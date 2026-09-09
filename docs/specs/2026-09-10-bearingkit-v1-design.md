@@ -198,7 +198,8 @@ Content is distilled from Antigravity-Core v5 (owner), fullstack-dev-skills (MIT
 | `privacy-block` | PreToolUse (Read/Edit/Bash) | PreToolUse | Blocks secrets files; `APPROVED:` retry protocol |
 | `scout-block` | PreToolUse | PreToolUse | Blocks reading `node_modules`, `dist`, `.git`, etc.; fixes: quoted strings ignored, `git` commands allowlisted |
 | `ship-gate` | PreToolUse on `git commit|push`, Stop | PreToolUse, Stop | Deny/continue when guardrails have not run this session after code changes; reason names `/bk-ship` |
-| `hot-path-flag` | PostToolUse (Edit/Write) | PostToolUse → state file → PreInvocation | Marks independent review required |
+| `hot-path-flag` | PostToolUse (Edit/Write) | PostToolUse → state file → PreInvocation | Marks independent review required; matches paths and content: auth, session, roles, upload, user-authored HTML or URL props, tenant scoping, migrations |
+| `temp-bypass-gate` | PreToolUse on `git commit|push`, deploy commands | PreToolUse | Blocks while code marked TEMPORARY / REMOVE-when-done has passed its expiry or has no expiry; lists the markers |
 
 One script per hook detects host by payload keys (`hook_event_name` vs `conversationId`) and emits the host's output schema. All hooks are fast, synchronous, no LLM calls.
 
@@ -292,6 +293,33 @@ Antigravity estimates are recorded only after measurement in the Skills & Custom
 - 100% of skills carry provenance and license mode; `NOTICE` complete.
 - `upstream-watch` produces a delta report for every source at least monthly.
 
+## 17b. Field lessons from BSWebSaaS (2026-06 → 2026-09) and the capabilities they add
+
+Source: GitHub `tuyenht/BSWebSaaS` main (66 PRs, 100+ commits), the server checkouts `/opt/bswebsaas/{prod,dev}` (read-only inspection 2026-09-10), the owner's CLAUDE.md §10 (Autonomy Gate, Council, Diamond++, DONE, learning log, anti-rot), 23 plan folders, council/audit reports, and the reviewer agent memory. Each row names evidence, then the Bearingkit capability that would have prevented or caught it.
+
+| # | Lesson (evidence) | Capability (where) |
+|---|---|---|
+| L1 | A temporary owner auto-login route marked "REMOVE when done" stayed live on prod for two months and was hit 25 times from external IPs, including a Telegram preview bot | **Temporary-bypass tracker**: any code marked TEMPORARY / REMOVE / backdoor must carry an expiry; `bk-close` lists live bypasses; `temp-bypass-gate` hook blocks deploy or commit while an expired bypass exists (§10) |
+| L2 | Guardrails declared in CLAUDE.md (Infection, Rector, Lighthouse, axe) were never wired into CI; CI itself stayed red for weeks because PHP ini limits differed from runtime | **Declared-gates reconciler** in `doctor --project` and `bk-ship`: diff declared gates vs CI workflow and local scripts; flag CI red streaks before feature work; compare CI runtime config with the real runtime |
+| L3 | Ten commits of admin styling shipped unstyled because `@vite` was missing and tests only asserted class strings; a Turnstile widget needed five fix PRs in one day | **Rendered verification**: `bk-test --browser` is mandatory for UI diffs; screenshot plus asset-resolution check is the evidence, never markup assertions alone |
+| L4 | Stored XSS through author-controlled URL props, missing login throttle, cross-tenant admin reach, an inert `role.level`, a credential-enumeration oracle, replayable OAuth tokens, sessions surviving password rotation. All found by later audits, not at implementation time | **Hot-path escalation by diff content**: `hot-path-flag` hook matches paths and content (auth, session, roles, upload, user-authored HTML or URL props, tenant scoping) and forces `bk-review --security` with `bk-reviewer`; invariants become regression-locking tests, as the owner did for cookie attributes |
+| L5 | The best guardrails in the repo introspect the schema or forbid patterns by regex, so a forgotten RLS or a stray role assignment fails CI by itself | **Invariant-to-test generator** in `bk-build`: when a COUNCIL decision creates an invariant, emit a self-maintaining coverage or chokepoint test, not a one-off assertion |
+| L6 | A destructive migration was safe only because the human wrote a plan row demanding a repo-wide reader grep beyond the ORM, a tested `down()`, and a stop | **Migration safety harness** in `bk-build --migration`: classify additive vs destructive; grep raw SQL, views, jobs, exports, seeds; require tested rollback and `CONCURRENTLY`; explicit human stop |
+| L7 | Twenty-two plan folders and all council reports exist only in the gitignored `plans/` of the server checkout; the best handoff prompt was untracked | **Committed handoff**: `bk-close` writes `docs/handoff/<date>.md` into the repo and proposes the commit; `doctor` warns when plan or handoff folders are ignored |
+| L8 | One stale locale fact needed three commits to purge from docs, docblock, fixture and comment; Vite 7 vs 8 drift; a handoff doc said Laravel 12 for a Laravel 13 project | **Fact registry and drift detector**: declared load-bearing facts (versions, locales, table names) are grepped across docs, code and CI by `bk-close --docs` and `doctor`; count-free references are the default |
+| L9 | AI proposed syntax from older majors (Tailwind 4 heading reset, undeclared theme colors, Laravel 12 idioms) exactly as the owner predicted in design.md | **Version card**: `detect-stack` reads lockfiles and the `stack-profile` hook injects exact installed majors; `bk-protocol` rule: for majors newer than training, consult pinned docs via context7 before writing framework code |
+| L10 | `npm install` emitted on a pnpm-only machine; three commits to settle one CI config | **Environment-parity preflight**: `detect-stack` reports package manager and runtime versions; generated CI or scripts must reference only toolchains present |
+| L11 | 8 of 8 admin color pairs failed WCAG, fonts unsubset, a zero-byte JS chunk preloaded; found manually after deploy | **Design import validator and budgets**: `bk-design --critic` computes contrast, checks reduced motion, focus and skip links; `bk-perf --web` checks asset budgets before "done" |
+| L12 | Prod checkout is seven weeks behind dev, carries uncommitted live edits, four orphaned `compose run` containers ran for seven weeks, dev Horizon unhealthy | **Ops drift check** in `bk-ops --deploy`: prod HEAD vs main, uncommitted files on prod, orphan or unhealthy containers, backup age; refuses deploy on drift without acknowledgement |
+| L13 | The reviewer agent kept project memory with "load-bearing facts, verify before relying" and "accepted trade-offs", which made later reviews faster and safer | **Agent memory as reviewer knowledge**: `bk-reviewer` runs with `memory: project`; `bk-close` proposes memory entries labelled decided, evidenced, or proposed |
+| L14 | Design-vs-code audits ran in two reconcile rounds with VERIFIED, MISMATCH, GAP and DECISION sections, each diff labelled ACT or COUNCIL; the owner keeps the audit prompts as files | **Audit template** in `bk-audit --docs`: the owner's own reconcile format and prompts become skill references (owner-authored text, license-free) |
+| L15 | The project already uses vendor-official skills shipped by Laravel Boost plus a `.ai/` override layer | **Vendor-skill deference**: `bk-protocol` detects vendor-shipped skills or guidelines in the project and defers to them for that framework instead of the kit's generic rules; `doctor` flags overlap |
+| L16 | The owner's own July hardening made `/bs:ship` execute ACT tasks directly and convene a council only for COUNCIL-class work, removing ceremony | **Autonomy Gate classifier**: `bk-spec` and the `stack-profile` hook pre-classify from diff paths (migrations, routes, auth, policies, module contracts, multi-module) and default to COUNCIL when unsure; ACT never asks |
+| L17 | The learning log added on 2026-07-30 never received a line; the loop existed on paper only | **Learning loop that fires**: `bk-close` and the Stop hook prompt for a RULE line when a user correction or a guardrail failure after the agent's own change is detected; append-only, evidence required, derived only from user turns and test results |
+| L18 | Multi-step state changes without a transaction produced silent 404s; boundary validation missed past-time scheduling; rate-limiter state leaked across tests until `Cache::flush()` per test | **Review lenses** in `bk-review`: multi-step mutation implies transaction or saga; validate at the boundary and in the UI; test isolation of singletons and caches |
+
+The owner's own text that is lifted verbatim into `core/` (owner-authored, license-free): Autonomy Gate §10.1 with the tie-breaker, Council Protocol §10.2 including "no theatrics", Definition of DONE §10.4, Diamond++ items 1, 6 and 8, the two-block `/bs:close` handoff with the reconcile protocol, the four-step `/bs:spec` ritual, the evidence-or-unverified line, the "propose from real state" line, the reviewer stance "no rubber-stamp", the version-drift warning, and "prevent traps by architecture, not by manual discipline".
+
 ## 18. Decisions log
 
 | Date | Decision |
@@ -302,6 +330,7 @@ Antigravity estimates are recorded only after measurement in the Skills & Custom
 | 2026-09-10 | Tier-1 languages: TS/JS, Python, PHP/Laravel, SQL, shell; tier-2: Java/Kotlin, C#, Go, C/C++, Rust, Swift, Dart |
 | 2026-09-10 | ClaudeKit: ideas only, no install; Superpowers: absorbed, plugin removed after phase 2 |
 | 2026-09-10 | DB KB: fix encoding bug now; author articles by canonical topic in background |
+| 2026-09-10 | Field lessons L1–L18 from BSWebSaaS adopted (§17b); Autonomy Gate classifier and temporary-bypass tracker added; ACT-class work never asks for approval |
 
 ## 19. Glossary
 
