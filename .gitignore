@@ -1,0 +1,14 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+
+# local, per-machine config (never commit)
+kit.config.json
+.env
+.env.*
+
+# build / eval outputs
+_build/
+_archive/
+evals/results/
