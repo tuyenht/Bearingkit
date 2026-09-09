@@ -91,7 +91,7 @@ bearingkit/
     upstream-watch.ps1 | .sh     # diff tracked upstream files since locked sha → docs/upstream/<date>-<source>.md
     detect-stack.cjs             # manifests → stack + guardrail commands (used by hooks and skills)
   docs/
-    ARCHITECTURE.md · CHANGELOG.md · CONTRIBUTING.md · superpowers/specs/ · upstream/
+    ARCHITECTURE.md · CHANGELOG.md · CONTRIBUTING.md · specs/ · plans/ · upstream/
   .claude-plugin/marketplace.json   # lets users `claude plugin marketplace add tuyenht/Bearingkit`
   LICENSE (MIT) · NOTICE · README.md (EN) · README.vi.md
 ```
