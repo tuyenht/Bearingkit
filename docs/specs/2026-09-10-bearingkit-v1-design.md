@@ -1,6 +1,6 @@
 # Bearingkit v1 — Design Specification
 
-Status: DRAFT v1.1 for owner review · Date: 2026-09-10 · Owner: tuyenht · Command prefix: `/bk-`
+Status: DRAFT v1.2 for owner review · Date: 2026-09-10 · Owner: tuyenht · Command prefix: `/bk-`
 
 > **Tóm tắt (VI).** Bearingkit là bộ kỹ năng và tác nhân cho lập trình có AI hỗ trợ, dùng chung cho
 > Claude Code và Google Antigravity từ **một nguồn duy nhất**. Lõi là "Kim chỉ nam": phân loại việc
@@ -9,7 +9,10 @@ Status: DRAFT v1.1 for owner review · Date: 2026-09-10 · Owner: tuyenht · Com
 > dưới giấy phép cho phép, học ý tưởng từ các bộ khác, và **không yêu cầu cài thêm bộ nào**. Dự án
 > không cần cấu hình riêng: kit tự đọc manifest và tài liệu sẵn có. Mọi tuyên bố "tốt hơn" phải đo
 > được. Bản 1.1 cắt 8 skill và 5 rules so với bản 1.0 sau audit, tách kế hoạch di trú máy của owner
-> sang `docs/plans/`, và ẩn danh mọi chi tiết hệ thống riêng. Phần còn lại bằng tiếng Anh vì repo public.
+> sang `docs/plans/`, và ẩn danh mọi chi tiết hệ thống riêng. Bản 1.2 chốt cài đặt một lệnh
+> `npx bearingkit install` cho cả hai host, thay hai hook chặn đường dẫn bằng danh sách chặn gốc của
+> host, định nghĩa kho trạng thái phiên, dàn bài `AGENTS.md`, mẫu mô tả skill và bảng chuỗi bàn giao.
+> Phần còn lại bằng tiếng Anh vì repo public.
 
 ---
 
@@ -42,7 +45,7 @@ Status: DRAFT v1.1 for owner review · Date: 2026-09-10 · Owner: tuyenht · Com
 4. **Absorb, attribute, re-evaluate.** MIT/Apache mechanisms are adapted with attribution; `upstream/sources.json` records provenance; `upstream-watch` tracks drift.
 5. **Host-agnostic text, host-specific adapters.** Skill bodies describe actions, not tool names. Claude-only fields live in the Claude adapter.
 6. **Evidence before assertion.** `file:line` citations; numbers with a method or the label "not measured"; negative controls; no untested claims in commits or docs.
-7. **Proportionate gates.** ACT-class work never asks. Only COUNCIL-class work stops for approval. Hooks enforce four invariants and nothing else.
+7. **Proportionate gates.** ACT-class work never asks. Only COUNCIL-class work stops for approval. Hooks and native deny lists enforce four invariants (secrets, unproven ship, unreviewed hot path, expired temporary bypass) and nothing else.
 8. **Budget is a contract.** `doctor` enforces sizes and listing tokens; CI fails on breach.
 
 ## 3. Hosts and verified mechanisms
@@ -65,8 +68,9 @@ Status: DRAFT v1.1 for owner review · Date: 2026-09-10 · Owner: tuyenht · Com
 
 - Antigravity PostToolUse cannot inject context → the hook writes a state flag; the next PreInvocation injects it.
 - Antigravity has no SessionStart → bootstrap via always-on plugin `rules/AGENTS.md` plus PreInvocation on the first invocation.
-- Claude plugins do not carry a `rules/` folder in current docs → the installer links `core/rules` into `~/.claude/rules/bearingkit/`; a marketplace install alone is therefore incomplete (test #4 checks whether skills with `paths:` can replace rules on Claude).
+- Claude plugins do not carry a `rules/` folder in current docs, and plugin skills are namespaced → the installer links directly into `~/.claude/{skills,rules,agents}` instead of relying on a plugin install; the marketplace stays a secondary channel.
 - Skill discovery is one level deep on both hosts → flat `skills/` only.
+- Both hosts have native path deny lists (Claude `permissions.deny`, Antigravity Permission Grants) → the kit configures them instead of shipping path-blocking hooks.
 
 ## 4. Repository layout
 
@@ -87,10 +91,12 @@ bearingkit/
   evals/
     activation/                  # 10 prompts per host per intent, expected skill
     skills/<skill>/tests/*.md    # prompt + expected; Skillmark-compatible
+  bin/bearingkit.cjs             # npm bin: install · update · uninstall · doctor · upstream-watch
   scripts/                       # Node only: install.cjs · doctor.cjs · upstream-watch.cjs · detect-stack.cjs
+  tests/                         # unit tests: hook payload adapters (both hosts), detect-stack, doctor, installer dry-run
   docs/                          # ARCHITECTURE.md · CHANGELOG.md · CONTRIBUTING.md · specs/ · plans/ · upstream/
-  .claude-plugin/marketplace.json
-  LICENSE (MIT) · NOTICE · README.md · README.vi.md
+  .claude-plugin/marketplace.json   # secondary channel
+  package.json · LICENSE (MIT) · NOTICE · README.md · README.vi.md
 ```
 
 ## 5. One source, two hosts, two install modes
@@ -104,11 +110,13 @@ bearingkit/
 | Hooks | `core/hooks/*.cjs` | `adapters/claude/hooks/hooks.json` | `adapters/antigravity/hooks.json` |
 | MCP | `core/mcp.json` | `install` runs `claude mcp add` | `adapters/antigravity/mcp_config.json` |
 
-**Dev mode** (kit author): `node scripts/install.cjs --dev` creates directory junctions (`mklink /J` on Windows, symlinks elsewhere) so an edit in `core/` is live in the next session on both hosts.
+**One installer, both hosts.** `npx bearingkit install` (npm package `bearingkit`, bin in `bin/bearingkit.cjs`) does everything: links `core/skills/bk-*` into `~/.claude/skills/`, `core/rules` into `~/.claude/rules/bearingkit/`, generated agents into `~/.claude/agents/`; merges hook registrations and the native deny list into `~/.claude/settings.json`; adds the `@…/core/AGENTS.md` import to `~/.claude/CLAUDE.md`; registers `adapters/antigravity` in `~/.gemini/config/plugins.json`; adds MCP servers. It backs up every file it touches, is idempotent, prints a diff of what changed, and `npx bearingkit uninstall` restores the backups. `npx bearingkit update` fetches the new version and re-links. Links are directory junctions on Windows (`mklink /J`, no admin) and symlinks elsewhere.
 
-**Public mode**: `claude plugin marketplace add tuyenht/Bearingkit && claude plugin install bearingkit` then `node scripts/install.cjs` once for rules, MCP, and the Antigravity `plugins.json` entry. The installer backs up touched files before writing and prints what it changed. `install.cjs --uninstall` reverses everything.
+**Dev mode** for the kit author: `npx bearingkit install --dev <repo>` points the same links at the working checkout, so an edit in `core/` is live in the next session on both hosts.
 
-**Command naming.** Directory `core/skills/bk-spec` gives `/bk-spec` on Antigravity and on Claude in dev mode. A marketplace install on Claude is expected to show `/bearingkit:bk-spec` (test #1). The `bk-` directory name is the contract.
+The Claude marketplace entry is a secondary channel for discovery; it is not required and is not the recommended path, because plugin skills are namespaced and plugins do not carry rules.
+
+**Command naming.** Directory `core/skills/bk-spec` gives `/bk-spec` on both hosts in both modes. The `bk-` directory name is the contract.
 
 ## 6. Zero per-project configuration
 
@@ -118,7 +126,7 @@ Skills read the project's own instruction files (`AGENTS.md`, `CLAUDE.md`, `READ
 
 **Vendor deference.** If the project ships vendor skills or guidelines (for example Laravel Boost under `.claude/skills/` and `.ai/`), the kit uses them for that framework and does not apply its own generic rules for it.
 
-Work products the kit writes into a project, in the project's conventional places: `plans/<yymmdd-hhmm>-<slug>/`, `docs/handoff/<date>.md`, `.claude/lessons.log` when the project opts in. These are project content, not kit configuration.
+Work products the kit writes into a project, in the project's conventional places: `plans/<yymmdd-hhmm>-<slug>/`, `docs/handoff/<date>.md`, `docs/architecture-map.md` from `bk-map`, and `.claude/lessons.log` when that file already exists (creating it once is the opt-in). These are project content, not kit configuration. Proposed edits to a project's own instruction files are always COUNCIL-class: shown as a diff, never applied silently.
 
 ## 7. Skill catalog
 
@@ -129,7 +137,7 @@ Conventions: description ≤300 characters, English first with Vietnamese cues, 
 | Skill | Intent | Gates and outputs | Adapted from |
 |---|---|---|---|
 | `bk-protocol` (hidden) | Shared references: gate criteria, council roles, evidence rules, RBA-lite, host tool map | — | Owner's protocol; Superpowers using-superpowers (MIT) |
-| `bk-map` | Understand an unfamiliar codebase; produce or refresh an architecture map | `file:line` anchors; proposes a doc diff | feature-dev code-explorer (Apache) |
+| `bk-map` | Understand an unfamiliar codebase; produce or refresh an architecture map | Writes `docs/architecture-map.md` with `file:line` anchors (ACT); proposes instruction-file edits as a diff (COUNCIL) | feature-dev code-explorer (Apache) |
 | `bk-research` | Answer with sources and confidence labels | Query plan, independent sources, claim labels | Built-in deep-research workflow; ClaudeKit research (ideas) |
 | `bk-next` | Recommend the next step from real repo state | Reads git, plans, handoff | Owner's `/bs:next` |
 | `bk-spec` | Restate the ask, edge cases, assumptions; classify ACT or COUNCIL; pin requirements | RBA-lite; stops only when COUNCIL | Owner's `/bs:spec`; Superpowers brainstorming (MIT); spec-kit (MIT); ClaudeKit requirement gate (ideas) |
@@ -150,7 +158,31 @@ Conventions: description ≤300 characters, English first with Vietnamese cues, 
 
 `bk-preview` (visual explain, diff and plan review in Markdown and HTML; clean-room), `bk-guard` (the known-failure guard pattern, with the Prisma 7 + Next example).
 
-### 7.3 Removed after audit
+### 7.3 Description template and handoff chain
+
+Every description follows one shape, English first, Vietnamese cues second, ≤300 characters:
+
+```
+<Action in one clause>. Use when: <cue phrases EN>; <cue phrases VI>. Not for: <nearest neighbor skill>.
+```
+
+Example, `bk-review`: "Review a diff or proposal before commit, hunting bugs, hot-path risk and untested claims. Use when: review, PR, before commit, soi diff, rà code, trước khi commit. Not for: explaining code, use bk-map."
+
+All skills read the stack profile and the project's instruction files first. Each ends by naming the next step; the chain has stops only at COUNCIL-class points:
+
+| From | Default next | Alternate |
+|---|---|---|
+| `bk-map`, `bk-research` | `bk-spec` | answer directly when the ask was a question |
+| `bk-spec` | `bk-plan` when COUNCIL or multi-step; `bk-build` when ACT and small | `bk-audit` when the ask is an investigation |
+| `bk-audit` | `bk-plan` | `bk-spec` when scope is still unclear |
+| `bk-plan` | `bk-build` | — |
+| `bk-build` | `bk-test`, then `bk-review` | `bk-debug` on unexpected failure |
+| `bk-debug` | `bk-test` | `bk-audit` after three failed attempts |
+| `bk-review` | `bk-ship` | back to `bk-build` on blocking findings |
+| `bk-ship` | `bk-close` | `bk-ops --deploy` when a deploy follows |
+| `bk-close` | end | — |
+
+### 7.4 Removed after audit
 
 `bk-refactor` (built-in `/simplify`), `bk-devtools` (official Chrome DevTools plugins), `bk-laravel` (Laravel Boost), `bk-loop` (built-in `/loop`), `bk-admin` (commercial theme assets, private pack), `bk-react-perf` (a link in the React rule), `bk-ops --ssh` (personal skill), `bk-kb-author` (lives in the owner's DB knowledge base repo).
 
@@ -161,7 +193,7 @@ Conventions: description ≤300 characters, English first with Vietnamese cues, 
 | `bk-scout` | haiku / low | read-only | Parallel scouting with `file:line` output, timeout per segment |
 | `bk-researcher` | sonnet / medium | read + web | Sourced research with confidence labels |
 | `bk-reviewer` | opus / high, `memory: project` | read-only | Independent gate for hot paths; never the author of the change; keeps load-bearing facts and accepted trade-offs |
-| `bk-query-optimizer` | sonnet / medium | read + shell | EXPLAIN-based diagnosis for `bk-db` |
+| `bk-query-optimizer` | sonnet / medium | read + shell | EXPLAIN-based diagnosis for `bk-db`; uses only the connection the project already exposes, prefers a read-only role, never prints credentials |
 | `bk-design-critic` | sonnet / medium | read + browser | Anti-generic and accessibility review |
 
 The model map is a table in the adapter; users on cheaper plans can lower it. Antigravity has no persona files; the same persona text is referenced by `bk-protocol`.
@@ -184,27 +216,42 @@ glob: "**/*.ts,**/*.tsx"           # key name confirmed by test #2; emit both `g
 
 Content is distilled from the owner's prior kits and MIT sources, and from official framework docs. No vendored third-party text without a permissive license. Each rule opens with a version card: which majors it was written against.
 
-## 10. Hooks
+## 10. Hooks, native deny lists, session state
 
-Four enforced invariants, two helpers. All hooks are Node scripts with unit-tested payload adapters for both hosts, no network, no LLM calls, under 100 ms.
+**Native deny lists instead of path-blocking hooks.** The installer writes deny rules for secret files (`**/.env*`, key material) and dependency or build folders (`node_modules`, `vendor`, `dist`, `build`, `.venv`, `target`) into Claude `permissions.deny` and Antigravity Permission Grants. The host matches paths, not command text, so nothing is blocked by a word inside a quoted string. A user who needs a blocked file lifts the rule in the host's own settings.
+
+**Session state store.** Hooks share `~/.bearingkit/state/<host>-<session-id>.json`, keyed by Claude `session_id` or Antigravity `conversationId`, never inside the project. Fields: stack profile hash, last injection hash, code files changed, guardrail runs with exit codes, hot-path touched, independent review recorded, temporary-bypass markers seen. Files older than seven days are pruned by the next run.
+
+Two enforcing hooks, two helpers. All are Node scripts with unit-tested payload adapters for both hosts, no network, no LLM calls, under 100 ms.
 
 | Hook | Claude event | Antigravity event | Behavior and conditions |
 |---|---|---|---|
-| `stack-profile` (helper) | SessionStart, UserPromptSubmit | PreInvocation | Injects ≤120 tokens only when state changed since the last injection: stack and majors, guardrails, branch, active plan and phase, dirty tree, hot-path touched, handoff present |
-| `hot-path-flag` (helper) | PostToolUse Edit/Write | PostToolUse → state file → PreInvocation | Marks independent review required when the diff touches hot paths by path or content |
-| `privacy-block` | PreToolUse Read/Edit/Bash | PreToolUse | Blocks secret files; `APPROVED:` retry protocol |
-| `scout-block` | PreToolUse | PreToolUse | Blocks reading dependency and build folders; quoted strings ignored; `git` allowlisted |
-| `ship-gate` | PreToolUse on commit/push; Stop | PreToolUse; Stop | Fires only when code files changed in this session and no guardrail run is recorded; names `/bk-ship`; docs-only sessions never trigger it |
+| `stack-profile` (helper) | SessionStart, UserPromptSubmit | PreInvocation | Injects ≤120 tokens only when the state hash changed: stack and majors, guardrails, branch, active plan and phase, dirty tree, hot-path touched, handoff present |
+| `hot-path-flag` (helper) | PostToolUse Edit/Write | PostToolUse → state → PreInvocation | Records that a hot path was touched, by path or content |
+| `ship-gate` | PreToolUse on commit/push; Stop | PreToolUse; Stop | Fires only when code files changed in this session and either no guardrail run is recorded or a hot path was touched without an independent review recorded; names `/bk-ship` or `/bk-review --security`; docs-only sessions never trigger it |
 | `temp-bypass-gate` | PreToolUse on commit/push/deploy | PreToolUse | Blocks while code marked TEMPORARY or REMOVE has no expiry or an expired one; lists the markers |
 
 ## 11. Auto-activation
+
+**`core/AGENTS.md` outline** (≤120 lines; this file decides most of the kit's intelligence):
+
+| Block | Lines | Content |
+|---|---|---|
+| Identity | 5 | What the kit is; answer in the user's language; read the stack profile first |
+| Autonomy Gate | 15 | ACT and COUNCIL criteria, tie-breaker, "ACT never asks" |
+| Router | 15 | Ten intents → skill; questions answered directly; the 1% rule |
+| Evidence rules | 15 | `file:line`; numbers with method or "not measured"; negative control; no untested claims; unverified is not a defect |
+| Council protocol | 10 | 2–4 relevant roles, one option each, debate conflicts, one verdict, rejected options, no theatrics, no execution until decided |
+| Definition of done | 6 | Guardrails run and pasted; rendered check for UI; nothing marked done without evidence |
+| Handoff chain and hot paths | 10 | The §7.3 chain; default hot paths; independent review rule including fix-of-fix |
+| Host notes | 6 | Tool map pointer, where state lives, how to lift a deny rule |
 
 1. **Descriptions route.** Action first, "Use when" with cue phrases and symptoms, "Not for". Tuned by activation evals per host.
 2. **Always-on router in `core/AGENTS.md`, about 20 lines.** Classify each request into one of ten intents (question, small change, feature, bug, review, ship, design, data, ops, research); questions are answered directly; the 1% rule applies; the handoff chain spec → plan → build → review → ship → close stops only at COUNCIL-class points.
 3. **Autonomy Gate classifier.** `bk-spec` and `stack-profile` pre-classify from paths and content: migrations, schema, auth, sessions, roles, module contracts, multi-module impact → COUNCIL; behavior-preserving refactor, tests, app-layer fixes, lint fixes, code to an agreed contract, docs, tasks in an approved plan → ACT. Unsure → COUNCIL. ACT never asks.
 4. **State injection** by `stack-profile`.
 5. **Deterministic gates** by the four enforcing hooks.
-6. **Learning loop.** Host memory stores routing preferences; `bk-close` writes the handoff and prompts for an append-only `RULE` line when a user correction or a guardrail failure after the agent's own change occurred; rules derive only from user turns and test results; `doctor` flags skills with zero calls in 30 days; evals re-tune descriptions on change.
+6. **Learning loop.** Host memory stores routing preferences; `bk-close` writes the handoff and prompts for an append-only `RULE` line when the session state shows a guardrail failure after the agent's own change, or the user's turns contained a correction cue (a short configurable list); it only prompts, never writes a rule by itself; rules derive only from user turns and test results; `doctor` flags skills with zero calls in 30 days; evals re-tune descriptions on change.
 7. **Anti-over-trigger.** Heavy skills run `context: fork` and need explicit signals; below moderate match ask one short question; explanations never summon the council.
 
 Metrics: activation precision and recall; hook false-block rate; manual invocations per session.
@@ -240,10 +287,10 @@ Antigravity numbers are recorded only after measurement.
 
 ## 15. Compatibility, versioning, uninstall
 
-- Semantic versioning; `CHANGELOG.md` is the single changelog. Minimum hosts: Claude Code 2.1.250 (`/skill-doctor`), Antigravity 2.0 with the customization system (plugins.json, hooks.json).
-- Node 20+ required for hooks and scripts; nothing else.
-- `install.cjs --uninstall` removes links, plugin registrations, MCP entries, and restores the backups it made.
-- Compatibility tests before v1.0: (1) Claude skill naming for dev-mode link versus plugin install and when `name` differs from the directory; (2) Antigravity rule frontmatter key `glob` versus `globs`, and whether plugin `rules/*.md` accept triggers; (3) Claude Code tolerance of unknown frontmatter keys in rules; (4) whether Claude skills with `paths:` can stand in for rules in a plugin-only install.
+- Semantic versioning; `CHANGELOG.md` is the single changelog. Minimum hosts: Claude Code 2.1.252 (`/skill-doctor`), Antigravity 2.0 with the customization system (plugins.json, hooks.json).
+- Node 20+ required for the installer, hooks and scripts; nothing else.
+- `npx bearingkit uninstall` removes links, settings entries, plugin registration, MCP entries, and restores the backups it made. The installer never moves or deletes user files that it did not create.
+- Compatibility tests before v1.0: (1) Claude discovers linked skills, rules and agents through junctions; (2) Antigravity rule frontmatter key `glob` versus `globs`, and whether plugin `rules/*.md` accept triggers; (3) Claude Code tolerance of unknown frontmatter keys in rules; (4) Antigravity Permission Grants can be written by the installer, otherwise the deny list is documented as a manual step there.
 
 ## 16. Risks and mitigations
 
@@ -257,6 +304,7 @@ Antigravity numbers are recorded only after measurement.
 | Windows link issues | medium / medium | Directory junctions; generated copies where a rename is required |
 | Timeline optimism | high / medium | Phase gates; ship phase 1 alone and measure |
 | License or privacy drift from contributors | medium / high | `doctor` blocks unknown-license vendoring, personal paths, secrets |
+| Installer damages host settings, the failure mode that broke a previous kit | low / high | Backup before every write; idempotent JSON merge; never moves user files; `uninstall` restores; installer dry-run covered by tests |
 
 ## 17. Success metrics (v1.0)
 
@@ -304,6 +352,7 @@ Owner-authored text lifted verbatim into `core/`: the Autonomy Gate with its tie
 | 2026-09-10 | ClaudeKit: ideas only; Superpowers: absorbed, plugin removed after phase 2 |
 | 2026-09-10 | Field lessons L1–L18 adopted; Autonomy Gate classifier and temporary-bypass tracker added; ACT never asks |
 | 2026-09-10 | Audit v1.1: 17 core skills, 5 agents, 8 rules, 6 hooks; modes inferred with four forced flags; Node-only scripts; owner migration moved to `docs/plans/`; private material excluded from the public kit |
+| 2026-09-10 | Audit v1.2: single installer `npx bearingkit install` for both hosts and modes; native deny lists replace `scout-block` and `privacy-block`, leaving 4 hooks; session state store defined; `AGENTS.md` outline, description template and handoff chain specified |
 
 ## 20. Glossary
 
