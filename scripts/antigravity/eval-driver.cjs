@@ -50,7 +50,11 @@ function resetFixture(workspace) {
 // Pure decision: given the payload, the first user input and the queue, what to do.
 function decide(payload, userInput, queue, trigger, workspaceIsFixture) {
   const p = payload || {};
-  if (p.invocationNum !== undefined && p.invocationNum !== 1) return { action: 'skip', reason: 'not the first invocation' };
+  // Invocation numbering starts at 0 in one run and at 1 in another (Antigravity 2.0, 2026-09-11), so the reliable
+  // rule is one injection per conversation: a conversation already in the ledger is never served again.
+  const served = new Set(((queue && queue.done) || []).map((d) => d.conversationId).filter(Boolean));
+  if (p.conversationId && served.has(p.conversationId)) return { action: 'skip', reason: 'already served this conversation' };
+  if (p.invocationNum !== undefined && Number(p.invocationNum) > 1) return { action: 'skip', reason: 'not the first invocation' };
   // Injection happens only inside the kit's own marked fixture: a typed trigger elsewhere is ignored, so a test
   // prompt can never land in a real project. Inside the fixture, a transcript that has no user input yet (the hook
   // may run before it is written) counts as triggered.
@@ -78,6 +82,11 @@ function main() {
     const ws = Array.isArray(payload.workspacePaths) ? payload.workspacePaths[0] : null;
     const isFixture = Boolean(ws && fs.existsSync(path.join(ws, FIXTURE_MARKER)));
     const d = decide(payload, firstUserInput(transcript), queue, queue && queue.trigger, isFixture);
+    // One line per invocation, so a silent host can be told apart from a driver that decided to skip.
+    try {
+      fs.mkdirSync(EVAL_DIR, { recursive: true });
+      fs.appendFileSync(path.join(EVAL_DIR, 'driver.log'), JSON.stringify({ at: new Date().toISOString(), conversationId: payload.conversationId || null, invocationNum: payload.invocationNum, isFixture, transcriptExists: Boolean(transcript), decision: d.action, reason: d.reason || null, pending: queue && Array.isArray(queue.pending) ? queue.pending.length : null }) + '\n');
+    } catch { /* logging never blocks the hook */ }
     if (d.action === 'skip' || !queue) { process.stdout.write('{}'); return; }
     if (d.action === 'empty') {
       process.stdout.write(JSON.stringify({ injectSteps: [{ ephemeralMessage: '[bearingkit-eval] The queue is empty. Reply with exactly: EVAL-QUEUE-EMPTY' }] }));

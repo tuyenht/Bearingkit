@@ -18,8 +18,17 @@ test('activation is read from the first SKILL.md tool call; injected block detec
     line({ type: 'PLANNER_RESPONSE', content: 'Reading the skill', tool_calls: [{ name: 'view_file', args: { AbsolutePath: '"C:\\\\Users\\\\x\\\\.gemini\\\\config\\\\plugins\\\\bearingkit\\\\skills\\\\bk-spec\\\\SKILL.md"' } }] }),
     line({ type: 'PLANNER_RESPONSE', content: 'then', tool_calls: [{ name: 'view_file', args: { AbsolutePath: 'C:/x/skills/bk-plan/SKILL.md' } }] }),
   ].join('\n');
-  assert.deepEqual(activationFromTranscript(t), { got: 'bk-spec', injected: true });
-  assert.deepEqual(activationFromTranscript('not json\n' + line({ type: 'PLANNER_RESPONSE', content: 'answered directly' })), { got: 'none', injected: false });
+  assert.deepEqual(activationFromTranscript(t), { got: 'bk-spec', injected: true, promptSeen: false });
+  // The model's reaction to the trigger line (before the injected prompt) is not scored.
+  const withTrigger = [
+    line({ type: 'USER_INPUT', content: '<USER_REQUEST>\nReply with OK and wait for my next message.\n</USER_REQUEST>' }),
+    line({ type: 'EPHEMERAL_MESSAGE', content: '[bearingkit] stack\n[/bearingkit]' }),
+    line({ type: 'PLANNER_RESPONSE', content: 'peek', tool_calls: [{ name: 'view_file', args: { AbsolutePath: 'C:/p/skills/bk-audit/SKILL.md' } }] }),
+    line({ type: 'USER_INPUT', content: '<USER_REQUEST>\nWhat does the retry decorator do?\n</USER_REQUEST>' }),
+    line({ type: 'PLANNER_RESPONSE', content: 'The file does not exist.', tool_calls: [{ name: 'view_file', args: { AbsolutePath: 'C:/p/src/http/retry.ts' } }] }),
+  ].join('\n');
+  assert.deepEqual(activationFromTranscript(withTrigger, { prompt: 'What does the retry decorator do?', expect: 'none' }), { got: 'none', injected: true, promptSeen: true });
+  assert.deepEqual(activationFromTranscript('not json\n' + line({ type: 'PLANNER_RESPONSE', content: 'answered directly' })), { got: 'none', injected: false, promptSeen: false });
   assert.equal(activationFromTranscript(line({ type: 'PLANNER_RESPONSE', content: 'GLOB-PROBE-OK' }), { kind: 'text', expect: 'GLOB-PROBE-OK' }).got, 'GLOB-PROBE-OK');
   assert.equal(activationFromTranscript(line({ type: 'PLANNER_RESPONSE', content: 'no idea' }), { kind: 'text', expect: 'GLOB-PROBE-OK' }).got, 'none');
 });
@@ -28,6 +37,10 @@ test('driver decides only on the first invocation of a conversation that starts 
   const queue = { trigger: 'bk eval', pending: [{ id: 'a', prompt: 'P1' }] };
   assert.equal(driver.decide({ invocationNum: 2 }, '<USER_REQUEST>\nbk eval\n</USER_REQUEST>', queue, 'bk eval', true).action, 'skip');
   assert.equal(driver.decide({ invocationNum: 1 }, 'Add CSV export', queue, 'bk eval', true).action, 'skip');
+  assert.equal(driver.decide({ invocationNum: 0 }, 'bk eval', queue, 'bk eval', true).action, 'inject', 'a zero-based first invocation counts as first');
+  const served = { trigger: 'bk eval', pending: [{ id: 'b', prompt: 'P2' }], done: [{ id: 'a', conversationId: 'c-9' }] };
+  assert.equal(driver.decide({ invocationNum: 1, conversationId: 'c-9' }, 'bk eval', served, 'bk eval', true).action, 'skip', 'one injection per conversation');
+  assert.equal(driver.decide({ invocationNum: 0, conversationId: 'c-10' }, 'bk eval', served, 'bk eval', true).action, 'inject');
   assert.equal(driver.decide({ invocationNum: 1 }, '<USER_REQUEST>\n  BK EVAL \n</USER_REQUEST>', queue, 'bk eval', true).action, 'inject');
   assert.equal(driver.decide({ invocationNum: 1 }, 'bk eval', { pending: [] }, 'bk eval', true).action, 'empty');
   assert.equal(driver.decide({ invocationNum: 1 }, 'bk eval', queue, 'bk eval', false).action, 'skip', 'the trigger outside the fixture is ignored');
