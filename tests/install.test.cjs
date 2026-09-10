@@ -131,7 +131,7 @@ test('--antigravity-copy installs a real plugin directory with dereferenced skil
   assert.ok(fs.existsSync(path.join(dst, 'skills', 'bk-spec', 'SKILL.md')));
   assert.ok(fs.existsSync(path.join(dst, 'rules', 'AGENTS.md')));
   assert.ok(!fs.existsSync(path.join(dst, 'hooks.template.json')), 'template not shipped');
-  assert.equal(fs.readFileSync(path.join(dst, '.bearingkit-copy'), 'utf8').trim(), d.kit);
+  assert.equal(fs.readFileSync(path.join(dst, '.bearingkit-copy'), 'utf8').trim(), fwd(d.kit));
   // A second install refreshes the copy in place; a junction install replaces its own copy with a link and back.
   await quiet(() => install(argsFor(d, ['--antigravity-only', '--antigravity-copy'])));
   assert.ok(fs.existsSync(path.join(dst, 'skills', 'bk-spec', 'SKILL.md')));
