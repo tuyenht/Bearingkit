@@ -1,6 +1,6 @@
 ---
 name: bk-review
-description: Review a diff or proposal before push, hunting bugs, hot-path risk and untested claims. Use when: review, PR, before push, soi diff, rà code, trước khi đẩy. Not for: explaining code.
+description: Review a diff or proposal before push, hunting bugs, hot-path risk and untested claims; judges whether a change is safe to merge. Use when: review, PR, safe to merge, soi diff, rà code, merge được chưa. Not for: committing or pushing, use bk-ship.
 context: fork
 background: false
 ---

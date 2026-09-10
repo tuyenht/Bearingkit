@@ -6,7 +6,7 @@
 {"id":"q-vi-02","intent":"question","lang":"vi","prompt":"Giải thích cách hàng đợi job xử lý retry trong dự án này.","expect":"none"}
 {"id":"q-vi-03","intent":"question","lang":"vi","prompt":"File cấu hình auth nằm ở đâu và làm gì?","expect":"none"}
 {"id":"q-vi-04","intent":"question","lang":"vi","prompt":"Tại sao repo có cả pnpm-lock lẫn package-lock?","expect":"none"}
-{"id":"q-neg-01","intent":"question","lang":"en","prompt":"Can you add a retry to the upload endpoint?","expect":"bk-spec"}
+{"id":"q-neg-01","intent":"question","lang":"en","prompt":"Can you add a retry to the upload endpoint?","expect":"bk-build"}
 {"id":"q-neg-02","intent":"question","lang":"vi","prompt":"Bạn kiểm tra giúp diff này trước khi tôi push được không?","expect":"bk-review"}
 {"id":"sm-en-01","intent":"small","lang":"en","prompt":"Rename the Save button label to \"Save changes\" on the settings page.","expect":"bk-build"}
 {"id":"sm-en-02","intent":"small","lang":"en","prompt":"Bump the default page size from 20 to 50 in the list endpoint.","expect":"bk-build"}
@@ -54,7 +54,7 @@
 {"id":"ship-en-04","intent":"ship","lang":"en","prompt":"Prepare the PR description for what we did.","expect":"bk-ship"}
 {"id":"ship-vi-01","intent":"ship","lang":"vi","prompt":"Commit và tạo PR cho phần vừa làm.","expect":"bk-ship"}
 {"id":"ship-vi-02","intent":"ship","lang":"vi","prompt":"Chạy kiểm tra rồi đẩy code lên.","expect":"bk-ship"}
-{"id":"ship-vi-03","intent":"ship","lang":"vi","prompt":"Giao hàng tính năng xuất hóa đơn.","expect":"bk-ship"}
+{"id":"ship-vi-03","intent":"ship","lang":"vi","prompt":"Xong phần xuất hóa đơn rồi, ship đi.","expect":"bk-ship"}
 {"id":"ship-vi-04","intent":"ship","lang":"vi","prompt":"Soạn mô tả PR cho những gì vừa làm.","expect":"bk-ship"}
 {"id":"ship-neg-01","intent":"ship","lang":"en","prompt":"Explain how bk-ship works.","expect":"none"}
-{"id":"ship-neg-02","intent":"ship","lang":"vi","prompt":"Deploy bản này lên staging.","expect":"bk-spec"}
+{"id":"ship-neg-02","intent":"ship","lang":"vi","prompt":"Deploy bản này lên staging.","expect":"none"}

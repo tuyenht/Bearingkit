@@ -110,6 +110,12 @@ async function run(argv) {
   const file = path.resolve(args.file || path.join(ROOT, 'evals', 'activation', 'phase-1.jsonl'));
   let prompts = loadPrompts(file);
   if (args.intent) prompts = prompts.filter((p) => p.intent === args.intent);
+  if (args.id) { const ids = new Set(String(args.id).split(',').map((s) => s.trim())); prompts = prompts.filter((p) => ids.has(p.id)); }
+  if (args['per-intent']) {
+    const n = Number(args['per-intent']);
+    const seen = {};
+    prompts = prompts.filter((p) => { seen[p.intent] = (seen[p.intent] || 0) + 1; return seen[p.intent] <= n; });
+  }
   if (args.limit) prompts = prompts.slice(0, Number(args.limit));
   const outDir = path.resolve(args.out || path.join(ROOT, 'evals', 'results'));
   fs.mkdirSync(outDir, { recursive: true });
