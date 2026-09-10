@@ -3,7 +3,7 @@
 // entries it writes are marked so a second run is idempotent and `uninstall` removes exactly what it added.
 //
 //   bearingkit install --dev <repo> [--config-dir <claude dir>] [--antigravity-dir <gemini config dir>]
-//                      [--dry-run] [--mcp] [--claude-only] [--antigravity-only] [--backups-dir <dir>]
+//                      [--dry-run] [--mcp] [--claude-only] [--antigravity-only] [--antigravity-copy] [--backups-dir <dir>]
 //   bearingkit uninstall (same options)
 //
 // Claude Code: junctions/symlinks for core/skills/bk-* → <claudeDir>/skills/, core/rules → <claudeDir>/rules/bearingkit,
@@ -45,6 +45,9 @@ function resolveOptions(argv) {
     mcp: Boolean(args.mcp),
     doClaude: !args['antigravity-only'],
     doAntigravity: !args['claude-only'] && (Boolean(args['antigravity-dir']) || !isolated),
+    // Antigravity's scanner may not follow a directory junction; --antigravity-copy installs a real directory
+    // (a snapshot of the adapter with the skills dereferenced) that a later install refreshes.
+    antigravityCopy: Boolean(args['antigravity-copy']),
   };
 }
 
@@ -207,12 +210,37 @@ class Installer {
     }
     this.link(path.join(this.o.kitRoot, 'core', 'skills'), path.join(ad, 'skills'));
     // Antigravity discovers plugins as subdirectories of <config>/plugins/ and enables them by default; the state
-    // lives in config.json only when the user toggles it. One junction is the whole registration.
-    this.link(ad, path.join(this.o.geminiDir, 'plugins', 'bearingkit'));
+    // lives in config.json only when the user toggles it. One junction (or one copied directory) is the whole registration.
+    const dst = path.join(this.o.geminiDir, 'plugins', 'bearingkit');
+    if (this.o.antigravityCopy) this.copyPlugin(ad, dst); else this.link(ad, dst);
+  }
+  // A copied plugin directory carries a marker naming the kit it came from, so only kit-made copies are ever replaced.
+  copyMarker(dst) { return path.join(dst, '.bearingkit-copy'); }
+  isKitCopy(dst) {
+    try { return fs.readFileSync(this.copyMarker(dst), 'utf8').trim() === this.o.kitRoot; } catch { return false; }
+  }
+  copyPlugin(ad, dst) {
+    let st = null;
+    try { st = fs.lstatSync(dst); } catch { st = null; }
+    if (st && st.isSymbolicLink()) { if (!this.isKitLink(dst)) { this.log(`! skipped ${fwd(dst)}: existing link not created by bearingkit`); return; } this.log(`- unlink ${fwd(dst)} (replaced by a copy)`); if (!this.o.dryRun) this.removeLink(dst); }
+    else if (st && !this.isKitCopy(dst)) { this.log(`! skipped ${fwd(dst)}: existing directory not created by bearingkit`); return; }
+    this.log(`+ copy ${fwd(ad)} → ${fwd(dst)} (skills dereferenced)`);
+    if (this.o.dryRun) return;
+    fs.rmSync(dst, { recursive: true, force: true });
+    fs.cpSync(ad, dst, { recursive: true, dereference: true, filter: (src) => !/hooks\.template\.json$/.test(src) });
+    fs.writeFileSync(this.copyMarker(dst), this.o.kitRoot + '\n');
+  }
+  removePluginDir(dst) {
+    let st = null;
+    try { st = fs.lstatSync(dst); } catch { return; }
+    if (st.isSymbolicLink()) { this.unlink(dst); return; }
+    if (!this.isKitCopy(dst)) { this.log(`! kept ${fwd(dst)}: directory not created by bearingkit`); return; }
+    this.log(`- remove copied plugin ${fwd(dst)}`);
+    if (!this.o.dryRun) fs.rmSync(dst, { recursive: true, force: true });
   }
   antigravityUninstall() {
     const ad = path.join(this.o.kitRoot, 'adapters', 'antigravity');
-    this.unlink(path.join(this.o.geminiDir, 'plugins', 'bearingkit'));
+    this.removePluginDir(path.join(this.o.geminiDir, 'plugins', 'bearingkit'));
     this.unlink(path.join(ad, 'skills'));
     for (const f of ['rules/AGENTS.md', 'hooks.json', 'mcp_config.json']) {
       const p = path.join(ad, f);

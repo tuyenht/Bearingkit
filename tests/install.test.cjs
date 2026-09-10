@@ -121,3 +121,27 @@ test('backups cover only the hosts the run touches', async () => {
   const [report2] = await quiet(() => install(argsFor(d, ['--claude-only', '--dry-run'])));
   assert.doesNotMatch(report2.join('\n'), /plugins\/bearingkit/);
 });
+
+test('--antigravity-copy installs a real plugin directory with dereferenced skills, and uninstall removes only kit-made copies', async () => {
+  const d = dirs();
+  await quiet(() => install(argsFor(d, ['--antigravity-only', '--antigravity-copy'])));
+  const dst = path.join(d.gemini, 'plugins', 'bearingkit');
+  assert.ok(fs.lstatSync(dst).isDirectory() && !fs.lstatSync(dst).isSymbolicLink(), 'a real directory');
+  assert.ok(fs.lstatSync(path.join(dst, 'skills')).isDirectory() && !fs.lstatSync(path.join(dst, 'skills')).isSymbolicLink(), 'skills copied, not linked');
+  assert.ok(fs.existsSync(path.join(dst, 'skills', 'bk-spec', 'SKILL.md')));
+  assert.ok(fs.existsSync(path.join(dst, 'rules', 'AGENTS.md')));
+  assert.ok(!fs.existsSync(path.join(dst, 'hooks.template.json')), 'template not shipped');
+  assert.equal(fs.readFileSync(path.join(dst, '.bearingkit-copy'), 'utf8').trim(), d.kit);
+  // A second install refreshes the copy in place; a junction install replaces its own copy with a link and back.
+  await quiet(() => install(argsFor(d, ['--antigravity-only', '--antigravity-copy'])));
+  assert.ok(fs.existsSync(path.join(dst, 'skills', 'bk-spec', 'SKILL.md')));
+  await quiet(() => uninstall(argsFor(d, ['--antigravity-only'])));
+  assert.ok(!fs.existsSync(dst), 'kit-made copy removed');
+  // A foreign directory with the same name is never touched.
+  fs.mkdirSync(dst, { recursive: true });
+  fs.writeFileSync(path.join(dst, 'plugin.json'), '{"name":"someone-else"}');
+  const [report] = await quiet(() => install(argsFor(d, ['--antigravity-only', '--antigravity-copy'])));
+  assert.match(report.join('\n'), /skipped .*existing directory not created by bearingkit/);
+  await quiet(() => uninstall(argsFor(d, ['--antigravity-only'])));
+  assert.ok(fs.existsSync(path.join(dst, 'plugin.json')), 'foreign directory kept');
+});
