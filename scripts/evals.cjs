@@ -4,6 +4,7 @@
 // Antigravity: prints a checklist to fill in by hand. Results go to evals/results/<date>-<host>.md.
 
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
@@ -66,6 +67,31 @@ function parseQuota(text) {
     }
   }
   return last;
+}
+
+// Claude Code loads every CLAUDE.md found in the ancestors of the working directory, so a fixture inside this
+// repository would carry the repository's own working agreement into every eval session. The fixture is therefore
+// copied outside the repository before a run, with a throwaway git history so "commit and push" prompts have a repo.
+function ancestorMemoryFiles(dir) {
+  const found = [];
+  let cur = path.resolve(dir);
+  for (;;) {
+    for (const name of ['CLAUDE.md', 'CLAUDE.local.md']) { const f = path.join(cur, name); if (fs.existsSync(f)) found.push(f); }
+    const parent = path.dirname(cur);
+    if (parent === cur) return found;
+    cur = parent;
+  }
+}
+
+function stageFixture(root, base) {
+  const src = path.join(root, 'evals', 'fixtures', 'sample-app');
+  const dst = path.join(base || path.join(os.tmpdir(), 'bearingkit-evals'), 'sample-app');
+  fs.rmSync(dst, { recursive: true, force: true });
+  fs.cpSync(src, dst, { recursive: true });
+  const git = (args) => spawnSync('git', ['-c', 'user.name=bearingkit', '-c', 'user.email=evals@bearingkit.invalid', ...args], { cwd: dst, encoding: 'utf8' });
+  const init = git(['init', '-q']);
+  const vcs = init.status === 0 && git(['add', '-A']).status === 0 && git(['commit', '-q', '-m', 'fixture']).status === 0;
+  return { cwd: dst, vcs, ancestors: ancestorMemoryFiles(path.dirname(dst)) };
 }
 
 // --per-intent N takes a spread per intent rather than the first N lines: an English positive, a Vietnamese positive,
@@ -166,8 +192,20 @@ async function run(argv) {
   }
 
   // Prompts talk about a settings page, invoices, a login form; the fixture app gives them something to point at.
-  const fixture = path.join(ROOT, 'evals', 'fixtures', 'sample-app');
-  const cwd = args.cwd ? path.resolve(args.cwd) : (fs.existsSync(fixture) ? fixture : process.cwd());
+  let cwd;
+  if (args.cwd) cwd = path.resolve(args.cwd);
+  else {
+    const staged = stageFixture(ROOT, args['stage-dir'] ? path.resolve(args['stage-dir']) : null);
+    cwd = staged.cwd;
+    process.stdout.write(`fixture staged at ${cwd}${staged.vcs ? ' (git initialised)' : ' (git unavailable, no history)'}
+`);
+    if (staged.ancestors.length) process.stdout.write(`warning: memory files above the fixture will load too: ${staged.ancestors.join(', ')}
+`);
+  }
+  const above = args.cwd ? ancestorMemoryFiles(path.dirname(cwd)) : [];
+  if (above.length) process.stdout.write(`warning: memory files above --cwd will load too: ${above.join(', ')}
+`);
+  if (args['stage-only']) return;
   const opts = { model: args.model || 'sonnet', configDir: args['config-dir'] ? path.resolve(args['config-dir']) : null, cwd, turns: args.turns ? Number(args.turns) : 6 };
   const equivalents = args.equivalents ? JSON.parse(fs.readFileSync(path.resolve(args.equivalents), 'utf8')) : null;
   const maxUtil = args['max-utilization'] ? Number(args['max-utilization']) : 0.9;
@@ -194,4 +232,4 @@ async function run(argv) {
   process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}.${quotaNote} Written: ${out}\n`);
 }
 
-module.exports = { run, parseStream, parseQuota, loadPrompts, summarize, table, checklist, passes, sample };
+module.exports = { run, parseStream, parseQuota, loadPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles };

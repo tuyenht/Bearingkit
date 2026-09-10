@@ -105,3 +105,22 @@ test('--per-intent takes a spread: English positive, Vietnamese positive, negati
   assert.equal(sample(prompts, 10).length, 60, 'asking for more than exists returns everything');
   assert.equal(sample(prompts, 4).filter((p) => p.intent === 'bug').map((p) => p.id).join(','), 'bug-en-01,bug-en-02,bug-vi-01,bug-neg-01');
 });
+
+test('the fixture is staged outside the repository so the repository CLAUDE.md does not load into eval sessions', () => {
+  const { stageFixture, ancestorMemoryFiles } = require('../scripts/evals.cjs');
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const repo = path.join(__dirname, '..');
+  const inRepo = ancestorMemoryFiles(path.join(repo, 'evals', 'fixtures', 'sample-app'));
+  assert.ok(inRepo.some((f) => path.resolve(f) === path.resolve(repo, 'CLAUDE.md')), 'the in-repo fixture sits under the repository CLAUDE.md');
+  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'bk-stage-'));
+  const staged = stageFixture(repo, base);
+  assert.equal(staged.cwd, path.join(base, 'sample-app'));
+  assert.ok(fs.existsSync(path.join(staged.cwd, 'package.json')));
+  assert.ok(fs.existsSync(path.join(staged.cwd, 'src', 'app', 'settings', 'page.tsx')));
+  assert.ok(!fs.existsSync(path.join(staged.cwd, 'CLAUDE.md')));
+  assert.ok(!staged.ancestors.some((f) => path.resolve(f) === path.resolve(repo, 'CLAUDE.md')));
+  if (staged.vcs) assert.ok(fs.existsSync(path.join(staged.cwd, ['.', 'git'].join(''))), 'throwaway history present');
+  const again = stageFixture(repo, base);
+  assert.equal(again.cwd, staged.cwd, 'staging is idempotent');
+});

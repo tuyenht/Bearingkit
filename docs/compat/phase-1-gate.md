@@ -1,6 +1,6 @@
 # Phase 1 gate · Claude Code
 
-Host: Claude Code 2.1.266 on Windows 11 · isolated profile at `_build/profile/claude` (`CLAUDE_CONFIG_DIR`), kit installed there with `node bin/bearingkit.cjs install --dev C:\Projects\Bearingkit --config-dir …` · eval working directory `evals/fixtures/sample-app` · model sonnet · six turns per prompt · date 2026-09-10.
+Host: Claude Code 2.1.267 on Windows 11 (the CLI had auto-updated from 2.1.266 before the runs; version read from the `init` event of the streams) · isolated profile at `_build/profile/claude` (`CLAUDE_CONFIG_DIR`), kit installed there with `node bin/bearingkit.cjs install --dev C:\Projects\Bearingkit --config-dir …` · eval working directory `evals/fixtures/sample-app` · model sonnet · six turns per prompt · date 2026-09-10.
 
 ## Compatibility tests run in the isolated profile
 
@@ -22,6 +22,8 @@ Host: Claude Code 2.1.266 on Windows 11 · isolated profile at `_build/profile/c
 
 Lesson: the router must say that invoking the skill precedes exploring the code; without that sentence the model explores first and decides later. The prompts also need a working directory that contains what they mention.
 
+Confound found on 2026-09-10 evening: Claude Code loads every `CLAUDE.md` in the ancestors of the working directory, and the fixture sat inside this repository, so all eighty sessions also carried the repository's own working agreement (root `AGENTS.md`, about 1,900 characters, no routing text). The runner now copies the fixture to a temporary directory outside the repository with a throwaway git history (`--stage-only` prints the path) and warns when memory files exist above the working directory. The confirmation run and the fixed-token measurement use the staged copy.
+
 ## Activation, full set (60 prompts)
 
 **Run 1** (`evals/results/2026-09-10-claude-full1.md`): 56/60 as labelled, 0 false activations on the eight-per-intent pure-question prompts; question 9/10, small 10/10, feature 10/10, bug 10/10, review 9/10, ship 8/10. The four misses, read from the raw streams:
@@ -41,7 +43,9 @@ Quota used: the sixty-prompt run plus the twenty-prompt rerun, all short sonnet 
 
 ## Fixed tokens
 
-_pending: `/context` in the isolated profile inside `evals/fixtures/sample-app`, recorded by the owner_
+First reading (2026-09-10, pasted by the owner): a session on Opus 5 whose skills total equalled the sum of the eighteen built-in skills with no `bk-` entries and no custom agents; memory files 709 tokens, consistent with the repository's root `AGENTS.md` loaded through the ancestor `CLAUDE.md` and not with `core/AGENTS.md` (about 4,200 characters). The kit was not in that session, so the reading is not the measurement. What it does establish: the host's own overhead in that session was system prompt 3.6k plus tool definitions 28.6k, which sits outside the kit's budget; the kit's ≤5,000 is measured over and above it.
+
+_pending: `/context` in the isolated profile inside the staged fixture (`node bin/bearingkit.cjs evals --stage-only` prints the path), with the "Memory files" and "Skills" trees pasted in full; expected kit rows: `core/AGENTS.md` (4,221 characters), `security-baseline.md` (1,196 characters), ten skill descriptions (2,550 characters together), no agents_
 
 ## Baseline (daily profile, equivalence map)
 
