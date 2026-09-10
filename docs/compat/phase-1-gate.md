@@ -45,4 +45,8 @@ _pending: `/context` in the isolated profile inside `evals/fixtures/sample-app`,
 
 ## Baseline (daily profile, equivalence map)
 
-_pending: `node bin/bearingkit.cjs evals --per-intent 3 --equivalents evals/activation/equivalents-superpowers.json --tag baseline` on the daily profile, 18 sessions, scheduled after the five-hour window resets (19:40 local on 2026-09-10) because each session on that profile loads about 61K tokens of the previous kits_
+_pending: `node bin/bearingkit.cjs evals --per-intent 3 --equivalents evals/activation/equivalents-superpowers.json --tag baseline` on the daily profile, 18 sessions (`--per-intent 3` takes an English positive, a Vietnamese positive and a negative per intent), scheduled after the five-hour window resets (19:40 local on 2026-09-10, from `five_hour.resetsAt` in the last stream) because each session on that profile loads an estimated 61K tokens of the previous kits_
+
+## Confirmation run (isolated profile, final descriptions)
+
+_pending: one run of all sixty prompts with the descriptions as tuned above. The gate result recorded here stitches run 1 (forty prompts read before the two cue changes) and run 2 (review and ship after them). Scheduled after the baseline, in the same fresh window; the runner stops at 90% and `--id` resumes the rest_

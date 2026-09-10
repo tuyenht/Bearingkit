@@ -60,10 +60,30 @@ function parseQuota(text) {
     try { o = JSON.parse(line); } catch { continue; }
     if (o && o.type === 'rate_limit_event' && o.rate_limit_info) {
       const w = o.rate_limit_info.unifiedWindows || {};
-      last = { fiveHour: w.five_hour ? w.five_hour.utilization : null, sevenDay: w.seven_day ? w.seven_day.utilization : null, resetsAt: o.rate_limit_info.resetsAt || null, status: o.rate_limit_info.status };
+      const fh = w.five_hour || {};
+      // The top-level resetsAt belongs to whichever window the event is about; the five-hour window carries its own.
+      last = { fiveHour: fh.utilization ?? null, sevenDay: w.seven_day ? w.seven_day.utilization : null, resetsAt: fh.resetsAt || o.rate_limit_info.resetsAt || null, status: o.rate_limit_info.status };
     }
   }
   return last;
+}
+
+// --per-intent N takes a spread per intent rather than the first N lines: an English positive, a Vietnamese positive,
+// a negative, then round again. A baseline of three per intent therefore still measures false activations and both languages.
+function sample(prompts, n) {
+  const byIntent = {};
+  for (const p of prompts) (byIntent[p.intent] = byIntent[p.intent] || []).push(p);
+  const picked = new Set();
+  for (const group of Object.values(byIntent)) {
+    const isNeg = (p) => p.id.includes('-neg-');
+    const lanes = [group.filter((p) => !isNeg(p) && p.lang === 'en'), group.filter((p) => !isNeg(p) && p.lang !== 'en'), group.filter(isNeg)];
+    let taken = 0;
+    for (let i = 0; taken < n && lanes.some((l) => l.length); i = (i + 1) % lanes.length) {
+      const p = lanes[i].shift();
+      if (p) { picked.add(p.id); taken++; }
+    }
+  }
+  return prompts.filter((p) => picked.has(p.id));
 }
 
 function runClaudePrompt(prompt, opts) {
@@ -131,11 +151,7 @@ async function run(argv) {
   let prompts = loadPrompts(file);
   if (args.intent) prompts = prompts.filter((p) => p.intent === args.intent);
   if (args.id) { const ids = new Set(String(args.id).split(',').map((s) => s.trim())); prompts = prompts.filter((p) => ids.has(p.id)); }
-  if (args['per-intent']) {
-    const n = Number(args['per-intent']);
-    const seen = {};
-    prompts = prompts.filter((p) => { seen[p.intent] = (seen[p.intent] || 0) + 1; return seen[p.intent] <= n; });
-  }
+  if (args['per-intent']) prompts = sample(prompts, Number(args['per-intent']));
   if (args.limit) prompts = prompts.slice(0, Number(args.limit));
   const outDir = path.resolve(args.out || path.join(ROOT, 'evals', 'results'));
   fs.mkdirSync(outDir, { recursive: true });
@@ -178,4 +194,4 @@ async function run(argv) {
   process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}.${quotaNote} Written: ${out}\n`);
 }
 
-module.exports = { run, parseStream, parseQuota, loadPrompts, summarize, table, checklist, passes };
+module.exports = { run, parseStream, parseQuota, loadPrompts, summarize, table, checklist, passes, sample };

@@ -94,11 +94,12 @@ class Installer {
 
   // ---------- backup ----------
   backup() {
+    // Only the hosts this run touches are backed up; --antigravity-only never reads the Claude profile.
     const candidates = [
-      [path.join(this.o.claudeDir, 'settings.json'), 'claude-settings.json'],
-      [path.join(this.o.claudeDir, 'CLAUDE.md'), 'claude-CLAUDE.md'],
-      [path.join(this.o.geminiDir, 'plugins.json'), 'antigravity-plugins.json'],
-    ].filter(([f]) => fs.existsSync(f));
+      this.o.doClaude && [path.join(this.o.claudeDir, 'settings.json'), 'claude-settings.json'],
+      this.o.doClaude && [path.join(this.o.claudeDir, 'CLAUDE.md'), 'claude-CLAUDE.md'],
+      this.o.doAntigravity && [path.join(this.o.geminiDir, 'plugins.json'), 'antigravity-plugins.json'],
+    ].filter((c) => c && fs.existsSync(c[0]));
     if (!candidates.length) { this.log('= nothing to back up'); return null; }
     const dir = path.join(this.o.backupsDir, new Date().toISOString().replace(/[:.]/g, '-'));
     const manifest = { at: new Date().toISOString(), files: [] };

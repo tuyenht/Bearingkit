@@ -98,3 +98,15 @@ test('an isolated profile skips antigravity unless its directory is given', asyn
   const [report] = await quiet(() => install(['--dev', REPO, '--config-dir', d.claude, '--backups-dir', d.backups, '--dry-run']));
   assert.match(report.join('\n'), /antigravity skipped/);
 });
+
+test('backups cover only the hosts the run touches', async () => {
+  const d = dirs();
+  fs.writeFileSync(path.join(d.claude, 'settings.json'), '{}');
+  fs.writeFileSync(path.join(d.gemini, 'plugins.json'), '{"entries":[]}');
+  const [report] = await quiet(() => install(argsFor(d, ['--antigravity-only', '--dry-run'])));
+  const text = report.join('\n');
+  assert.doesNotMatch(text, /backup .*claude-settings/, 'an antigravity-only run must not read the Claude profile');
+  assert.match(text, /backup .*antigravity-plugins/);
+  const [report2] = await quiet(() => install(argsFor(d, ['--claude-only', '--dry-run'])));
+  assert.doesNotMatch(report2.join('\n'), /backup .*antigravity-plugins/);
+});

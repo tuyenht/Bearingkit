@@ -80,3 +80,28 @@ test('checklist renders one row per prompt', () => {
   const text = checklist([{ id: 'x', intent: 'bug', prompt: 'a | b', expect: 'bk-debug' }]);
   assert.match(text, /\| x \| bug \| a \\\| b \| bk-debug \|  \|/);
 });
+
+test('parseQuota reads the five-hour window and its own reset time, not the event-level one', () => {
+  const { parseQuota } = require('../scripts/evals.cjs');
+  const ev = JSON.stringify({ type: 'rate_limit_event', rate_limit_info: { status: 'allowed', resetsAt: 2, rateLimitType: 'seven_day', unifiedWindows: { five_hour: { utilization: 0.73, resetsAt: 1 }, seven_day: { utilization: 0.32, resetsAt: 2 } } } });
+  const q = parseQuota('junk\n' + ev);
+  assert.equal(q.fiveHour, 0.73);
+  assert.equal(q.sevenDay, 0.32);
+  assert.equal(q.resetsAt, 1);
+  assert.equal(parseQuota('nothing here'), null);
+});
+
+test('--per-intent takes a spread: English positive, Vietnamese positive, negative, then round again', () => {
+  const { sample } = require('../scripts/evals.cjs');
+  const prompts = loadPrompts(path.join(__dirname, '..', 'evals', 'activation', 'phase-1.jsonl'));
+  const three = sample(prompts, 3);
+  assert.equal(three.length, 18);
+  for (const intent of ['question', 'small', 'feature', 'bug', 'review', 'ship']) {
+    const g = three.filter((p) => p.intent === intent);
+    assert.equal(g.filter((p) => p.lang === 'en' && !p.id.includes('-neg-')).length, 1, `${intent} en`);
+    assert.equal(g.filter((p) => p.lang === 'vi' && !p.id.includes('-neg-')).length, 1, `${intent} vi`);
+    assert.equal(g.filter((p) => p.id.includes('-neg-')).length, 1, `${intent} neg`);
+  }
+  assert.equal(sample(prompts, 10).length, 60, 'asking for more than exists returns everything');
+  assert.equal(sample(prompts, 4).filter((p) => p.intent === 'bug').map((p) => p.id).join(','), 'bug-en-01,bug-en-02,bug-vi-01,bug-neg-01');
+});
