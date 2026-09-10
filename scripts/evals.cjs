@@ -57,7 +57,12 @@ function runClaudePrompt(prompt, opts) {
   const env = { ...process.env };
   delete env.CLAUDECODE;
   if (opts.configDir) env.CLAUDE_CONFIG_DIR = opts.configDir;
-  const r = spawnSync('claude', args, { input: prompt, encoding: 'utf8', env, cwd: opts.cwd, shell: process.platform === 'win32', timeout: 180000, maxBuffer: 20 * 1024 * 1024 });
+  // Windows resolves `claude` through a .cmd shim, which needs a shell; the prompt travels through stdin so no
+  // user text is ever concatenated into the command line. Elsewhere the binary is spawned directly.
+  const spawnOpts = { input: prompt, encoding: 'utf8', env, cwd: opts.cwd, timeout: 180000, maxBuffer: 20 * 1024 * 1024 };
+  const r = process.platform === 'win32'
+    ? spawnSync(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', ['claude', ...args].join(' ')], spawnOpts)
+    : spawnSync('claude', args, spawnOpts);
   return { got: parseStream(r.stdout || ''), raw: r.stdout || '', stderr: r.stderr || '', status: r.status };
 }
 
