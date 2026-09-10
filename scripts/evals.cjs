@@ -114,17 +114,18 @@ function stageFixture(root, base) {
   // Held open: empty the directory instead (its history stays), so the staging commit holds exactly the source tree.
   if (reused) for (const entry of fs.readdirSync(dst)) if (entry !== '.git') fs.rmSync(path.join(dst, entry), { recursive: true, force: true });
   fs.cpSync(src, dst, { recursive: true, force: true });
+  fs.writeFileSync(path.join(dst, '.bearingkit-fixture'), 'bearingkit eval fixture: sessions may edit freely, the runner resets it\n');
   // autocrlf off: a reset must restore the bytes that were copied, not a line-ending conversion of them.
   const git = (args) => spawnSync('git', ['-c', 'user.name=bearingkit', '-c', 'user.email=evals@bearingkit.invalid', '-c', 'core.autocrlf=false', ...args], { cwd: dst, encoding: 'utf8' });
   const init = git(['init', '-q']);
-  if (init.status === 0) { git(['add', '-A']); git(['commit', '-q', '-m', 'fixture']); }
+  if (init.status === 0) { git(['add', '-A']); git(['commit', '-q', '-m', 'fixture']); git(['tag', '-f', 'bearingkit-stage']); }
   const vcs = init.status === 0 && fs.existsSync(path.join(dst, '.git'));
   const sha = vcs ? String(git(['rev-parse', 'HEAD']).stdout || '').trim() : null;
   // Sessions edit, create and even commit files; every prompt must start from the same tree, so the copy is
   // reset to the staging commit before each session (and once more after the run).
   const reset = () => {
     if (!sha) { fs.cpSync(src, dst, { recursive: true, force: true }); return false; }
-    return git(['reset', '-q', '--hard', sha]).status === 0 && git(['clean', '-q', '-fdx']).status === 0;
+    return git(['reset', '-q', '--hard', 'bearingkit-stage']).status === 0 && git(['clean', '-q', '-fdx']).status === 0;
   };
   return { cwd: dst, vcs, reused, sha, reset, ancestors: ancestorMemoryFiles(path.dirname(dst)) };
 }
@@ -231,6 +232,28 @@ async function run(argv) {
   const date = new Date().toISOString().slice(0, 10);
 
   if (host === 'antigravity') {
+    const ag = require('./antigravity-evals.cjs');
+    const agOpts = { pluginDir: args['plugin-dir'] ? path.resolve(args['plugin-dir']) : undefined, evalDir: args['eval-dir'] ? path.resolve(args['eval-dir']) : undefined, trigger: args.trigger, tag: args.tag };
+    if (args.arm) {
+      const items = prompts.slice();
+      if (args['probe-glob']) items.push({ id: 'probe-glob', intent: 'compat', lang: 'en', prompt: 'Read the file src/app/login/page.tsx, then answer with exactly one word: probe status', expect: 'GLOB-PROBE-OK', kind: 'text' });
+      const a = ag.arm(items, agOpts);
+      process.stdout.write(`armed ${a.count} prompts behind ${a.hooksFile}; trigger phrase: "${a.trigger}"; queue: ${a.queueFile}\n`);
+      return;
+    }
+    if (args.disarm) { const d = ag.disarm(agOpts); process.stdout.write(`disarmed: ${d.hooksFile}\n`); return; }
+    if (args.score) {
+      const s = ag.score(agOpts);
+      const equivalents = args.equivalents ? JSON.parse(fs.readFileSync(path.resolve(args.equivalents), 'utf8')) : null;
+      const summary = summarize(s.results, equivalents);
+      const meta = `Host: antigravity · scored from conversation transcripts · prompts done: ${s.results.length}, still queued: ${s.pending} · injected block seen in ${s.results.filter((r) => r.injected).length} conversations · models: ${[...new Set(s.results.map((r) => r.modelName))].join(', ') || 'unknown'}`;
+      const tag = s.tag ? '-' + String(s.tag).replace(/[^a-z0-9-]/gi, '') : '';
+      const out = path.join(outDir, `${date}-antigravity${tag}.md`);
+      fs.writeFileSync(out, table(s.results, summary, 'antigravity', meta, equivalents));
+      for (const r of s.results) process.stdout.write(`${String(r.id).padEnd(12)} expect=${String(r.expect).padEnd(16)} got=${String(r.got).padEnd(14)} ${passes(r, equivalents) ? 'ok' : 'MISS'}${r.injected ? '' : '  (no [bearingkit] block)'}\n`);
+      process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}; ${s.pending} still queued. Written: ${out}\n`);
+      return;
+    }
     const text = checklist(prompts);
     const out = path.join(outDir, `${date}-antigravity-checklist.md`);
     fs.writeFileSync(out, text);
