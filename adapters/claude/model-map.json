@@ -1,0 +1,6 @@
+{
+  "bk-researcher": { "model": "sonnet", "effort": "medium" },
+  "bk-reviewer": { "model": "opus", "effort": "high", "memory": "project" },
+  "bk-query-optimizer": { "model": "sonnet", "effort": "medium" },
+  "bk-design-critic": { "model": "sonnet", "effort": "medium" }
+}

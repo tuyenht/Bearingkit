@@ -19,3 +19,5 @@ evals/results/
 adapters/*/skills/
 adapters/antigravity/rules/AGENTS.md
 adapters/claude/agents/
+adapters/antigravity/hooks.json
+adapters/antigravity/mcp_config.json

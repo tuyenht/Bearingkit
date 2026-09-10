@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "purpose": "Version-pinned library documentation; the anti-hallucination source for majors newer than the model's training"
+    }
+  }
+}

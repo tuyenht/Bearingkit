@@ -1,0 +1,5 @@
+{
+  "PreInvocation": [
+    { "command": "node \"<KIT>/core/hooks/stack-profile.cjs\"" }
+  ]
+}

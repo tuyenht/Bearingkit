@@ -1,0 +1,7 @@
+{
+  "name": "bearingkit",
+  "version": "0.1.0",
+  "description": "Bearingkit protocol skills for AI-assisted software work. Secondary channel; the recommended install is `npx bearingkit install`, which also links rules and hooks.",
+  "author": { "name": "tuyenht" },
+  "license": "MIT"
+}
