@@ -66,24 +66,32 @@ function runClaudePrompt(prompt, opts) {
   return { got: parseStream(r.stdout || ''), raw: r.stdout || '', stderr: r.stderr || '', status: r.status };
 }
 
-function summarize(results) {
+// A result passes when the skill invoked is the expected one, or, for a baseline run against another setup,
+// one of the skills declared equivalent to it (evals/activation/equivalents-*.json: { "bk-spec": ["brainstorming"] }).
+function passes(r, equivalents) {
+  if (r.got === r.expect) return true;
+  if (!equivalents || r.expect === 'none') return false;
+  return (equivalents[r.expect] || []).includes(r.got);
+}
+
+function summarize(results, equivalents) {
   const byIntent = {};
   let falseActivations = 0;
   for (const r of results) {
     const b = (byIntent[r.intent] = byIntent[r.intent] || { total: 0, pass: 0, positives: 0, positivesPass: 0 });
-    const pass = r.got === r.expect;
+    const pass = passes(r, equivalents);
     b.total++; if (pass) b.pass++;
     if (r.expect !== 'none' && !r.id.includes('-neg-')) { b.positives++; if (pass) b.positivesPass++; }
     if (r.expect === 'none' && r.got !== 'none') falseActivations++;
   }
   const total = results.length;
-  const pass = results.filter((r) => r.got === r.expect).length;
+  const pass = results.filter((r) => passes(r, equivalents)).length;
   return { byIntent, total, pass, falseActivations };
 }
 
-function table(results, summary, host, meta) {
+function table(results, summary, host, meta, equivalents) {
   const lines = [`# Activation evals · ${host} · ${new Date().toISOString().slice(0, 10)}`, '', meta, '', '| id | intent | expect | got | pass |', '|---|---|---|---|---|'];
-  for (const r of results) lines.push(`| ${r.id} | ${r.intent} | ${r.expect} | ${r.got} | ${r.got === r.expect ? 'yes' : 'NO'} |`);
+  for (const r of results) lines.push(`| ${r.id} | ${r.intent} | ${r.expect} | ${r.got} | ${passes(r, equivalents) ? 'yes' : 'NO'} |`);
   lines.push('', '| intent | positives routed | all prompts |', '|---|---|---|');
   for (const [k, v] of Object.entries(summary.byIntent)) lines.push(`| ${k} | ${v.positivesPass}/${v.positives} | ${v.pass}/${v.total} |`);
   lines.push('', `Overall: ${summary.pass}/${summary.total} · false activations on "none" prompts: ${summary.falseActivations}`);
@@ -116,18 +124,21 @@ async function run(argv) {
   }
 
   const opts = { model: args.model || 'sonnet', configDir: args['config-dir'] ? path.resolve(args['config-dir']) : null, cwd: args.cwd ? path.resolve(args.cwd) : process.cwd() };
+  const equivalents = args.equivalents ? JSON.parse(fs.readFileSync(path.resolve(args.equivalents), 'utf8')) : null;
   const results = [];
   for (const p of prompts) {
     const r = runClaudePrompt(p.prompt, opts);
-    results.push({ ...p, got: r.got });
-    process.stdout.write(`${p.id.padEnd(12)} expect=${p.expect.padEnd(10)} got=${r.got.padEnd(10)} ${r.got === p.expect ? 'ok' : 'MISS'}\n`);
+    const row = { ...p, got: r.got };
+    results.push(row);
+    process.stdout.write(`${p.id.padEnd(12)} expect=${p.expect.padEnd(10)} got=${r.got.padEnd(10)} ${passes(row, equivalents) ? 'ok' : 'MISS'}\n`);
     if (args.raw) fs.writeFileSync(path.join(outDir, `${date}-${p.id}.raw.jsonl`), r.raw);
   }
-  const summary = summarize(results);
-  const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · cwd: ${opts.cwd} · prompts: ${results.length}`;
-  const out = path.join(outDir, `${date}-claude${args.intent ? '-' + args.intent : ''}.md`);
-  fs.writeFileSync(out, table(results, summary, 'claude', meta));
+  const summary = summarize(results, equivalents);
+  const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · cwd: ${opts.cwd} · prompts: ${results.length}${equivalents ? ' · equivalents: ' + path.basename(args.equivalents) : ''}`;
+  const tag = args.tag ? '-' + String(args.tag).replace(/[^a-z0-9-]/gi, '') : '';
+  const out = path.join(outDir, `${date}-claude${args.intent ? '-' + args.intent : ''}${tag}.md`);
+  fs.writeFileSync(out, table(results, summary, 'claude', meta, equivalents));
   process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}. Written: ${out}\n`);
 }
 
-module.exports = { run, parseStream, loadPrompts, summarize, table, checklist };
+module.exports = { run, parseStream, loadPrompts, summarize, table, checklist, passes };

@@ -51,6 +51,17 @@ test('summarize counts passes, positives and false activations', () => {
   assert.equal(s.byIntent.bug.positivesPass, 1);
 });
 
+test('equivalents make a baseline run meaningful', () => {
+  const { passes } = require('../scripts/evals.cjs');
+  const eq = JSON.parse(require('node:fs').readFileSync(path.join(__dirname, '..', 'evals', 'activation', 'equivalents-superpowers.json'), 'utf8'));
+  assert.equal(passes({ expect: 'bk-spec', got: 'brainstorming' }, eq), true);
+  assert.equal(passes({ expect: 'bk-spec', got: 'brainstorming' }, null), false);
+  assert.equal(passes({ expect: 'none', got: 'brainstorming' }, eq), false, 'a negative never passes through equivalence');
+  assert.equal(passes({ expect: 'bk-debug', got: 'bk-debug' }, eq), true);
+  const s = summarize([{ id: 'feat-en-01', intent: 'feature', expect: 'bk-spec', got: 'brainstorming' }], eq);
+  assert.equal(s.pass, 1);
+});
+
 test('checklist renders one row per prompt', () => {
   const text = checklist([{ id: 'x', intent: 'bug', prompt: 'a | b', expect: 'bk-debug' }]);
   assert.match(text, /\| x \| bug \| a \\\| b \| bk-debug \|  \|/);
