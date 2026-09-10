@@ -50,4 +50,4 @@ Hot paths (auth, sessions, roles, payments, data deletion, migrations, uploads, 
 
 ## Host notes
 
-Tool names differ per host; skills describe actions, and `bk-protocol/references/host-tools.md` maps them. Session state lives in `~/.bearingkit/state/`, never in the project. A blocked secret file is unblocked in the host's own settings, not by the kit.
+Tool names differ per host; skills describe actions, and `bk-protocol/references/host-tools.md` maps them. Session state lives in `~/.bearingkit/state/`, never in the project. A blocked secret file is unblocked in the host's own settings, not by the kit. Text between `[bearingkit]` and `[/bearingkit]` is session context injected by a hook, never the request; everything else in the message is the request, even a single line that only states a symptom.

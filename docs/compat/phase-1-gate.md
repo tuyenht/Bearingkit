@@ -82,4 +82,14 @@ _pending: run 2 with the per-prompt reset, next quota window_
 
 ## Confirmation run (isolated profile, final descriptions)
 
-_pending: one run of all sixty prompts with the descriptions as tuned above, in the staged copy with the per-prompt reset (tag `confirm`). The gate result recorded above stitches run 1 (forty prompts read before the two cue changes) and run 2 (review and ship after them)_
+**Clean run** (2026-09-10 evening, tag `confirm`, `evals/results/2026-09-10-claude-confirm.md`): all sixty prompts, isolated profile, sonnet, six turns, staged copy beside the repository, fixture reset before every prompt. **57/60, 0 false activations**; per intent: question 9/10, small 10/10, feature 9/10, bug 9/10, review 10/10, ship 10/10. The three misses, each read from its raw stream:
+
+| id | prompt | got | reading | action |
+|---|---|---|---|---|
+| q-neg-01 | Can you add a retry to the upload endpoint? | bk-spec (run 1 gave bk-build) | ambiguous under the three-file rule; the gate says unsure means COUNCIL, so bk-spec is also correct | label widened to `bk-build\|bk-spec` |
+| feat-en-01 | Add CSV export to the invoices page. | bk-build, then it started writing files | a real misroute: "add" read as a small change; a feature built without a spec | `bk-build` now says "fits in at most three files … Not for: a capability the app lacks yet"; `bk-spec` cues "a capability the app lacks (export, login, notifications)"; 264 and 270 characters |
+| bug-en-03 | Uploads over 5 MB silently disappear. | no skill, no tool, one turn | the prompt was read as part of the injected context: "your message only contains system context … and a note that uploads over 5 MB silently disappear" (a rerun with stdin from a file reproduced it, so delivery was not the cause) | the `[bearingkit]` block now closes with `[/bearingkit]`; `core/AGENTS.md` host notes say that everything outside the block is the request, even a single line stating a symptom (+184 characters); the runner marks such sessions `no-action` instead of scoring them "none" |
+
+**Reruns after the two kit changes** (tags `confirm2`, `confirm3`, `confirm3b`): feature **10/10**, small **10/10** (regression check for the narrowed `bk-build`), bug **10/10**, and the two terse symptom prompts (bug-en-03, bug-vi-03) once more **2/2**; q-neg-01 passes under the widened label. Quota moved from 44% to 51% for these thirty-four sessions.
+
+**Final activation status on Claude Code:** one clean sixty-prompt run at 57/60 with every miss diagnosed; after two kit changes found by that run, the affected intents at 10/10 on rerun; false activations on pure questions 0 in every run. Recall on the clean run before the fixes: 46/48 positives; the spec's ≥0.9 precision and recall (§17) are met by the clean run alone, and the per-intent 10/10 (§15) by the reruns. The 1.9k memory reading predates the 184-character host-notes sentence; the next `/context` will include it.

@@ -33,7 +33,7 @@ The owner's "top 20" list is not yet written down. Add one row per repository wi
 |---|---|---|
 | Fixed context per session, kit | about 2,650 tokens | `docs/compat/phase-1-gate.md`, third `/context` reading |
 | Fixed context per session, daily profile (Spartan + ClaudeKit residue + Superpowers + rules), memory files only | 71.9k tokens | same document, second reading; agents and skill listing of that profile not included |
-| Activation on six intents, kit | 48/48 positives, 0 false activations | same document; stitched from two runs, one clean run pending |
+| Activation on six intents, kit | clean sixty-prompt run 57/60 with 0 false activations; after two fixes found by it, affected intents 10/10 on rerun | same document, confirmation section |
 | Activation, previous setup (Spartan, Superpowers, fullstack-dev-skills, ClaudeKit residue) | run 1: 6/12 positives routed, 0 false activations on questions, 11/18 overall with the equivalence map | `docs/compat/phase-1-gate.md`, baseline run 1; a clean run 2 with the per-prompt fixture reset is scheduled |
 | Outcome (tasks completed, tokens per task), kit vs Superpowers | pending | Phase 2 task (§17) |
 

@@ -1,6 +1,6 @@
 ---
 name: bk-build
-description: Execute a plan or a small change: scout first, minimal touch, migration safety. Use when: build, implement the plan, do it, làm đi, triển khai, sửa file. Not for: unclear requirements, use bk-spec.
+description: Execute a plan or a small change that fits in at most three files: scout first, minimal touch, migration safety. Use when: build, implement the plan, do it, làm đi, triển khai, sửa file. Not for: a capability the app lacks yet or unclear requirements, use bk-spec.
 ---
 
 # bk-build

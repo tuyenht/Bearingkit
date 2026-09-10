@@ -57,7 +57,7 @@ function buildBlock(profile, git, plan, handoff, hotPathTouched) {
     ? `branch: ${git.branch}${git.dirtyCount ? ` (dirty: ${git.dirtyCount} files)` : ''}${plan ? ` · plan: ${plan.path}${plan.phase ? ` phase ${plan.phase}` : ''}` : ''}`
     : 'no git';
   const l4 = `hot path touched: ${hotPathTouched ? 'yes' : 'no'}${handoff ? ` · handoff: ${handoff}` : ''}`;
-  return [l1, l2, l3, l4].join('\n');
+  return [l1, l2, l3, l4, '[/bearingkit]'].join('\n');
 }
 
 async function run(payload, deps = {}) {

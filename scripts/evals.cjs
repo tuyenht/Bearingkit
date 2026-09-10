@@ -153,12 +153,24 @@ function runClaudePrompt(prompt, opts) {
   delete env.CLAUDECODE;
   if (opts.configDir) env.CLAUDE_CONFIG_DIR = opts.configDir;
   // Windows resolves `claude` through a .cmd shim, which needs a shell; the prompt travels through stdin so no
-  // user text is ever concatenated into the command line. Elsewhere the binary is spawned directly.
-  const spawnOpts = { input: prompt, encoding: 'utf8', env, cwd: opts.cwd, timeout: 180000, maxBuffer: 20 * 1024 * 1024 };
-  const r = process.platform === 'win32'
-    ? spawnSync(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', ['claude', ...args].join(' ')], spawnOpts)
-    : spawnSync('claude', args, spawnOpts);
-  return { got: parseStream(r.stdout || ''), raw: r.stdout || '', stderr: r.stderr || '', status: r.status, quota: parseQuota(r.stdout || '') };
+  // user text is ever concatenated into the command line. Elsewhere the binary is spawned directly. Stdin is a
+  // file, not a pipe: a pipe can race the CLI's own stdin wait and deliver nothing (seen once on 2026-09-10).
+  const promptFile = path.join(os.tmpdir(), `bearingkit-prompt-${process.pid}.txt`);
+  fs.writeFileSync(promptFile, prompt);
+  const fd = fs.openSync(promptFile, 'r');
+  const spawnOpts = { stdio: [fd, 'pipe', 'pipe'], encoding: 'utf8', env, cwd: opts.cwd, timeout: 180000, maxBuffer: 20 * 1024 * 1024 };
+  let r;
+  try {
+    r = process.platform === 'win32'
+      ? spawnSync(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', ['claude', ...args].join(' ')], spawnOpts)
+      : spawnSync('claude', args, spawnOpts);
+  } finally { fs.closeSync(fd); fs.rmSync(promptFile, { force: true }); }
+  const raw = r.stdout || '';
+  // One turn, no tool call, no user event: the model did not act on the prompt (it was not delivered, or it was
+  // read as part of the injected context, both seen on 2026-09-10). Marked "no-action" rather than scored as
+  // "none" so it stands out in the table; read the raw stream, then rerun.
+  const acted = /"type":"user"/.test(raw) || /"type":"tool_use"/.test(raw) || !/"num_turns":1\b/.test(raw);
+  return { got: acted ? parseStream(raw) : 'no-action', raw, stderr: r.stderr || '', status: r.status, quota: parseQuota(raw) };
 }
 
 // A result passes when the skill invoked is the expected one, or, for a baseline run against another setup,

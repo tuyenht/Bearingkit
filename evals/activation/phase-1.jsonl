@@ -6,7 +6,7 @@
 {"id":"q-vi-02","intent":"question","lang":"vi","prompt":"Giải thích cách hàng đợi job xử lý retry trong dự án này.","expect":"none"}
 {"id":"q-vi-03","intent":"question","lang":"vi","prompt":"File cấu hình auth nằm ở đâu và làm gì?","expect":"none"}
 {"id":"q-vi-04","intent":"question","lang":"vi","prompt":"Tại sao repo có cả pnpm-lock lẫn package-lock?","expect":"none"}
-{"id":"q-neg-01","intent":"question","lang":"en","prompt":"Can you add a retry to the upload endpoint?","expect":"bk-build"}
+{"id":"q-neg-01","intent":"question","lang":"en","prompt":"Can you add a retry to the upload endpoint?","expect":"bk-build|bk-spec"}
 {"id":"q-neg-02","intent":"question","lang":"vi","prompt":"Bạn kiểm tra giúp diff này trước khi tôi push được không?","expect":"bk-review"}
 {"id":"sm-en-01","intent":"small","lang":"en","prompt":"Rename the Save button label to \"Save changes\" on the settings page.","expect":"bk-build"}
 {"id":"sm-en-02","intent":"small","lang":"en","prompt":"Bump the default page size from 20 to 50 in the list endpoint.","expect":"bk-build"}

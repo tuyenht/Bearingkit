@@ -33,6 +33,7 @@ test('injects once, then stays silent until state changes', async () => {
   const p = { session_id: 's', cwd: 'C:/x', hook_event_name: 'UserPromptSubmit', prompt: 'hi' };
   const first = await run(p, d);
   assert.ok(first.hookSpecificOutput && first.hookSpecificOutput.additionalContext.includes('[bearingkit]'));
+  assert.ok(first.hookSpecificOutput.additionalContext.trimEnd().endsWith('[/bearingkit]'), 'the block closes with a marker so the request that follows is not read as context');
   const second = await run(p, d);
   assert.deepEqual(second, {});
   const changed = await run(p, { ...d, git: () => ({ branch: 'main', dirtyCount: 0 }) });
