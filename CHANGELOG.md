@@ -18,8 +18,9 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 ### Measured (Claude Code 2.1.266, isolated profile)
 - Compatibility tests 1, 3, 6, 8, 9 plus the import and rules checks passed; gate runs on 2.1.267 after an auto-update (`docs/compat/2026-09-10-tests-1-3.md`, `docs/compat/phase-1-gate.md`).
 - Activation on the six Phase 1 intents: 48/48 positives routed, 0 false activations on pure questions, after one tuning round on the `bk-review` and `bk-ship` descriptions and two label corrections (`docs/compat/phase-1-gate.md`).
+- Fixed context of the kit: about 2,650 tokens of the 5,000 budget (`/context` on 2.1.267 in the isolated profile: memory files 1.9k, ten skill descriptions 750, no agents yet); host overhead outside the budget in the same session was 3.4k system prompt, 28.3k tool definitions and 2.75k built-in skills.
 
 ### Not yet
-- Fixed-token measurement with `/context` (target ≤5,000), the baseline run against the previous setup, and one clean confirmation run with the final descriptions.
+- The baseline run against the previous setup and one clean confirmation run with the final descriptions.
 - Antigravity: plugin entry, compatibility tests 2, 4, 7, activation by hand. Test 5 (hook predicate) waits for Phase 2.
 - Language rules, agents, the two enforcing hooks and `hot-path-flag` (Phase 2). `README`, `LICENSE`, `NOTICE`, `upstream/sources.json` (Phase 4).
