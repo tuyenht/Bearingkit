@@ -33,8 +33,22 @@ test('phase-1 prompt set is well formed: sixty prompts, six intents, ten each, u
     assert.equal(group.filter((p) => p.id.includes('-neg-')).length, 2, `${i} negatives`);
     assert.equal(group.filter((p) => p.lang === 'vi' && !p.id.includes('-neg-')).length, 4, `${i} vietnamese positives`);
   }
-  const expects = new Set(prompts.map((p) => p.expect));
+  const expects = new Set(prompts.flatMap((p) => p.expect.split('|')));
   for (const e of expects) assert.ok(e === 'none' || /^bk-[a-z]+$/.test(e), e);
+});
+
+test('expect alternatives: either route passes, and a "none" alternative counts a false activation only when both miss', () => {
+  const { passes } = require('../scripts/evals.cjs');
+  assert.equal(passes({ expect: 'bk-spec|none', got: 'none' }), true);
+  assert.equal(passes({ expect: 'bk-spec|none', got: 'bk-spec' }), true);
+  assert.equal(passes({ expect: 'bk-spec|none', got: 'bk-ship' }), false);
+  const s = summarize([
+    { id: 'ship-neg-02', intent: 'ship', expect: 'bk-spec|none', got: 'bk-spec' },
+    { id: 'ship-neg-03', intent: 'ship', expect: 'bk-spec|none', got: 'bk-ship' },
+  ]);
+  assert.equal(s.pass, 1);
+  assert.equal(s.falseActivations, 1);
+  assert.equal(s.byIntent.ship.positives, 0);
 });
 
 test('summarize counts passes, positives and false activations', () => {

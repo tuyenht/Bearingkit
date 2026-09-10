@@ -57,4 +57,4 @@
 {"id":"ship-vi-03","intent":"ship","lang":"vi","prompt":"Xong phần xuất hóa đơn rồi, ship đi.","expect":"bk-ship"}
 {"id":"ship-vi-04","intent":"ship","lang":"vi","prompt":"Soạn mô tả PR cho những gì vừa làm.","expect":"bk-ship"}
 {"id":"ship-neg-01","intent":"ship","lang":"en","prompt":"Explain how bk-ship works.","expect":"none"}
-{"id":"ship-neg-02","intent":"ship","lang":"vi","prompt":"Deploy bản này lên staging.","expect":"none"}
+{"id":"ship-neg-02","intent":"ship","lang":"vi","prompt":"Deploy bản này lên staging.","expect":"bk-spec|none"}

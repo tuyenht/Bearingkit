@@ -52,6 +52,20 @@ function parseStream(text) {
   return 'none';
 }
 
+// Last rate_limit_event in a stream: { fiveHour, sevenDay, resetsAt } as fractions, or null.
+function parseQuota(text) {
+  let last = null;
+  for (const line of String(text).split('\n')) {
+    let o;
+    try { o = JSON.parse(line); } catch { continue; }
+    if (o && o.type === 'rate_limit_event' && o.rate_limit_info) {
+      const w = o.rate_limit_info.unifiedWindows || {};
+      last = { fiveHour: w.five_hour ? w.five_hour.utilization : null, sevenDay: w.seven_day ? w.seven_day.utilization : null, resetsAt: o.rate_limit_info.resetsAt || null, status: o.rate_limit_info.status };
+    }
+  }
+  return last;
+}
+
 function runClaudePrompt(prompt, opts) {
   const args = ['-p', '--output-format', 'stream-json', '--verbose', '--max-turns', String(opts.turns || 6), '--model', opts.model];
   const env = { ...process.env };
@@ -63,15 +77,20 @@ function runClaudePrompt(prompt, opts) {
   const r = process.platform === 'win32'
     ? spawnSync(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', ['claude', ...args].join(' ')], spawnOpts)
     : spawnSync('claude', args, spawnOpts);
-  return { got: parseStream(r.stdout || ''), raw: r.stdout || '', stderr: r.stderr || '', status: r.status };
+  return { got: parseStream(r.stdout || ''), raw: r.stdout || '', stderr: r.stderr || '', status: r.status, quota: parseQuota(r.stdout || '') };
 }
 
 // A result passes when the skill invoked is the expected one, or, for a baseline run against another setup,
 // one of the skills declared equivalent to it (evals/activation/equivalents-*.json: { "bk-spec": ["brainstorming"] }).
+// `expect` may list alternatives separated by "|" when the design allows more than one correct route
+// (for example an ops request before bk-ops exists: "bk-spec|none").
+const alternatives = (expect) => String(expect).split('|').map((s) => s.trim()).filter(Boolean);
+
 function passes(r, equivalents) {
-  if (r.got === r.expect) return true;
-  if (!equivalents || r.expect === 'none') return false;
-  return (equivalents[r.expect] || []).includes(r.got);
+  const alts = alternatives(r.expect);
+  if (alts.includes(r.got)) return true;
+  if (!equivalents) return false;
+  return alts.some((a) => a !== 'none' && (equivalents[a] || []).includes(r.got));
 }
 
 function summarize(results, equivalents) {
@@ -80,9 +99,10 @@ function summarize(results, equivalents) {
   for (const r of results) {
     const b = (byIntent[r.intent] = byIntent[r.intent] || { total: 0, pass: 0, positives: 0, positivesPass: 0 });
     const pass = passes(r, equivalents);
+    const alts = alternatives(r.expect);
     b.total++; if (pass) b.pass++;
-    if (r.expect !== 'none' && !r.id.includes('-neg-')) { b.positives++; if (pass) b.positivesPass++; }
-    if (r.expect === 'none' && r.got !== 'none') falseActivations++;
+    if (!alts.includes('none') && !r.id.includes('-neg-')) { b.positives++; if (pass) b.positivesPass++; }
+    if (alts.includes('none') && !pass) falseActivations++;
   }
   const total = results.length;
   const pass = results.filter((r) => passes(r, equivalents)).length;
@@ -134,20 +154,28 @@ async function run(argv) {
   const cwd = args.cwd ? path.resolve(args.cwd) : (fs.existsSync(fixture) ? fixture : process.cwd());
   const opts = { model: args.model || 'sonnet', configDir: args['config-dir'] ? path.resolve(args['config-dir']) : null, cwd, turns: args.turns ? Number(args.turns) : 6 };
   const equivalents = args.equivalents ? JSON.parse(fs.readFileSync(path.resolve(args.equivalents), 'utf8')) : null;
+  const maxUtil = args['max-utilization'] ? Number(args['max-utilization']) : 0.9;
   const results = [];
+  let quota = null;
   for (const p of prompts) {
     const r = runClaudePrompt(p.prompt, opts);
     const row = { ...p, got: r.got };
     results.push(row);
+    quota = r.quota || quota;
     process.stdout.write(`${p.id.padEnd(12)} expect=${p.expect.padEnd(10)} got=${r.got.padEnd(10)} ${passes(row, equivalents) ? 'ok' : 'MISS'}\n`);
     if (args.raw) fs.writeFileSync(path.join(outDir, `${date}-${p.id}.raw.jsonl`), r.raw);
+    if (quota && quota.fiveHour !== null && quota.fiveHour >= maxUtil) {
+      process.stdout.write(`stopping: five-hour window at ${Math.round(quota.fiveHour * 100)}% (limit ${Math.round(maxUtil * 100)}%), resets ${quota.resetsAt ? new Date(quota.resetsAt * 1000).toLocaleString() : 'unknown'}; rerun the rest with --id\n`);
+      break;
+    }
   }
   const summary = summarize(results, equivalents);
-  const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · cwd: ${opts.cwd} · prompts: ${results.length}${equivalents ? ' · equivalents: ' + path.basename(args.equivalents) : ''}`;
+  const quotaNote = quota ? ` · quota after run: five-hour ${Math.round((quota.fiveHour || 0) * 100)}%, seven-day ${Math.round((quota.sevenDay || 0) * 100)}%` : '';
+  const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · cwd: ${opts.cwd} · prompts: ${results.length}${equivalents ? ' · equivalents: ' + path.basename(args.equivalents) : ''}${quotaNote}`;
   const tag = args.tag ? '-' + String(args.tag).replace(/[^a-z0-9-]/gi, '') : '';
   const out = path.join(outDir, `${date}-claude${args.intent ? '-' + args.intent : ''}${tag}.md`);
   fs.writeFileSync(out, table(results, summary, 'claude', meta, equivalents));
-  process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}. Written: ${out}\n`);
+  process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}.${quotaNote} Written: ${out}\n`);
 }
 
-module.exports = { run, parseStream, loadPrompts, summarize, table, checklist, passes };
+module.exports = { run, parseStream, parseQuota, loadPrompts, summarize, table, checklist, passes };
