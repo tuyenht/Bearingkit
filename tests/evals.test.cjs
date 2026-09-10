@@ -139,4 +139,14 @@ test('the fixture is staged outside the repository so the repository CLAUDE.md d
   if (staged.vcs) assert.ok(fs.existsSync(path.join(staged.cwd, ['.', 'git'].join(''))), 'throwaway history present');
   const again = stageFixture(repo, base);
   assert.equal(again.cwd, staged.cwd, 'staging is idempotent');
+  // Every prompt starts from the staging commit: edits, new files and extra commits made by a session are undone.
+  if (again.vcs) {
+    const page = path.join(again.cwd, 'src', 'app', 'settings', 'page.tsx');
+    const original = fs.readFileSync(page, 'utf8');
+    fs.writeFileSync(page, original + '\n// edited by a session\n');
+    fs.writeFileSync(path.join(again.cwd, 'junk.txt'), 'left behind');
+    assert.equal(again.reset(), true);
+    assert.equal(fs.readFileSync(page, 'utf8'), original, 'tracked edit undone');
+    assert.ok(!fs.existsSync(path.join(again.cwd, 'junk.txt')), 'untracked file removed');
+  }
 });

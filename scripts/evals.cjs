@@ -111,12 +111,22 @@ function stageFixture(root, base) {
   // then the files are refreshed in place instead of the directory being recreated.
   let reused = false;
   try { fs.rmSync(dst, { recursive: true, force: true }); } catch { reused = true; }
+  // Held open: empty the directory instead (its history stays), so the staging commit holds exactly the source tree.
+  if (reused) for (const entry of fs.readdirSync(dst)) if (entry !== '.git') fs.rmSync(path.join(dst, entry), { recursive: true, force: true });
   fs.cpSync(src, dst, { recursive: true, force: true });
-  const git = (args) => spawnSync('git', ['-c', 'user.name=bearingkit', '-c', 'user.email=evals@bearingkit.invalid', ...args], { cwd: dst, encoding: 'utf8' });
+  // autocrlf off: a reset must restore the bytes that were copied, not a line-ending conversion of them.
+  const git = (args) => spawnSync('git', ['-c', 'user.name=bearingkit', '-c', 'user.email=evals@bearingkit.invalid', '-c', 'core.autocrlf=false', ...args], { cwd: dst, encoding: 'utf8' });
   const init = git(['init', '-q']);
   if (init.status === 0) { git(['add', '-A']); git(['commit', '-q', '-m', 'fixture']); }
   const vcs = init.status === 0 && fs.existsSync(path.join(dst, '.git'));
-  return { cwd: dst, vcs, reused, ancestors: ancestorMemoryFiles(path.dirname(dst)) };
+  const sha = vcs ? String(git(['rev-parse', 'HEAD']).stdout || '').trim() : null;
+  // Sessions edit, create and even commit files; every prompt must start from the same tree, so the copy is
+  // reset to the staging commit before each session (and once more after the run).
+  const reset = () => {
+    if (!sha) { fs.cpSync(src, dst, { recursive: true, force: true }); return false; }
+    return git(['reset', '-q', '--hard', sha]).status === 0 && git(['clean', '-q', '-fdx']).status === 0;
+  };
+  return { cwd: dst, vcs, reused, sha, reset, ancestors: ancestorMemoryFiles(path.dirname(dst)) };
 }
 
 // --per-intent N takes a spread per intent rather than the first N lines: an English positive, a Vietnamese positive,
@@ -218,10 +228,12 @@ async function run(argv) {
 
   // Prompts talk about a settings page, invoices, a login form; the fixture app gives them something to point at.
   let cwd;
+  let resetFixture = null;
   if (args.cwd) cwd = path.resolve(args.cwd);
   else {
     const staged = stageFixture(ROOT, args['stage-dir'] ? path.resolve(args['stage-dir']) : null);
     cwd = staged.cwd;
+    resetFixture = staged.reset;
     process.stdout.write('fixture staged at ' + cwd + (staged.vcs ? ' (git initialised)' : ' (git unavailable, no history)') + (staged.reused ? ' (existing copy refreshed in place: it is held open elsewhere)' : '') + '\n');
   }
   // A measurement taken under foreign memory files is not a measurement; refuse rather than warn.
@@ -238,6 +250,7 @@ async function run(argv) {
   const results = [];
   let quota = null;
   for (const p of prompts) {
+    if (resetFixture && !resetFixture()) process.stdout.write('warning: fixture reset failed before ' + p.id + '\n');
     const r = runClaudePrompt(p.prompt, opts);
     const row = { ...p, got: r.got };
     results.push(row);
@@ -249,6 +262,7 @@ async function run(argv) {
       break;
     }
   }
+  if (resetFixture) resetFixture();
   const summary = summarize(results, equivalents);
   const quotaNote = quota ? ` · quota after run: five-hour ${Math.round((quota.fiveHour || 0) * 100)}%, seven-day ${Math.round((quota.sevenDay || 0) * 100)}%` : '';
   const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · cwd: ${opts.cwd} · prompts: ${results.length}${equivalents ? ' · equivalents: ' + path.basename(args.equivalents) : ''}${quotaNote}`;

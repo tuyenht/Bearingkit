@@ -17,7 +17,8 @@
     "executing-plans",
     "subagent-driven-development",
     "build",
-    "cook"
+    "cook",
+    "test-driven-development"
   ],
   "bk-test": [
     "test-driven-development",

@@ -63,8 +63,23 @@ Third reading (2026-09-10, isolated profile, staged copy beside the repository w
 
 ## Baseline (daily profile, equivalence map)
 
-_pending: `node bin/bearingkit.cjs evals --per-intent 3 --equivalents evals/activation/equivalents-superpowers.json --tag baseline` on the daily profile, 18 sessions (`--per-intent 3` takes an English positive, a Vietnamese positive and a negative per intent), scheduled after the five-hour window resets (19:40 local on 2026-09-10, from `five_hour.resetsAt` in the last stream) because each session on that profile loads an estimated 61K tokens of the previous kits_
+**Run 1** (2026-09-10 20:31 local; `evals/results/2026-09-10-claude-baseline.md`, raw streams `*-baseline.raw.jsonl`): eighteen prompts, one English positive, one Vietnamese positive and one negative per intent; sonnet, six turns; the staged copy beside the repository; the daily profile as it is (Spartan commands, Superpowers 5.1.0, fullstack-dev-skills, residual ClaudeKit hooks, 71.9k of memory files per session). Scored with the equivalence map: 10/18; after crediting test-driven-development as a legitimate route for a small change (added to the map the same evening; recount by hand on the recorded `got` column): **11/18**. Positives routed **6/12**; false activations on pure questions **0/2**.
+
+| intent | positives routed | what the raw streams show |
+|---|---|---|
+| question | (no positives) | both questions answered directly; the negative ("add a retry to the upload endpoint") explored, then invoked test-driven-development |
+| small | 0/2 | English: edited the file at once (Grep, Read, Edit), no skill. Vietnamese: found the previous session's edit already in place and verified it |
+| feature | 0/2 | both explored for six turns (Bash, Glob, Read) without invoking brainstorming |
+| bug | 2/2 | systematic-debugging both times; the negative ("review the fix I just made") was reviewed by hand, no review skill |
+| review | 2/2 | code-review both times |
+| ship | 0/2 | ran git directly and committed locally without finishing-a-development-branch or pr-ready |
+
+Readings. Where the previous setup carries a strong skill (systematic-debugging, code-review) it routes as well as the kit. Small changes get no skill by that setup's own decision rule ("small change, just ask Claude") and are edited immediately, while the kit routes them to `bk-build`: two designs, so the honest comparison for `small` is the outcome benchmark, not routing. Feature and ship show the two failure modes the kit's router sentence prevents: exploring for the whole turn budget without deciding, and running git directly without a finishing checklist.
+
+Caveat, and the reason a run 2 is scheduled: the sessions shared the staged copy and the previous setup's sessions edited and committed files (the fourth session renamed the button, the ship session committed it), so prompts after the fourth saw a dirty tree, which may have influenced routing. The runner now resets the copy to the staging commit before every prompt and once after the run. Run 1 stays recorded; a clean run 2 goes in the next quota window. Cost: the five-hour window read 25% after the run, having reset at 19:40 with this conversation sharing it, so about 1.4 points per daily-profile session is an upper bound, against about 0.7 for the isolated profile.
+
+_pending: run 2 with the per-prompt reset, next quota window_
 
 ## Confirmation run (isolated profile, final descriptions)
 
-_pending: one run of all sixty prompts with the descriptions as tuned above. The gate result recorded here stitches run 1 (forty prompts read before the two cue changes) and run 2 (review and ship after them). Scheduled after the baseline, in the same fresh window; the runner stops at 90% and `--id` resumes the rest_
+_pending: one run of all sixty prompts with the descriptions as tuned above, in the staged copy with the per-prompt reset (tag `confirm`). The gate result recorded above stitches run 1 (forty prompts read before the two cue changes) and run 2 (review and ship after them)_
