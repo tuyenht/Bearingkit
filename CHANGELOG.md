@@ -5,6 +5,7 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 ## Unreleased · 0.1.0 (Phase 1 in progress)
 
 ### Added
+- `docs/specs/2026-09-10-coverage-matrix.md`: one row per source the kit replaces or absorbs (Superpowers, the official plugins, spec-kit, ClaudeKit, Spartan, context7, Skillmark, fullstack-dev-skills, vercel agent-skills, document-skills, the owner's previous kit, Antigravity docs), with status and the measurement each "better" claim rests on; rows for the owner's remaining repositories to follow.
 - `core/AGENTS.md`: the protocol (autonomy gate, router with intent table, evidence rules, council, definition of done, hot paths, host notes), 53 lines. The router says to invoke the matching skill before reading or searching code; without that sentence the model explored first and never invoked.
 - `bk-protocol` hidden reference skill with gate patterns, personas, host tool map, evidence and council formats, RBA-lite, correction cues, the two-block handoff template.
 - Ten protocol skills: `bk-next`, `bk-spec`, `bk-audit`, `bk-plan`, `bk-build`, `bk-test`, `bk-debug`, `bk-review`, `bk-ship`, `bk-close`.

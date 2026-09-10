@@ -1,13 +1,75 @@
 {
-  "_comment": "Baseline runs against a profile that carries Superpowers (and similar kits) count these skills as equivalent to the kit's. Names are matched on the last path segment, so 'superpowers:brainstorming' matches 'brainstorming'.",
-  "bk-spec": ["brainstorming", "spec", "think"],
-  "bk-plan": ["writing-plans", "plan", "epic"],
-  "bk-build": ["executing-plans", "subagent-driven-development", "build", "cook"],
-  "bk-test": ["test-driven-development", "test", "e2e", "qa"],
-  "bk-debug": ["systematic-debugging", "debug", "fix"],
-  "bk-review": ["requesting-code-review", "receiving-code-review", "code-review", "review", "fe-review", "gate-review"],
-  "bk-ship": ["finishing-a-development-branch", "verification-before-completion", "pr-ready", "ship", "commit"],
-  "bk-next": ["context-save", "watzup", "next"],
-  "bk-close": ["context-save", "watzup", "journal", "close"],
-  "bk-audit": ["audit", "brainstorming"]
+  "_comment": "Baseline runs against a profile that carries Superpowers, Spartan, fullstack-dev-skills and similar kits count these skills or commands as equivalent to the kit's. Names are matched on the last path segment, so 'superpowers:brainstorming' matches 'brainstorming' and '/spartan:spec' matches 'spec'.",
+  "bk-spec": [
+    "brainstorming",
+    "spec",
+    "think",
+    "feature-forge",
+    "spec-miner",
+    "brownfield"
+  ],
+  "bk-plan": [
+    "writing-plans",
+    "plan",
+    "epic"
+  ],
+  "bk-build": [
+    "executing-plans",
+    "subagent-driven-development",
+    "build",
+    "cook"
+  ],
+  "bk-test": [
+    "test-driven-development",
+    "test",
+    "e2e",
+    "qa",
+    "test-master",
+    "testcontainer"
+  ],
+  "bk-debug": [
+    "systematic-debugging",
+    "debug",
+    "fix",
+    "debugging-wizard"
+  ],
+  "bk-review": [
+    "requesting-code-review",
+    "receiving-code-review",
+    "code-review",
+    "review",
+    "fe-review",
+    "gate-review",
+    "code-reviewer",
+    "security-reviewer",
+    "tf-review"
+  ],
+  "bk-ship": [
+    "finishing-a-development-branch",
+    "verification-before-completion",
+    "pr-ready",
+    "ship",
+    "commit",
+    "ship-pr",
+    "ship-pr-codex",
+    "commit-message",
+    "commit-message-with-codex"
+  ],
+  "bk-next": [
+    "context-save",
+    "watzup",
+    "next",
+    "onboard",
+    "sessions"
+  ],
+  "bk-close": [
+    "context-save",
+    "watzup",
+    "journal",
+    "close"
+  ],
+  "bk-audit": [
+    "audit",
+    "brainstorming"
+  ]
 }

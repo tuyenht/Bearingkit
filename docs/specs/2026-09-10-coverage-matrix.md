@@ -1,0 +1,44 @@
+# Coverage matrix: what the kit replaces, where, and how "better" is measured
+
+Owner's requirement (2026-09-10): one kit that replaces the leading vibe-coding repositories, carries their best capabilities, installs once, costs few tokens, and is better and more complete than each of them. Superpowers, the official `code-review`, `frontend-design` and `claude-code-setup` plugins are mandatory. The owner names the remaining repositories later; rows are added here as they are named.
+
+This file is the tracking instrument for that requirement. A row without a measurement in the last column is a plan, not a claim, and is never quoted in public material. Status vocabulary: **designed** (mapped in the spec only), **framed** (skill or file exists, body without the source's substance), **absorbed** (substance ported into `references/` with attribution in `NOTICE`), **measured** (a number in `docs/compat/` backs the "better" claim).
+
+Related: spec §7 (catalog, "Adapted from" column), §12 (sources and license modes), §13 (evals), §17 (success metrics); `docs/plans/2026-09-10-content-backlog.md` (the porting work itself).
+
+## Sources named so far
+
+| # | Source · license · mode | Its strongest capabilities (from its own skill and command names) | Kit target | Phase | Status 2026-09-10 | Where the kit must be better · measurement |
+|---|---|---|---|---|---|---|
+| 1 | obra/superpowers 5.1.0 · MIT · adapt (mandatory) | 14 skills: using-superpowers (meta-routing injected every session), brainstorming, writing-plans, executing-plans, subagent-driven-development, dispatching-parallel-agents, using-git-worktrees, test-driven-development, systematic-debugging, verification-before-completion, requesting-code-review, receiving-code-review, finishing-a-development-branch, writing-skills | `bk-protocol` (using-superpowers), `bk-spec` (brainstorming), `bk-plan` (writing-plans), `bk-build` (executing-plans, subagent-driven, parallel agents, worktrees), `bk-test` (TDD), `bk-debug` (systematic-debugging), `bk-review` (requesting, receiving), `bk-ship` (finishing-branch, verification). writing-skills becomes the kit's own authoring convention (§7) and a `doctor` check, not a user skill | 1 frame, 2 substance | **framed**: ten skills exist with 26–30-line bodies; no `references/` yet; substance not ported | Routing: precision and recall on the 60-prompt set with negative controls, kit vs a profile with Superpowers (baseline run). Tokens: fixed context per session, `/context`. Outcome: task suite pass rate and tokens per task, kit vs Superpowers profile (§17, Phase 2) |
+| 2 | anthropics/claude-plugins-official · Apache-2.0 · adapt (`code-review`, `frontend-design`, `claude-code-setup` mandatory) | code-review (multi-agent review method), pr-review-toolkit (review lenses, test lens), frontend-design (distinctive UI guidance), claude-code-setup (recommends skills, hooks and settings for a repository), feature-dev (code-explorer), commit-commands, claude-md-management, security-guidance (pattern list) | `bk-review` (method, lenses), `bk-test` (test lens), `bk-design`, Phase 2 seeding step plus `doctor` (claude-code-setup), `bk-map` (code-explorer), `bk-ship` (commit-commands), `bk-close` (claude-md-management), `hot-path-flag` hook (security-guidance patterns) | 2 | **designed** only; no local copy on the workstation, fetch needed before porting; `NOTICE` entry required | Review: findings per review on a seeded-bug fixture, kit vs plugin. Design: critic pass criteria (contrast, reduced motion, focus, asset budget) present and checked, plugin has no critic. Setup: `doctor` output vs claude-code-setup recommendations on the same repository |
+| 3 | github/spec-kit · MIT · ideas-only | constitution, specify, plan, tasks; spec-first discipline | `bk-spec`, `bk-plan` | 1 frame, 2 substance | framed | Same routing and outcome measures as row 1; spec-kit is command-driven, the kit routes from plain language (activation set) |
+| 4 | ClaudeKit · proprietary · ideas-only, clean-room | cook gates, requirement gate, predict and scenario audits, branch-to-plan, scout, watzup, retro, journal, preview | `bk-build`, `bk-spec`, `bk-audit`, `bk-plan`, `bk-close`, `bk-research`; scout replaced by the built-in Explore agent | 2 | designed | Tokens: ClaudeKit's global instruction set is part of the 71.9k memory measured on the daily profile; the kit's whole fixed cost measured at about 2,650 |
+| 5 | Spartan AI Toolkit (the owner's current global kit) · license unverified · reference until verified | 70 command files on this workstation: spec, plan, build, epic, debug, review, fe-review, gate-review, pr-ready, ship-pr, deploy, ux pipeline, product and startup commands, Terraform commands, dual-agent gates | Lifecycle commands map onto `bk-spec`, `bk-plan`, `bk-build`, `bk-review`, `bk-ship`, `bk-ops`, `bk-design`; product, startup and Terraform commands are out of the kit's scope by design | 2 (ideas) | designed | Tokens: its `CLAUDE.md` and 30 rules are the bulk of the 71.9k memory measured; the kit's rules are path-scoped and cost 0 when unmatched. Routing: Spartan routes by slash command and a manual decision rule; the kit routes from plain language (activation set) |
+| 6 | context7 · MIT · reference | Library documentation over MCP | `core/mcp.json`, installed only with `install --mcp` | 1 | **built** (opt-in) | Not a "better" claim; a dependency the kit exposes without forcing it |
+| 7 | Skillmark · MIT · reference | Skill eval harness and result format | `skills/<skill>/tests/*.md` format (§13) and the outcome benchmark (§17) | 2 | designed | This is the measurement, not a competitor |
+| 8 | fullstack-dev-skills · MIT · reference (cached locally) | 66 per-framework and per-role skills (react-expert, nextjs-developer, laravel-specialist, postgres-pro, code-reviewer, debugging-wizard, test-master, security-reviewer, …) | Deliberately not absorbed as skills: the kit carries eight path-scoped language rules instead; the code-reviewer, debugging-wizard and test-master lenses inform `bk-review`, `bk-debug`, `bk-test` references | 2 | designed | Tokens: 66 always-listed descriptions vs 8 rules at 0 tokens when the path does not match, `/context` on both profiles. Routing: baseline equivalence map credits its skills when they activate |
+| 9 | vercel-labs/agent-skills · no license file · reference only | react-best-practices, web-design-guidelines | `bk-design` and the `typescript-react` rule cite them as reading; nothing vendored | 2 | designed | No claim; reference |
+| 10 | anthropics document-skills · not open · excluded | docx, pdf, pptx, xlsx handling | Excluded from the kit; users who need them install them separately | — | excluded | No claim |
+| 11 | Owner's previous kit · owner-authored · adapt | RBA fail conditions, known-failure guard, asset budgets, design-critic, database playbook, council protocol lines | `bk-protocol/references/rba-lite.md` (built), `bk-design`, `bk-perf`, `bk-db`, the two verbatim protocol lines (§18) | 1 partly, 2 | framed (rba-lite, gate patterns, personas); rest designed | Same measures as the skills they land in |
+| 12 | Antigravity built-in docs (dated 2026-09-05) · reference | `.agents/` roots, global `~/.gemini/config`, hooks PreToolUse/PostToolUse/PreInvocation/PostInvocation/Stop, rule triggers | `adapters/antigravity/`, `core/hooks/lib/host.cjs` | 1 | built, **unmeasured** (Task 13: tests 2, 4, 7 and activation by hand) | Parity: same skills, same activation set, recorded by hand |
+
+## Rows to be named by the owner
+
+The owner's "top 20" list is not yet written down. Add one row per repository with the same seven columns; a repository the kit chooses not to absorb still gets a row with "excluded" and the reason, so the decision is visible.
+
+## Measurements that back "better" today
+
+| Claim | Number | Source |
+|---|---|---|
+| Fixed context per session, kit | about 2,650 tokens | `docs/compat/phase-1-gate.md`, third `/context` reading |
+| Fixed context per session, daily profile (Spartan + ClaudeKit residue + Superpowers + rules), memory files only | 71.9k tokens | same document, second reading; agents and skill listing of that profile not included |
+| Activation on six intents, kit | 48/48 positives, 0 false activations | same document; stitched from two runs, one clean run pending |
+| Activation, previous setup | pending | baseline run with the equivalence map |
+| Outcome (tasks completed, tokens per task), kit vs Superpowers | pending | Phase 2 task (§17) |
+
+## Rules for this file
+
+- A row moves to **absorbed** only when its `references/` file exists, `NOTICE` names the source, and `upstream/sources.json` records repo, tag, sha and the derived map.
+- A row moves to **measured** only when `docs/compat/` holds the number and the method.
+- "Better" claims quote the row's measurement column; nothing else.

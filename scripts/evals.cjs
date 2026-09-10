@@ -230,6 +230,7 @@ async function run(argv) {
   const opts = { model: args.model || 'sonnet', configDir: args['config-dir'] ? path.resolve(args['config-dir']) : null, cwd, turns: args.turns ? Number(args.turns) : 6 };
   const equivalents = args.equivalents ? JSON.parse(fs.readFileSync(path.resolve(args.equivalents), 'utf8')) : null;
   const maxUtil = args['max-utilization'] ? Number(args['max-utilization']) : 0.9;
+  const tag = args.tag ? '-' + String(args.tag).replace(/[^a-z0-9-]/gi, '') : '';
   const results = [];
   let quota = null;
   for (const p of prompts) {
@@ -238,7 +239,7 @@ async function run(argv) {
     results.push(row);
     quota = r.quota || quota;
     process.stdout.write(`${p.id.padEnd(12)} expect=${p.expect.padEnd(10)} got=${r.got.padEnd(10)} ${passes(row, equivalents) ? 'ok' : 'MISS'}\n`);
-    if (args.raw) fs.writeFileSync(path.join(outDir, `${date}-${p.id}.raw.jsonl`), r.raw);
+    if (args.raw) fs.writeFileSync(path.join(outDir, `${date}-${p.id}${tag}.raw.jsonl`), r.raw);
     if (quota && quota.fiveHour !== null && quota.fiveHour >= maxUtil) {
       process.stdout.write(`stopping: five-hour window at ${Math.round(quota.fiveHour * 100)}% (limit ${Math.round(maxUtil * 100)}%), resets ${quota.resetsAt ? new Date(quota.resetsAt * 1000).toLocaleString() : 'unknown'}; rerun the rest with --id\n`);
       break;
@@ -247,7 +248,6 @@ async function run(argv) {
   const summary = summarize(results, equivalents);
   const quotaNote = quota ? ` · quota after run: five-hour ${Math.round((quota.fiveHour || 0) * 100)}%, seven-day ${Math.round((quota.sevenDay || 0) * 100)}%` : '';
   const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · cwd: ${opts.cwd} · prompts: ${results.length}${equivalents ? ' · equivalents: ' + path.basename(args.equivalents) : ''}${quotaNote}`;
-  const tag = args.tag ? '-' + String(args.tag).replace(/[^a-z0-9-]/gi, '') : '';
   const out = path.join(outDir, `${date}-claude${args.intent ? '-' + args.intent : ''}${tag}.md`);
   fs.writeFileSync(out, table(results, summary, 'claude', meta, equivalents));
   process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}.${quotaNote} Written: ${out}\n`);
