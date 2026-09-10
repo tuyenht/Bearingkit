@@ -26,10 +26,11 @@ test('activation is read from the first SKILL.md tool call; injected block detec
 
 test('driver decides only on the first invocation of a conversation that starts with the trigger', () => {
   const queue = { trigger: 'bk eval', pending: [{ id: 'a', prompt: 'P1' }] };
-  assert.equal(driver.decide({ invocationNum: 2 }, '<USER_REQUEST>\nbk eval\n</USER_REQUEST>', queue).action, 'skip');
-  assert.equal(driver.decide({ invocationNum: 1 }, 'Add CSV export', queue).action, 'skip');
-  assert.equal(driver.decide({ invocationNum: 1 }, '<USER_REQUEST>\n  BK EVAL \n</USER_REQUEST>', queue, 'bk eval').action, 'inject');
-  assert.equal(driver.decide({ invocationNum: 1 }, 'bk eval', { pending: [] }).action, 'empty');
+  assert.equal(driver.decide({ invocationNum: 2 }, '<USER_REQUEST>\nbk eval\n</USER_REQUEST>', queue, 'bk eval', true).action, 'skip');
+  assert.equal(driver.decide({ invocationNum: 1 }, 'Add CSV export', queue, 'bk eval', true).action, 'skip');
+  assert.equal(driver.decide({ invocationNum: 1 }, '<USER_REQUEST>\n  BK EVAL \n</USER_REQUEST>', queue, 'bk eval', true).action, 'inject');
+  assert.equal(driver.decide({ invocationNum: 1 }, 'bk eval', { pending: [] }, 'bk eval', true).action, 'empty');
+  assert.equal(driver.decide({ invocationNum: 1 }, 'bk eval', queue, 'bk eval', false).action, 'skip', 'the trigger outside the fixture is ignored');
   // No user input in the transcript yet: injected only inside the marked fixture, never elsewhere.
   assert.equal(driver.decide({ invocationNum: 1 }, null, queue, 'bk eval', true).action, 'inject');
   assert.equal(driver.decide({ invocationNum: 1 }, null, queue, 'bk eval', false).action, 'skip');

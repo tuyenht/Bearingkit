@@ -44,9 +44,11 @@ function resetFixture(workspace) {
 function decide(payload, userInput, queue, trigger, workspaceIsFixture) {
   const p = payload || {};
   if (p.invocationNum !== undefined && p.invocationNum !== 1) return { action: 'skip', reason: 'not the first invocation' };
-  // The transcript may not carry the user input yet when the hook runs; inside the kit's own marked fixture the
-  // trigger is then taken as given. Anywhere else, no input means no injection.
-  const triggered = isTrigger(userInput, trigger) || (userInput === null && workspaceIsFixture === true);
+  // Injection happens only inside the kit's own marked fixture: a typed trigger elsewhere is ignored, so a test
+  // prompt can never land in a real project. Inside the fixture, a transcript that has no user input yet (the hook
+  // may run before it is written) counts as triggered.
+  if (workspaceIsFixture !== true) return { action: 'skip', reason: 'not the eval fixture' };
+  const triggered = isTrigger(userInput, trigger) || userInput === null;
   if (!triggered) return { action: 'skip', reason: 'no trigger' };
   const q = queue || {};
   const pending = Array.isArray(q.pending) ? q.pending : [];
