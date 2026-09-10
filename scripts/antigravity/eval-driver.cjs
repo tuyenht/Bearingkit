@@ -26,9 +26,16 @@ function firstUserInput(transcriptText) {
   return null;
 }
 
+// The user's text sits inside <USER_REQUEST>…</USER_REQUEST>; the host appends blocks such as <ADDITIONAL_METADATA>
+// (local time) after it, so only the request block is compared.
+function requestText(userInput) {
+  const s = String(userInput || '');
+  const m = s.match(/<USER_REQUEST>([\s\S]*?)<\/USER_REQUEST>/);
+  return (m ? m[1] : s.replace(/<ADDITIONAL_METADATA>[\s\S]*?<\/ADDITIONAL_METADATA>/g, '')).trim();
+}
+
 function isTrigger(userInput, trigger) {
-  const t = String(userInput || '').replace(/<\/?USER_REQUEST>/g, '').trim().toLowerCase();
-  return t === String(trigger || 'bk eval').trim().toLowerCase();
+  return requestText(userInput).toLowerCase() === String(trigger || 'bk eval').trim().toLowerCase();
 }
 
 function resetFixture(workspace) {
@@ -82,10 +89,13 @@ function main() {
     // The whole item travels into the ledger, so scoring never depends on the pending list again.
     queue.done = (queue.done || []).concat([{ ...d.item, conversationId: payload.conversationId || null, transcriptPath: payload.transcriptPath || null, modelName: payload.modelName || null, workspace, reset, at: new Date().toISOString() }]);
     fs.writeFileSync(queueFile, JSON.stringify(queue, null, 2));
-    process.stdout.write(JSON.stringify({ injectSteps: [{ userMessage: d.item.prompt }] }));
+    process.stdout.write(JSON.stringify({ injectSteps: [
+      { ephemeralMessage: '[bearingkit-eval] The line "' + (queue.trigger || 'bk eval') + '" above is a harness trigger, not a request. The user\'s request is the next message; act on it exactly as you would for any user. [/bearingkit-eval]' },
+      { userMessage: d.item.prompt },
+    ] }));
   });
 }
 
 if (require.main === module) main();
 
-module.exports = { firstUserInput, isTrigger, decide, resetFixture, EVAL_DIR, FIXTURE_MARKER, STAGE_TAG };
+module.exports = { firstUserInput, requestText, isTrigger, decide, resetFixture, EVAL_DIR, FIXTURE_MARKER, STAGE_TAG };

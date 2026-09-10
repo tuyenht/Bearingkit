@@ -31,6 +31,10 @@ test('driver decides only on the first invocation of a conversation that starts 
   assert.equal(driver.decide({ invocationNum: 1 }, '<USER_REQUEST>\n  BK EVAL \n</USER_REQUEST>', queue, 'bk eval', true).action, 'inject');
   assert.equal(driver.decide({ invocationNum: 1 }, 'bk eval', { pending: [] }, 'bk eval', true).action, 'empty');
   assert.equal(driver.decide({ invocationNum: 1 }, 'bk eval', queue, 'bk eval', false).action, 'skip', 'the trigger outside the fixture is ignored');
+  // Antigravity 2.0 appends metadata blocks after the request; only the request block counts.
+  const real = '<USER_REQUEST>\nbk eval\n</USER_REQUEST>\n<ADDITIONAL_METADATA>\nThe current local time is: 2026-09-11T00:12:09+07:00.\n</ADDITIONAL_METADATA>';
+  assert.equal(driver.requestText(real), 'bk eval');
+  assert.equal(driver.decide({ invocationNum: 1 }, real, queue, 'bk eval', true).action, 'inject');
   // No user input in the transcript yet: injected only inside the marked fixture, never elsewhere.
   assert.equal(driver.decide({ invocationNum: 1 }, null, queue, 'bk eval', true).action, 'inject');
   assert.equal(driver.decide({ invocationNum: 1 }, null, queue, 'bk eval', false).action, 'skip');
@@ -54,7 +58,10 @@ test('driver end to end: injects the next prompt, advances the queue, records th
   const payload = JSON.stringify({ conversationId: 'c-1', invocationNum: 1, transcriptPath: transcript, workspacePaths: [ws], modelName: 'auto' });
   const r = spawnSync(process.execPath, [path.join(__dirname, '..', 'scripts', 'antigravity', 'eval-driver.cjs')], { input: payload, encoding: 'utf8', env: { ...process.env, BEARINGKIT_EVAL_DIR: evalDir } });
   assert.equal(r.status, 0, r.stderr);
-  assert.deepEqual(JSON.parse(r.stdout), { injectSteps: [{ userMessage: 'Add CSV export to the invoices page.' }] });
+  const out = JSON.parse(r.stdout);
+  assert.equal(out.injectSteps.length, 2);
+  assert.match(out.injectSteps[0].ephemeralMessage, /harness trigger/);
+  assert.deepEqual(out.injectSteps[1], { userMessage: 'Add CSV export to the invoices page.' });
   const q = JSON.parse(fs.readFileSync(path.join(evalDir, 'queue.json'), 'utf8'));
   assert.equal(q.pending.length, 1);
   assert.equal(q.done[0].id, 'p1');
