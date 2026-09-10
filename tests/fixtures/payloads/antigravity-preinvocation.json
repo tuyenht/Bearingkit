@@ -7,6 +7,5 @@
   "artifactDirectoryPath": "C:\\x\\.gemini\\antigravity\\artifacts",
   "modelName": "auto",
   "invocationNum": 1,
-  "initialNumSteps": 0,
-  "event": "PreInvocation"
+  "initialNumSteps": 0
 }

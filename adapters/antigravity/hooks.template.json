@@ -3,7 +3,7 @@
     "PreInvocation": [
       {
         "type": "command",
-        "command": "node \"<KIT>/core/hooks/stack-profile.cjs\"",
+        "command": "node \"<KIT>/core/hooks/stack-profile.cjs\" --event PreInvocation",
         "timeout": 10
       }
     ]

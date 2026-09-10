@@ -8,7 +8,7 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
-const { parse, format, readStdin } = require('./lib/host.cjs');
+const { parse, format, readStdin, eventFromArgv } = require('./lib/host.cjs');
 const { State } = require('./lib/state.cjs');
 const { detect } = require('../../scripts/detect-stack.cjs');
 
@@ -61,7 +61,7 @@ function buildBlock(profile, git, plan, handoff, hotPathTouched) {
 }
 
 async function run(payload, deps = {}) {
-  const e = parse(payload);
+  const e = parse(payload, { event: deps.event || null });
   if (e.isSubagent || !EVENTS.has(e.event)) return {};
   const state = new State({ host: e.host, sessionId: e.sessionId, cwd: e.cwd, baseDir: deps.baseDir });
   if (e.event === 'session-start') state.prune();
@@ -90,7 +90,7 @@ async function run(payload, deps = {}) {
 
 if (require.main === module) {
   readStdin()
-    .then((p) => run(p))
+    .then((p) => run(p, { event: eventFromArgv(process.argv) }))
     .then((out) => process.stdout.write(JSON.stringify(out)))
     .catch((err) => { process.stderr.write(String(err && err.stack ? err.stack : err)); process.stdout.write('{}'); });
 }

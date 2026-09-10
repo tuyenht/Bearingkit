@@ -70,3 +70,14 @@ test('format nothing, and antigravity post-tool is always empty', () => {
   assert.deepEqual(format('antigravity', 'post-tool', { inject: 'ignored' }), {});
   assert.deepEqual(format('claude', 'pre-tool', { inject: 'not an inject event' }), {});
 });
+
+test('antigravity event comes from the registered argument, else from the payload shape', () => {
+  const { eventFromArgv, inferAntigravityEvent } = require('../core/hooks/lib/host.cjs');
+  assert.equal(eventFromArgv(['node', 'x.cjs', '--event', 'PreInvocation']), 'PreInvocation');
+  assert.equal(eventFromArgv(['node', 'x.cjs']), null);
+  assert.equal(parse(fx('antigravity-preinvocation'), { event: 'PostInvocation' }).event, 'post-invocation', 'the argument wins');
+  assert.equal(parse(fx('antigravity-preinvocation')).event, 'pre-invocation', 'invocationNum alone reads as pre-invocation');
+  assert.equal(inferAntigravityEvent({ stepIdx: 2, error: 'exit status 1' }), 'post-tool');
+  assert.equal(inferAntigravityEvent({ executionNum: 1, terminationReason: 'model_stop' }), 'stop');
+  assert.equal(inferAntigravityEvent({ conversationId: 'c' }), 'unknown');
+});

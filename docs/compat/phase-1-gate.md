@@ -96,7 +96,7 @@ _pending: run 2 with the per-prompt reset, next quota window_
 
 # Phase 1 gate · Antigravity
 
-Host: Antigravity 2.0 on the same workstation, global config `~/.gemini/config` as the owner uses it daily (three bundled plugins, one owner rule); the kit installed on 2026-09-10 evening with `install --dev C:\Projects\Bearingkit --antigravity-only` after the owner's approval.
+Host: Antigravity on the same workstation (the installed version number is still to be read from the app), global config `~/.gemini/config` as the owner uses it daily (three bundled plugins, one owner rule); the kit installed on 2026-09-10 evening with `install --dev C:\Projects\Bearingkit --antigravity-only` after the owner's approval.
 
 ## Mechanism, corrected before installing
 
@@ -110,7 +110,7 @@ The spec had the plugin registered through a `plugins.json` registry with `entri
 
 | # | Question | Method | Answer | Verdict |
 |---|---|---|---|---|
-| 7 | Conversation id and working directory field names in hook payloads | documented common fields: `conversationId`, `workspacePaths[]`, `transcriptPath`, `artifactDirectoryPath`, `modelName`; `host.cjs` updated; a temporary logging hook (`_build/compat/log-payload.cjs`, keys and types only) captures a real payload to confirm | _pending the first Antigravity conversation with the probe in place_ | docs read; runtime confirmation pending |
+| 7 | Conversation id, working directory and event identification in hook payloads | documented common fields: `conversationId`, `workspacePaths[]`, `transcriptPath`, `artifactDirectoryPath`, `modelName`, and no event name: the kit's registration now passes `--event PreInvocation` on the command line and `host.cjs` falls back to the payload shape; a temporary logging hook (`_build/compat/log-payload.cjs`, keys and types only, registered on PreInvocation, PostInvocation and PostToolUse because those contracts accept an empty object) captures real payloads to confirm | _pending the first Antigravity conversation with the probe in place_ | docs read; runtime confirmation pending |
 | 2 | Which key names the file pattern of a `trigger: glob` rule | temporary `rules/probe-glob.md` in the plugin carries both `glob:` and `globs:`; open a `.tsx` file and read the Skills & Customizations panel, then drop one key at a time | _pending_ | pending |
 | 4 | Can the installer write a deny for `.env` reads | `userSettings.globalPermissionGrants` holds `allow` entries such as `command(git)`; the proto has `deny` and `ask` too; the grammar for file access is not in the embedded docs | deny exists; file-access grammar unverified; the installer does not write `config.json` | manual step until verified |
 | 1, 3, 6 | Skills through junctions; hidden `bk-protocol`; rules through the plugin | the panel lists the plugin's skills; `bk-protocol` should be visible but inert (Antigravity has no hidden flag) | _pending_ | pending |

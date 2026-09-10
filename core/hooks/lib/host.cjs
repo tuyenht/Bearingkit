@@ -33,8 +33,25 @@ function isClaude(p) {
   return Boolean(p.session_id);
 }
 
-function parse(payload) {
+// Antigravity payloads carry no event name; the registered command passes it (`--event PreInvocation`), and the
+// payload shape is the fallback: toolCall → pre-tool, terminationReason or executionNum → stop, stepIdx without a
+// toolCall → post-tool, invocationNum → pre-invocation (PostInvocation shares that shape, so it needs the argument).
+function inferAntigravityEvent(p) {
+  if (p.toolCall) return 'pre-tool';
+  if (p.terminationReason !== undefined || p.executionNum !== undefined) return 'stop';
+  if (p.stepIdx !== undefined) return 'post-tool';
+  if (p.invocationNum !== undefined) return 'pre-invocation';
+  return 'unknown';
+}
+
+function eventFromArgv(argv) {
+  const i = argv.indexOf('--event');
+  return i >= 0 ? argv[i + 1] : null;
+}
+
+function parse(payload, opts) {
   const p = payload || {};
+  const forced = (opts && opts.event) || null;
   if (isClaude(p)) {
     const cwd = norm(p.cwd);
     return {
@@ -50,7 +67,7 @@ function parse(payload) {
   const cwd = norm((Array.isArray(p.workspacePaths) && p.workspacePaths[0]) || p.workspaceRoot || p.cwd);
   return {
     host: 'antigravity',
-    event: ANTIGRAVITY_EVENTS[p.event] || ANTIGRAVITY_EVENTS[p.hookEventName] || 'unknown',
+    event: ANTIGRAVITY_EVENTS[forced] || ANTIGRAVITY_EVENTS[p.event] || ANTIGRAVITY_EVENTS[p.hookEventName] || inferAntigravityEvent(p),
     sessionId: p.conversationId || p.conversation_id || p.sessionId || fallbackId(cwd),
     cwd,
     isSubagent: false,
@@ -89,4 +106,4 @@ function readStdin(timeoutMs = 2000) {
   });
 }
 
-module.exports = { parse, format, readStdin, CLAUDE_EVENTS, ANTIGRAVITY_EVENTS };
+module.exports = { parse, format, readStdin, eventFromArgv, inferAntigravityEvent, CLAUDE_EVENTS, ANTIGRAVITY_EVENTS };

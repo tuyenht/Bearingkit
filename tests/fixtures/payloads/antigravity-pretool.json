@@ -4,7 +4,6 @@
     "C:/x"
   ],
   "modelName": "auto",
-  "event": "PreToolUse",
   "stepIdx": 3,
   "toolCall": {
     "name": "run_command",
