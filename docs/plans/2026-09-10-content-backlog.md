@@ -35,6 +35,10 @@ These are reference items, not design changes. Each names the file it belongs in
 - Guardrail archetypes: schema-introspecting coverage test; regex or AST chokepoint test; concurrency hammer against the live worker pool.
 - Branch-topology assistant: detect squash merges and emit the `rebase --onto` recipe (`bk-next`, v1.1).
 
+## Phase 2 seeding step (owner's explicit ask)
+
+- Run the official `claude-code-setup` recommender once on three representative projects of different stacks; collect its hook, MCP and subagent suggestions; adopt into `core/` only what repeats across projects; never apply its per-project output to a project. Antigravity's built-in customization guide plays the same role there.
+
 ## `evals/`
 
 - `--changed` mode: run only skills changed since the last commit.
