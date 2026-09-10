@@ -1,0 +1,12 @@
+{
+  "name": "fixture/laravel",
+  "require": {
+    "php": "^8.4",
+    "laravel/framework": "^12.0",
+    "livewire/livewire": "^4.0"
+  },
+  "require-dev": {
+    "pestphp/pest": "^3.0",
+    "laravel/pint": "^1.0"
+  }
+}
