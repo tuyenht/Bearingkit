@@ -69,23 +69,44 @@ function parseQuota(text) {
   return last;
 }
 
-// Claude Code loads every CLAUDE.md found in the ancestors of the working directory, so a fixture inside this
-// repository would carry the repository's own working agreement into every eval session. The fixture is therefore
-// copied outside the repository before a run, with a throwaway git history so "commit and push" prompts have a repo.
+// Claude Code loads, for every ancestor of the working directory, CLAUDE.md, CLAUDE.local.md, .claude/CLAUDE.md and
+// .claude/rules/*.md. Two consequences for measurement: a fixture inside this repository carries the repository's own
+// working agreement, and a fixture anywhere under the home directory carries the daily profile (~/.claude) as if it
+// were project memory, even in an isolated CLAUDE_CONFIG_DIR. The fixture is therefore staged in a tree with no such
+// files above it, with a throwaway git history so "commit and push" prompts have a repo.
 function ancestorMemoryFiles(dir) {
   const found = [];
   let cur = path.resolve(dir);
   for (;;) {
-    for (const name of ['CLAUDE.md', 'CLAUDE.local.md']) { const f = path.join(cur, name); if (fs.existsSync(f)) found.push(f); }
+    for (const name of ['CLAUDE.md', 'CLAUDE.local.md', path.join('.claude', 'CLAUDE.md')]) { const f = path.join(cur, name); if (fs.existsSync(f)) found.push(f); }
+    const rules = path.join(cur, '.claude', 'rules');
+    if (fs.existsSync(rules) && fs.readdirSync(rules).some((n) => n.endsWith('.md'))) found.push(rules + path.sep);
     const parent = path.dirname(cur);
     if (parent === cur) return found;
     cur = parent;
   }
 }
 
+// First candidate whose ancestors carry no memory files and which can be created: beside the repository, then the
+// drive or filesystem root, then the temp directory (which usually sits under the home directory and fails the check).
+function chooseStageBase(root, candidates) {
+  const list = candidates || [
+    path.join(path.dirname(root), '.bearingkit-evals'),
+    path.join(path.parse(root).root, 'bearingkit-evals'),
+    path.join(os.tmpdir(), 'bearingkit-evals'),
+  ];
+  for (const c of list) {
+    if (ancestorMemoryFiles(path.dirname(c)).length) continue;
+    try { fs.mkdirSync(c, { recursive: true }); return c; } catch { /* next candidate */ }
+  }
+  return null;
+}
+
 function stageFixture(root, base) {
   const src = path.join(root, 'evals', 'fixtures', 'sample-app');
-  const dst = path.join(base || path.join(os.tmpdir(), 'bearingkit-evals'), 'sample-app');
+  const chosen = base || chooseStageBase(root);
+  if (!chosen) throw new Error('no staging directory free of memory files above it; pass --stage-dir');
+  const dst = path.join(chosen, 'sample-app');
   fs.rmSync(dst, { recursive: true, force: true });
   fs.cpSync(src, dst, { recursive: true });
   const git = (args) => spawnSync('git', ['-c', 'user.name=bearingkit', '-c', 'user.email=evals@bearingkit.invalid', ...args], { cwd: dst, encoding: 'utf8' });
@@ -197,14 +218,14 @@ async function run(argv) {
   else {
     const staged = stageFixture(ROOT, args['stage-dir'] ? path.resolve(args['stage-dir']) : null);
     cwd = staged.cwd;
-    process.stdout.write(`fixture staged at ${cwd}${staged.vcs ? ' (git initialised)' : ' (git unavailable, no history)'}
-`);
-    if (staged.ancestors.length) process.stdout.write(`warning: memory files above the fixture will load too: ${staged.ancestors.join(', ')}
-`);
+    process.stdout.write('fixture staged at ' + cwd + (staged.vcs ? ' (git initialised)' : ' (git unavailable, no history)') + '\n');
   }
-  const above = args.cwd ? ancestorMemoryFiles(path.dirname(cwd)) : [];
-  if (above.length) process.stdout.write(`warning: memory files above --cwd will load too: ${above.join(', ')}
-`);
+  // A measurement taken under foreign memory files is not a measurement; refuse rather than warn.
+  const above = ancestorMemoryFiles(path.dirname(cwd));
+  if (above.length) {
+    process.stdout.write('memory files above the working directory would load into every session: ' + above.join(', ') + '\n');
+    if (!args['allow-ancestor-memory']) { process.stdout.write('refusing to run; move the fixture (--stage-dir) or pass --allow-ancestor-memory\n'); process.exitCode = 2; return; }
+  }
   if (args['stage-only']) return;
   const opts = { model: args.model || 'sonnet', configDir: args['config-dir'] ? path.resolve(args['config-dir']) : null, cwd, turns: args.turns ? Number(args.turns) : 6 };
   const equivalents = args.equivalents ? JSON.parse(fs.readFileSync(path.resolve(args.equivalents), 'utf8')) : null;
@@ -232,4 +253,4 @@ async function run(argv) {
   process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}.${quotaNote} Written: ${out}\n`);
 }
 
-module.exports = { run, parseStream, parseQuota, loadPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles };
+module.exports = { run, parseStream, parseQuota, loadPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };

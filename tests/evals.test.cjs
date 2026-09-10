@@ -120,6 +120,22 @@ test('the fixture is staged outside the repository so the repository CLAUDE.md d
   assert.ok(fs.existsSync(path.join(staged.cwd, 'src', 'app', 'settings', 'page.tsx')));
   assert.ok(!fs.existsSync(path.join(staged.cwd, 'CLAUDE.md')));
   assert.ok(!staged.ancestors.some((f) => path.resolve(f) === path.resolve(repo, 'CLAUDE.md')));
+  // Ancestor detection covers the project-memory locations Claude Code reads on the way up: CLAUDE.md, .claude/CLAUDE.md, .claude/rules/.
+  const tree = fs.mkdtempSync(path.join(os.tmpdir(), 'bk-anc-'));
+  fs.mkdirSync(path.join(tree, '.claude', 'rules'), { recursive: true });
+  fs.writeFileSync(path.join(tree, '.claude', 'CLAUDE.md'), 'daily profile');
+  fs.writeFileSync(path.join(tree, '.claude', 'rules', 'x.md'), 'rule');
+  fs.mkdirSync(path.join(tree, 'a', 'b'), { recursive: true });
+  const above = ancestorMemoryFiles(path.join(tree, 'a', 'b')).map((f) => path.resolve(f));
+  assert.ok(above.includes(path.resolve(tree, '.claude', 'CLAUDE.md')), 'finds .claude/CLAUDE.md in an ancestor');
+  assert.ok(above.some((f) => f === path.resolve(tree, '.claude', 'rules')), 'finds .claude/rules in an ancestor');
+  // The staging base skips candidates whose ancestors carry memory files.
+  const { chooseStageBase } = require('../scripts/evals.cjs');
+  const foreign = fs.mkdtempSync(path.join(os.tmpdir(), 'bk-foreign-'));
+  fs.writeFileSync(path.join(foreign, 'CLAUDE.md'), 'foreign');
+  assert.equal(chooseStageBase(repo, [path.join(tree, 'a', 'evals'), path.join(foreign, 'evals')]), null, 'both candidates sit under memory files');
+  const clean = ancestorMemoryFiles(os.tmpdir()).length === 0 ? fs.mkdtempSync(path.join(os.tmpdir(), 'bk-clean-')) : null;
+  if (clean) assert.equal(chooseStageBase(repo, [path.join(foreign, 'evals'), path.join(clean, 'evals')]), path.join(clean, 'evals'), 'the first clean candidate wins');
   if (staged.vcs) assert.ok(fs.existsSync(path.join(staged.cwd, ['.', 'git'].join(''))), 'throwaway history present');
   const again = stageFixture(repo, base);
   assert.equal(again.cwd, staged.cwd, 'staging is idempotent');
