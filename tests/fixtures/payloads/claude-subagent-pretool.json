@@ -1,0 +1,9 @@
+{
+  "session_id": "s1",
+  "cwd": "C:/x",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Bash",
+  "tool_input": { "command": "git push" },
+  "agent_id": "a9",
+  "agent_type": "Explore"
+}

@@ -1,0 +1,6 @@
+{
+  "conversationId": "c1",
+  "workspaceRoot": "C:/x",
+  "event": "PreToolUse",
+  "toolCall": { "name": "run_command", "args": { "command": "git push" } }
+}
