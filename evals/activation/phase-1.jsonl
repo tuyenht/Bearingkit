@@ -1,0 +1,60 @@
+{"id":"q-en-01","intent":"question","lang":"en","prompt":"What does the retry decorator in src/http/retry.ts do?","expect":"none"}
+{"id":"q-en-02","intent":"question","lang":"en","prompt":"Where is the tenant id resolved in the request pipeline?","expect":"none"}
+{"id":"q-en-03","intent":"question","lang":"en","prompt":"Explain how the invoice numbering sequence works in this codebase.","expect":"none"}
+{"id":"q-en-04","intent":"question","lang":"en","prompt":"Why does the build use two tsconfig files?","expect":"none"}
+{"id":"q-vi-01","intent":"question","lang":"vi","prompt":"Middleware tenant hiện đang lấy tenant id từ đâu?","expect":"none"}
+{"id":"q-vi-02","intent":"question","lang":"vi","prompt":"Giải thích cách hàng đợi job xử lý retry trong dự án này.","expect":"none"}
+{"id":"q-vi-03","intent":"question","lang":"vi","prompt":"File cấu hình auth nằm ở đâu và làm gì?","expect":"none"}
+{"id":"q-vi-04","intent":"question","lang":"vi","prompt":"Tại sao repo có cả pnpm-lock lẫn package-lock?","expect":"none"}
+{"id":"q-neg-01","intent":"question","lang":"en","prompt":"Can you add a retry to the upload endpoint?","expect":"bk-spec"}
+{"id":"q-neg-02","intent":"question","lang":"vi","prompt":"Bạn kiểm tra giúp diff này trước khi tôi push được không?","expect":"bk-review"}
+{"id":"sm-en-01","intent":"small","lang":"en","prompt":"Rename the Save button label to \"Save changes\" on the settings page.","expect":"bk-build"}
+{"id":"sm-en-02","intent":"small","lang":"en","prompt":"Bump the default page size from 20 to 50 in the list endpoint.","expect":"bk-build"}
+{"id":"sm-en-03","intent":"small","lang":"en","prompt":"Add a null check before reading user.profile.avatar in the header component.","expect":"bk-build"}
+{"id":"sm-en-04","intent":"small","lang":"en","prompt":"Change the log level of the cache warmup message to debug.","expect":"bk-build"}
+{"id":"sm-vi-01","intent":"small","lang":"vi","prompt":"Đổi nhãn nút Lưu thành Lưu thay đổi trong trang settings.","expect":"bk-build"}
+{"id":"sm-vi-02","intent":"small","lang":"vi","prompt":"Sửa lỗi chính tả trong thông báo đăng ký thành công.","expect":"bk-build"}
+{"id":"sm-vi-03","intent":"small","lang":"vi","prompt":"Thêm kiểm tra null trước khi đọc avatar ở header.","expect":"bk-build"}
+{"id":"sm-vi-04","intent":"small","lang":"vi","prompt":"Tăng timeout của request tải ảnh lên 10 giây.","expect":"bk-build"}
+{"id":"sm-neg-01","intent":"small","lang":"en","prompt":"Add a new export format to the reports page.","expect":"bk-spec"}
+{"id":"sm-neg-02","intent":"small","lang":"vi","prompt":"Cái nút Lưu bị mất trên trang settings, sửa giúp.","expect":"bk-debug"}
+{"id":"feat-en-01","intent":"feature","lang":"en","prompt":"Add CSV export to the invoices page.","expect":"bk-spec"}
+{"id":"feat-en-02","intent":"feature","lang":"en","prompt":"Implement two-factor login with TOTP.","expect":"bk-spec"}
+{"id":"feat-en-03","intent":"feature","lang":"en","prompt":"We need a notification center with read and unread state.","expect":"bk-spec"}
+{"id":"feat-en-04","intent":"feature","lang":"en","prompt":"Build an admin screen to manage coupons.","expect":"bk-spec"}
+{"id":"feat-vi-01","intent":"feature","lang":"vi","prompt":"Thêm xuất CSV cho trang hóa đơn.","expect":"bk-spec"}
+{"id":"feat-vi-02","intent":"feature","lang":"vi","prompt":"Làm tính năng đăng nhập hai lớp bằng TOTP.","expect":"bk-spec"}
+{"id":"feat-vi-03","intent":"feature","lang":"vi","prompt":"Cần một trung tâm thông báo có trạng thái đã đọc và chưa đọc.","expect":"bk-spec"}
+{"id":"feat-vi-04","intent":"feature","lang":"vi","prompt":"Triển khai màn hình quản lý mã giảm giá cho admin.","expect":"bk-spec"}
+{"id":"feat-neg-01","intent":"feature","lang":"en","prompt":"Explain what the notification center does today.","expect":"none"}
+{"id":"feat-neg-02","intent":"feature","lang":"vi","prompt":"Chạy test cho module hóa đơn.","expect":"bk-test"}
+{"id":"bug-en-01","intent":"bug","lang":"en","prompt":"The login form shows a 500 after a password reset.","expect":"bk-debug"}
+{"id":"bug-en-02","intent":"bug","lang":"en","prompt":"The nightly report job fails with a timeout since yesterday.","expect":"bk-debug"}
+{"id":"bug-en-03","intent":"bug","lang":"en","prompt":"Uploads over 5 MB silently disappear.","expect":"bk-debug"}
+{"id":"bug-en-04","intent":"bug","lang":"en","prompt":"Tests pass locally but fail in CI with a database error.","expect":"bk-debug"}
+{"id":"bug-vi-01","intent":"bug","lang":"vi","prompt":"Form đăng nhập báo lỗi 500 sau khi đổi mật khẩu.","expect":"bk-debug"}
+{"id":"bug-vi-02","intent":"bug","lang":"vi","prompt":"Job báo cáo đêm bị timeout từ hôm qua.","expect":"bk-debug"}
+{"id":"bug-vi-03","intent":"bug","lang":"vi","prompt":"Upload trên 5 MB bị mất mà không báo lỗi gì.","expect":"bk-debug"}
+{"id":"bug-vi-04","intent":"bug","lang":"vi","prompt":"Test chạy local thì qua mà lên CI thì lỗi database.","expect":"bk-debug"}
+{"id":"bug-neg-01","intent":"bug","lang":"en","prompt":"Review the fix I just made for the login 500.","expect":"bk-review"}
+{"id":"bug-neg-02","intent":"bug","lang":"vi","prompt":"Viết test cho trường hợp upload file lớn.","expect":"bk-test"}
+{"id":"rev-en-01","intent":"review","lang":"en","prompt":"Review this diff before I push.","expect":"bk-review"}
+{"id":"rev-en-02","intent":"review","lang":"en","prompt":"Look over the PR for the invoice export and tell me what is risky.","expect":"bk-review"}
+{"id":"rev-en-03","intent":"review","lang":"en","prompt":"Check the auth middleware change for security problems.","expect":"bk-review"}
+{"id":"rev-en-04","intent":"review","lang":"en","prompt":"Is this branch safe to merge?","expect":"bk-review"}
+{"id":"rev-vi-01","intent":"review","lang":"vi","prompt":"Soi giúp diff này trước khi tôi đẩy.","expect":"bk-review"}
+{"id":"rev-vi-02","intent":"review","lang":"vi","prompt":"Rà code của PR xuất hóa đơn xem có gì rủi ro.","expect":"bk-review"}
+{"id":"rev-vi-03","intent":"review","lang":"vi","prompt":"Kiểm tra thay đổi middleware auth về mặt bảo mật.","expect":"bk-review"}
+{"id":"rev-vi-04","intent":"review","lang":"vi","prompt":"Nhánh này merge được chưa?","expect":"bk-review"}
+{"id":"rev-neg-01","intent":"review","lang":"en","prompt":"Explain how the review process works in this repo.","expect":"none"}
+{"id":"rev-neg-02","intent":"review","lang":"vi","prompt":"Commit và tạo PR cho nhánh này.","expect":"bk-ship"}
+{"id":"ship-en-01","intent":"ship","lang":"en","prompt":"Commit this and open a PR.","expect":"bk-ship"}
+{"id":"ship-en-02","intent":"ship","lang":"en","prompt":"Run the checks and push.","expect":"bk-ship"}
+{"id":"ship-en-03","intent":"ship","lang":"en","prompt":"Ship the invoice export.","expect":"bk-ship"}
+{"id":"ship-en-04","intent":"ship","lang":"en","prompt":"Prepare the PR description for what we did.","expect":"bk-ship"}
+{"id":"ship-vi-01","intent":"ship","lang":"vi","prompt":"Commit và tạo PR cho phần vừa làm.","expect":"bk-ship"}
+{"id":"ship-vi-02","intent":"ship","lang":"vi","prompt":"Chạy kiểm tra rồi đẩy code lên.","expect":"bk-ship"}
+{"id":"ship-vi-03","intent":"ship","lang":"vi","prompt":"Giao hàng tính năng xuất hóa đơn.","expect":"bk-ship"}
+{"id":"ship-vi-04","intent":"ship","lang":"vi","prompt":"Soạn mô tả PR cho những gì vừa làm.","expect":"bk-ship"}
+{"id":"ship-neg-01","intent":"ship","lang":"en","prompt":"Explain how bk-ship works.","expect":"none"}
+{"id":"ship-neg-02","intent":"ship","lang":"vi","prompt":"Deploy bản này lên staging.","expect":"bk-spec"}

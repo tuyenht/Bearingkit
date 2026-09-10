@@ -1,0 +1,128 @@
+#!/usr/bin/env node
+'use strict';
+// Activation evals. Claude Code: runs each prompt through `claude -p` and records the first skill invoked.
+// Antigravity: prints a checklist to fill in by hand. Results go to evals/results/<date>-<host>.md.
+
+const fs = require('node:fs');
+const path = require('node:path');
+const { spawnSync } = require('node:child_process');
+
+const ROOT = path.resolve(__dirname, '..');
+
+function parseArgs(argv) {
+  const out = { _: [] };
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a.startsWith('--')) {
+      const next = argv[i + 1];
+      if (next !== undefined && !next.startsWith('--')) { out[a.slice(2)] = next; i++; } else { out[a.slice(2)] = true; }
+    } else out._.push(a);
+  }
+  return out;
+}
+
+function loadPrompts(file) {
+  const lines = fs.readFileSync(file, 'utf8').split('\n').filter((l) => l.trim());
+  const prompts = lines.map((l, i) => { try { return JSON.parse(l); } catch (e) { throw new Error(`line ${i + 1} is not JSON`); } });
+  const ids = new Set();
+  for (const p of prompts) {
+    for (const k of ['id', 'intent', 'lang', 'prompt', 'expect']) if (!p[k]) throw new Error(`prompt ${p.id || '?'} lacks ${k}`);
+    if (ids.has(p.id)) throw new Error(`duplicate id ${p.id}`);
+    ids.add(p.id);
+  }
+  return prompts;
+}
+
+// First Skill invocation in a claude -p stream-json transcript, else 'none'.
+function parseStream(text) {
+  for (const line of String(text).split('\n')) {
+    let o;
+    try { o = JSON.parse(line); } catch { continue; }
+    const items = [];
+    if (o && o.type === 'assistant' && o.message && Array.isArray(o.message.content)) items.push(...o.message.content);
+    if (o && o.type === 'tool_use') items.push(o);
+    for (const it of items) {
+      if (it && it.type === 'tool_use' && it.name === 'Skill') {
+        const inp = it.input || {};
+        const name = inp.skill || inp.name || inp.command || '';
+        return String(name).replace(/^\//, '').split(':').pop() || 'none';
+      }
+    }
+  }
+  return 'none';
+}
+
+function runClaudePrompt(prompt, opts) {
+  const args = ['-p', '--output-format', 'stream-json', '--verbose', '--max-turns', '2', '--model', opts.model];
+  const env = { ...process.env };
+  delete env.CLAUDECODE;
+  if (opts.configDir) env.CLAUDE_CONFIG_DIR = opts.configDir;
+  const r = spawnSync('claude', args, { input: prompt, encoding: 'utf8', env, cwd: opts.cwd, shell: process.platform === 'win32', timeout: 180000, maxBuffer: 20 * 1024 * 1024 });
+  return { got: parseStream(r.stdout || ''), raw: r.stdout || '', stderr: r.stderr || '', status: r.status };
+}
+
+function summarize(results) {
+  const byIntent = {};
+  let falseActivations = 0;
+  for (const r of results) {
+    const b = (byIntent[r.intent] = byIntent[r.intent] || { total: 0, pass: 0, positives: 0, positivesPass: 0 });
+    const pass = r.got === r.expect;
+    b.total++; if (pass) b.pass++;
+    if (r.expect !== 'none' && !r.id.includes('-neg-')) { b.positives++; if (pass) b.positivesPass++; }
+    if (r.expect === 'none' && r.got !== 'none') falseActivations++;
+  }
+  const total = results.length;
+  const pass = results.filter((r) => r.got === r.expect).length;
+  return { byIntent, total, pass, falseActivations };
+}
+
+function table(results, summary, host, meta) {
+  const lines = [`# Activation evals · ${host} · ${new Date().toISOString().slice(0, 10)}`, '', meta, '', '| id | intent | expect | got | pass |', '|---|---|---|---|---|'];
+  for (const r of results) lines.push(`| ${r.id} | ${r.intent} | ${r.expect} | ${r.got} | ${r.got === r.expect ? 'yes' : 'NO'} |`);
+  lines.push('', '| intent | positives routed | all prompts |', '|---|---|---|');
+  for (const [k, v] of Object.entries(summary.byIntent)) lines.push(`| ${k} | ${v.positivesPass}/${v.positives} | ${v.pass}/${v.total} |`);
+  lines.push('', `Overall: ${summary.pass}/${summary.total} · false activations on "none" prompts: ${summary.falseActivations}`);
+  return lines.join('\n') + '\n';
+}
+
+function checklist(prompts) {
+  const lines = ['# Activation checklist · antigravity', '', 'Run each prompt in a fresh conversation; write the skill that activated (or none) in the last column.', '', '| id | intent | prompt | expect | got |', '|---|---|---|---|---|'];
+  for (const p of prompts) lines.push(`| ${p.id} | ${p.intent} | ${p.prompt.replace(/\|/g, '\\|')} | ${p.expect} |  |`);
+  return lines.join('\n') + '\n';
+}
+
+async function run(argv) {
+  const args = parseArgs(argv);
+  const host = args.host || 'claude';
+  const file = path.resolve(args.file || path.join(ROOT, 'evals', 'activation', 'phase-1.jsonl'));
+  let prompts = loadPrompts(file);
+  if (args.intent) prompts = prompts.filter((p) => p.intent === args.intent);
+  if (args.limit) prompts = prompts.slice(0, Number(args.limit));
+  const outDir = path.resolve(args.out || path.join(ROOT, 'evals', 'results'));
+  fs.mkdirSync(outDir, { recursive: true });
+  const date = new Date().toISOString().slice(0, 10);
+
+  if (host === 'antigravity') {
+    const text = checklist(prompts);
+    const out = path.join(outDir, `${date}-antigravity-checklist.md`);
+    fs.writeFileSync(out, text);
+    process.stdout.write(text + `\nwritten: ${out}\n`);
+    return;
+  }
+
+  const opts = { model: args.model || 'sonnet', configDir: args['config-dir'] ? path.resolve(args['config-dir']) : null, cwd: args.cwd ? path.resolve(args.cwd) : process.cwd() };
+  const results = [];
+  for (const p of prompts) {
+    const r = runClaudePrompt(p.prompt, opts);
+    results.push({ ...p, got: r.got });
+    process.stdout.write(`${p.id.padEnd(12)} expect=${p.expect.padEnd(10)} got=${r.got.padEnd(10)} ${r.got === p.expect ? 'ok' : 'MISS'}\n`);
+    if (args.raw) fs.writeFileSync(path.join(outDir, `${date}-${p.id}.raw.jsonl`), r.raw);
+  }
+  const summary = summarize(results);
+  const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · cwd: ${opts.cwd} · prompts: ${results.length}`;
+  const out = path.join(outDir, `${date}-claude${args.intent ? '-' + args.intent : ''}.md`);
+  fs.writeFileSync(out, table(results, summary, 'claude', meta));
+  process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}. Written: ${out}\n`);
+}
+
+module.exports = { run, parseStream, loadPrompts, summarize, table, checklist };
