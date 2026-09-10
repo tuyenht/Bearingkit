@@ -1,6 +1,15 @@
 {
   "conversationId": "c1",
-  "workspaceRoot": "C:/x",
+  "workspacePaths": [
+    "C:/x"
+  ],
+  "modelName": "auto",
   "event": "PreToolUse",
-  "toolCall": { "name": "run_command", "args": { "command": "git push" } }
+  "stepIdx": 3,
+  "toolCall": {
+    "name": "run_command",
+    "args": {
+      "CommandLine": "git push"
+    }
+  }
 }

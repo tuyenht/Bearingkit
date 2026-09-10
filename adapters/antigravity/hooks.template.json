@@ -1,5 +1,11 @@
 {
-  "PreInvocation": [
-    { "command": "node \"<KIT>/core/hooks/stack-profile.cjs\"" }
-  ]
+  "bearingkit": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "node \"<KIT>/core/hooks/stack-profile.cjs\"",
+        "timeout": 10
+      }
+    ]
+  }
 }

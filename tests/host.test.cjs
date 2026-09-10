@@ -41,7 +41,7 @@ test('antigravity pre-tool', () => {
   const e = parse(fx('antigravity-pretool'));
   assert.equal(e.event, 'pre-tool');
   assert.equal(e.tool.name, 'run_command');
-  assert.equal(e.tool.args.command, 'git push');
+  assert.equal(e.tool.args.CommandLine, 'git push');
 });
 
 test('missing session id falls back to a stable id per cwd and day', () => {

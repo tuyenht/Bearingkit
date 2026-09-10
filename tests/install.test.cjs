@@ -11,10 +11,16 @@ const tmp = (p) => fs.mkdtempSync(path.join(os.tmpdir(), `bk-${p}-`));
 const fwd = (p) => path.resolve(p).replace(/\\/g, '/');
 const quiet = async (fn) => { const w = process.stdout.write; let out = ''; process.stdout.write = (s) => { out += s; return true; }; try { return [await fn(), out]; } finally { process.stdout.write = w; } };
 
-function dirs() {
-  return { claude: tmp('claude'), gemini: tmp('gemini'), backups: tmp('backups') };
+function tmpKit() {
+  const kit = tmp('kit');
+  const skip = (src) => /[\\/]adapters[\\/]antigravity[\\/](skills|hooks\.json|mcp_config\.json|rules)([\\/]|$)/.test(src) || /[\\/]adapters[\\/]claude[\\/](skills|agents)([\\/]|$)/.test(src);
+  for (const dir of ['core', 'adapters']) fs.cpSync(path.join(REPO, dir), path.join(kit, dir), { recursive: true, filter: (src) => !skip(src) });
+  return kit;
 }
-const argsFor = (d, extra = []) => ['--dev', REPO, '--config-dir', d.claude, '--antigravity-dir', d.gemini, '--backups-dir', d.backups, ...extra];
+function dirs() {
+  return { kit: tmpKit(), claude: tmp('claude'), gemini: tmp('gemini'), backups: tmp('backups') };
+}
+const argsFor = (d, extra = []) => ['--dev', d.kit, '--config-dir', d.claude, '--antigravity-dir', d.gemini, '--backups-dir', d.backups, ...extra];
 
 test('dry run writes nothing and reports the links, hooks and import line', async () => {
   const d = dirs();
@@ -53,7 +59,7 @@ test('install links skills and rules, merges settings and the import line idempo
   assert.equal(settings.permissions.deny.filter((r) => r === 'Read(**/.env)').length, 1);
 
   const md = fs.readFileSync(path.join(d.claude, 'CLAUDE.md'), 'utf8');
-  assert.equal(md.split('\n').filter((l) => l === `@${fwd(REPO)}/core/AGENTS.md`).length, 1);
+  assert.equal(md.split('\n').filter((l) => l === `@${fwd(d.kit)}/core/AGENTS.md`).length, 1);
   assert.match(md, /^# mine/);
 
   const backups = fs.readdirSync(d.backups);
@@ -61,11 +67,16 @@ test('install links skills and rules, merges settings and the import line idempo
   const manifest = JSON.parse(fs.readFileSync(path.join(d.backups, backups[0], 'manifest.json'), 'utf8'));
   assert.ok(manifest.files.some((f) => f.from.endsWith('settings.json')));
 
-  const plugins = JSON.parse(fs.readFileSync(path.join(d.gemini, 'plugins.json'), 'utf8'));
-  assert.equal(plugins.entries.filter((e) => e.bearingkit).length, 1);
-  assert.ok(fs.existsSync(path.join(REPO, 'adapters', 'antigravity', 'rules', 'AGENTS.md')));
-  assert.ok(fs.readFileSync(path.join(REPO, 'adapters', 'antigravity', 'hooks.json'), 'utf8').includes(fwd(REPO)));
-  assert.ok(fs.lstatSync(path.join(REPO, 'adapters', 'antigravity', 'skills')).isSymbolicLink());
+  const plugin = path.join(d.gemini, 'plugins', 'bearingkit');
+  assert.ok(fs.lstatSync(plugin).isSymbolicLink(), 'the plugin is one junction under the global plugins root');
+  assert.ok(fs.existsSync(path.join(plugin, 'plugin.json')));
+  assert.ok(fs.existsSync(path.join(plugin, 'skills', 'bk-spec', 'SKILL.md')), 'skills reachable through the junction chain');
+  const hooks = JSON.parse(fs.readFileSync(path.join(plugin, 'hooks.json'), 'utf8'));
+  assert.ok(Array.isArray(hooks.bearingkit.PreInvocation), 'hooks.json uses the named-hook wrapper');
+  assert.ok(!fs.existsSync(path.join(d.gemini, 'plugins.json')), 'no registry file is written');
+  assert.ok(fs.existsSync(path.join(d.kit, 'adapters', 'antigravity', 'rules', 'AGENTS.md')));
+  assert.ok(fs.readFileSync(path.join(d.kit, 'adapters', 'antigravity', 'hooks.json'), 'utf8').includes(fwd(d.kit)));
+  assert.ok(fs.lstatSync(path.join(d.kit, 'adapters', 'antigravity', 'skills')).isSymbolicLink());
 
   await quiet(() => uninstall(argsFor(d)));
   assert.ok(!fs.existsSync(link));
@@ -75,10 +86,10 @@ test('install links skills and rules, merges settings and the import line idempo
   assert.equal(after.hooks.UserPromptSubmit, undefined);
   assert.deepEqual(after.permissions.deny, ['Read(secrets/**)']);
   assert.equal(fs.readFileSync(path.join(d.claude, 'CLAUDE.md'), 'utf8'), '# mine\n');
-  assert.equal(JSON.parse(fs.readFileSync(path.join(d.gemini, 'plugins.json'), 'utf8')).entries.length, 0);
-  assert.ok(!fs.existsSync(path.join(REPO, 'adapters', 'antigravity', 'skills')));
-  assert.ok(!fs.existsSync(path.join(REPO, 'adapters', 'antigravity', 'hooks.json')));
-  assert.ok(fs.existsSync(path.join(REPO, 'core', 'skills', 'bk-spec', 'SKILL.md')), 'kit source untouched');
+  assert.ok(!fs.existsSync(path.join(d.gemini, 'plugins', 'bearingkit')), 'uninstall removes the plugin junction');
+  assert.ok(!fs.existsSync(path.join(d.kit, 'adapters', 'antigravity', 'skills')));
+  assert.ok(!fs.existsSync(path.join(d.kit, 'adapters', 'antigravity', 'hooks.json')));
+  assert.ok(fs.existsSync(path.join(d.kit, 'core', 'skills', 'bk-spec', 'SKILL.md')), 'kit source untouched');
 });
 
 test('an existing directory not created by the kit is left alone and reported', async () => {
@@ -95,18 +106,18 @@ test('an existing directory not created by the kit is left alone and reported', 
 
 test('an isolated profile skips antigravity unless its directory is given', async () => {
   const d = dirs();
-  const [report] = await quiet(() => install(['--dev', REPO, '--config-dir', d.claude, '--backups-dir', d.backups, '--dry-run']));
+  const [report] = await quiet(() => install(['--dev', d.kit, '--config-dir', d.claude, '--backups-dir', d.backups, '--dry-run']));
   assert.match(report.join('\n'), /antigravity skipped/);
 });
 
 test('backups cover only the hosts the run touches', async () => {
   const d = dirs();
   fs.writeFileSync(path.join(d.claude, 'settings.json'), '{}');
-  fs.writeFileSync(path.join(d.gemini, 'plugins.json'), '{"entries":[]}');
   const [report] = await quiet(() => install(argsFor(d, ['--antigravity-only', '--dry-run'])));
   const text = report.join('\n');
   assert.doesNotMatch(text, /backup .*claude-settings/, 'an antigravity-only run must not read the Claude profile');
-  assert.match(text, /backup .*antigravity-plugins/);
+  assert.match(text, /nothing to back up/, 'the Antigravity side modifies no existing file');
+  assert.match(text, /\+ link .*plugins\/bearingkit/);
   const [report2] = await quiet(() => install(argsFor(d, ['--claude-only', '--dry-run'])));
-  assert.doesNotMatch(report2.join('\n'), /backup .*antigravity-plugins/);
+  assert.doesNotMatch(report2.join('\n'), /plugins\/bearingkit/);
 });

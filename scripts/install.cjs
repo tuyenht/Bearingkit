@@ -98,7 +98,6 @@ class Installer {
     const candidates = [
       this.o.doClaude && [path.join(this.o.claudeDir, 'settings.json'), 'claude-settings.json'],
       this.o.doClaude && [path.join(this.o.claudeDir, 'CLAUDE.md'), 'claude-CLAUDE.md'],
-      this.o.doAntigravity && [path.join(this.o.geminiDir, 'plugins.json'), 'antigravity-plugins.json'],
     ].filter((c) => c && fs.existsSync(c[0]));
     if (!candidates.length) { this.log('= nothing to back up'); return null; }
     const dir = path.join(this.o.backupsDir, new Date().toISOString().replace(/[:.]/g, '-'));
@@ -207,27 +206,17 @@ class Installer {
       this.writeFile(path.join(ad, 'mcp_config.json'), JSON.stringify(cfg, null, 2) + '\n');
     }
     this.link(path.join(this.o.kitRoot, 'core', 'skills'), path.join(ad, 'skills'));
-    const file = path.join(this.o.geminiDir, 'plugins.json');
-    const plugins = readJson(file, { entries: [] });
-    plugins.entries = Array.isArray(plugins.entries) ? plugins.entries : [];
-    const entryPath = fwd(ad);
-    if (plugins.entries.some((e) => e && fwd(String(e.path || '')) === entryPath)) { this.log('= plugin entry already present in plugins.json'); return; }
-    plugins.entries.push({ path: entryPath, enabled: true, bearingkit: true });
-    this.log(`+ plugin entry ${entryPath} in ${fwd(file)}`);
-    this.writeFile(file, JSON.stringify(plugins, null, 2) + '\n');
+    // Antigravity discovers plugins as subdirectories of <config>/plugins/ and enables them by default; the state
+    // lives in config.json only when the user toggles it. One junction is the whole registration.
+    this.link(ad, path.join(this.o.geminiDir, 'plugins', 'bearingkit'));
   }
   antigravityUninstall() {
     const ad = path.join(this.o.kitRoot, 'adapters', 'antigravity');
+    this.unlink(path.join(this.o.geminiDir, 'plugins', 'bearingkit'));
     this.unlink(path.join(ad, 'skills'));
     for (const f of ['rules/AGENTS.md', 'hooks.json', 'mcp_config.json']) {
       const p = path.join(ad, f);
       if (fs.existsSync(p)) { this.log(`- remove ${fwd(p)}`); if (!this.o.dryRun) fs.rmSync(p); }
-    }
-    const file = path.join(this.o.geminiDir, 'plugins.json');
-    const plugins = readJson(file, null);
-    if (plugins && Array.isArray(plugins.entries)) {
-      const kept = plugins.entries.filter((e) => !(e && e.bearingkit === true));
-      if (kept.length !== plugins.entries.length) { plugins.entries = kept; this.log('- plugin entry from plugins.json'); this.writeFile(file, JSON.stringify(plugins, null, 2) + '\n'); }
     }
   }
 }

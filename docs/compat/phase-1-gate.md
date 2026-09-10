@@ -93,3 +93,30 @@ _pending: run 2 with the per-prompt reset, next quota window_
 **Reruns after the two kit changes** (tags `confirm2`, `confirm3`, `confirm3b`): feature **10/10**, small **10/10** (regression check for the narrowed `bk-build`), bug **10/10**, and the two terse symptom prompts (bug-en-03, bug-vi-03) once more **2/2**; q-neg-01 passes under the widened label. Quota moved from 44% to 51% for these thirty-four sessions.
 
 **Final activation status on Claude Code:** one clean sixty-prompt run at 57/60 with every miss diagnosed; after two kit changes found by that run, the affected intents at 10/10 on rerun; false activations on pure questions 0 in every run. Recall on the clean run before the fixes: 46/48 positives; the spec's ≥0.9 precision and recall (§17) are met by the clean run alone, and the per-intent 10/10 (§15) by the reruns. The 1.9k memory reading predates the 184-character host-notes sentence; the next `/context` will include it.
+
+# Phase 1 gate · Antigravity
+
+Host: Antigravity 2.0 on the same workstation, global config `~/.gemini/config` as the owner uses it daily (three bundled plugins, one owner rule); the kit installed on 2026-09-10 evening with `install --dev C:\Projects\Bearingkit --antigravity-only` after the owner's approval.
+
+## Mechanism, corrected before installing
+
+The spec had the plugin registered through a `plugins.json` registry with `entries.path`. The global config had no such file, and the docs embedded in the language server (read the same evening) say a plugin is a subdirectory of `<config>/plugins/` with `plugin.json`, optional `skills/<name>/SKILL.md`, `rules/AGENTS.md`, `hooks.json` and `mcp_config.json`, discovered automatically and enabled by default; `config.json` holds only user toggles; `plugins.json` registers non-standard locations. The installer now creates one junction, `~/.gemini/config/plugins/bearingkit → <kit>/adapters/antigravity`, and writes nothing else outside the repository; `uninstall` removes that junction. Two more corrections from the same docs: `hooks.json` needs a named-hook wrapper (the template lacked it), and the payload's working directory is `workspacePaths[0]`, not `workspaceRoot`.
+
+## Install report
+
+`= nothing to back up` · generated `adapters/antigravity/rules/AGENTS.md` and `hooks.json` · junction `adapters/antigravity/skills → core/skills` · junction `~/.gemini/config/plugins/bearingkit → adapters/antigravity`. Verified on disk: the eleven skill folders are reachable through the junction chain; `hooks.json` carries the `bearingkit` named hook with one `PreInvocation` handler.
+
+## Compatibility tests
+
+| # | Question | Method | Answer | Verdict |
+|---|---|---|---|---|
+| 7 | Conversation id and working directory field names in hook payloads | documented common fields: `conversationId`, `workspacePaths[]`, `transcriptPath`, `artifactDirectoryPath`, `modelName`; `host.cjs` updated; a temporary logging hook (`_build/compat/log-payload.cjs`, keys and types only) captures a real payload to confirm | _pending the first Antigravity conversation with the probe in place_ | docs read; runtime confirmation pending |
+| 2 | Which key names the file pattern of a `trigger: glob` rule | temporary `rules/probe-glob.md` in the plugin carries both `glob:` and `globs:`; open a `.tsx` file and read the Skills & Customizations panel, then drop one key at a time | _pending_ | pending |
+| 4 | Can the installer write a deny for `.env` reads | `userSettings.globalPermissionGrants` holds `allow` entries such as `command(git)`; the proto has `deny` and `ask` too; the grammar for file access is not in the embedded docs | deny exists; file-access grammar unverified; the installer does not write `config.json` | manual step until verified |
+| 1, 3, 6 | Skills through junctions; hidden `bk-protocol`; rules through the plugin | the panel lists the plugin's skills; `bk-protocol` should be visible but inert (Antigravity has no hidden flag) | _pending_ | pending |
+
+## Activation by hand
+
+Checklist: `evals/results/2026-09-10-antigravity-checklist.md` (18 prompts: one English positive, one Vietnamese positive, one negative per intent). Fresh conversation per prompt; the last column takes the skill that activated, or none. Gate for the spread: 18/18; then the remaining 42.
+
+_pending_

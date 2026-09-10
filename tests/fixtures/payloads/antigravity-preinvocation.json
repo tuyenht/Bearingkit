@@ -1,5 +1,12 @@
 {
   "conversationId": "c1",
-  "workspaceRoot": "C:\\x",
+  "workspacePaths": [
+    "C:\\x"
+  ],
+  "transcriptPath": "C:\\x\\.gemini\\antigravity\\transcript.jsonl",
+  "artifactDirectoryPath": "C:\\x\\.gemini\\antigravity\\artifacts",
+  "modelName": "auto",
+  "invocationNum": 1,
+  "initialNumSteps": 0,
   "event": "PreInvocation"
 }

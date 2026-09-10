@@ -13,7 +13,7 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 - Session state store (`core/hooks/lib/state.cjs`), host payload adapters for Claude Code and Antigravity (`core/hooks/lib/host.cjs`), and the `stack-profile` hook that injects at most 120 tokens only when the session state changed, re-arms after compaction and no-ops inside subagents. The injected block closes with `[/bearingkit]` so a terse request after it is not read as context.
 - `scripts/record-guardrail.cjs`: the writer for guardrail runs and independent reviews that the push gate reads.
 - Activation eval set (60 prompts, six intents, two negatives per intent, English and Vietnamese) with a runner for Claude Code (`claude -p` stream parsing, `expect` alternatives `a|b`, an equivalence map for baseline runs against another setup, `--intent`/`--id`/`--per-intent` filters where `--per-intent` takes a spread per intent, quota read from the stream with a stop at 90% of the five-hour window) and a checklist for Antigravity. `evals/fixtures/sample-app` is staged in a directory whose ancestors carry no memory files (beside the repository by default; throwaway git history; `--stage-only` prints the path) and used as the working directory, so prompts have something to point at and neither the repository's own `CLAUDE.md` nor a daily profile under the home directory loads through the ancestor chain; the runner refuses to run otherwise. The staged copy is reset to its staging commit before every prompt, since sessions edit and even commit files.
-- Adapters: Claude hook registrations, model map, plugin manifest; Antigravity plugin manifest and hook template; `core/mcp.json` (context7); `core/rules/security-baseline.md`.
+- Adapters: Claude hook registrations, model map, plugin manifest; Antigravity plugin manifest and hook template (named-hook wrapper, one `PreInvocation` handler); `core/mcp.json` (context7); `core/rules/security-baseline.md`. On Antigravity the install is one junction under `~/.gemini/config/plugins/`; no registry file is written.
 - `bin/bearingkit.cjs install --dev <repo>` for both hosts with backups scoped to the hosts a run touches, idempotent settings merges, a secrets-only deny list, `--config-dir` for an isolated Claude profile, `--dry-run`, and `uninstall` that removes exactly what was added.
 
 ### Measured (Claude Code 2.1.266, isolated profile)
@@ -24,5 +24,5 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 
 ### Not yet
 - A clean baseline run 2 (run 1 recorded: 11/18 with the equivalence map, positives routed 6/12, 0 false activations; its sessions shared and edited the fixture), next quota window.
-- Antigravity: plugin entry, compatibility tests 2, 4, 7, activation by hand. Test 5 (hook predicate) waits for Phase 2.
+- Antigravity: installed as a plugin junction; compatibility tests 2 and 7 (runtime confirmation) and activation by hand pending; test 4 recorded as a manual step. Test 5 (hook predicate) waits for Phase 2.
 - Language rules, agents, the two enforcing hooks and `hot-path-flag` (Phase 2). `README`, `LICENSE`, `NOTICE`, `upstream/sources.json` (Phase 4).

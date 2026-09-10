@@ -47,7 +47,7 @@ function parse(payload) {
       prompt: typeof p.prompt === 'string' ? p.prompt : null,
     };
   }
-  const cwd = norm(p.workspaceRoot || p.cwd);
+  const cwd = norm((Array.isArray(p.workspacePaths) && p.workspacePaths[0]) || p.workspaceRoot || p.cwd);
   return {
     host: 'antigravity',
     event: ANTIGRAVITY_EVENTS[p.event] || ANTIGRAVITY_EVENTS[p.hookEventName] || 'unknown',
