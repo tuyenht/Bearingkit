@@ -14,7 +14,7 @@ const quiet = async (fn) => { const w = process.stdout.write; let out = ''; proc
 function tmpKit() {
   const kit = tmp('kit');
   const skip = (src) => /[\\/]adapters[\\/]antigravity[\\/](skills|hooks\.json|mcp_config\.json|rules)([\\/]|$)/.test(src) || /[\\/]adapters[\\/]claude[\\/](skills|agents)([\\/]|$)/.test(src);
-  for (const dir of ['core', 'adapters']) fs.cpSync(path.join(REPO, dir), path.join(kit, dir), { recursive: true, filter: (src) => !skip(src) });
+  for (const dir of ['core', 'adapters', 'scripts']) fs.cpSync(path.join(REPO, dir), path.join(kit, dir), { recursive: true, filter: (src) => !skip(src) });
   return kit;
 }
 function dirs() {
@@ -75,7 +75,11 @@ test('install links skills and rules, merges settings and the import line idempo
   assert.ok(Array.isArray(hooks.bearingkit.PreInvocation), 'hooks.json uses the named-hook wrapper');
   assert.ok(!fs.existsSync(path.join(d.gemini, 'plugins.json')), 'no registry file is written');
   assert.ok(fs.existsSync(path.join(d.kit, 'adapters', 'antigravity', 'rules', 'AGENTS.md')));
-  assert.ok(fs.readFileSync(path.join(d.kit, 'adapters', 'antigravity', 'hooks.json'), 'utf8').includes(fwd(d.kit)));
+  const hooksJson = fs.readFileSync(path.join(d.kit, 'adapters', 'antigravity', 'hooks.json'), 'utf8');
+  assert.match(hooksJson, /"command": "node hooks\/stack-profile\.cjs --event PreInvocation"/, 'relative, unquoted command');
+  assert.ok(!hooksJson.includes('"C:') && !hooksJson.includes(fwd(d.kit)), 'no absolute path inside the command');
+  const launcher = fs.readFileSync(path.join(d.kit, 'adapters', 'antigravity', 'hooks', 'stack-profile.cjs'), 'utf8');
+  assert.ok(launcher.includes(JSON.stringify(fwd(d.kit))), 'the launcher carries the kit path as a string');
   assert.ok(fs.lstatSync(path.join(d.kit, 'adapters', 'antigravity', 'skills')).isSymbolicLink());
 
   await quiet(() => uninstall(argsFor(d)));
@@ -89,6 +93,7 @@ test('install links skills and rules, merges settings and the import line idempo
   assert.ok(!fs.existsSync(path.join(d.gemini, 'plugins', 'bearingkit')), 'uninstall removes the plugin junction');
   assert.ok(!fs.existsSync(path.join(d.kit, 'adapters', 'antigravity', 'skills')));
   assert.ok(!fs.existsSync(path.join(d.kit, 'adapters', 'antigravity', 'hooks.json')));
+  assert.ok(!fs.existsSync(path.join(d.kit, 'adapters', 'antigravity', 'hooks', 'stack-profile.cjs')), 'launcher removed');
   assert.ok(fs.existsSync(path.join(d.kit, 'core', 'skills', 'bk-spec', 'SKILL.md')), 'kit source untouched');
 });
 
@@ -144,4 +149,18 @@ test('--antigravity-copy installs a real plugin directory with dereferenced skil
   assert.match(report.join('\n'), /skipped .*existing directory not created by bearingkit/);
   await quiet(() => uninstall(argsFor(d, ['--antigravity-only'])));
   assert.ok(fs.existsSync(path.join(dst, 'plugin.json')), 'foreign directory kept');
+});
+
+test('the Antigravity launcher runs the stack-profile hook from the plugin directory with a relative command', async () => {
+  const { spawnSync } = require('node:child_process');
+  const d = dirs();
+  await quiet(() => install(argsFor(d, ['--antigravity-only', '--antigravity-copy'])));
+  const plugin = path.join(d.gemini, 'plugins', 'bearingkit');
+  const stateDir = tmp('state');
+  const payload = JSON.stringify({ conversationId: 'launch-1', workspacePaths: [REPO], invocationNum: 1, modelName: 'auto' });
+  const r = spawnSync(process.execPath, ['hooks/stack-profile.cjs', '--event', 'PreInvocation'], { cwd: plugin, input: payload, encoding: 'utf8', env: { ...process.env, BEARINGKIT_STATE_DIR: stateDir } });
+  assert.equal(r.status, 0, r.stderr);
+  const out = JSON.parse(r.stdout);
+  assert.ok(out.injectSteps && out.injectSteps[0].ephemeralMessage.includes('[bearingkit]'), 'first invocation injects the block');
+  assert.ok(fs.readdirSync(stateDir).some((f) => f.startsWith('antigravity-')), 'state file written for the antigravity session');
 });
