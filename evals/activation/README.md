@@ -10,7 +10,7 @@ Format, one JSON object per line: `id`, `intent`, `lang`, `prompt`, `expect` (a 
 node bin/bearingkit.cjs evals --config-dir <isolated profile> [--model sonnet] [--intent bug] [--limit 5] [--cwd <sample project>]
 ```
 
-Each prompt runs in a fresh non-interactive session (`claude -p`, streamed JSON, at most two turns). The runner records the first skill the model invoked, or `none`, and writes `evals/results/<date>-claude.md` with a table and per-intent scores. Measure in an isolated profile that contains nothing but the kit; the host caps the skill listing and drops least-used descriptions on overflow, so a crowded profile measures the crowd, not the kit.
+Each prompt runs in a fresh non-interactive session (`claude -p`, streamed JSON, at most six turns, `--turns` to change) inside `evals/fixtures/sample-app` unless `--cwd` says otherwise, so prompts about the settings page or the invoices page have real files to find. The runner records the first skill the model invoked, or `none`, and writes `evals/results/<date>-claude.md` with a table and per-intent scores. `--tag <name>` suffixes the result file; `--equivalents <json>` makes a baseline run against another setup meaningful. Measure in an isolated profile that contains nothing but the kit; the host caps the skill listing and drops least-used descriptions on overflow, so a crowded profile measures the crowd, not the kit.
 
 Baseline: run the same file once against the current daily profile (no `--config-dir`) before the old kits are removed; that table is what later claims compare to.
 

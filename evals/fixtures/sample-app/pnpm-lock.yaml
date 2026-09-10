@@ -1,0 +1,17 @@
+lockfileVersion: '9.0'
+
+packages:
+  next@15.1.0:
+    resolution: {integrity: sha512-fixture}
+  react@19.0.0:
+    resolution: {integrity: sha512-fixture}
+  react-dom@19.0.0:
+    resolution: {integrity: sha512-fixture}
+  prisma@7.0.0:
+    resolution: {integrity: sha512-fixture}
+  '@prisma/client@7.0.0':
+    resolution: {integrity: sha512-fixture}
+  typescript@5.6.0:
+    resolution: {integrity: sha512-fixture}
+  vitest@2.0.0:
+    resolution: {integrity: sha512-fixture}

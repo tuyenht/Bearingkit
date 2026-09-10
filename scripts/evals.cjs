@@ -53,7 +53,7 @@ function parseStream(text) {
 }
 
 function runClaudePrompt(prompt, opts) {
-  const args = ['-p', '--output-format', 'stream-json', '--verbose', '--max-turns', '2', '--model', opts.model];
+  const args = ['-p', '--output-format', 'stream-json', '--verbose', '--max-turns', String(opts.turns || 6), '--model', opts.model];
   const env = { ...process.env };
   delete env.CLAUDECODE;
   if (opts.configDir) env.CLAUDE_CONFIG_DIR = opts.configDir;
@@ -123,7 +123,10 @@ async function run(argv) {
     return;
   }
 
-  const opts = { model: args.model || 'sonnet', configDir: args['config-dir'] ? path.resolve(args['config-dir']) : null, cwd: args.cwd ? path.resolve(args.cwd) : process.cwd() };
+  // Prompts talk about a settings page, invoices, a login form; the fixture app gives them something to point at.
+  const fixture = path.join(ROOT, 'evals', 'fixtures', 'sample-app');
+  const cwd = args.cwd ? path.resolve(args.cwd) : (fs.existsSync(fixture) ? fixture : process.cwd());
+  const opts = { model: args.model || 'sonnet', configDir: args['config-dir'] ? path.resolve(args['config-dir']) : null, cwd, turns: args.turns ? Number(args.turns) : 6 };
   const equivalents = args.equivalents ? JSON.parse(fs.readFileSync(path.resolve(args.equivalents), 'utf8')) : null;
   const results = [];
   for (const p of prompts) {
