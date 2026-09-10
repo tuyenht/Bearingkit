@@ -1,0 +1,26 @@
+{
+  "name": "bearingkit",
+  "version": "0.1.0",
+  "description": "Skills, agents, rules and hooks for AI coding agents; one source for Claude Code and Google Antigravity",
+  "license": "MIT",
+  "repository": "github:tuyenht/Bearingkit",
+  "bin": {
+    "bearingkit": "bin/bearingkit.cjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test tests/**/*.test.cjs"
+  },
+  "files": [
+    "bin",
+    "scripts",
+    "core",
+    "adapters",
+    "evals",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ]
+}
