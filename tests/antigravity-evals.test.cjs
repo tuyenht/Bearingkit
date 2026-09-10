@@ -30,6 +30,10 @@ test('driver decides only on the first invocation of a conversation that starts 
   assert.equal(driver.decide({ invocationNum: 1 }, 'Add CSV export', queue).action, 'skip');
   assert.equal(driver.decide({ invocationNum: 1 }, '<USER_REQUEST>\n  BK EVAL \n</USER_REQUEST>', queue, 'bk eval').action, 'inject');
   assert.equal(driver.decide({ invocationNum: 1 }, 'bk eval', { pending: [] }).action, 'empty');
+  // No user input in the transcript yet: injected only inside the marked fixture, never elsewhere.
+  assert.equal(driver.decide({ invocationNum: 1 }, null, queue, 'bk eval', true).action, 'inject');
+  assert.equal(driver.decide({ invocationNum: 1 }, null, queue, 'bk eval', false).action, 'skip');
+  assert.equal(driver.decide({ invocationNum: 1 }, 'some real request', queue, 'bk eval', true).action, 'skip', 'a real request in the fixture is not hijacked');
   assert.equal(driver.firstUserInput([line({ type: 'CHECKPOINT' }), line({ type: 'USER_INPUT', content: 'hello' })].join('\n')), 'hello');
 });
 

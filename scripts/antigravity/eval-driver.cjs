@@ -41,10 +41,13 @@ function resetFixture(workspace) {
 }
 
 // Pure decision: given the payload, the first user input and the queue, what to do.
-function decide(payload, userInput, queue, trigger) {
+function decide(payload, userInput, queue, trigger, workspaceIsFixture) {
   const p = payload || {};
   if (p.invocationNum !== undefined && p.invocationNum !== 1) return { action: 'skip', reason: 'not the first invocation' };
-  if (!isTrigger(userInput, trigger)) return { action: 'skip', reason: 'no trigger' };
+  // The transcript may not carry the user input yet when the hook runs; inside the kit's own marked fixture the
+  // trigger is then taken as given. Anywhere else, no input means no injection.
+  const triggered = isTrigger(userInput, trigger) || (userInput === null && workspaceIsFixture === true);
+  if (!triggered) return { action: 'skip', reason: 'no trigger' };
   const q = queue || {};
   const pending = Array.isArray(q.pending) ? q.pending : [];
   if (!pending.length) return { action: 'empty' };
@@ -63,7 +66,9 @@ function main() {
     try { queue = JSON.parse(fs.readFileSync(queueFile, 'utf8')); } catch { queue = null; }
     let transcript = '';
     try { transcript = fs.readFileSync(String(payload.transcriptPath || ''), 'utf8'); } catch { transcript = ''; }
-    const d = decide(payload, firstUserInput(transcript), queue, queue && queue.trigger);
+    const ws = Array.isArray(payload.workspacePaths) ? payload.workspacePaths[0] : null;
+    const isFixture = Boolean(ws && fs.existsSync(path.join(ws, FIXTURE_MARKER)));
+    const d = decide(payload, firstUserInput(transcript), queue, queue && queue.trigger, isFixture);
     if (d.action === 'skip' || !queue) { process.stdout.write('{}'); return; }
     if (d.action === 'empty') {
       process.stdout.write(JSON.stringify({ injectSteps: [{ ephemeralMessage: '[bearingkit-eval] The queue is empty. Reply with exactly: EVAL-QUEUE-EMPTY' }] }));
