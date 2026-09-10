@@ -107,12 +107,16 @@ function stageFixture(root, base) {
   const chosen = base || chooseStageBase(root);
   if (!chosen) throw new Error('no staging directory free of memory files above it; pass --stage-dir');
   const dst = path.join(chosen, 'sample-app');
-  fs.rmSync(dst, { recursive: true, force: true });
-  fs.cpSync(src, dst, { recursive: true });
+  // A previous copy may be held open (an interactive session's working directory on Windows cannot be deleted);
+  // then the files are refreshed in place instead of the directory being recreated.
+  let reused = false;
+  try { fs.rmSync(dst, { recursive: true, force: true }); } catch { reused = true; }
+  fs.cpSync(src, dst, { recursive: true, force: true });
   const git = (args) => spawnSync('git', ['-c', 'user.name=bearingkit', '-c', 'user.email=evals@bearingkit.invalid', ...args], { cwd: dst, encoding: 'utf8' });
   const init = git(['init', '-q']);
-  const vcs = init.status === 0 && git(['add', '-A']).status === 0 && git(['commit', '-q', '-m', 'fixture']).status === 0;
-  return { cwd: dst, vcs, ancestors: ancestorMemoryFiles(path.dirname(dst)) };
+  if (init.status === 0) { git(['add', '-A']); git(['commit', '-q', '-m', 'fixture']); }
+  const vcs = init.status === 0 && fs.existsSync(path.join(dst, '.git'));
+  return { cwd: dst, vcs, reused, ancestors: ancestorMemoryFiles(path.dirname(dst)) };
 }
 
 // --per-intent N takes a spread per intent rather than the first N lines: an English positive, a Vietnamese positive,
@@ -218,7 +222,7 @@ async function run(argv) {
   else {
     const staged = stageFixture(ROOT, args['stage-dir'] ? path.resolve(args['stage-dir']) : null);
     cwd = staged.cwd;
-    process.stdout.write('fixture staged at ' + cwd + (staged.vcs ? ' (git initialised)' : ' (git unavailable, no history)') + '\n');
+    process.stdout.write('fixture staged at ' + cwd + (staged.vcs ? ' (git initialised)' : ' (git unavailable, no history)') + (staged.reused ? ' (existing copy refreshed in place: it is held open elsewhere)' : '') + '\n');
   }
   // A measurement taken under foreign memory files is not a measurement; refuse rather than warn.
   const above = ancestorMemoryFiles(path.dirname(cwd));
