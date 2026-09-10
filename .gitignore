@@ -12,3 +12,6 @@ kit.config.json
 _build/
 _archive/
 evals/results/
+
+# project-level host config used only for compatibility probes
+.claude/
