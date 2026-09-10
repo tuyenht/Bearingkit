@@ -1,6 +1,6 @@
 ---
 name: bk-debug
-description: Root cause before any fix; four phases; council after three failed attempts. Use when: bug, error, fails, broken, không chạy, lỗi, bị sai. Not for: known-good code review, use bk-review.
+description: "Root cause before any fix; four phases; council after three failed attempts. Use when: bug, error, fails, broken, không chạy, lỗi, bị sai. Not for: known-good code review, use bk-review."
 ---
 
 # bk-debug

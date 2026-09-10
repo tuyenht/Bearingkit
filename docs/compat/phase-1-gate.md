@@ -104,7 +104,14 @@ The spec had the plugin registered through a `plugins.json` registry with `entri
 
 ## Install report
 
-`= nothing to back up` · generated `adapters/antigravity/rules/AGENTS.md` and `hooks.json` · junction `adapters/antigravity/skills → core/skills` · junction `~/.gemini/config/plugins/bearingkit → adapters/antigravity`. Verified on disk: the eleven skill folders are reachable through the junction chain; `hooks.json` carries the `bearingkit` named hook with one `PreInvocation` handler.
+`= nothing to back up` · generated `adapters/antigravity/rules/AGENTS.md` and `hooks.json` · junction `adapters/antigravity/skills → core/skills` · junction `~/.gemini/config/plugins/bearingkit → adapters/antigravity`. Verified on disk: the eleven skill folders are reachable through the junction chain; `hooks.json` carries the `bearingkit` named hook with one `PreInvocation` handler. Later the same evening the junction was replaced by a real directory (`install --antigravity-copy`, marker file `.bearingkit-copy`) to take the junction question out of the first reading; whether the scanner follows junctions is still to be tested separately.
+
+## Two products, two panels (2026-09-10 night)
+
+The owner's workstation runs both **Antigravity IDE** and **Antigravity 2.0** (the agent manager). Findings from their Customizations panels, with the same `~/.gemini/config/plugins/bearingkit` on disk:
+
+- IDE: the panel lists two built-in skills (from `~/.gemini/antigravity-ide/builtin/skills/`) and one rule `user_global` (`~/.gemini/GEMINI.md`, 368 tokens). It lists **no plugin skill at all**, not even those of Google's own `securecoder` plugin under `~/.gemini/antigravity-ide/plugins/` or of the bundled `modern-web-guidance-plugin`. The panel is therefore not a measurement of plugin loading on the IDE; the model's own listing in a chat is. The owner's rule file under `~/.gemini/config/rules/` (no frontmatter) did not appear either.
+- 2.0: the panel lists plugin skills with a **`Plugin: bearingkit`** tag, so the global `config/plugins/` root is read by 2.0. Rules read 2,241 tokens across two rules: `user_global` 368, hence the kit's `rules/AGENTS.md` (protocol plus baseline) about **1,873 tokens**, in line with the 1.9k memory reading on Claude Code. Only `bk-protocol` appeared among the skills: the other ten carry `: ` inside an unquoted `description`, which a strict YAML parser rejects; Claude Code's parser had tolerated it. Fixed the same night by quoting every such value; `tests/skills.test.cjs` now fails on a bare value with `: `, an unknown key, a name that differs from the folder, or a description over 300 characters. The kit's target host in spec §3 is 2.0; the IDE is recorded as a second surface to verify by chat.
 
 ## Compatibility tests
 

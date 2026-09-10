@@ -1,6 +1,6 @@
 ---
 name: bk-close
-description: End the session: handoff in two blocks verified against git, live bypasses listed, lessons prompt. Use when: close, wrap up, end session, kết phiên, bàn giao, tổng kết. Not for: mid-task summaries.
+description: "End the session: handoff in two blocks verified against git, live bypasses listed, lessons prompt. Use when: close, wrap up, end session, kết phiên, bàn giao, tổng kết. Not for: mid-task summaries."
 ---
 
 # bk-close

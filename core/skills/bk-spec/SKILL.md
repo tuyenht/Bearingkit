@@ -1,6 +1,6 @@
 ---
 name: bk-spec
-description: Pin down a request before building: restate, edge cases, assumptions, ACT or COUNCIL, requirements. Use when: new feature, a capability the app lacks (export, login, notifications), add, implement, làm tính năng, thêm chức năng, yêu cầu mới. Not for: bugs, use bk-debug.
+description: "Pin down a request before building: restate, edge cases, assumptions, ACT or COUNCIL, requirements. Use when: new feature, a capability the app lacks (export, login, notifications), add, implement, làm tính năng, thêm chức năng, yêu cầu mới. Not for: bugs, use bk-debug."
 ---
 
 # bk-spec

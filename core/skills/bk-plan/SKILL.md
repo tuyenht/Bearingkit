@@ -1,6 +1,6 @@
 ---
 name: bk-plan
-description: Write a phased plan with exit criteria and evidence per phase; resolve the active plan. Use when: plan this, break it down, lập kế hoạch, chia bước. Not for: small ACT changes, use bk-build.
+description: "Write a phased plan with exit criteria and evidence per phase; resolve the active plan. Use when: plan this, break it down, lập kế hoạch, chia bước. Not for: small ACT changes, use bk-build."
 ---
 
 # bk-plan

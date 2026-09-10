@@ -1,6 +1,6 @@
 ---
 name: bk-audit
-description: Council investigation with one verdict and rejected options; lenses chosen by context. Use when: audit, evaluate options, should we, rà soát, đánh giá phương án, có nên. Not for: reviewing a diff, use bk-review.
+description: "Council investigation with one verdict and rejected options; lenses chosen by context. Use when: audit, evaluate options, should we, rà soát, đánh giá phương án, có nên. Not for: reviewing a diff, use bk-review."
 context: fork
 background: false
 ---

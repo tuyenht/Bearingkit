@@ -1,6 +1,6 @@
 ---
 name: bk-ship
-description: Finish work that is already done: run detected guardrails, paste output, secret scan, conventional commit, PR body. Use when: ship, commit, push, PR, xong rồi ship đi, đẩy code, tạo PR. Not for: judging whether a change is safe (bk-review), building it (bk-build), deploying (bk-ops).
+description: "Finish work that is already done: run detected guardrails, paste output, secret scan, conventional commit, PR body. Use when: ship, commit, push, PR, xong rồi ship đi, đẩy code, tạo PR. Not for: judging whether a change is safe (bk-review), building it (bk-build), deploying (bk-ops)."
 ---
 
 # bk-ship

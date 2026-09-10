@@ -1,6 +1,6 @@
 ---
 name: bk-test
-description: Tests as the contract, TDD by default; --browser forces rendered checks for UI. Use when: test, coverage, write tests, viết test, kiểm thử, chạy test. Not for: diagnosing a failure, use bk-debug.
+description: "Tests as the contract, TDD by default; --browser forces rendered checks for UI. Use when: test, coverage, write tests, viết test, kiểm thử, chạy test. Not for: diagnosing a failure, use bk-debug."
 ---
 
 # bk-test

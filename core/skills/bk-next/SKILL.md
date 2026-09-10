@@ -1,6 +1,6 @@
 ---
 name: bk-next
-description: Recommend the next step from the real repository state (git, plans, handoff). Use when: what next, where were we, tiếp theo làm gì, đang dở gì. Not for: executing the step, use the skill it names.
+description: "Recommend the next step from the real repository state (git, plans, handoff). Use when: what next, where were we, tiếp theo làm gì, đang dở gì. Not for: executing the step, use the skill it names."
 ---
 
 # bk-next
