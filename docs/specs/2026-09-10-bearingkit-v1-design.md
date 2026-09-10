@@ -94,9 +94,10 @@ bearingkit/
   bin/bearingkit.cjs             # npm bin: install · update · uninstall · doctor · upstream-watch
   scripts/                       # Node only: install.cjs · doctor.cjs · upstream-watch.cjs · detect-stack.cjs
   tests/                         # unit tests: hook payload adapters (both hosts), detect-stack, doctor, installer dry-run
-  docs/                          # ARCHITECTURE.md · CHANGELOG.md · CONTRIBUTING.md · specs/ · plans/ · upstream/
+  docs/                          # ARCHITECTURE.md · CHANGELOG.md · CONTRIBUTING.md · specs/ · plans/ · handoff/ · upstream/
   .claude-plugin/marketplace.json   # secondary channel
   package.json · LICENSE (MIT) · NOTICE · README.md · README.vi.md
+  AGENTS.md · CLAUDE.md          # working agreement for developing the kit itself (CLAUDE.md imports AGENTS.md); not the product
 ```
 
 ## 5. One source, two hosts, two install modes
@@ -353,6 +354,7 @@ Owner-authored text lifted verbatim into `core/`: the Autonomy Gate with its tie
 | 2026-09-10 | Field lessons L1–L18 adopted; Autonomy Gate classifier and temporary-bypass tracker added; ACT never asks |
 | 2026-09-10 | Audit v1.1: 17 core skills, 5 agents, 8 rules, 6 hooks; modes inferred with four forced flags; Node-only scripts; owner migration moved to `docs/plans/`; private material excluded from the public kit |
 | 2026-09-10 | Audit v1.2: single installer `npx bearingkit install` for both hosts and modes; native deny lists replace `scout-block` and `privacy-block`, leaving 4 hooks; session state store defined; `AGENTS.md` outline, description template and handoff chain specified |
+| 2026-09-10 | The kit repository dogfoods its own handoff rule: session state lives in `docs/handoff/<date>.md`, the working agreement in root `AGENTS.md` (imported by `CLAUDE.md`); chat history is never a source of truth |
 
 ## 20. Glossary
 
