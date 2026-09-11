@@ -1,6 +1,8 @@
 # Bearingkit v1 — Design Specification
 
-Status: DRAFT v1.4 for owner review · Date: 2026-09-10 · Owner: tuyenht · Command prefix: `/bk-`
+Status: v1.4, **superseded on 2026-09-11 by `2026-09-11-bearingkit-v2-design.md`** except §3 (verified host mechanics) and §18 (field lessons), which remain the record and are cited from v2 · Date: 2026-09-10 · Owner: tuyenht · Command prefix: `/bk-`
+
+> Layout, installer, adapters, rule layer and hooks described below are the v1 design; v2 replaced them (skills at the root, one bootstrap per host, no installer). Kept in full for the decisions log and the two retained sections.
 
 > **Tóm tắt (VI).** Bearingkit là bộ kỹ năng và tác nhân cho lập trình có AI hỗ trợ, dùng chung cho
 > Claude Code và Google Antigravity từ **một nguồn duy nhất**. Lõi là "Kim chỉ nam": phân loại việc

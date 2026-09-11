@@ -1,7 +1,0 @@
-{
-  "session_id": "s1",
-  "transcript_path": "C:/Users/someone/.claude/projects/C--x/s1.jsonl",
-  "cwd": "C:\\x",
-  "hook_event_name": "UserPromptSubmit",
-  "prompt": "add invoices"
-}
