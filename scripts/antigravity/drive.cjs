@@ -35,17 +35,22 @@ function transcriptSettled(file) {
 async function runOne(c, projectId, trigger) {
   const before = readQueue().done.length;
   await c.evaluate(`location.href = ${JSON.stringify(`https://127.0.0.1:1407/?section=${projectId}`)}; true`);
-  const ready = await waitFor(async () => c.evaluate("!!document.querySelector('[contenteditable=true]')").catch(() => false), 20000, 1000);
+  // The section re-mounts its composer while it loads; take the editor only after it has been present on two
+  // consecutive checks, and treat it vanishing between the check and the keystrokes as a retryable failure
+  // (it killed a 42-prompt run at prompt six once).
+  let seen = 0;
+  const ready = await waitFor(async () => { const p = await c.evaluate("!!document.querySelector('[contenteditable=true]')").catch(() => false); seen = p ? seen + 1 : 0; return seen >= 2 ? true : null; }, 30000, 700);
   if (!ready) throw new Error('composer did not appear');
   await sleep(800);
-  const typed = await c.evaluate(`(() => { const ed = document.querySelector('[contenteditable=true]'); ed.focus(); document.execCommand('selectAll', false, null); document.execCommand('insertText', false, ${JSON.stringify(trigger)}); return ed.innerText; })()`);
+  const typed = await c.evaluate(`(() => { const ed = document.querySelector('[contenteditable=true]'); if (!ed) return null; ed.focus(); document.execCommand('selectAll', false, null); document.execCommand('insertText', false, ${JSON.stringify(trigger)}); return ed.innerText; })()`);
+  if (typed === null) throw new Error('composer vanished before typing');
   // The composer enables its send button asynchronously; wait for it, then fall back to Enter.
   const sendState = "(() => { const b = [...document.querySelectorAll('button')].find(x => /send message/i.test(x.getAttribute('aria-label')||x.innerText||'')); return b ? (b.disabled || b.getAttribute('aria-disabled') === 'true' ? 'disabled' : 'ready') : 'missing'; })()";
   const ready2 = await waitFor(async () => (await c.evaluate(sendState)) === 'ready' ? true : null, 6000, 500);
   let sent = false;
   if (ready2) sent = await c.evaluate("(() => { const b = [...document.querySelectorAll('button')].find(x => /send message/i.test(x.getAttribute('aria-label')||x.innerText||'')); b.click(); return true; })()");
   if (!sent) {
-    await c.evaluate("document.querySelector('[contenteditable=true]').focus(); true");
+    await c.evaluate("(() => { const ed = document.querySelector('[contenteditable=true]'); if (ed) ed.focus(); return true; })()");
     await c.send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13, text: '\r' });
     await c.send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 });
     await sleep(1000);
@@ -73,9 +78,20 @@ async function runOne(c, projectId, trigger) {
   const max = Number(maxArg || 1);
   const trigger = readQueue().trigger; // the phrase the armed driver expects
   const c = await connect();
+  // One prompt failing to start (composer race, transient DevTools error) retries after a pause instead of ending
+  // the run; three failures in a row end it, since by then the app itself needs a look.
+  let failures = 0;
   for (let i = 0; i < max; i++) {
     if (!readQueue().pending.length) { console.log('queue empty'); break; }
-    const r = await runOne(c, projectId, trigger);
+    let r;
+    try { r = await runOne(c, projectId, trigger); failures = 0; } catch (e) {
+      failures += 1;
+      console.log(`${i + 1}. retry ${failures} after error: ${e.message || e}`);
+      if (failures >= 3) throw new Error(`three consecutive failures, last: ${e.message || e}`);
+      await sleep(5000);
+      i -= 1;
+      continue;
+    }
     console.log(`${i + 1}. ${JSON.stringify(r)}`);
     if (!r.id) break;
     await sleep(2000);
