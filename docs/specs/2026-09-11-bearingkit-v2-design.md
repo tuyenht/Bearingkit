@@ -16,6 +16,10 @@ Status: v2.0, approved by the owner on 2026-09-11 · Supersedes `2026-09-10-bear
 4. Quality as you go: every skill enforces evidence, tests, review and scope discipline so that code is correct at each step and stays inside the request.
 5. Fixed context stays under 5,000 tokens on Claude Code; measured at release, not per change.
 6. Every capability traceable to a source with a license mode; `NOTICE` complete.
+7. Current technology by construction: every stack file opens with a version card, the stack profile reads the pinned majors from the lockfiles, and for anything newer than the model's training the skills consult pinned documentation before writing syntax (v1 §18 L9; context7 documented per host).
+8. Built for a one-person software company that drives AI agents: the skill set covers the whole lifecycle from request to handoff, the independent review comes from a different model or host, and every session ends with a handoff and lessons the next session reads.
+
+**The owner's requirement in their own words (2026-09-10 and 2026-09-11).** One kit that supports many AI tools but installs into each separately, from one source skill; no time spent on intermediate machinery; the time goes to synthesizing, classifying and distilling the best of every source in the coverage matrix into the owner's own standard skill set, covering all vibe-coding work for building software systems, applications and tools of the highest quality, optimal and lightest; code that is correct at every step and stays inside the request; AI that follows the most modern, leading and optimal technology; the council of senior experts adds what is good and fits. Superpowers, the official code-review, frontend-design and claude-code-setup plugins are mandatory sources; the kit must be better and more complete than each source it replaces, and "better" is only ever claimed from a measurement (§11).
 
 **Non-goals (v2)**
 
