@@ -19,10 +19,11 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 ### Measured (Claude Code 2.1.266, isolated profile)
 - Compatibility tests 1, 3, 6, 8, 9 plus the import and rules checks passed; gate runs on 2.1.267 after an auto-update (`docs/compat/2026-09-10-tests-1-3.md`, `docs/compat/phase-1-gate.md`).
 - Activation on the six Phase 1 intents: 48/48 positives routed, 0 false activations on pure questions, after one tuning round on the `bk-review` and `bk-ship` descriptions and two label corrections (`docs/compat/phase-1-gate.md`).
+- Antigravity 2.0 (Opus 4.6): plugin loaded on both products, rule 1,873 tokens and ten descriptions 1,045 on the panel, hook payloads as documented, hooks executed after the launcher fix; automated activation run 16/19 strict on the 18-prompt spread plus the glob probe, the small-change gap fixed by a host note (`docs/compat/phase-1-gate.md`).
 - Confirmation: one clean sixty-prompt run at 57/60 with 0 false activations; its three misses led to a widened label, narrower `bk-build` cues and the closing marker on the injected block; the affected intents rerun at 10/10 (`docs/compat/phase-1-gate.md`).
 - Fixed context of the kit: about 2,650 tokens of the 5,000 budget (`/context` on 2.1.267 in the isolated profile: memory files 1.9k, ten skill descriptions 750, no agents yet); host overhead outside the budget in the same session was 3.4k system prompt, 28.3k tool definitions and 2.75k built-in skills.
 
 ### Not yet
 - A clean baseline run 2 (run 1 recorded: 11/18 with the equivalence map, positives routed 6/12, 0 false activations; its sessions shared and edited the fixture), next quota window.
-- Antigravity: installed as a plugin junction; compatibility tests 2 and 7 (runtime confirmation) and activation by hand pending; test 4 recorded as a manual step. Test 5 (hook predicate) waits for Phase 2.
+- Antigravity: activation rerun after the host note (small changes), glob key isolation, junction variant; test 4 recorded as a manual step. Test 5 (hook predicate) waits for Phase 2.
 - Language rules, agents, the two enforcing hooks and `hot-path-flag` (Phase 2). `README`, `LICENSE`, `NOTICE`, `upstream/sources.json` (Phase 4).

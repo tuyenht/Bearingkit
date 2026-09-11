@@ -126,8 +126,21 @@ The owner's workstation runs both **Antigravity IDE** and **Antigravity 2.0** (t
 | 6 | `bk-protocol` on Antigravity | no hidden flag exists; it is listed like the others | listed, description says "Not for direct use" | as designed; whether the model leaves it alone is read from the checklist |
 | rules | Plugin `rules/AGENTS.md` loaded and measured | 2.0 panel, Rules breakdown | `…/plugins/bearingkit/rules/AGENTS.md` **1,873 tokens** beside the owner's `user_global` 368 | **PASS**, measured |
 
-## Activation by hand
+## Activation, automated on Antigravity 2.0
 
-Checklist: `evals/results/2026-09-10-antigravity-checklist.md` (18 prompts: one English positive, one Vietnamese positive, one negative per intent). Fresh conversation per prompt; the last column takes the skill that activated, or none. Gate for the spread: 18/18; then the remaining 42.
+Method: `evals --host antigravity --arm` queues prompts behind a PreInvocation driver hook in the live plugin; a DevTools-driven script opens one conversation per prompt in the eval project (`bearingkit-eval-sample-app`, a project file that points at the staged fixture), types a hold phrase ("Reply with OK and wait for my next message."), and the driver resets the fixture to its staging tag and injects the real prompt as the next user turn; `--score` reads each transcript from the injected prompt onward and takes the first `view_file` of a `skills/<name>/SKILL.md` as the activation. Model: Claude Opus 4.6 (thinking), the owner's default in 2.0. Every conversation carried the kit's `[bearingkit]` block.
 
-_pending_
+**Run 1** (2026-09-11, tag `ide-spread`, 18 prompts, one English positive, one Vietnamese positive, one negative per intent): **16/19 by the strict scorer** (19 with the glob probe), false activations 1.
+
+| intent | positives routed | reading |
+|---|---|---|
+| question | (both answered directly) | negative "add a retry" opened `bk-build`, accepted |
+| small | 0/2 | both edited the settings page directly after grep and view, without opening `bk-build`; the negative "add a new export format" opened `bk-spec` |
+| feature | 2/2 | `bk-spec`; the negative "explain the notification center" answered directly |
+| bug | 2/2 | `bk-debug`; the negative "review the fix" opened `bk-review` |
+| review | 2/2 | `bk-review`; the negative "explain the review process" answered directly |
+| ship | 2/2 | `bk-ship`; the negative "explain how bk-ship works" opened `bk-ship` and explained it without acting, which the scorer counts and this reading accepts: on this host, reading a skill is the only way to explain it |
+
+Reading: where the router names a skill for a real task, 2.0 opens it 8/8 across feature, bug, review and ship. The gap is the small change: with no skill tool on this host, "invoke the skill" was not read as "open its file" for a one-line rename. Fix applied the same morning: the generated `rules/AGENTS.md` gains an "Antigravity" section saying that invoking a skill means opening `skills/<name>/SKILL.md` first, small changes included, and that reading a skill to explain it is not an invocation; `host-tools.md` gains the row. Rerun of the four affected prompts follows below.
+
+Test 2 (glob rule): the probe conversation read `src/app/login/page.tsx` and answered `GLOB-PROBE-OK`, so a `trigger: glob` rule in the plugin loads when the agent reads a matching file (both key spellings were present; isolation of the key name follows below).
