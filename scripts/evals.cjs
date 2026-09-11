@@ -242,6 +242,16 @@ async function run(argv) {
       return;
     }
     if (args.disarm) { const d = ag.disarm(agOpts); process.stdout.write(`disarmed: ${d.hooksFile}\n`); return; }
+    if (args.drive) {
+      // Needs the Antigravity 2.0 app running (DevTools on its local port) and a project file that points at the staged fixture.
+      const { spawn } = require('node:child_process');
+      const log = path.join(outDir, `${date}-antigravity-drive${args.tag ? '-' + String(args.tag).replace(/[^a-z0-9-]/gi, '') : ''}.log`);
+      const fd = fs.openSync(log, 'a');
+      const child = spawn(process.execPath, [path.join(__dirname, 'antigravity', 'drive.cjs'), String(args.drive), String(args.count || 1)], { detached: true, stdio: ['ignore', fd, fd], windowsHide: true });
+      child.unref();
+      process.stdout.write(`driver started (pid ${child.pid}) for ${args.count || 1} conversation(s) in project ${args.drive}; log: ${log}\n`);
+      return;
+    }
     if (args.score) {
       const s = ag.score(agOpts);
       const equivalents = args.equivalents ? JSON.parse(fs.readFileSync(path.resolve(args.equivalents), 'utf8')) : null;

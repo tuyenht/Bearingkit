@@ -21,7 +21,7 @@ Related: spec §7 (catalog, "Adapted from" column), §12 (sources and license mo
 | 9 | vercel-labs/agent-skills · no license file · reference only | react-best-practices, web-design-guidelines | `bk-design` and the `typescript-react` rule cite them as reading; nothing vendored | 2 | designed | No claim; reference |
 | 10 | anthropics document-skills · not open · excluded | docx, pdf, pptx, xlsx handling | Excluded from the kit; users who need them install them separately | — | excluded | No claim |
 | 11 | Owner's previous kit · owner-authored · adapt | RBA fail conditions, known-failure guard, asset budgets, design-critic, database playbook, council protocol lines | `bk-protocol/references/rba-lite.md` (built), `bk-design`, `bk-perf`, `bk-db`, the two verbatim protocol lines (§18) | 1 partly, 2 | framed (rba-lite, gate patterns, personas); rest designed | Same measures as the skills they land in |
-| 12 | Antigravity built-in docs (dated 2026-09-05) · reference | `.agents/` roots, global `~/.gemini/config`, hooks PreToolUse/PostToolUse/PreInvocation/PostInvocation/Stop, rule triggers | `adapters/antigravity/`, `core/hooks/lib/host.cjs` | 1 | installed on 2.0 and the IDE: eleven skills listed, rule 1,873 tokens, ten descriptions 1,045; test 7 passed at runtime; activation automated on 2.0: run 1 16/19 strict, the small-change gap fixed by a host note in the generated rule, rerun pending; glob rules load (key isolation pending) | Parity: same skills, same activation set, recorded by hand; tokens from the 2.0 panel |
+| 12 | Antigravity built-in docs (dated 2026-09-05) · reference | `.agents/` roots, global `~/.gemini/config`, hooks PreToolUse/PostToolUse/PreInvocation/PostInvocation/Stop, rule triggers | `adapters/antigravity/`, `core/hooks/lib/host.cjs` | 1 | installed on 2.0 and the IDE: eleven skills listed, rule 1,873 tokens, ten descriptions 1,045; test 7 passed at runtime; activation automated on 2.0: run 1 16/19 strict, then 10/10 positives after the host note in the generated rule; glob rules load with either key and are path-scoped | Parity: same skills, same activation set, recorded by hand; tokens from the 2.0 panel |
 
 ## Rows to be named by the owner
 
@@ -33,7 +33,8 @@ The owner's "top 20" list is not yet written down. Add one row per repository wi
 |---|---|---|
 | Fixed context per session, kit | about 2,650 tokens | `docs/compat/phase-1-gate.md`, third `/context` reading |
 | Fixed context per session, daily profile (Spartan + ClaudeKit residue + Superpowers + rules), memory files only | 71.9k tokens | same document, second reading; agents and skill listing of that profile not included |
-| Activation on six intents, kit | clean sixty-prompt run 57/60 with 0 false activations; after two fixes found by it, affected intents 10/10 on rerun | same document, confirmation section |
+| Activation on six intents, kit, Claude Code | clean sixty-prompt run 57/60 with 0 false activations; after two fixes found by it, affected intents 10/10 on rerun | same document, confirmation section |
+| Activation on six intents, kit, Antigravity 2.0 (Opus 4.6) | 18-prompt spread: 16/19 strict; after one host note, positives 10/10, questions direct, negatives 6/6 with the explain reading | same document, Antigravity section |
 | Activation, previous setup (Spartan, Superpowers, fullstack-dev-skills, ClaudeKit residue) | run 1: 6/12 positives routed, 0 false activations on questions, 11/18 overall with the equivalence map | `docs/compat/phase-1-gate.md`, baseline run 1; a clean run 2 with the per-prompt fixture reset is scheduled |
 | Outcome (tasks completed, tokens per task), kit vs Superpowers | pending | Phase 2 task (§17) |
 
