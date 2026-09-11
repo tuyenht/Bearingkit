@@ -8,8 +8,9 @@
 //
 // Claude Code: junctions/symlinks for core/skills/bk-* → <claudeDir>/skills/, core/rules → <claudeDir>/rules/bearingkit,
 // hook registrations and a secrets-only deny list merged into settings.json, an @import line in CLAUDE.md.
-// Antigravity: adapters/antigravity/{rules/AGENTS.md (copy), hooks.json (from template), skills (link)} and one entry
-// in <geminiDir>/plugins.json. When --config-dir is given without --antigravity-dir, the Antigravity side is skipped,
+// Antigravity: adapters/antigravity/{rules/AGENTS.md (copy), hooks.json (from template), skills (link)} copied into
+// <geminiDir>/plugins/bearingkit, a real directory (the host does not scan junctions). When --config-dir is given
+// without --antigravity-dir, the Antigravity side is skipped,
 // because an isolated Claude profile has no Antigravity counterpart.
 
 const fs = require('node:fs');

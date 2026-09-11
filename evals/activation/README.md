@@ -20,4 +20,6 @@ Baseline: run the same file once against the current daily profile (no `--config
 node bin/bearingkit.cjs evals --host antigravity
 ```
 
-Prints the prompts as a checklist and writes `evals/results/<date>-antigravity-checklist.md`. Run each prompt in a fresh conversation, note which skill activated, fill in the table by hand. Tokens are not measured on this host and are recorded as such.
+Without flags this prints the prompts as a checklist (`evals/results/<date>-antigravity-checklist.md`) for a run by hand.
+
+The automated run on Antigravity 2.0 (the desktop app must be open; it exposes DevTools on a local port) goes: `--arm --id <ids> --tag <tag>` installs a driver hook into the live plugin and queues the prompts; `--drive <projectId> --count N` starts a detached script that opens one conversation per prompt in the eval project (a JSON under `~/.gemini/config/projects/` pointing at the staged fixture), types a hold phrase, and lets the hook inject the real prompt after resetting the fixture; `--score` reads the transcripts (the first `SKILL.md` opened after the injected prompt) and writes the table; `--disarm` removes the hook. Progress lives in `~/.bearingkit/antigravity-eval/queue.json` and the drive log under `evals/results/`. About 90 seconds per prompt on Opus 4.6. Tokens on this host are read from the app’s Customizations panel, not measured by the runner.

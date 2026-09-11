@@ -56,6 +56,191 @@
         "plugins/security-guidance/hooks/patterns.py"
       ],
       "derived": {}
+    },
+    {
+      "name": "multica-ai/andrej-karpathy-skills",
+      "repo": "https://github.com/multica-ai/andrej-karpathy-skills",
+      "tag": null,
+      "sha": "2c606141936f1eeef17fa3043a72095b4765b9c2",
+      "license": "none (no license file)",
+      "mode": "ideas-only",
+      "verified": "2026-09-11",
+      "note": "row 13; a CLAUDE.md of four failure modes",
+      "tracked": [
+        "CLAUDE.md"
+      ],
+      "derived": {}
+    },
+    {
+      "name": "PatrickJS/awesome-cursorrules",
+      "repo": "https://github.com/PatrickJS/awesome-cursorrules",
+      "tag": null,
+      "sha": "b044f956f021b6e8877f16781bcfc466a6a120e9",
+      "license": "CC0-1.0",
+      "mode": "reference",
+      "verified": "2026-09-11",
+      "note": "row 14; framework rule sets for the language rules",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "github/spec-kit",
+      "repo": "https://github.com/github/spec-kit",
+      "tag": null,
+      "sha": "c173bf19a6654e3b05386ec3599349a55282b897",
+      "license": "MIT",
+      "mode": "ideas-only",
+      "verified": "2026-09-11",
+      "note": "row 3",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "addyosmani/agent-skills",
+      "repo": "https://github.com/addyosmani/agent-skills",
+      "tag": null,
+      "sha": "6ca0cd7db39b41b1c37e26d335c507ee92382c6d",
+      "license": "MIT",
+      "mode": "ideas-only",
+      "verified": "2026-09-11",
+      "note": "row 15",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "mattpocock/skills",
+      "repo": "https://github.com/mattpocock/skills",
+      "tag": null,
+      "sha": "3cca18b368ae95cdbdebbff572ccafa662551015",
+      "license": "MIT",
+      "mode": "adapt",
+      "verified": "2026-09-11",
+      "note": "row 16",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "microsoft/playwright-mcp",
+      "repo": "https://github.com/microsoft/playwright-mcp",
+      "tag": null,
+      "sha": "8a13ef8e9f7385a0f89477922127f31cbfde9761",
+      "license": "Apache-2.0",
+      "mode": "reference",
+      "verified": "2026-09-11",
+      "note": "row 17; opt-in MCP",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "vercel-labs/agent-browser",
+      "repo": "https://github.com/vercel-labs/agent-browser",
+      "tag": null,
+      "sha": "8c15ff9f71ae60c7e99e66afe1e2d4b9bf414fe2",
+      "license": "Apache-2.0",
+      "mode": "reference",
+      "verified": "2026-09-11",
+      "note": "row 18",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "The-PR-Agent/pr-agent",
+      "repo": "https://github.com/The-PR-Agent/pr-agent",
+      "tag": null,
+      "sha": "1421c673effb7644239e18fdea5403ccf04bb190",
+      "license": "MIT (LICENSE file read 2026-09-11)",
+      "mode": "reference",
+      "verified": "2026-09-11",
+      "note": "row 19",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "biomejs/biome",
+      "repo": "https://github.com/biomejs/biome",
+      "tag": null,
+      "sha": "93dc6153d86dde9e3285881160ab0995db665d99",
+      "license": "Apache-2.0",
+      "mode": "reference",
+      "verified": "2026-09-11",
+      "note": "row 20; guardrail command",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "cloudflare/skills",
+      "repo": "https://github.com/cloudflare/skills",
+      "tag": null,
+      "sha": "b052c32bab7dd493513260228a36c88294f343f1",
+      "license": "Apache-2.0",
+      "mode": "reference",
+      "verified": "2026-09-11",
+      "note": "row 21; Phase 3",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "anthropics/skills",
+      "repo": "https://github.com/anthropics/skills",
+      "tag": null,
+      "sha": "34040c9c568585f6929bedeaad110ad08f079624",
+      "license": "none at top level; frontend-design and mcp-builder carry Apache-2.0 LICENSE.txt",
+      "mode": "adapt (those two skills only)",
+      "verified": "2026-09-11",
+      "note": "row 22",
+      "tracked": [
+        "skills/frontend-design/SKILL.md",
+        "skills/mcp-builder/SKILL.md"
+      ],
+      "derived": {}
+    },
+    {
+      "name": "modelcontextprotocol/servers",
+      "repo": "https://github.com/modelcontextprotocol/servers",
+      "tag": null,
+      "sha": "d73f99efbfd40c3aa1b61e88728b3d49fb52608f",
+      "license": "transition MIT to Apache-2.0 (LICENSE file; API NOASSERTION)",
+      "mode": "reference",
+      "verified": "2026-09-11",
+      "note": "row 23; Phase 3",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "vercel-labs/skills",
+      "repo": "https://github.com/vercel-labs/skills",
+      "tag": null,
+      "sha": "80feb48868972d518436f26711509bc78595b5cb",
+      "license": "MIT",
+      "mode": "reference",
+      "verified": "2026-09-11",
+      "note": "row 24; install channel candidate, Phase 4",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "vercel-labs/agent-skills",
+      "repo": "https://github.com/vercel-labs/agent-skills",
+      "tag": null,
+      "sha": "063bee94c3f4df8453406c830b0a7df0f2860278",
+      "license": "none (no license file)",
+      "mode": "reference",
+      "verified": "2026-09-11",
+      "note": "row 9",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "Aider-AI/aider",
+      "repo": "https://github.com/Aider-AI/aider",
+      "tag": null,
+      "sha": "5dc9490bb35f9729ef2c95d00a19ccd30c26339c",
+      "license": "Apache-2.0",
+      "mode": "ideas-only",
+      "verified": "2026-09-11",
+      "note": "row 26; repo-map idea for bk-map",
+      "tracked": [],
+      "derived": {}
     }
   ]
 }

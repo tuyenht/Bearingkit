@@ -2,6 +2,14 @@
 
 All notable changes to Bearingkit. The format follows Keep a Changelog; versions follow semver. This is the single changelog.
 
+## Unreleased
+
+### Added
+- Coverage matrix rows 13–39 for the owner's repository list (2026-09-11): four sources to absorb, eight references and opt-in integrations, seven hosts or tools recorded as host candidates or ideas, eight exclusions with the owner's reasons; license, archived flag, last push and stars read from the GitHub API on that day. `upstream/sources.json` records the HEAD sha of every source the kit will read (15 new entries, derived maps empty). Content backlog gains the follow-up group.
+
+### Changed
+- Spec §3, §5 and §7 no longer say Antigravity has no subagents; 2.0 can spawn ad-hoc subagents but offers no definition format, so `bk-build` still executes sequentially there. Gate doc: three sentences that still called the junction question open now point at its isolation. Installer header comment and the evals README describe the copied plugin directory and the automated Antigravity run.
+
 ## 0.1.0-phase1 · 2026-09-11
 
 Phase 1 closed against the gate in spec §15: activation 10/10 on the six Phase 1 intents on both hosts, fixed context under 5,000 tokens in an isolated profile. Sixty-prompt readings behind that: Claude Code 2.1.267, one clean run 57/60, then the affected intents 10/10 after two fixes; Antigravity 2.0 (2.12.2, Opus 4.6 thinking) 58/60 strict, 59/60 with the explain reading. False activations: 0 on Claude Code; 1 on Antigravity (asked to explain `bk-ship`, it read the skill). Fixed context about 2,650 tokens on Claude Code, about 2,920 on Antigravity's customization panel. Compatibility tests 1, 2, 3, 6, 7, 8, 9 pass; 4 is a manual step on Antigravity; 5 waits for Phase 2's enforcing hooks. Everything under Added exists at this tag; Carried into Phase 2 is what does not. Numbers and methods: `docs/compat/phase-1-gate.md`.

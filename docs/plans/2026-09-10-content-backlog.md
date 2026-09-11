@@ -55,3 +55,16 @@ Each item ports substance, not structure: the source's decision rules, checklist
 4. **Official claude-code-setup (Apache-2.0).** The seeding step (already listed above) and `doctor`: on a repository, produce the recommendation the plugin would, then apply what the kit already provides and list the rest.
 
 Exit criterion for the group: the outcome benchmark (spec §17) runs against a Superpowers-only profile and the kit matches or beats it; numbers in `docs/compat/`.
+
+## Follow-ups from the owner's repository list (2026-09-11), after the mandatory group
+
+Rows 13–24 of the coverage matrix. Each item lands with the same discipline as the mandatory group (references over structure, `NOTICE`, `upstream/sources.json` derived map, matrix row status).
+
+1. **karpathy-skills (ideas only, no license file).** Two protocol lines: scope discipline (edit only what the task names) as a `bk-build` gate sentence, "no speculative abstraction" as a protocol sentence in `core/AGENTS.md`; re-measure fixed context.
+2. **mattpocock/skills (MIT).** `bk-spec/references/grill-me.md` (question until nothing is ambiguous, merged with brainstorming's one question at a time); diagnose and triage checklists into `bk-debug/references/`; zoom-out and improve-codebase-architecture into `bk-audit/references/`; compare its handoff with the two-block template and take what is missing.
+3. **addyosmani/agent-skills (MIT).** interview-me, idea-refine and doubt-driven questions into `bk-spec/references/`; task-breakdown rules into `bk-plan/references/`; incremental-implementation into `bk-build/references/`; context-engineering checks into `doctor`.
+4. **awesome-cursorrules (CC0).** When each of the eight language rules is written, read the matching set first and cite it.
+5. **Verification tools.** `core/mcp.json` gains an opt-in playwright-mcp entry; `bk-test` and `bk-design` name one browser tool per install (agent-browser or playwright-mcp); `doctor` reports agent-browser and biome/Pint presence; `detect-stack` lists biome, Pint and PHPStan as guardrail commands when configured (unit test on a fixture).
+6. **pr-agent (MIT).** `bk-review`'s independent-review definition accepts a pr-agent run on CI as the second context; the outcome benchmark gets a row comparing findings on the seeded-bug fixture.
+7. **Aider (ideas).** The repo-map idea (definitions of every file, compressed) informs `bk-map`.
+8. **Phase 3 and 4 candidates, no work now.** mcp-builder as an optional skill; Cloudflare skills only behind a `wrangler.toml` detection; the reference MCP servers in the opt-in list; the `npx skills` CLI as a secondary install channel; OpenCode, gemini-cli and Cline as host candidates with their own compatibility tests.
