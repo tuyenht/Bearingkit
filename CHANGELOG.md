@@ -2,7 +2,9 @@
 
 All notable changes to Bearingkit. The format follows Keep a Changelog; versions follow semver. This is the single changelog.
 
-## Unreleased · 0.1.0 (Phase 1 in progress)
+## 0.1.0-phase1 · 2026-09-11
+
+Phase 1 closed against the gate in spec §15: activation 10/10 on the six Phase 1 intents on both hosts, fixed context under 5,000 tokens in an isolated profile. Sixty-prompt readings behind that: Claude Code 2.1.267, one clean run 57/60, then the affected intents 10/10 after two fixes; Antigravity 2.0 (2.12.2, Opus 4.6 thinking) 58/60 strict, 59/60 with the explain reading. False activations: 0 on Claude Code; 1 on Antigravity (asked to explain `bk-ship`, it read the skill). Fixed context about 2,650 tokens on Claude Code, about 2,920 on Antigravity's customization panel. Compatibility tests 1, 2, 3, 6, 7, 8, 9 pass; 4 is a manual step on Antigravity; 5 waits for Phase 2's enforcing hooks. Everything under Added exists at this tag; Carried into Phase 2 is what does not. Numbers and methods: `docs/compat/phase-1-gate.md`.
 
 ### Added
 - `upstream/sources.json`: provenance of the two sources verified so far (Superpowers 5.1.0, the official plugins repository at its 2026-09-10 commit) with the tracked files; derived maps fill in as Phase 2 ports substance. The official repository is cached under the gitignored `_build/upstream/`.
@@ -15,6 +17,7 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 - `scripts/record-guardrail.cjs`: the writer for guardrail runs and independent reviews that the push gate reads.
 - Activation eval set (60 prompts, six intents, two negatives per intent, English and Vietnamese) with a runner for Claude Code (`claude -p` stream parsing, `expect` alternatives `a|b`, an equivalence map for baseline runs against another setup, `--intent`/`--id`/`--per-intent` filters where `--per-intent` takes a spread per intent, quota read from the stream with a stop at 90% of the five-hour window) and a checklist for Antigravity. `evals/fixtures/sample-app` is staged in a directory whose ancestors carry no memory files (beside the repository by default; throwaway git history; `--stage-only` prints the path) and used as the working directory, so prompts have something to point at and neither the repository's own `CLAUDE.md` nor a daily profile under the home directory loads through the ancestor chain; the runner refuses to run otherwise. The staged copy is reset to its staging commit before every prompt, since sessions edit and even commit files.
 - Adapters: Claude hook registrations, model map, plugin manifest; Antigravity plugin manifest and hook template (named-hook wrapper, one `PreInvocation` handler); `core/mcp.json` (context7); `core/rules/security-baseline.md`. On Antigravity the install is one real directory under `~/.gemini/config/plugins/` (the host's scanner does not follow junctions; a later `install` refreshes the copy; `--antigravity-link` for experiments); no registry file is written; the hook command is relative and points at a generated launcher inside the plugin, because the host resolves command tokens against the plugin directory.
+- `evals/fixtures/sample-app` gained `src/lib/cache.ts`, `src/app/api/invoices/route.ts`, `src/components/header.tsx` and `src/app/signup/page.tsx` (2026-09-11), so every small-change prompt points at something the fixture holds; `sm-en-04` had asked for a log message that did not exist.
 - `bin/bearingkit.cjs install --dev <repo>` for both hosts with backups scoped to the hosts a run touches, idempotent settings merges, a secrets-only deny list, `--config-dir` for an isolated Claude profile, `--dry-run`, and `uninstall` that removes exactly what was added.
 
 ### Measured (Claude Code 2.1.266, isolated profile)
@@ -24,7 +27,7 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 - Confirmation: one clean sixty-prompt run at 57/60 with 0 false activations; its three misses led to a widened label, narrower `bk-build` cues and the closing marker on the injected block; the affected intents rerun at 10/10 (`docs/compat/phase-1-gate.md`).
 - Fixed context of the kit: about 2,650 tokens of the 5,000 budget (`/context` on 2.1.267 in the isolated profile: memory files 1.9k, ten skill descriptions 750, no agents yet); host overhead outside the budget in the same session was 3.4k system prompt, 28.3k tool definitions and 2.75k built-in skills.
 
-### Not yet
+### Carried into Phase 2
 - A clean baseline run 2 (run 1 recorded: 11/18 with the equivalence map, positives routed 6/12, 0 false activations; its sessions shared and edited the fixture), next quota window.
-- Antigravity: test 4 recorded as a manual step; the fixture gap behind `sm-en-04` (no cache warmup message to change) to close before the next full run. Test 5 (hook predicate) waits for Phase 2.
+- Antigravity: test 4 recorded as a manual step; `sm-en-04` re-measured in the next full run now that the fixture holds its target. Test 5 (hook predicate) waits for Phase 2.
 - Language rules, agents, the two enforcing hooks and `hot-path-flag` (Phase 2). `README`, `LICENSE`, `NOTICE` (Phase 4); `upstream/sources.json` holds two verified sources, derived maps empty until Phase 2.
