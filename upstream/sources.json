@@ -150,11 +150,17 @@
       "license": "none (no license file)",
       "mode": "ideas-only",
       "verified": "2026-09-11",
-      "note": "row 13; a CLAUDE.md of four failure modes",
+      "note": "row 13; a CLAUDE.md of four failure modes: wrong assumptions, over-engineering, scope creep, unverifiable code. No license, so no text is copied — no NOTICE entry is warranted (ideas only, paraphrased into the kit's own words). The first and fourth failure modes were already covered by bk-protocol's Autonomy Gate (\"unsure → COUNCIL\") and Definition of done (\"No test, not done\"); the other two were genuinely missing and are what got ported 2026-09-11.",
       "tracked": [
         "CLAUDE.md"
       ],
-      "derived": {}
+      "derived": {
+        "skills/bk-build/SKILL.md": [
+          "CLAUDE.md §2 Simplicity First (no speculative abstraction)",
+          "CLAUDE.md §3 Surgical Changes (touch only what you must, clean up only your own orphans)"
+        ]
+      },
+      "absorbed": "2026-09-11 — idea-only absorption: two gate lines paraphrased (not quoted) into skills/bk-build/SKILL.md's Steps and Gates. This does not meet docs/specs/2026-09-10-coverage-matrix.md's definition of \"absorbed\" (substance ported with NOTICE attribution): there is no permissive license and no text was copied, so no NOTICE entry exists or is owed."
     },
     {
       "name": "PatrickJS/awesome-cursorrules",
@@ -232,11 +238,11 @@
       "name": "The-PR-Agent/pr-agent",
       "repo": "https://github.com/The-PR-Agent/pr-agent",
       "tag": null,
-      "sha": "1421c673effb7644239e18fdea5403ccf04bb190",
-      "license": "MIT (LICENSE file read 2026-09-11)",
+      "sha": "101dcafc41ca447cbc748871e10dfa579017a6ee",
+      "license": "MIT (LICENSE file read 2026-09-11: \"Copyright (c) 2026 The PR Agent\"; resolves an earlier MIT-vs-AGPL discrepancy noted against the owner's source list — this repo's actual LICENSE file is MIT)",
       "mode": "reference",
       "verified": "2026-09-11",
-      "note": "row 19",
+      "note": "row 19; sha corrected 2026-09-11 (was 1421c673effb7644239e18fdea5403ccf04bb190, stale — a fresh --depth 1 clone's HEAD is 101dcafc41ca447cbc748871e10dfa579017a6ee)",
       "tracked": [],
       "derived": {}
     },
@@ -311,9 +317,10 @@
       "license": "none (no license file)",
       "mode": "reference",
       "verified": "2026-09-11",
-      "note": "row 9",
+      "note": "row 9; the repo carries more skills than the matrix row names (composition-patterns, deploy-to-vercel, react-native-skills, react-view-transitions, vercel-cli-with-tokens, vercel-optimize, writing-guidelines, on top of the two the matrix cites). Read in full 2026-09-11: react-best-practices is a substantial, genuinely minable catalog (70 React/Next.js performance rules in 8 priority categories: waterfalls, bundle size, server performance, client fetching, re-renders, rendering, JS micro-optimizations, advanced patterns) — its natural home is the typescript-react stack file. web-design-guidelines is thin by comparison: it is a live-fetch wrapper (WebFetch against https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md at review time), not a static ruleset, and that live-fetch pattern doesn't fit the kit's own static, token-predictable design — worth citing as a pointer, not adopting as a pattern.",
       "tracked": [],
-      "derived": {}
+      "derived": {},
+      "read": "2026-09-11 — not yet placed: skills/bk-build/references/stacks/ doesn't exist yet (stack files are content-program step 3, not this pass); this entry's note carries the synthesis forward so the reading isn't lost"
     },
     {
       "name": "Aider-AI/aider",
@@ -324,6 +331,71 @@
       "mode": "ideas-only",
       "verified": "2026-09-11",
       "note": "row 26; repo-map idea for bk-map",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "jeffallan/claude-skills",
+      "repo": "https://github.com/jeffallan/claude-skills",
+      "tag": "0.4.14",
+      "sha": "5e8b6b8ff4007414f91f980771047b6136600c34",
+      "license": "MIT",
+      "mode": "reference",
+      "verified": "2026-09-11",
+      "local": "Claude Code plugin cache, fullstack-dev-skills 0.4.14 (marketplace repo HEAD; the cache directory itself has no .git to re-derive from)",
+      "note": "coverage matrix row 8; 66 per-framework/per-role skills, deliberately not absorbed as skills — the kit carries 8 path-scoped language rules instead",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "c0x12c/ai-toolkit",
+      "repo": "https://github.com/c0x12c/ai-toolkit",
+      "tag": null,
+      "sha": "96b2c9d099f8507a95b9e43916f144594720a3c9",
+      "license": "none (license endpoint 404, no LICENSE file at repo root)",
+      "mode": "ideas-only",
+      "verified": "2026-09-11",
+      "local": "installed under ~/.claude/commands/spartan*, ~/.claude/rules/**; local installed version 1.26.0 per ~/.claude/.spartan-version — the sha above is the remote master HEAD read from the GitHub API just now, not necessarily what v1.26.0 was built from",
+      "note": "coverage matrix row 5 (Spartan AI Toolkit); no permissive license found, so ideas-only — no text lifted verbatim",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "claudekit/claudekit-engineer",
+      "repo": "https://github.com/claudekit/claudekit-engineer",
+      "tag": null,
+      "sha": "898c4a5cddac05b919e2c9ce922460f5662d511b",
+      "license": "proprietary (\"Other\" per GitHub API; LICENSE file: \"Copyright (c) 2024-2025 ClaudeKit. All Rights Reserved.\")",
+      "mode": "ideas-only clean-room",
+      "verified": "2026-09-11",
+      "local": "C:\\Projects\\claudekit-research\\claudekit-engineer",
+      "note": "coverage matrix row 4; repo confirmed private via the GitHub API — its star count is visible only to accounts with access, not a public signal",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "tuyenht/Antigravity-Core",
+      "repo": "https://github.com/tuyenht/Antigravity-Core",
+      "tag": "5.0.1",
+      "sha": "1774280ee0d559d337f8f3a7014e45ce9d974f11",
+      "license": "proprietary, owner-authored (\"Copyright (c) 2026 Antigravity-Core. All Rights Reserved.\"); it is the owner's own repo, so the owner's own text may be adapted — any third-party text vendored inside it may not",
+      "mode": "adapt (owner's own text only)",
+      "verified": "2026-09-11",
+      "local": "C:\\Projects\\Antigravity-Core",
+      "note": "coverage matrix row 11 (\"owner's previous kit\"); the kit this migration supersedes — see docs/plans/2026-09-10-owner-migration.md",
+      "tracked": [],
+      "derived": {}
+    },
+    {
+      "name": "claudekit/skillmark",
+      "repo": "https://github.com/claudekit/skillmark",
+      "tag": null,
+      "sha": "de78ffbabc807c7e1f4fd790dfcd3ca773508c1e",
+      "license": "none (GitHub API license_key: null; no LICENSE file locally) — corrects docs/specs/2026-09-10-coverage-matrix.md row 7, which says MIT with no verification method or date cited",
+      "mode": "reference",
+      "verified": "2026-09-11",
+      "local": "C:\\Projects\\claudekit-research\\skillmark",
+      "note": "an agent-skill benchmarking CLI and public leaderboard, not a skill-content source — a tool to run alongside the kit; coverage matrix row 7 (skills/<skill>/tests/*.md format idea)",
       "tracked": [],
       "derived": {}
     }

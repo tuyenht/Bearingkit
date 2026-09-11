@@ -23,6 +23,7 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 
 ### Changed
 - Spec §3, §5 and §7 no longer say Antigravity has no subagents; 2.0 can spawn ad-hoc subagents but offers no definition format, so `bk-build` still executes sequentially there. Gate doc: three sentences that still called the junction question open now point at its isolation. Installer header comment and the evals README describe the copied plugin directory and the automated Antigravity run.
+- Spec §1 gains a named scope test (does a capability let one person do a team's work), cited from Non-goals and §5.2; a new §16 names goal 7's four technology-currency mechanisms — version card, stack profile, pinned-documentation lookup, drift watch over both upstream and hosts — each with who runs it, how often and the command; `docs/plans/2026-09-11-content-program.md` points its Step 3, Step 4 and sprint rules at the same section.
 
 ## 0.1.0-phase1 · 2026-09-11
 

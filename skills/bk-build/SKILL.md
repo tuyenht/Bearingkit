@@ -11,7 +11,7 @@ description: "Execute a plan or a small change that fits in at most three files:
 
 ## Steps
 1. Scout the touchpoints first: every file and symbol the change reaches, as a `file:line` list, including callers and readers of anything renamed.
-2. Work in the smallest steps that keep the code working: change, run the narrowest check, record. Never rewrite working code to change its style.
+2. Work in the smallest steps that keep the code working: change, run the narrowest check, record. Never rewrite working code to change its style, refactor code the plan didn't name, or "clean up" formatting nobody asked about. An edit orphaning an import, variable, or function gets it removed; pre-existing dead code gets named in the report, not deleted.
 3. Tests first for every new behavior (bk-test): a failing test, then the code that makes it pass.
 4. Migrations: classify additive or destructive; grep every reader of the affected columns beyond the ORM; write and test the rollback; use a concurrent index where the engine supports it; stop for a human only when the migration is destructive.
 5. When delegating on a host with subagents: give each subagent file ownership that does not overlap, a worktree branched from the current HEAD, and the four-state return contract (done, done-with-concerns, blocked, needs-context); never retry the same approach after blocked; after three failures, escalate. Without subagents, execute sequentially.
@@ -19,6 +19,7 @@ description: "Execute a plan or a small change that fits in at most three files:
 
 ## Gates
 - No side effects outside the named files without saying so.
+- No abstraction, option, or error handling for a scenario the plan doesn't have; a diff that could be half the size and still meet it is too big.
 - A hot-path change is flagged for independent review before push.
 
 ## Evidence to paste

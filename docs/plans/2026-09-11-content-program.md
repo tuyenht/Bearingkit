@@ -1,6 +1,6 @@
 # Content program: from thirty sources to one standard skill set
 
-Status: PLANNED 2026-09-11 · Spec: `docs/specs/2026-09-11-bearingkit-v2-design.md` §5 · Starts after the v2 restructure plan closes.
+Status: PLANNED 2026-09-11 · Spec: `docs/specs/2026-09-11-bearingkit-v2-design.md` §5, §16 · Starts after the v2 restructure plan closes.
 
 The owner's requirement (2026-09-11): cover every source in the coverage matrix, classify the overlapping skills across them, and distill them into the kit's own skills, raised to the quality bar of spec §5.3, covering the work of a one-person software company that drives AI agents.
 
@@ -16,11 +16,11 @@ The owner's requirement (2026-09-11): cover every source in the coverage matrix,
 
 ## Step 3 · Stack files
 
-`skills/bk-build/references/stacks/<stack>.md` for the eight stacks of spec §5.5, each written from the matching awesome-cursorrules set, fullstack-dev-skills expert, vendor docs and the owner's field lessons, with a version card.
+`skills/bk-build/references/stacks/<stack>.md` for the eight stacks of spec §5.5, each written from the matching awesome-cursorrules set, fullstack-dev-skills expert, vendor docs and the owner's field lessons, with a version card (the mechanism, who refreshes it and when: spec §16).
 
 ## Step 4 · Release gate v0.2
 
-Activation set on both hosts, token reading, skill tests, acceptance tests; numbers into `docs/compat/`; matrix measurement column filled; CHANGELOG; tag.
+Activation set on both hosts, token reading, skill tests, acceptance tests; numbers into `docs/compat/`; matrix measurement column filled; CHANGELOG; tag; the shas landed today in `upstream/sources.json` become the drift-watch baseline (spec §16).
 
 ## Rules for every sprint
 
@@ -28,3 +28,4 @@ Activation set on both hosts, token reading, skill tests, acceptance tests; numb
 - No text from a source without a verified permissive license; ideas are re-written clean-room.
 - A body line without a source or a field lesson behind it is removed.
 - Measurements only at Step 4; a sprint ends with tests green and one acceptance run, nothing more.
+- Below a stated confidence on a stack major newer than the model's training, the agent writing that reference text consults context7 or `bk-research` first, never from memory — the same rule the finished skill applies at runtime (`skills/bk-protocol/references/evidence.md:7`; mechanism and cadence: spec §16).

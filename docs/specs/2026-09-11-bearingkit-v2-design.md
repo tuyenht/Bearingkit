@@ -8,6 +8,8 @@ Status: v2.0, approved by the owner on 2026-09-11 · Supersedes `2026-09-10-bear
 
 **Purpose.** One skill set that makes any AI coding agent work like a disciplined senior team: understand before acting, propose only when the blast radius demands it, prove before claiming, hand off cleanly. Installed into each tool separately from one source.
 
+**Scope test.** Every capability the kit carries — a skill, a reference, a pack — earns its place by one test: does it let one person do the work an entire team would otherwise need for that task? What fails it is a non-goal below, or belongs in a project's own instructions, not the kit's; §5.2 applies the same test before any skill enters the final catalog.
+
 **Goals**
 
 1. One source, `skills/`, in the Agent Skills format every current host reads. A skill is the same file on every host.
@@ -16,7 +18,7 @@ Status: v2.0, approved by the owner on 2026-09-11 · Supersedes `2026-09-10-bear
 4. Quality as you go: every skill enforces evidence, tests, review and scope discipline so that code is correct at each step and stays inside the request.
 5. Fixed context stays under 5,000 tokens on Claude Code; measured at release, not per change.
 6. Every capability traceable to a source with a license mode; `NOTICE` complete.
-7. Current technology by construction: every stack file opens with a version card, the stack profile reads the pinned majors from the lockfiles, and for anything newer than the model's training the skills consult pinned documentation before writing syntax (v1 §18 L9; context7 documented per host).
+7. Current technology by construction, through four named mechanisms (§16): the version card in every stack file, the stack profile that reads majors from the lockfiles, pinned-documentation lookup before writing syntax newer than the model's training, and a drift watch over both the upstream sources and the hosts (v1 §18 L9; context7 documented per host).
 8. Built for a one-person software company that drives AI agents: the skill set covers the whole lifecycle from request to handoff, the independent review comes from a different model or host, and every session ends with a handoff and lessons the next session reads.
 
 **The owner's requirement in their own words (2026-09-10 and 2026-09-11).** One kit that supports many AI tools but installs into each separately, from one source skill; no time spent on intermediate machinery; the time goes to synthesizing, classifying and distilling the best of every source in the coverage matrix into the owner's own standard skill set, covering all vibe-coding work for building software systems, applications and tools of the highest quality, optimal and lightest; code that is correct at every step and stays inside the request; AI that follows the most modern, leading and optimal technology; the council of senior experts adds what is good and fits. Superpowers, the official code-review, frontend-design and claude-code-setup plugins are mandatory sources; the kit must be better and more complete than each source it replaces, and "better" is only ever claimed from a measurement (§11).
@@ -91,7 +93,7 @@ Optional packs, decided by the inventory (§5.2), never in the default install: 
 
 ### 5.2 Inventory and dedup rule
 
-Every skill, command, rule set or agent in every source of the coverage matrix is inventoried once, in `docs/specs/<date>-skill-inventory.md`, with three columns: the source item, the kit skill it maps to, and one decision: **absorb** into `references/` with attribution, **idea** carried into the body without text, or **drop** with a reason. One source item maps to exactly one kit skill. Licenses are verified before any text is taken; sources without a license file contribute ideas only. The inventory is produced by one research agent per source, merged and decided by the owner's agent, and it fixes the final catalog: a skill enters the catalog only when the inventory shows work for it.
+Every skill, command, rule set or agent in every source of the coverage matrix is inventoried once, in `docs/specs/<date>-skill-inventory.md`, with three columns: the source item, the kit skill it maps to, and one decision: **absorb** into `references/` with attribution, **idea** carried into the body without text, or **drop** with a reason. One source item maps to exactly one kit skill. Licenses are verified before any text is taken; sources without a license file contribute ideas only. The inventory is produced by one research agent per source, merged and decided by the owner's agent, and it fixes the final catalog: a skill enters the catalog only when the inventory shows work for it that passes the scope test of §1 (one person doing a team's work).
 
 ### 5.3 Quality bar per skill
 
@@ -133,7 +135,7 @@ Unchanged from v1 §6: the kit reads a project's manifests and instruction files
 
 ## 10. Provenance
 
-`upstream/sources.json` records, per source: repo, tag, sha, license, mode (`adapt`, `ideas-only`, `reference`), tracked files, the derived map from kit files to source files, and the absorption date. `NOTICE` carries one section per adapted source with its license notice. A references file that says it is adapted from upstream must appear in a derived map (enforced by a test). The coverage matrix (`2026-09-10-coverage-matrix.md`) stays the list of sources with status; its measurement column is filled at releases only. `upstream-watch` (drift reports against the locked shas) is a v1.0 deliverable.
+`upstream/sources.json` records, per source: repo, tag, sha, license, mode (`adapt`, `ideas-only`, `reference`), tracked files, the derived map from kit files to source files, and the absorption date. `NOTICE` carries one section per adapted source with its license notice. A references file that says it is adapted from upstream must appear in a derived map (enforced by a test). The coverage matrix (`2026-09-10-coverage-matrix.md`) stays the list of sources with status; its measurement column is filled at releases only. `upstream-watch` (drift reports against the locked shas) is a v1.0 deliverable; who runs it, at what cadence and with what command, alongside the matching host-drift watch, is §16.
 
 ## 11. Evals and the release gate
 
@@ -186,9 +188,24 @@ Antigravity numbers are read from the Customizations panel. Language guidance an
 | 2026-09-11 | Language rules folded into `bk-build/references/stacks/`; the security baseline into the protocol; the four personas paired with hand-written agent files; enforcement hooks deferred to v0.4 as optional |
 | 2026-09-11 | The inventory (§5.2) fixes the final catalog and the optional packs; product discovery, UX, AI-feature and dependency skills are packs, not core, until it says otherwise |
 | 2026-09-11 | Hosts beyond Claude Code and Antigravity are wired from the Superpowers shapes and listed as supported only after the acceptance test |
+| 2026-09-11 | §1 gained a named scope test (does it let one person do a team's work), cited from Non-goals and §5.2; §16 named goal 7's four technology-currency mechanisms — version card, stack profile, pinned-documentation lookup, drift watch — each with who runs it, how often, and the command |
 
 Earlier decisions: v1 §19.
 
-## 16. Glossary
+## 16. Technology-currency mechanisms
+
+Goal 7 (§1) names four mechanisms, not a slogan; this section specifies each one — who runs it, how often, with what command — so "current technology by construction" stays checkable.
+
+| Mechanism | Who runs it | Frequency | Command | Status |
+|---|---|---|---|---|
+| Version card | Whoever authors or revises a `bk-build/references/stacks/<stack>.md` file | At authoring time; again whenever that stack's tracked major changes | Manual edit of the file's "Written against: …" line, cross-checked against the Stack profile's output (next row) run in a current reference project for that stack | Designed (§5.5); executed from `docs/plans/2026-09-11-content-program.md` Step 3 |
+| Stack profile | The acting skill (`bk-build`, `bk-test`, `bk-review`) | Once per session, per project root (§5.6) | `node <kit>/scripts/detect-stack.cjs` (`<kit>` = the directory holding `skills/`, known from the skill file's own path) | Built — reads the lockfile major for Node (`scripts/detect-stack.cjs:34`) and the equivalent manifest for the other seven stacks |
+| Pinned-documentation lookup | The acting skill or agent, in-session | Event-triggered, whenever the confidence-gate rule fires; never on a schedule | The host's context7 MCP once installed (per-host install command in `docs/hosts.md:51`); `bk-research` (search or fetch against official docs) when context7 is not installed on that host or session | Rule built and live (`skills/bk-protocol/references/evidence.md:7`, `SKILL.md:43`); context7 stays opt-in, never installed by the kit (§1 non-goals) |
+| Drift watch — upstream | The owner today; a scheduled job once `upstream-watch` and CI exist (§13, v1.0) | Monthly or on demand (v1 §12, carried forward) | `node bin/bearingkit.cjs upstream-watch` (not yet implemented); until then, e.g. `git -C _build/upstream/<repo> log --oneline <locked-sha>..HEAD` per source in `upstream/sources.json` | Designed, not built (§10, §13) |
+| Drift watch — host | The owner, on noticing a host version change | Whenever a host ships a new version; at minimum once per kit release gate (§11: "acceptance test when the bootstrap wiring or a host changes") | The two acceptance prompts of §11, run by hand in a clean session on that host version, recorded in `docs/hosts.md` | Live, manual — the pattern already used for Claude Code 2.1.268 and Antigravity 2.12.2 in §3 |
+
+Neither drift-watch scope is a hook or a schedule yet: both stay owner-run by hand until `upstream-watch`, CI and a scheduler land at v1.0 (§13); a missed cycle is a visible gap here, not a silent one.
+
+## 17. Glossary
 
 v1 §20 applies. **Bootstrap**: the protocol text a host loads at session start. **Acceptance test**: the two prompts of §11 that prove a host loads the bootstrap and routes. **Pack**: an optional skill group outside the default install.
