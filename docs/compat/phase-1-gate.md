@@ -205,3 +205,16 @@ Harness defect found by this run: the driver ended the whole run at prompt six w
 **Sixty prompts on Antigravity 2.0, latest reading per prompt** (18 from the spread run and its rerun above, 42 from this run): **58/60 strict, 59/60 with the explain reading accepted**. Misses: `ship-neg-01` (asked to explain `bk-ship`, read it; accepted as above) and `sm-en-04` (fixture gap, above). Prompts that expect a skill: 47/48; prompts that expect none: 11/12 strict, 12/12 with the explain reading. Positives by intent: small 7/8, feature 8/8, bug 8/8, review 8/8, ship 8/8; questions 8/8 direct; the twelve cross-intent negatives all route to the intended other skill.
 
 The eval hook is disarmed (`evals --host antigravity --disarm`), the live plugin carries only the `bearingkit` hook again, and the eval project file plus the staged fixture stay for the next runs.
+
+## Fixed tokens after the Superpowers port (2026-09-11, Claude Code 2.1.268)
+
+Method: `claude -p --output-format json --max-turns 1 --model claude-opus-5` with the prompt "Reply with the single word ok.", `CLAUDE_CONFIG_DIR` set to the isolated profile, working directory the staged fixture at `bearingkit-stage` with a clean tree; the number is the first turn's input total (`input_tokens` + `cache_creation_input_tokens` + `cache_read_input_tokens`), which includes the host's own system prompt and tool definitions (about 41k on this version) on top of the kit. `/context` was not available in `-p` mode, so this is a comparison between kit states, not a replacement for the gate reading of about 2,650.
+
+| Kit state | Total | Notes |
+|---|---|---|
+| kit as committed before the port (working tree stashed) | 43,817 | same host version, same fixture commit |
+| kit with the eight `references/` files and the eight one-line citations | 43,821 | two readings, 43,821 both times |
+| same, with the seven new `references/` directories moved out of the skill folders | 43,823 | proves the directories are not read at session start |
+| first reading of the day, before any edit | 42,788 | outlier: 1,033 below the three readings above at the same host version, fixture commit and prompt; the common cached prefix with the next reading was 32,144 tokens, so the difference sits after the tool definitions; not the kit, since the stashed state reads 43,817; the profile's `.claude.json` backups taken at the start of each run show three cached feature flags (`cachedGrowthBookFeatures`) flipped between the first and the second run, and flags gate host prompt content, so the host's own prompt grew between the two runs (likely cause; not proven token by token) |
+
+Reading: the port does not move the fixed context; references are read on demand as designed. Two of the runs at 10:19 local were refused by the account's session limit and are not readings.

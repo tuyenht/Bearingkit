@@ -10,6 +10,7 @@ background: false
 ## Read first
 - The `[bearingkit]` stack block, the project's review checklist in its instruction files (the abbreviated hotlist there is compared against the full list), and `bk-protocol/references/evidence.md`.
 - The diff: if none is given, take the diff against the base branch.
+- `references/code-review-exchange.md`: what an independent reviewer receives and returns, how feedback is handled.
 
 ## Steps
 1. Lenses, in this order: correctness, hot-path risk, untested claims, silent failures (swallowed errors, missing transactions across multi-step mutations, unbounded inputs), simplification (delegate to the host's built-in simplifier when one exists, otherwise inline).

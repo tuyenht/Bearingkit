@@ -51,3 +51,44 @@ test('every skill has a name matching its folder and a description within the bu
     if (name !== 'bk-protocol') assert.match(d, /Use when/, name + ': description carries cues ("Use when")');
   }
 });
+
+// Spec section 7: bodies stay at or under 100 lines, heavy material lives in references/ and is cited by relative path.
+// A cited file that does not exist, or a references file nothing cites, is the dead-reference case doctor will check later.
+test('every skill body is within 100 lines, cites only reference files that exist, and every references file is cited', () => {
+  for (const name of fs.readdirSync(dir)) {
+    const file = path.join(dir, name, 'SKILL.md');
+    if (!fs.existsSync(file)) continue;
+    assert.ok(!fs.readFileSync(file, 'utf8').startsWith('﻿'), name + ': SKILL.md starts with a BOM');
+    const { body } = frontmatter(file);
+    const lines = body.replace(/\n+$/, '').split('\n').length;
+    assert.ok(lines <= 100, name + ': body is ' + lines + ' lines, budget 100');
+    for (const m of body.matchAll(/`(?:(bk-[a-z]+)\/)?references\/([a-z0-9-]+\.md)`/g)) {
+      const owner = m[1] || name;
+      assert.ok(fs.existsSync(path.join(dir, owner, 'references', m[2])), name + ': cites missing ' + owner + '/references/' + m[2]);
+    }
+    const refDir = path.join(dir, name, 'references');
+    if (!fs.existsSync(refDir)) continue;
+    for (const ref of fs.readdirSync(refDir)) {
+      assert.ok(body.includes('references/' + ref), name + ': references/' + ref + ' is never cited by its SKILL.md');
+      assert.ok(!fs.readFileSync(path.join(refDir, ref), 'utf8').startsWith('﻿'), name + '/references/' + ref + ': starts with a BOM');
+    }
+  }
+});
+
+// Spec section 12: anything adapted from an upstream source is recorded in upstream/sources.json (derived map) and points at NOTICE.
+test('every references file adapted from upstream has a derived entry in upstream/sources.json and names NOTICE', () => {
+  const sources = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'upstream', 'sources.json'), 'utf8')).sources;
+  const derived = new Set(sources.flatMap((s) => Object.keys(s.derived || {})));
+  for (const name of fs.readdirSync(dir)) {
+    const refDir = path.join(dir, name, 'references');
+    if (!fs.existsSync(refDir)) continue;
+    for (const ref of fs.readdirSync(refDir)) {
+      const text = fs.readFileSync(path.join(refDir, ref), 'utf8');
+      if (!/^Adapted from /m.test(text)) continue;
+      const key = 'core/skills/' + name + '/references/' + ref;
+      assert.ok(derived.has(key), key + ': adapted from upstream but absent from every derived map');
+      assert.match(text, /`NOTICE`/, key + ': must point at NOTICE');
+    }
+  }
+  for (const key of derived) assert.ok(fs.existsSync(path.join(__dirname, '..', key)), key + ': in a derived map but the file does not exist');
+});

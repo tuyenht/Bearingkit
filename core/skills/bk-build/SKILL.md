@@ -7,6 +7,7 @@ description: "Execute a plan or a small change that fits in at most three files:
 
 ## Read first
 - The `[bearingkit]` stack block (guardrail commands, hot paths), the project's instruction files, and the plan phase or the acceptance criteria.
+- `references/executing.md` before executing a plan: isolation, subagent-driven execution with the two-stage review, parallel agents.
 
 ## Steps
 1. Scout the touchpoints first: every file and symbol the change reaches, as a `file:line` list, including callers and readers of anything renamed.

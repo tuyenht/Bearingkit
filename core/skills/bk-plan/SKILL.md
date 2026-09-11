@@ -8,6 +8,7 @@ description: "Write a phased plan with exit criteria and evidence per phase; res
 ## Read first
 - The `[bearingkit]` stack block, the project's instruction files, the spec or audit verdict this plan implements.
 - The active plan, if any: session state, then the branch name against `plans/` and `docs/plans/`; if neither resolves, ask which plan.
+- `references/writing-plans.md`: task granularity, the no-placeholder list, the self-review against the spec.
 
 ## Steps
 1. Create `plans/<yymmdd-hhmm>-<slug>/` (or the folder the project's instruction file names) with `plan.md` of at most eighty lines: goal, phases with status, key dependencies, links to the phase files.

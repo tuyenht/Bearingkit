@@ -24,9 +24,61 @@
         "skills/requesting-code-review/SKILL.md",
         "skills/receiving-code-review/SKILL.md",
         "skills/finishing-a-development-branch/SKILL.md",
-        "skills/writing-skills/SKILL.md"
+        "skills/writing-skills/SKILL.md",
+        "skills/brainstorming/spec-document-reviewer-prompt.md",
+        "skills/writing-plans/plan-document-reviewer-prompt.md",
+        "skills/subagent-driven-development/implementer-prompt.md",
+        "skills/subagent-driven-development/spec-reviewer-prompt.md",
+        "skills/subagent-driven-development/code-quality-reviewer-prompt.md",
+        "skills/requesting-code-review/code-reviewer.md",
+        "skills/systematic-debugging/root-cause-tracing.md",
+        "skills/systematic-debugging/condition-based-waiting.md",
+        "skills/systematic-debugging/defense-in-depth.md",
+        "skills/test-driven-development/testing-anti-patterns.md"
       ],
-      "derived": {}
+      "derived": {
+        "core/skills/bk-spec/references/brainstorming.md": [
+          "skills/brainstorming/SKILL.md",
+          "skills/brainstorming/spec-document-reviewer-prompt.md"
+        ],
+        "core/skills/bk-plan/references/writing-plans.md": [
+          "skills/writing-plans/SKILL.md",
+          "skills/writing-plans/plan-document-reviewer-prompt.md"
+        ],
+        "core/skills/bk-build/references/executing.md": [
+          "skills/executing-plans/SKILL.md",
+          "skills/subagent-driven-development/SKILL.md",
+          "skills/subagent-driven-development/implementer-prompt.md",
+          "skills/subagent-driven-development/spec-reviewer-prompt.md",
+          "skills/subagent-driven-development/code-quality-reviewer-prompt.md",
+          "skills/dispatching-parallel-agents/SKILL.md",
+          "skills/using-git-worktrees/SKILL.md"
+        ],
+        "core/skills/bk-test/references/tdd.md": [
+          "skills/test-driven-development/SKILL.md",
+          "skills/test-driven-development/testing-anti-patterns.md"
+        ],
+        "core/skills/bk-debug/references/systematic-debugging.md": [
+          "skills/systematic-debugging/SKILL.md",
+          "skills/systematic-debugging/root-cause-tracing.md",
+          "skills/systematic-debugging/condition-based-waiting.md",
+          "skills/systematic-debugging/defense-in-depth.md"
+        ],
+        "core/skills/bk-review/references/code-review-exchange.md": [
+          "skills/requesting-code-review/SKILL.md",
+          "skills/requesting-code-review/code-reviewer.md",
+          "skills/receiving-code-review/SKILL.md"
+        ],
+        "core/skills/bk-ship/references/finishing.md": [
+          "skills/verification-before-completion/SKILL.md",
+          "skills/finishing-a-development-branch/SKILL.md"
+        ],
+        "core/skills/bk-protocol/references/meta-routing.md": [
+          "skills/using-superpowers/SKILL.md",
+          "skills/writing-skills/SKILL.md"
+        ]
+      },
+      "absorbed": "2026-09-11"
     },
     {
       "name": "anthropics/claude-plugins-official",

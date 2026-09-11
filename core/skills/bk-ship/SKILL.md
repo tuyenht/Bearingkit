@@ -7,6 +7,7 @@ description: "Finish work that is already done: run detected guardrails, paste o
 
 ## Read first
 - The `[bearingkit]` stack block for the guardrail commands, and the project's instruction files for declared gates and commit conventions.
+- `references/finishing.md`: verification before any claim, the branch-completion options, worktree cleanup.
 
 ## Steps
 1. Run every guardrail the stack block lists, in full. Record each with `node <kit>/scripts/record-guardrail.cjs --command "<cmd>" --exit <code>` so the push gate can see it.

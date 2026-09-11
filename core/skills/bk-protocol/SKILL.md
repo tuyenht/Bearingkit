@@ -19,3 +19,4 @@ This skill holds shared references. Task skills read the files under `references
 | `references/rba-lite.md` | Reasoning-before-action block and its fail conditions |
 | `references/correction-cues.md` | Phrases that mark a user correction |
 | `references/handoff-template.md` | Two-block handoff skeleton used by bk-close |
+| `references/meta-routing.md` | What the router keeps from Superpowers' meta-skill, and the authoring convention for skills |

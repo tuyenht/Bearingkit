@@ -8,6 +8,7 @@ description: "Pin down a request before building: restate, edge cases, assumptio
 ## Read first
 - The `[bearingkit]` stack block, the project's instruction files (architecture, conventions, hot paths, "do not" lists), and `bk-protocol/references/gate-patterns.md`.
 - The code the request touches: find the touchpoints and cite them as `file:line`.
+- `references/brainstorming.md` when the ask needs questions, a design, or a spec file.
 
 ## Steps
 1. Restate the request in one paragraph in the user's words plus the technical reading. If the two differ, say where.

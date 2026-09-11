@@ -7,6 +7,7 @@ description: "Tests as the contract, TDD by default; --browser forces rendered c
 
 ## Read first
 - The `[bearingkit]` stack block (test command, framework majors) and the project's testing conventions in its instruction files.
+- `references/tdd.md`: the cycle, the rationalizations, the test anti-patterns.
 
 ## Steps
 1. For each behavior: write the failing test, run it and show the failure, write the minimal code, run it and show the pass, then refactor with the test green.
