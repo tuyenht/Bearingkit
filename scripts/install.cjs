@@ -3,7 +3,7 @@
 // entries it writes are marked so a second run is idempotent and `uninstall` removes exactly what it added.
 //
 //   bearingkit install --dev <repo> [--config-dir <claude dir>] [--antigravity-dir <gemini config dir>]
-//                      [--dry-run] [--mcp] [--claude-only] [--antigravity-only] [--antigravity-copy] [--backups-dir <dir>]
+//                      [--dry-run] [--mcp] [--claude-only] [--antigravity-only] [--antigravity-link] [--backups-dir <dir>]
 //   bearingkit uninstall (same options)
 //
 // Claude Code: junctions/symlinks for core/skills/bk-* → <claudeDir>/skills/, core/rules → <claudeDir>/rules/bearingkit,
@@ -45,9 +45,10 @@ function resolveOptions(argv) {
     mcp: Boolean(args.mcp),
     doClaude: !args['antigravity-only'],
     doAntigravity: !args['claude-only'] && (Boolean(args['antigravity-dir']) || !isolated),
-    // Antigravity's scanner may not follow a directory junction; --antigravity-copy installs a real directory
-    // (a snapshot of the adapter with the skills dereferenced) that a later install refreshes.
-    antigravityCopy: Boolean(args['antigravity-copy']),
+    // Antigravity's plugin scanner does not follow a directory junction (isolated on 2.0 on 2026-09-11), so the
+    // plugin is a real directory, a snapshot of the adapter with the skills dereferenced that a later install
+    // refreshes; --antigravity-link keeps the junction for experiments.
+    antigravityCopy: !args['antigravity-link'],
   };
 }
 
@@ -232,10 +233,20 @@ class Installer {
     // Antigravity discovers plugins as subdirectories of <config>/plugins/ and enables them by default; the state
     // lives in config.json only when the user toggles it. One junction (or one copied directory) is the whole registration.
     const dst = path.join(this.o.geminiDir, 'plugins', 'bearingkit');
-    if (this.o.antigravityCopy) this.copyPlugin(ad, dst); else this.link(ad, dst);
+    if (this.o.antigravityCopy) this.copyPlugin(ad, dst);
+    else {
+      // A kit-made copy gives way to the junction; anything else in the way is left alone by link().
+      if (!this.isKitLinkOrMissing(dst) && this.isKitCopy(dst)) { this.log(`- remove copied plugin ${fwd(dst)} (replaced by a link)`); if (!this.o.dryRun) fs.rmSync(dst, { recursive: true, force: true }); }
+      this.link(ad, dst);
+    }
   }
   // A copied plugin directory carries a marker naming the kit it came from, so only kit-made copies are ever replaced.
   copyMarker(dst) { return path.join(dst, '.bearingkit-copy'); }
+  isKitLinkOrMissing(dst) {
+    let st = null;
+    try { st = fs.lstatSync(dst); } catch { return true; }
+    return st.isSymbolicLink();
+  }
   isKitCopy(dst) {
     try { return fs.readFileSync(this.copyMarker(dst), 'utf8').trim() === this.o.kitRoot; } catch { return false; }
   }

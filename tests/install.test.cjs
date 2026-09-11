@@ -68,7 +68,8 @@ test('install links skills and rules, merges settings and the import line idempo
   assert.ok(manifest.files.some((f) => f.from.endsWith('settings.json')));
 
   const plugin = path.join(d.gemini, 'plugins', 'bearingkit');
-  assert.ok(fs.lstatSync(plugin).isSymbolicLink(), 'the plugin is one junction under the global plugins root');
+  assert.ok(fs.lstatSync(plugin).isDirectory() && !fs.lstatSync(plugin).isSymbolicLink(), 'the plugin is a real directory (the host does not follow junctions)');
+  assert.equal(fs.readFileSync(path.join(plugin, '.bearingkit-copy'), 'utf8').trim(), fwd(d.kit));
   assert.ok(fs.existsSync(path.join(plugin, 'plugin.json')));
   assert.ok(fs.existsSync(path.join(plugin, 'skills', 'bk-spec', 'SKILL.md')), 'skills reachable through the junction chain');
   const hooks = JSON.parse(fs.readFileSync(path.join(plugin, 'hooks.json'), 'utf8'));
@@ -126,14 +127,14 @@ test('backups cover only the hosts the run touches', async () => {
   const text = report.join('\n');
   assert.doesNotMatch(text, /backup .*claude-settings/, 'an antigravity-only run must not read the Claude profile');
   assert.match(text, /nothing to back up/, 'the Antigravity side modifies no existing file');
-  assert.match(text, /\+ link .*plugins\/bearingkit/);
+  assert.match(text, /\+ copy .*plugins\/bearingkit/);
   const [report2] = await quiet(() => install(argsFor(d, ['--claude-only', '--dry-run'])));
   assert.doesNotMatch(report2.join('\n'), /plugins\/bearingkit/);
 });
 
-test('--antigravity-copy installs a real plugin directory with dereferenced skills, and uninstall removes only kit-made copies', async () => {
+test('the Antigravity plugin is a real directory with dereferenced skills, and uninstall removes only kit-made copies', async () => {
   const d = dirs();
-  await quiet(() => install(argsFor(d, ['--antigravity-only', '--antigravity-copy'])));
+  await quiet(() => install(argsFor(d, ['--antigravity-only'])));
   const dst = path.join(d.gemini, 'plugins', 'bearingkit');
   assert.ok(fs.lstatSync(dst).isDirectory() && !fs.lstatSync(dst).isSymbolicLink(), 'a real directory');
   assert.ok(fs.lstatSync(path.join(dst, 'skills')).isDirectory() && !fs.lstatSync(path.join(dst, 'skills')).isSymbolicLink(), 'skills copied, not linked');
@@ -142,14 +143,19 @@ test('--antigravity-copy installs a real plugin directory with dereferenced skil
   assert.ok(!fs.existsSync(path.join(dst, 'hooks.template.json')), 'template not shipped');
   assert.equal(fs.readFileSync(path.join(dst, '.bearingkit-copy'), 'utf8').trim(), fwd(d.kit));
   // A second install refreshes the copy in place; a junction install replaces its own copy with a link and back.
-  await quiet(() => install(argsFor(d, ['--antigravity-only', '--antigravity-copy'])));
+  await quiet(() => install(argsFor(d, ['--antigravity-only'])));
   assert.ok(fs.existsSync(path.join(dst, 'skills', 'bk-spec', 'SKILL.md')));
+  // --antigravity-link replaces the kit-made copy with a junction (experiments only), and back.
+  await quiet(() => install(argsFor(d, ['--antigravity-only', '--antigravity-link'])));
+  assert.ok(fs.lstatSync(dst).isSymbolicLink(), 'junction on request');
+  await quiet(() => install(argsFor(d, ['--antigravity-only'])));
+  assert.ok(!fs.lstatSync(dst).isSymbolicLink() && fs.existsSync(path.join(dst, '.bearingkit-copy')), 'back to a copy');
   await quiet(() => uninstall(argsFor(d, ['--antigravity-only'])));
   assert.ok(!fs.existsSync(dst), 'kit-made copy removed');
   // A foreign directory with the same name is never touched.
   fs.mkdirSync(dst, { recursive: true });
   fs.writeFileSync(path.join(dst, 'plugin.json'), '{"name":"someone-else"}');
-  const [report] = await quiet(() => install(argsFor(d, ['--antigravity-only', '--antigravity-copy'])));
+  const [report] = await quiet(() => install(argsFor(d, ['--antigravity-only'])));
   assert.match(report.join('\n'), /skipped .*existing directory not created by bearingkit/);
   await quiet(() => uninstall(argsFor(d, ['--antigravity-only'])));
   assert.ok(fs.existsSync(path.join(dst, 'plugin.json')), 'foreign directory kept');
@@ -158,7 +164,7 @@ test('--antigravity-copy installs a real plugin directory with dereferenced skil
 test('the Antigravity launcher runs the stack-profile hook from the plugin directory with a relative command', async () => {
   const { spawnSync } = require('node:child_process');
   const d = dirs();
-  await quiet(() => install(argsFor(d, ['--antigravity-only', '--antigravity-copy'])));
+  await quiet(() => install(argsFor(d, ['--antigravity-only'])));
   const plugin = path.join(d.gemini, 'plugins', 'bearingkit');
   const stateDir = tmp('state');
   const payload = JSON.stringify({ conversationId: 'launch-1', workspacePaths: [REPO], invocationNum: 1, modelName: 'auto' });
