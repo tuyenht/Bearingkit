@@ -25,6 +25,7 @@ One `skills/` source; each host installs it with its own command. A host is list
 - Uninstall: `npx bearingkit antigravity uninstall`; it removes only a directory the kit created (marker file `.bearingkit-copy`).
 - Bootstrap: `rules/bearingkit.md` with `trigger: always_on` inside the plugin copy. A skill is invoked by opening `skills/<name>/SKILL.md` inside the plugin (the path the Customizations panel shows) with `view_file` and following it.
 - Tokens are read from the Customizations panel; Phase 1 measured the rule at 1,873 and ten descriptions at 1,045.
+- Automated runs (the eval driver, the acceptance test) drive the 2.0 app over the Chrome DevTools protocol. The app does not open that port by itself (verified 2026-09-11: a plainly started app listened on no DevTools port); start it as `Antigravity.exe --remote-debugging-port=1405` (the port `scripts/antigravity/cdp.cjs` expects), or through a launcher that adds the flag.
 
 ## Gemini CLI
 
