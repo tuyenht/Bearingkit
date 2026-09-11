@@ -1,0 +1,61 @@
+{
+  "$comment": "Provenance of everything the kit adapts or reads (spec section 12). A source enters this file only with a verified sha; 'derived' maps kit files to the source files they were adapted from and stays empty until the porting lands. Local caches are named by version; their paths live in the gitignored kit.config.json.",
+  "sources": [
+    {
+      "name": "obra/superpowers",
+      "repo": "https://github.com/obra/superpowers",
+      "tag": "5.1.0",
+      "sha": "f2cbfbefebbfef77321e4c9abc9e949826bea9d7",
+      "license": "MIT",
+      "mode": "adapt",
+      "verified": "2026-09-11",
+      "local": "Claude Code plugin cache, superpowers-marketplace 5.1.0",
+      "tracked": [
+        "skills/using-superpowers/SKILL.md",
+        "skills/brainstorming/SKILL.md",
+        "skills/writing-plans/SKILL.md",
+        "skills/executing-plans/SKILL.md",
+        "skills/subagent-driven-development/SKILL.md",
+        "skills/dispatching-parallel-agents/SKILL.md",
+        "skills/using-git-worktrees/SKILL.md",
+        "skills/test-driven-development/SKILL.md",
+        "skills/systematic-debugging/SKILL.md",
+        "skills/verification-before-completion/SKILL.md",
+        "skills/requesting-code-review/SKILL.md",
+        "skills/receiving-code-review/SKILL.md",
+        "skills/finishing-a-development-branch/SKILL.md",
+        "skills/writing-skills/SKILL.md"
+      ],
+      "derived": {}
+    },
+    {
+      "name": "anthropics/claude-plugins-official",
+      "repo": "https://github.com/anthropics/claude-plugins-official",
+      "tag": null,
+      "sha": "3b600518a637492d37c9877aeb49c2a55d939c04",
+      "license": "Apache-2.0",
+      "mode": "adapt",
+      "verified": "2026-09-11",
+      "local": "shallow clone under _build/upstream/ (gitignored), commit dated 2026-09-10",
+      "tracked": [
+        "plugins/code-review/commands/code-review.md",
+        "plugins/pr-review-toolkit/commands/review-pr.md",
+        "plugins/pr-review-toolkit/agents/code-reviewer.md",
+        "plugins/pr-review-toolkit/agents/code-simplifier.md",
+        "plugins/pr-review-toolkit/agents/comment-analyzer.md",
+        "plugins/pr-review-toolkit/agents/pr-test-analyzer.md",
+        "plugins/pr-review-toolkit/agents/silent-failure-hunter.md",
+        "plugins/pr-review-toolkit/agents/type-design-analyzer.md",
+        "plugins/frontend-design/skills/frontend-design/SKILL.md",
+        "plugins/claude-code-setup/skills/claude-automation-recommender/SKILL.md",
+        "plugins/claude-code-setup/skills/claude-automation-recommender/references/hooks-patterns.md",
+        "plugins/claude-code-setup/skills/claude-automation-recommender/references/mcp-servers.md",
+        "plugins/claude-code-setup/skills/claude-automation-recommender/references/plugins-reference.md",
+        "plugins/claude-code-setup/skills/claude-automation-recommender/references/skills-reference.md",
+        "plugins/claude-code-setup/skills/claude-automation-recommender/references/subagent-templates.md",
+        "plugins/security-guidance/hooks/patterns.py"
+      ],
+      "derived": {}
+    }
+  ]
+}
