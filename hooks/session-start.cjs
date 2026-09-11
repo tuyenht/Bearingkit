@@ -9,7 +9,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const PROTOCOL = path.join(__dirname, '..', 'skills', 'bk-protocol', 'SKILL.md');
+const KIT_ROOT = path.resolve(__dirname, '..');
+const PROTOCOL = path.join(KIT_ROOT, 'skills', 'bk-protocol', 'SKILL.md');
 
 function stripFrontmatter(text) {
   const lines = String(text).split('\n');
@@ -18,11 +19,14 @@ function stripFrontmatter(text) {
   return end === -1 ? String(text) : lines.slice(end + 1).join('\n').replace(/^\n+/, '');
 }
 
-function buildContext(file = PROTOCOL) {
+// The protocol is injected, not read from a file, so the model cannot infer where the kit lives; the skills call
+// `node <kit>/scripts/detect-stack.cjs`, and this line is what makes `<kit>` concrete on this host.
+function buildContext(file = PROTOCOL, kitRoot = KIT_ROOT) {
   const body = stripFrontmatter(fs.readFileSync(file, 'utf8')).trim();
   return [
     '<bearingkit-protocol>',
     'The Bearingkit protocol below is in force for this session. Its skills are invoked through the host\'s skill tool; the router names which one before any code is read. Everything after the closing tag is the user\'s request.',
+    `Kit root, the directory that holds \`skills/\` and \`scripts/\`: \`${kitRoot}\`.`,
     '',
     body,
     '</bearingkit-protocol>',
@@ -43,4 +47,4 @@ if (require.main === module) {
   process.stdout.write(JSON.stringify(output(context)) + '\n');
 }
 
-module.exports = { buildContext, output, stripFrontmatter, PROTOCOL };
+module.exports = { buildContext, output, stripFrontmatter, PROTOCOL, KIT_ROOT };

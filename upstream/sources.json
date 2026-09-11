@@ -1,5 +1,5 @@
 {
-  "$comment": "Provenance of everything the kit adapts or reads (spec section 12). A source enters this file only with a verified sha; 'derived' maps kit files to the source files they were adapted from and stays empty until the porting lands. Local caches are named by version; their paths live in the gitignored kit.config.json.",
+  "$comment": "Provenance of everything the kit adapts or reads (spec v2 section 10). A source enters this file only with a verified sha; derived maps kit files to the source files they were adapted from or shaped after. Local caches (the Claude plugin cache for Superpowers, the gitignored _build/upstream/ for clones) are named, not pathed.",
   "sources": [
     {
       "name": "obra/superpowers",
@@ -34,7 +34,19 @@
         "skills/systematic-debugging/root-cause-tracing.md",
         "skills/systematic-debugging/condition-based-waiting.md",
         "skills/systematic-debugging/defense-in-depth.md",
-        "skills/test-driven-development/testing-anti-patterns.md"
+        "skills/test-driven-development/testing-anti-patterns.md",
+        "hooks/session-start",
+        "hooks/hooks.json",
+        "hooks/hooks-cursor.json",
+        "hooks/run-hook.cmd",
+        ".claude-plugin/plugin.json",
+        ".claude-plugin/marketplace.json",
+        ".codex-plugin/plugin.json",
+        ".cursor-plugin/plugin.json",
+        "gemini-extension.json",
+        "GEMINI.md",
+        ".opencode/plugins/superpowers.js",
+        "README.md"
       ],
       "derived": {
         "skills/bk-spec/references/brainstorming.md": [
@@ -76,6 +88,27 @@
         "skills/bk-protocol/references/meta-routing.md": [
           "skills/using-superpowers/SKILL.md",
           "skills/writing-skills/SKILL.md"
+        ],
+        "hooks/session-start.cjs": [
+          "hooks/session-start"
+        ],
+        "hooks/hooks.json": [
+          "hooks/hooks.json"
+        ],
+        "hooks/hooks-cursor.json": [
+          "hooks/hooks-cursor.json"
+        ],
+        ".codex-plugin/plugin.json": [
+          ".codex-plugin/plugin.json"
+        ],
+        ".cursor-plugin/plugin.json": [
+          ".cursor-plugin/plugin.json"
+        ],
+        "gemini-extension.json": [
+          "gemini-extension.json"
+        ],
+        "GEMINI.md": [
+          "GEMINI.md"
         ]
       },
       "absorbed": "2026-09-11"

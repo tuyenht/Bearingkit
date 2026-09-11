@@ -13,7 +13,7 @@ One `skills/` source; each host installs it with its own command. A host is list
 
 ## Claude Code
 
-- Install: `/plugin marketplace add tuyenht/Bearingkit`, then `/plugin install bearingkit@bearingkit`. Uninstall: `/plugin uninstall bearingkit`.
+- Install: `/plugin marketplace add tuyenht/Bearingkit`, then `/plugin install bearingkit@bearingkit`. While the repository is private (until v1.0), add the marketplace by local path instead: `/plugin marketplace add C:\Projects\Bearingkit`. Uninstall through the `/plugin` menu (the exact `/plugin uninstall` form is unverified).
 - Development and evals, no install: `claude --plugin-dir <path to the checkout>`. The kit's evals runner passes this by default.
 - Bootstrap: `hooks/hooks.json` runs `hooks/session-start.cjs` on startup, clear and compact; it returns the protocol (`skills/bk-protocol/SKILL.md`) as additional context. Skills appear as `bearingkit:bk-<name>`; `bk-protocol` is hidden from the listing.
 - Agents: `agents/bk-*.md` load with the plugin.
@@ -29,7 +29,7 @@ One `skills/` source; each host installs it with its own command. A host is list
 
 ## Gemini CLI
 
-- Install: `gemini extensions install https://github.com/tuyenht/Bearingkit`; update with `gemini extensions update bearingkit`.
+- Install: `gemini extensions install https://github.com/tuyenht/Bearingkit` (a local path works while the repository is private); update with `gemini extensions update bearingkit`. Unverified until the acceptance test runs there.
 - Bootstrap: `gemini-extension.json` names `GEMINI.md`, which imports `./skills/bk-protocol/SKILL.md`.
 - Shares `~/.gemini/GEMINI.md` conventions with Antigravity's `user_global` rule; install both only if you use both.
 

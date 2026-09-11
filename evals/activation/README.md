@@ -2,7 +2,7 @@
 
 `phase-1.jsonl` holds sixty prompts: six intents (question, small change, feature, bug, review, ship), ten each, eight positives (four English, four Vietnamese) and two negatives whose expected answer is `none` or a neighbouring skill. A run passes the Phase 1 gate when every positive routes to its skill and no negative routes to the intent's skill.
 
-Format, one JSON object per line: `id`, `intent`, `lang`, `prompt`, `expect` (a skill name or `none`).
+Format, one JSON object per line: `id`, `intent`, `lang`, `prompt`, `expect` (a skill name or `none`). `acceptance.jsonl` holds the two-prompt acceptance test of spec v2 §11 (the autonomy-gate question, then "Let's make a react todo list" expecting `bk-spec`); run it with `--file evals/activation/acceptance.jsonl` on either host, and read the first answer by hand for ACT and COUNCIL.
 
 ## Claude Code
 
@@ -20,6 +20,6 @@ Baseline: run the same file once against the current daily profile (no `--config
 node bin/bearingkit.cjs evals --host antigravity
 ```
 
-Without flags this prints the prompts as a checklist (`evals/results/<date>-antigravity-checklist.md`) for a run by hand.
+Without flags this prints the prompts as a checklist (`evals/results/<date>-antigravity-checklist.md`) for a run by hand. On this host `--plugin-dir` names the live plugin copy (default `~/.gemini/config/plugins/bearingkit`), not the checkout.
 
 The automated run on Antigravity 2.0 (the desktop app must be running with `--remote-debugging-port=1405`; it opens no DevTools port by default) goes: `--arm --id <ids> --tag <tag>` installs a driver hook into the live plugin and queues the prompts; `--drive <projectId> --count N` starts a detached script that opens one conversation per prompt in the eval project (a JSON under `~/.gemini/config/projects/` pointing at the staged fixture), types a hold phrase, and lets the hook inject the real prompt after resetting the fixture; `--score` reads the transcripts (the first `SKILL.md` opened after the injected prompt) and writes the table; `--disarm` removes the hook. Progress lives in `~/.bearingkit/antigravity-eval/queue.json` and the drive log under `evals/results/`. About 90 seconds per prompt on Opus 4.6. Tokens on this host are read from the app’s Customizations panel, not measured by the runner.

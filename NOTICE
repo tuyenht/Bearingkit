@@ -7,6 +7,7 @@ Bearingkit is distributed under the MIT license declared in `package.json`. Part
 - Repository: https://github.com/obra/superpowers, tag `v5.1.0`, commit `f2cbfbefebbfef77321e4c9abc9e949826bea9d7` (verified 2026-09-11 against the Claude Code plugin cache of the same version).
 - License: MIT, Copyright (c) 2025 Jesse Vincent.
 - Adapted into `skills/bk-spec/references/brainstorming.md`, `skills/bk-plan/references/writing-plans.md`, `skills/bk-build/references/executing.md`, `skills/bk-test/references/tdd.md`, `skills/bk-debug/references/systematic-debugging.md`, `skills/bk-review/references/code-review-exchange.md`, `skills/bk-ship/references/finishing.md`, `skills/bk-protocol/references/meta-routing.md`. The files are rewritten in the kit's form: the source's decision rules, checklists and failure patterns are retained; its folder defaults, flowcharts, prompt-template scaffolding and per-platform sections are not.
+- Shapes followed, code the kit's own: `hooks/session-start.cjs` (a SessionStart hook that returns the bootstrap skill as context in the three key forms the hosts read) after the source's `hooks/session-start`; `hooks/hooks.json`, `hooks/hooks-cursor.json`, `.codex-plugin/plugin.json`, `.cursor-plugin/plugin.json`, `gemini-extension.json` and `GEMINI.md` after the source's manifests of the same names.
 
 ```
 MIT License

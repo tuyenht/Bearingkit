@@ -12,6 +12,7 @@ test('the bootstrap carries the protocol body without its frontmatter', () => {
   assert.ok(!/^---\n/m.test(ctx.split('\n').slice(0, 4).join('\n')), 'no frontmatter fence in the context');
   assert.ok(!/user-invocable/.test(ctx), 'frontmatter keys stripped');
   for (const heading of ['## Autonomy Gate', '## Router', '## Evidence', '## Security baseline', '## Host notes']) assert.ok(ctx.includes(heading), heading);
+  assert.ok(ctx.includes('Kit root') && ctx.includes(path.resolve(__dirname, '..')), 'the injected context names the kit root so skills can run detect-stack');
   assert.equal(stripFrontmatter('---\na: b\n---\n\nbody\n'), 'body\n');
   assert.equal(stripFrontmatter('body only'), 'body only');
 });

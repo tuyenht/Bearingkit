@@ -16,6 +16,8 @@ function fakeKit() {
   fs.writeFileSync(path.join(root, 'skills', 'bk-protocol', 'references', 'x.md'), '# x\n');
   fs.mkdirSync(path.join(root, 'skills', 'bk-spec'), { recursive: true });
   fs.writeFileSync(path.join(root, 'skills', 'bk-spec', 'SKILL.md'), '---\nname: bk-spec\ndescription: "s"\n---\nbody\n');
+  fs.mkdirSync(path.join(root, 'scripts', 'lib'), { recursive: true });
+  for (const s of ['scripts/detect-stack.cjs', 'scripts/record-guardrail.cjs', 'scripts/lib/state.cjs']) fs.writeFileSync(path.join(root, ...s.split('/')), '// stub\n');
   return root;
 }
 
@@ -26,8 +28,9 @@ test('install composes plugin.json, skills and the always-on rule, and refreshes
   assert.ok(!fs.existsSync(dest), 'dry run writes nothing');
   assert.ok(dry.actions.some((a) => a.includes('rules')));
   install({ root, dest });
-  for (const f of ['plugin.json', 'skills/bk-protocol/SKILL.md', 'skills/bk-protocol/references/x.md', 'skills/bk-spec/SKILL.md', 'rules/bearingkit.md', MARKER]) assert.ok(fs.existsSync(path.join(dest, f)), f);
+  for (const f of ['plugin.json', 'skills/bk-protocol/SKILL.md', 'skills/bk-protocol/references/x.md', 'skills/bk-spec/SKILL.md', 'scripts/detect-stack.cjs', 'scripts/record-guardrail.cjs', 'scripts/lib/state.cjs', 'rules/bearingkit.md', MARKER]) assert.ok(fs.existsSync(path.join(dest, f)), f);
   const rule = fs.readFileSync(path.join(dest, 'rules', 'bearingkit.md'), 'utf8');
+  assert.ok(rule.includes('Kit root') && rule.includes(dest), 'the rule names the copy as the kit root, so skills can run the scripts');
   assert.ok(rule.startsWith('---\ntrigger: always_on\n---\n# Bearingkit'), 'rule starts with the always-on frontmatter then the body');
   assert.ok(!rule.includes('user-invocable') && !rule.includes('name: bk-protocol'), 'skill frontmatter stripped');
   assert.ok(rule.includes('## Antigravity host note') && rule.includes('view_file'), 'the host note that makes the model open SKILL.md first is appended');

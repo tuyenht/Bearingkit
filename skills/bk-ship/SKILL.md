@@ -10,7 +10,7 @@ description: "Finish work that is already done: run detected guardrails, paste o
 - `references/finishing.md`: verification before any claim, the branch-completion options, worktree cleanup.
 
 ## Steps
-1. Run every guardrail the stack profile lists, in full. Record each with `node <kit>/scripts/record-guardrail.cjs --command "<cmd>" --exit <code>` so the push gate can see it.
+1. Run every guardrail the stack profile lists, in full. Record each with `node <kit>/scripts/record-guardrail.cjs --command "<cmd>" --exit <code>` so the record exists for the review step and for a later push gate.
 2. Paste the outputs. A failing guardrail stops the ship; it is fixed, not skipped.
 3. Scan the staged diff for secret patterns (cloud access keys, API keys, private key blocks, personal access tokens, chat tokens, hard-coded passwords). A hit stops the ship.
 4. Name a code diff that carries no test diff; the user decides whether that is acceptable.

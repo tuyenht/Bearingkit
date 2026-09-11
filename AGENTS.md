@@ -4,7 +4,7 @@ This file is for agents developing the kit itself. Claude Code reads it through 
 
 ## Where the truth lives
 
-- Design: `docs/specs/` (current: `2026-09-10-bearingkit-v1-design.md`; decisions log is its §19).
+- Design: `docs/specs/` (current: `2026-09-11-bearingkit-v2-design.md`; decisions log is its §15; the v1 spec stays for its §3 host mechanics and §18 field lessons).
 - Owner migration: `docs/plans/2026-09-10-owner-migration.md`.
 - Session state, open threads, pending decisions: the newest file in `docs/handoff/`. Read it first when resuming; rewrite it before the last commit of a session.
 - Nothing important lives only in chat history. If a decision or fact is not in the repo, it does not exist for the next session.

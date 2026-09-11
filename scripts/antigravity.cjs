@@ -39,9 +39,14 @@ const HOST_NOTE = [
   'This host has no skill tool. Invoking a skill means opening its file, `skills/<name>/SKILL.md` inside the bearingkit plugin (the path the Customizations panel shows), with `view_file` as the first action, and then following it. That holds for a one-line rename as much as for a feature: a small change still opens `bk-build`, a new capability opens `bk-spec`, before any list, grep, read or edit of the project. Reading a skill to explain what it does is not an invocation.',
 ].join('\n');
 
-function ruleText(root) {
+// Skills call `node <kit>/scripts/detect-stack.cjs` and `record-guardrail.cjs`; the copy carries those scripts and
+// names its own path as the kit root, since the model cannot infer it from a rule the host loaded for it.
+const SCRIPTS = ['scripts/detect-stack.cjs', 'scripts/record-guardrail.cjs', 'scripts/lib/state.cjs'];
+
+function ruleText(root, dest) {
   const protocol = fs.readFileSync(path.join(root, 'skills', 'bk-protocol', 'SKILL.md'), 'utf8');
-  return '---\ntrigger: always_on\n---\n' + stripFrontmatter(protocol).trim() + '\n\n' + HOST_NOTE + '\n';
+  const kitRoot = dest ? `\n\nKit root, the directory that holds \`skills/\` and \`scripts/\` on this host: \`${dest}\`.` : '';
+  return '---\ntrigger: always_on\n---\n' + stripFrontmatter(protocol).trim() + '\n\n' + HOST_NOTE + kitRoot + '\n';
 }
 
 // The copy is composed from the checkout: the Antigravity manifest, every skill folder (files dereferenced), and the
@@ -55,12 +60,14 @@ function install(opts = {}) {
   if (fs.existsSync(dest) && !fs.existsSync(marker)) throw new Error(`${dest} exists and was not created by bearingkit; remove it yourself or pass --dest`);
   const manifest = path.join(root, '.antigravity', 'plugin.json');
   const skills = path.join(root, 'skills');
-  for (const p of [manifest, skills]) if (!fs.existsSync(p)) throw new Error(`missing ${p}`);
+  const scripts = SCRIPTS.map((s) => path.join(root, ...s.split('/')));
+  for (const p of [manifest, skills, ...scripts]) if (!fs.existsSync(p)) throw new Error(`missing ${p}`);
   const actions = [];
   if (fs.existsSync(dest)) actions.push(`- remove previous copy ${dest}`);
   actions.push(`+ copy ${manifest} → ${path.join(dest, 'plugin.json')}`);
   actions.push(`+ copy ${skills} → ${path.join(dest, 'skills')} (dereferenced)`);
-  actions.push(`+ write ${path.join(dest, 'rules', 'bearingkit.md')} (protocol body, trigger: always_on)`);
+  actions.push(`+ copy ${SCRIPTS.join(', ')} → ${path.join(dest, 'scripts')}`);
+  actions.push(`+ write ${path.join(dest, 'rules', 'bearingkit.md')} (protocol body, host note, kit root; trigger: always_on)`);
   actions.push(`+ write ${marker}`);
   for (const a of actions) log(a);
   if (!dryRun) {
@@ -68,7 +75,8 @@ function install(opts = {}) {
     fs.mkdirSync(path.join(dest, 'rules'), { recursive: true });
     fs.copyFileSync(manifest, path.join(dest, 'plugin.json'));
     fs.cpSync(skills, path.join(dest, 'skills'), { recursive: true, dereference: true });
-    fs.writeFileSync(path.join(dest, 'rules', 'bearingkit.md'), ruleText(root));
+    for (const s of SCRIPTS) { const to = path.join(dest, ...s.split('/')); fs.mkdirSync(path.dirname(to), { recursive: true }); fs.copyFileSync(path.join(root, ...s.split('/')), to); }
+    fs.writeFileSync(path.join(dest, 'rules', 'bearingkit.md'), ruleText(root, dest));
     fs.writeFileSync(marker, root + '\n');
   }
   return { dest, actions, dryRun };
@@ -97,4 +105,4 @@ function cli(argv) {
 
 if (require.main === module) cli(process.argv.slice(2));
 
-module.exports = { install, uninstall, cli, defaultDest, ruleText, MARKER };
+module.exports = { install, uninstall, cli, defaultDest, ruleText, MARKER, SCRIPTS };
