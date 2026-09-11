@@ -200,7 +200,12 @@ class Installer {
     const ad = path.join(this.o.kitRoot, 'adapters', 'antigravity');
     const agents = fs.readFileSync(path.join(this.o.kitRoot, 'core', 'AGENTS.md'), 'utf8');
     const baseline = fs.readFileSync(path.join(this.o.kitRoot, 'core', 'rules', 'security-baseline.md'), 'utf8').replace(/^---[\s\S]*?---\s*/, '');
-    this.writeFile(path.join(ad, 'rules', 'AGENTS.md'), `---\ntrigger: always_on\n---\n${agents.trim()}\n\n${baseline.trim()}\n`);
+    const antigravityNote = [
+      '## Antigravity',
+      '',
+      'This host has no skill tool. Invoking a skill means opening its file, `skills/<name>/SKILL.md` inside the bearingkit plugin (the path the Customizations panel shows), with `view_file` as the first action, and then following it. That holds for a one-line rename as much as for a feature: a small change still opens `bk-build` before any grep, read or edit. Reading a skill to explain what it does is not an invocation.',
+    ].join('\n');
+    this.writeFile(path.join(ad, 'rules', 'AGENTS.md'), `---\ntrigger: always_on\n---\n${agents.trim()}\n\n${antigravityNote}\n\n${baseline.trim()}\n`);
     const hooks = fs.readFileSync(path.join(ad, 'hooks.template.json'), 'utf8').replace(/<KIT>/g, this.o.kitRoot);
     this.writeFile(path.join(ad, 'hooks.json'), hooks);
     // Launcher: Antigravity runs hook commands with the plugin directory as working directory and resolves path-like

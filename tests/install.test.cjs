@@ -75,6 +75,10 @@ test('install links skills and rules, merges settings and the import line idempo
   assert.ok(Array.isArray(hooks.bearingkit.PreInvocation), 'hooks.json uses the named-hook wrapper');
   assert.ok(!fs.existsSync(path.join(d.gemini, 'plugins.json')), 'no registry file is written');
   assert.ok(fs.existsSync(path.join(d.kit, 'adapters', 'antigravity', 'rules', 'AGENTS.md')));
+  const rule = fs.readFileSync(path.join(d.kit, 'adapters', 'antigravity', 'rules', 'AGENTS.md'), 'utf8');
+  assert.match(rule, /^---\ntrigger: always_on\n---\n/, 'always-on frontmatter');
+  assert.match(rule, /## Antigravity[\s\S]*view_file/, 'host note tells the model how to invoke a skill here');
+  assert.ok(rule.indexOf('## Antigravity') < rule.indexOf('Never print'), 'host note sits before the security baseline');
   const hooksJson = fs.readFileSync(path.join(d.kit, 'adapters', 'antigravity', 'hooks.json'), 'utf8');
   assert.match(hooksJson, /"command": "node hooks\/stack-profile\.cjs --event PreInvocation"/, 'relative, unquoted command');
   assert.ok(!hooksJson.includes('"C:') && !hooksJson.includes(fwd(d.kit)), 'no absolute path inside the command');

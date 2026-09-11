@@ -4,6 +4,7 @@ Skills describe actions. This table names the tool that performs each action on 
 
 | Action | Claude Code | Antigravity |
 |---|---|---|
+| invoke a skill | the Skill tool | view_file on `skills/<name>/SKILL.md` inside the bearingkit plugin, then follow it |
 | read a file | Read | view_file |
 | search text | Grep | grep_search |
 | find files by name | Glob | find_by_name |
