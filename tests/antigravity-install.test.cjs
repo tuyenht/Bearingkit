@@ -30,6 +30,7 @@ test('install composes plugin.json, skills and the always-on rule, and refreshes
   const rule = fs.readFileSync(path.join(dest, 'rules', 'bearingkit.md'), 'utf8');
   assert.ok(rule.startsWith('---\ntrigger: always_on\n---\n# Bearingkit'), 'rule starts with the always-on frontmatter then the body');
   assert.ok(!rule.includes('user-invocable') && !rule.includes('name: bk-protocol'), 'skill frontmatter stripped');
+  assert.ok(rule.includes('## Antigravity host note') && rule.includes('view_file'), 'the host note that makes the model open SKILL.md first is appended');
   fs.writeFileSync(path.join(dest, 'skills', 'stale.md'), 'old');
   install({ root, dest });
   assert.ok(!fs.existsSync(path.join(dest, 'skills', 'stale.md')), 'refresh replaces the copy');

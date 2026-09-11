@@ -30,9 +30,18 @@ function parseArgs(argv) {
   return out;
 }
 
+// Antigravity has no skill tool, so the protocol alone leaves the model naming a skill and exploring the code instead
+// of opening it (measured on 2026-09-10 and again on 2026-09-11 after this note was dropped from the v2 copy). The
+// note below restored the small-change and feature intents to 10/10 on the sixty-prompt set in Phase 1.
+const HOST_NOTE = [
+  '## Antigravity host note',
+  '',
+  'This host has no skill tool. Invoking a skill means opening its file, `skills/<name>/SKILL.md` inside the bearingkit plugin (the path the Customizations panel shows), with `view_file` as the first action, and then following it. That holds for a one-line rename as much as for a feature: a small change still opens `bk-build`, a new capability opens `bk-spec`, before any list, grep, read or edit of the project. Reading a skill to explain what it does is not an invocation.',
+].join('\n');
+
 function ruleText(root) {
   const protocol = fs.readFileSync(path.join(root, 'skills', 'bk-protocol', 'SKILL.md'), 'utf8');
-  return '---\ntrigger: always_on\n---\n' + stripFrontmatter(protocol).trim() + '\n';
+  return '---\ntrigger: always_on\n---\n' + stripFrontmatter(protocol).trim() + '\n\n' + HOST_NOTE + '\n';
 }
 
 // The copy is composed from the checkout: the Antigravity manifest, every skill folder (files dereferenced), and the

@@ -1,4 +1,5 @@
-// Drives Antigravity 2.0 through its DevTools endpoint (port 1405 on the workstation where this was built): for each
+// Drives Antigravity 2.0 through its DevTools endpoint (the app must be started with --remote-debugging-port=1405;
+// it opens no DevTools port by default): for each
 // queued prompt, opens a new conversation in the given project, types the hold phrase the armed driver expects, sends,
 // waits for the driver hook to log the conversation and for the transcript to settle, then moves on.
 // Usage: node drive.cjs <projectId> [maxPrompts]   (arm the queue first: evals --host antigravity --arm …)
@@ -32,9 +33,23 @@ function transcriptSettled(file) {
   return { settled: Boolean(done), lines: lines.length, lastType: last && last.type, lastStatus: last && last.status };
 }
 
+// The app serves its UI from https://127.0.0.1:<port> and the port changes with every launch (1407 on one day,
+// 29065 the next); a fixed port lands the renderer on chrome-error and the composer never appears. The origin is
+// read from the page, stepping back through history when an earlier bad navigation left an error page on top.
+async function resolveOrigin(c) {
+  for (let i = 0; i < 10; i++) {
+    const origin = await c.evaluate('location.origin').catch(() => '');
+    if (/^https:\/\/127\.0\.0\.1:\d+$/.test(String(origin))) return origin;
+    await c.evaluate('history.back(); true').catch(() => {});
+    await sleep(1500);
+  }
+  throw new Error('could not find the app origin: the page is not on https://127.0.0.1:<port>; bring the app window to its project view first');
+}
+
 async function runOne(c, projectId, trigger) {
   const before = readQueue().done.length;
-  await c.evaluate(`location.href = ${JSON.stringify(`https://127.0.0.1:1407/?section=${projectId}`)}; true`);
+  const origin = await resolveOrigin(c);
+  await c.evaluate(`location.href = ${JSON.stringify(`${origin}/?section=${projectId}`)}; true`);
   // The section re-mounts its composer while it loads; take the editor only after it has been present on two
   // consecutive checks, and treat it vanishing between the check and the keystrokes as a retryable failure
   // (it killed a 42-prompt run at prompt six once).
