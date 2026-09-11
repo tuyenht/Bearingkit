@@ -150,6 +150,8 @@ function sample(prompts, n) {
 
 function runClaudePrompt(prompt, opts) {
   const args = ['-p', '--output-format', 'stream-json', '--verbose', '--max-turns', String(opts.turns || 6), '--model', opts.model];
+  // The kit is loaded straight from the checkout as a plugin (no install step); a baseline against another setup passes --plugin-dir none.
+  if (opts.pluginDir) args.push('--plugin-dir', opts.pluginDir);
   const env = { ...process.env };
   delete env.CLAUDECODE;
   if (opts.configDir) env.CLAUDE_CONFIG_DIR = opts.configDir;
@@ -288,7 +290,7 @@ async function run(argv) {
     if (!args['allow-ancestor-memory']) { process.stdout.write('refusing to run; move the fixture (--stage-dir) or pass --allow-ancestor-memory\n'); process.exitCode = 2; return; }
   }
   if (args['stage-only']) return;
-  const opts = { model: args.model || 'sonnet', configDir: args['config-dir'] ? path.resolve(args['config-dir']) : null, cwd, turns: args.turns ? Number(args.turns) : 6 };
+  const opts = { model: args.model || 'sonnet', configDir: args['config-dir'] ? path.resolve(args['config-dir']) : null, cwd, turns: args.turns ? Number(args.turns) : 6, pluginDir: args['plugin-dir'] === 'none' ? null : path.resolve(String(args['plugin-dir'] || ROOT)) };
   const equivalents = args.equivalents ? JSON.parse(fs.readFileSync(path.resolve(args.equivalents), 'utf8')) : null;
   const maxUtil = args['max-utilization'] ? Number(args['max-utilization']) : 0.9;
   const tag = args.tag ? '-' + String(args.tag).replace(/[^a-z0-9-]/gi, '') : '';
@@ -310,7 +312,7 @@ async function run(argv) {
   if (resetFixture) resetFixture();
   const summary = summarize(results, equivalents);
   const quotaNote = quota ? ` · quota after run: five-hour ${Math.round((quota.fiveHour || 0) * 100)}%, seven-day ${Math.round((quota.sevenDay || 0) * 100)}%` : '';
-  const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · cwd: ${opts.cwd} · prompts: ${results.length}${equivalents ? ' · equivalents: ' + path.basename(args.equivalents) : ''}${quotaNote}`;
+  const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · plugin: ${opts.pluginDir || 'none'} · cwd: ${opts.cwd} · prompts: ${results.length}${equivalents ? ' · equivalents: ' + path.basename(args.equivalents) : ''}${quotaNote}`;
   const out = path.join(outDir, `${date}-claude${args.intent ? '-' + args.intent : ''}${tag}.md`);
   fs.writeFileSync(out, table(results, summary, 'claude', meta, equivalents));
   process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}.${quotaNote} Written: ${out}\n`);

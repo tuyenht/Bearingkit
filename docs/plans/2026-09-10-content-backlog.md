@@ -4,7 +4,7 @@ Status: OPEN · Spec: `docs/specs/2026-09-10-bearingkit-v1-design.md` · Source:
 
 These are reference items, not design changes. Each names the file it belongs in. Identifying details of the owner's projects are omitted; the lessons are generic.
 
-## `core/rules/sql.md` and `core/rules/php-laravel.md`
+## `skills/bk-build/references/stacks/sql.md` and `stacks/php-laravel.md` (v2: stack files replace the rule layer)
 
 - Tenant or row isolation is enforced by the database engine (policies, constraints), never by application discipline alone.
 - Migrations run under a privileged role; the runtime role is restricted.

@@ -1,6 +1,6 @@
 # Gate patterns
 
-Used by bk-spec and the stack block to pre-classify a change. Patterns are globs relative to the repository root; content patterns apply to code lines only, never to comments or docs. The project's own instruction files may extend any row.
+Used by bk-spec and detect-stack to pre-classify a change. Patterns are globs relative to the repository root; content patterns apply to code lines only, never to comments or docs. The project's own instruction files may extend any row.
 
 | Class | Path patterns | Content patterns (code lines) | Size rule |
 |---|---|---|---|

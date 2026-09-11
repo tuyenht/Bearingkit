@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { State } = require('../core/hooks/lib/state.cjs');
+const { State } = require('../scripts/lib/state.cjs');
 
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'bk-state-'));
 

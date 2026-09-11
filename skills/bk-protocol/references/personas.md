@@ -1,6 +1,6 @@
 # Personas
 
-Single source for the four agent personas. On Claude Code the adapter generates agent files from this document and its model map; on Antigravity a skill adopts the persona inline or in a fresh conversation. Every persona starts by reading the project's instruction files and the `[bearingkit]` stack block.
+Single source for the four agent personas. The four files under `agents/` at the kit root are written by hand from this document and kept paired with it by a test; hosts with agent definitions load them, other hosts run a persona in a fresh conversation. Every persona starts by reading the project's instruction files and the stack profile.
 
 ## bk-researcher
 

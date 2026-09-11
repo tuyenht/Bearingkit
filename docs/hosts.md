@@ -1,0 +1,50 @@
+# Hosts: install, bootstrap, acceptance
+
+One `skills/` source; each host installs it with its own command. A host is listed as supported only after the acceptance test passed on it (spec v2 §11): in a clean session, "What are the two classes of the autonomy gate, and what does each do?" answers ACT and COUNCIL without invoking a skill, and "Let's make a react todo list" invokes `bk-spec` before any code is written.
+
+| Host | Version tested | Acceptance | Date |
+|---|---|---|---|
+| Claude Code | 2.1.268 | **pass**: loaded with `--plugin-dir` in the isolated profile on the staged fixture (plugin listed as `bearingkit@inline`, ten skills listed, `bk-protocol` hidden); prompt 1 answered ACT and COUNCIL with no tool call in one turn; prompt 2's first tool call was `Skill bearingkit:bk-spec` (the session then hit the three-turn cap while reading the fixture, which the test does not score) | 2026-09-11 |
+| Antigravity 2.0 | 2.12.2 (v1 copy) | copy refreshed with `antigravity install` (plugin.json, eleven skills, `rules/bearingkit.md`); acceptance pending: the app was closed (DevTools on port 1405 refused), so the driver could not run. Run when the app is open: `node bin/bearingkit.cjs evals --host antigravity --arm --file evals/activation/acceptance.jsonl --tag acceptance`, then `--drive bearingkit-eval-sample-app --count 2`, then `--score`, then `--disarm` | 2026-09-11 (copy) |
+| Gemini CLI | not tested | pending | |
+| Cursor | not tested | pending | |
+| Codex CLI / app | not tested | pending; bootstrap mechanism unknown | |
+| Copilot CLI, Factory Droid | not tested | pending | |
+
+## Claude Code
+
+- Install: `/plugin marketplace add tuyenht/Bearingkit`, then `/plugin install bearingkit@bearingkit`. Uninstall: `/plugin uninstall bearingkit`.
+- Development and evals, no install: `claude --plugin-dir <path to the checkout>`. The kit's evals runner passes this by default.
+- Bootstrap: `hooks/hooks.json` runs `hooks/session-start.cjs` on startup, clear and compact; it returns the protocol (`skills/bk-protocol/SKILL.md`) as additional context. Skills appear as `bearingkit:bk-<name>`; `bk-protocol` is hidden from the listing.
+- Agents: `agents/bk-*.md` load with the plugin.
+- Deny list for secret files, set by you in `~/.claude/settings.json` if wanted: `permissions.deny` with `Read(**/.env*)` and the key-material patterns you use; the kit writes no settings.
+
+## Antigravity 2.0
+
+- Install: `npx bearingkit antigravity install` (or `node bin/bearingkit.cjs antigravity install` from a checkout). It copies `skills/`, the manifest and the protocol as an always-on rule into `~/.gemini/config/plugins/bearingkit`, a real directory, because the host's plugin scanner does not follow directory junctions (isolated on 2.0, 2026-09-11). Run it again after updating the kit. `--dry-run` prints the plan; `--dest <dir>` targets another plugin root.
+- Uninstall: `npx bearingkit antigravity uninstall`; it removes only a directory the kit created (marker file `.bearingkit-copy`).
+- Bootstrap: `rules/bearingkit.md` with `trigger: always_on` inside the plugin copy. A skill is invoked by opening `skills/<name>/SKILL.md` inside the plugin (the path the Customizations panel shows) with `view_file` and following it.
+- Tokens are read from the Customizations panel; Phase 1 measured the rule at 1,873 and ten descriptions at 1,045.
+
+## Gemini CLI
+
+- Install: `gemini extensions install https://github.com/tuyenht/Bearingkit`; update with `gemini extensions update bearingkit`.
+- Bootstrap: `gemini-extension.json` names `GEMINI.md`, which imports `./skills/bk-protocol/SKILL.md`.
+- Shares `~/.gemini/GEMINI.md` conventions with Antigravity's `user_global` rule; install both only if you use both.
+
+## Cursor
+
+- Install from the plugin marketplace once listed; the manifest is `.cursor-plugin/plugin.json` (skills, agents, `hooks/hooks-cursor.json`).
+- Bootstrap: the sessionStart hook runs `hooks/session-start.cjs`, which returns `additional_context`.
+
+## Codex CLI and app
+
+- Manifest: `.codex-plugin/plugin.json` with `skills: ./skills/`. How Codex loads a plugin's session bootstrap is not yet known; Superpowers ships an empty `AGENTS.md` alongside the same manifest. Listed as supported only after the acceptance test.
+
+## Copilot CLI and Factory Droid
+
+- Same plugin format as Claude Code (`copilot plugin marketplace add tuyenht/Bearingkit`, `droid plugin marketplace add https://github.com/tuyenht/Bearingkit`); the hook script also returns the top-level `additionalContext` those hosts read. Pending.
+
+## Optional: documentation MCP
+
+The kit installs no MCP server. For libraries newer than the model's training, add context7 yourself: Claude Code `claude mcp add context7 -- npx -y @upstash/context7-mcp`; Antigravity and Gemini CLI through their `mcp_config.json` or settings. `bk-research` and the evidence rules tell the agent when to consult it.

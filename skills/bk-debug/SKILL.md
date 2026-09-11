@@ -6,7 +6,7 @@ description: "Root cause before any fix; four phases; council after three failed
 # bk-debug
 
 ## Read first
-- The `[bearingkit]` stack block, the project's instruction files, the exact error text, and the last change before the failure (git log).
+- The stack profile (run `detect-stack` as bk-protocol's host notes say), the project's instruction files, the exact error text, and the last change before the failure (git log).
 - `references/systematic-debugging.md`: the four phases, tracing to the source, condition-based waiting, defense in depth.
 
 ## Steps

@@ -16,4 +16,4 @@ Skills describe actions. This table names the tool that performs each action on 
 | open a page and check it rendered | browser tools or a Playwright script | browser tools or a Playwright script |
 | record a guardrail run | `node <kit>/scripts/record-guardrail.cjs --command "<cmd>" --exit <code>` | same command through run_command |
 
-`<kit>` is the kit's install root; in dev mode it is the repository checkout.
+`<kit>` is the directory that holds `skills/` (the plugin root; the repository checkout during development).

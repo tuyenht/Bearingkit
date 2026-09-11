@@ -6,7 +6,7 @@ description: "Tests as the contract, TDD by default; --browser forces rendered c
 # bk-test
 
 ## Read first
-- The `[bearingkit]` stack block (test command, framework majors) and the project's testing conventions in its instruction files.
+- The stack profile (run `detect-stack` as bk-protocol's host notes say) (test command, framework majors) and the project's testing conventions in its instruction files.
 - `references/tdd.md`: the cycle, the rationalizations, the test anti-patterns.
 
 ## Steps

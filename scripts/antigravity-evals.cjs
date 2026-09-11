@@ -65,7 +65,7 @@ function arm(prompts, opts = {}) {
   const pluginDir = opts.pluginDir || DEFAULT_PLUGIN_DIR;
   const evalDir = opts.evalDir || DEFAULT_EVAL_DIR;
   const hooksFile = path.join(pluginDir, 'hooks.json');
-  if (!fs.existsSync(hooksFile)) throw new Error(`no plugin hooks.json at ${hooksFile}; install the kit for Antigravity first`);
+  if (!fs.existsSync(pluginDir)) throw new Error(`no plugin directory at ${pluginDir}; run \`bearingkit antigravity install\` first`);
   fs.mkdirSync(path.join(pluginDir, 'hooks'), { recursive: true });
   fs.copyFileSync(DRIVER_SRC, path.join(pluginDir, 'hooks', 'eval-driver.cjs'));
   const hooks = readJson(hooksFile, {});

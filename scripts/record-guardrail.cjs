@@ -7,7 +7,7 @@
 // specific state file instead of the newest one for this directory). State dir: BEARINGKIT_STATE_DIR or ~/.bearingkit/state.
 
 const path = require('node:path');
-const { State } = require('../core/hooks/lib/state.cjs');
+const { State } = require('./lib/state.cjs');
 
 function parseArgs(argv) {
   const out = { _: [] };

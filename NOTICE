@@ -1,12 +1,12 @@
 # NOTICE
 
-Bearingkit is distributed under the MIT license declared in `package.json`. Parts of `core/` are adapted from other open-source projects. Each entry below names the project, its license, the exact version, and the kit files that derive from it; `upstream/sources.json` records the same with the commit sha and the file-level map, and every derived file names its sources in its opening paragraph. Nothing here changes the license of the kit; the notices below are kept as their licenses require.
+Bearingkit is distributed under the MIT license declared in `package.json`. Parts of `skills/` are adapted from other open-source projects. Each entry below names the project, its license, the exact version, and the kit files that derive from it; `upstream/sources.json` records the same with the commit sha and the file-level map, and every derived file names its sources in its opening paragraph. Nothing here changes the license of the kit; the notices below are kept as their licenses require.
 
 ## obra/superpowers 5.1.0
 
 - Repository: https://github.com/obra/superpowers, tag `v5.1.0`, commit `f2cbfbefebbfef77321e4c9abc9e949826bea9d7` (verified 2026-09-11 against the Claude Code plugin cache of the same version).
 - License: MIT, Copyright (c) 2025 Jesse Vincent.
-- Adapted into `core/skills/bk-spec/references/brainstorming.md`, `core/skills/bk-plan/references/writing-plans.md`, `core/skills/bk-build/references/executing.md`, `core/skills/bk-test/references/tdd.md`, `core/skills/bk-debug/references/systematic-debugging.md`, `core/skills/bk-review/references/code-review-exchange.md`, `core/skills/bk-ship/references/finishing.md`, `core/skills/bk-protocol/references/meta-routing.md`. The files are rewritten in the kit's form: the source's decision rules, checklists and failure patterns are retained; its folder defaults, flowcharts, prompt-template scaffolding and per-platform sections are not.
+- Adapted into `skills/bk-spec/references/brainstorming.md`, `skills/bk-plan/references/writing-plans.md`, `skills/bk-build/references/executing.md`, `skills/bk-test/references/tdd.md`, `skills/bk-debug/references/systematic-debugging.md`, `skills/bk-review/references/code-review-exchange.md`, `skills/bk-ship/references/finishing.md`, `skills/bk-protocol/references/meta-routing.md`. The files are rewritten in the kit's form: the source's decision rules, checklists and failure patterns are retained; its folder defaults, flowcharts, prompt-template scaffolding and per-platform sections are not.
 
 ```
 MIT License

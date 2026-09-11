@@ -1,14 +1,14 @@
 # Meta-routing: what the router keeps from using-superpowers
 
-Adapted from obra/superpowers 5.1.0 (MIT): `skills/using-superpowers/SKILL.md`, with the authoring rules from `skills/writing-skills/SKILL.md`; attribution in `NOTICE`. The kit has no meta-skill: the router lives in `core/AGENTS.md` and costs no skill slot. This file records what the source's meta-skill does, where the kit keeps each behavior, and what it drops on purpose, so the router is edited with the list in view.
+Adapted from obra/superpowers 5.1.0 (MIT): `skills/using-superpowers/SKILL.md`, with the authoring rules from `skills/writing-skills/SKILL.md`; attribution in `NOTICE`. The kit has no meta-skill: the router lives in this skill's `SKILL.md`, injected at session start, and costs no listed slot. This file records what the source's meta-skill does, where the kit keeps each behavior, and what it drops on purpose, so the router is edited with the list in view.
 
 | Behavior in the source | Where the kit keeps it |
 |---|---|
-| Invoke the matching skill before any response, including a clarifying question | `core/AGENTS.md` Router: the skill is the first action, before reading or searching code |
+| Invoke the matching skill before any response, including a clarifying question | `bk-protocol/SKILL.md` Router: the skill is the first action, before reading or searching code |
 | A one-percent chance a skill applies is enough to open it; drop it when it does not fit | Router, same sentence |
 | Announce which skill and for what | Router: "name the intent, then invoke" |
 | A dispatched subagent executes its task and does not re-route | Hooks no-op inside subagents; a subagent prompt carries its task text, not the router |
-| Instruction priority: the user's instruction files first, the skill second, the host's defaults last | `core/AGENTS.md` opening: the project's facts always win over the kit |
+| Instruction priority: the user's instruction files first, the skill second, the host's defaults last | `bk-protocol/SKILL.md` opening: the project's facts always win over the kit |
 | Process skills before implementation skills (design or debug before build) | The handoff chain spec, plan, build, test, review, ship, close, and the intent table |
 | Rigid versus flexible skills | Every skill body: the Gates section is rigid, the Steps adapt to context |
 | Instructions say what, not how; "add X" does not skip the workflow | Router: a request to add, change, rename or fix never starts with an edit |

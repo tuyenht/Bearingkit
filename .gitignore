@@ -15,10 +15,3 @@ evals/results/
 
 # project-level host config used only for compatibility probes
 .claude/
-# created by install, never committed
-adapters/*/skills/
-adapters/antigravity/rules/AGENTS.md
-adapters/claude/agents/
-adapters/antigravity/hooks.json
-adapters/antigravity/hooks/
-adapters/antigravity/mcp_config.json

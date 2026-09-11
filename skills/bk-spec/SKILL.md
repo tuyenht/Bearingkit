@@ -6,7 +6,7 @@ description: "Pin down a request before building: restate, edge cases, assumptio
 # bk-spec
 
 ## Read first
-- The `[bearingkit]` stack block, the project's instruction files (architecture, conventions, hot paths, "do not" lists), and `bk-protocol/references/gate-patterns.md`.
+- The stack profile (run `detect-stack` as bk-protocol's host notes say), the project's instruction files (architecture, conventions, hot paths, "do not" lists), and `bk-protocol/references/gate-patterns.md`.
 - The code the request touches: find the touchpoints and cite them as `file:line`.
 - `references/brainstorming.md` when the ask needs questions, a design, or a spec file.
 

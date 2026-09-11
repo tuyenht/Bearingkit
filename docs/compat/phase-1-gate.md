@@ -1,5 +1,7 @@
 # Phase 1 gate · Claude Code
 
+> Historical record of the v1 gate (2026-09-10 to 2026-09-11). Paths and the install method name the v1 layout (`core/AGENTS.md` import, junctions, `adapters/`); v2 loads the kit as a plugin. The measurements stand.
+
 Host: Claude Code 2.1.267 on Windows 11 (the CLI had auto-updated from 2.1.266 before the runs; version read from the `init` event of the streams) · isolated profile at `_build/profile/claude` (`CLAUDE_CONFIG_DIR`), kit installed there with `node bin/bearingkit.cjs install --dev C:\Projects\Bearingkit --config-dir …` · eval working directory `evals/fixtures/sample-app` · model sonnet · six turns per prompt · date 2026-09-10.
 
 ## Compatibility tests run in the isolated profile

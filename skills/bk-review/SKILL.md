@@ -8,7 +8,7 @@ background: false
 # bk-review
 
 ## Read first
-- The `[bearingkit]` stack block, the project's review checklist in its instruction files (the abbreviated hotlist there is compared against the full list), and `bk-protocol/references/evidence.md`.
+- The stack profile (run `detect-stack` as bk-protocol's host notes say), the project's review checklist in its instruction files (the abbreviated hotlist there is compared against the full list), and `bk-protocol/references/evidence.md`.
 - The diff: if none is given, take the diff against the base branch.
 - `references/code-review-exchange.md`: what an independent reviewer receives and returns, how feedback is handled.
 

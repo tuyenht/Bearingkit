@@ -1,0 +1,2 @@
+{"id":"acc-01","intent":"question","lang":"en","prompt":"What are the two classes of the autonomy gate, and what does each do?","expect":"none"}
+{"id":"acc-02","intent":"feature","lang":"en","prompt":"Let's make a react todo list","expect":"bk-spec"}

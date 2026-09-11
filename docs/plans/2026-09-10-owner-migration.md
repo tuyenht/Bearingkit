@@ -1,6 +1,6 @@
 # Owner workstation migration to Bearingkit v1
 
-Status: PLANNED · Applies to: the kit author's machine only · Spec: `docs/specs/2026-09-10-bearingkit-v1-design.md`
+Status: PLANNED · Applies to: the kit author's machine only · Spec: `docs/specs/2026-09-11-bearingkit-v2-design.md` (Phase 0 unchanged; from Phase 2 on, "install" means the host's own plugin install: Claude Code marketplace or `--plugin-dir`, Antigravity `bearingkit antigravity install`; there is no kit installer, no links, no kit entries in host settings)
 
 This plan is not part of the product. It sequences how the author retires previous kits (Spartan, ClaudeKit remnants, Antigravity-Core v5, third-party skill packs) and adopts Bearingkit on both hosts. No private hostnames, paths beyond the local projects folder, or secrets appear here.
 

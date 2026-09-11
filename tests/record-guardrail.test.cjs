@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { State } = require('../core/hooks/lib/state.cjs');
+const { State } = require('../scripts/lib/state.cjs');
 
 const script = path.join(__dirname, '..', 'scripts', 'record-guardrail.cjs');
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'bk-rg-'));

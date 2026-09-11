@@ -1,0 +1,6 @@
+{
+  "name": "bearingkit",
+  "description": "A protocol and skill set for AI-assisted software work: autonomy gate, evidence rules, spec, plan, build, test, review, ship and close workflows.",
+  "version": "0.1.0",
+  "contextFileName": "GEMINI.md"
+}

@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const dir = path.join(__dirname, '..', 'core', 'skills');
+const dir = path.join(__dirname, '..', 'skills');
 const ALLOWED_KEYS = new Set(['name', 'description', 'context', 'background', 'user-invocable', 'disable-model-invocation', 'allowed-tools']);
 
 function frontmatter(file) {
@@ -85,7 +85,7 @@ test('every references file adapted from upstream has a derived entry in upstrea
     for (const ref of fs.readdirSync(refDir)) {
       const text = fs.readFileSync(path.join(refDir, ref), 'utf8');
       if (!/^Adapted from /m.test(text)) continue;
-      const key = 'core/skills/' + name + '/references/' + ref;
+      const key = 'skills/' + name + '/references/' + ref;
       assert.ok(derived.has(key), key + ': adapted from upstream but absent from every derived map');
       assert.match(text, /`NOTICE`/, key + ': must point at NOTICE');
     }

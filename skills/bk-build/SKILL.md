@@ -6,7 +6,7 @@ description: "Execute a plan or a small change that fits in at most three files:
 # bk-build
 
 ## Read first
-- The `[bearingkit]` stack block (guardrail commands, hot paths), the project's instruction files, and the plan phase or the acceptance criteria.
+- The stack profile (run `detect-stack` as bk-protocol's host notes say) (guardrail commands, hot paths), the project's instruction files, and the plan phase or the acceptance criteria.
 - `references/executing.md` before executing a plan: isolation, subagent-driven execution with the two-stage review, parallel agents.
 
 ## Steps

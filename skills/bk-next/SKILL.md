@@ -6,7 +6,7 @@ description: "Recommend the next step from the real repository state (git, plans
 # bk-next
 
 ## Read first
-- The `[bearingkit]` stack block if present, the project's instruction files, and the newest file in `docs/handoff/`.
+- The stack profile (run `detect-stack` as bk-protocol's host notes say) if present, the project's instruction files, and the newest file in `docs/handoff/`.
 - Version control state: current branch, uncommitted changes, the last ten commits.
 - The active plan: session state, then the branch name matched against `plans/` and `docs/plans/`, and which phase is still unchecked.
 

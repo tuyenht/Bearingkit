@@ -1,7 +1,7 @@
 {
   "name": "bearingkit",
   "version": "0.1.0",
-  "description": "Skills, agents, rules and hooks for AI coding agents; one source for Claude Code and Google Antigravity",
+  "description": "A protocol and skill set for AI-assisted software work; one skills/ source installed into each host with the host's own command (Claude Code, Antigravity, Gemini CLI, Cursor, Codex)",
   "license": "MIT",
   "repository": "github:tuyenht/Bearingkit",
   "bin": {
@@ -16,8 +16,15 @@
   "files": [
     "bin",
     "scripts",
-    "core",
-    "adapters",
+    "skills",
+    "agents",
+    "hooks",
+    ".claude-plugin",
+    ".codex-plugin",
+    ".cursor-plugin",
+    ".antigravity",
+    "gemini-extension.json",
+    "GEMINI.md",
     "evals",
     "LICENSE",
     "NOTICE",

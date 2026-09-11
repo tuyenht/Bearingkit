@@ -6,7 +6,7 @@ description: "Write a phased plan with exit criteria and evidence per phase; res
 # bk-plan
 
 ## Read first
-- The `[bearingkit]` stack block, the project's instruction files, the spec or audit verdict this plan implements.
+- The stack profile (run `detect-stack` as bk-protocol's host notes say), the project's instruction files, the spec or audit verdict this plan implements.
 - The active plan, if any: session state, then the branch name against `plans/` and `docs/plans/`; if neither resolves, ask which plan.
 - `references/writing-plans.md`: task granularity, the no-placeholder list, the self-review against the spec.
 

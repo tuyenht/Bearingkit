@@ -8,7 +8,7 @@ background: false
 # bk-audit
 
 ## Read first
-- The `[bearingkit]` stack block, the project's instruction files, and `bk-protocol/references/council.md`.
+- The stack profile (run `detect-stack` as bk-protocol's host notes say), the project's instruction files, and `bk-protocol/references/council.md`.
 - The material under audit: code, a design, a document, or a decision, with its current evidence.
 
 ## Steps

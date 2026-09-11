@@ -1,0 +1,21 @@
+{
+  "name": "bearingkit",
+  "version": "0.1.0",
+  "description": "A protocol and skill set for AI-assisted software work: autonomy gate, evidence rules, spec, plan, build, test, review, ship and close workflows with independent review for hot paths.",
+  "author": { "name": "tuyenht", "url": "https://github.com/tuyenht" },
+  "homepage": "https://github.com/tuyenht/Bearingkit",
+  "repository": "https://github.com/tuyenht/Bearingkit",
+  "license": "MIT",
+  "keywords": ["skills", "protocol", "planning", "tdd", "debugging", "code-review", "workflow"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Bearingkit",
+    "shortDescription": "Disciplined delivery workflows for coding agents",
+    "longDescription": "Bearingkit classifies every request (act or council), routes it to a skill, and holds the work to evidence: tests first, guardrails pasted, independent review on hot paths, a two-block handoff at the end of a session.",
+    "developerName": "tuyenht",
+    "category": "Coding",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": ["Let's add a feature to this project.", "Review this diff before I push."],
+    "websiteURL": "https://github.com/tuyenht/Bearingkit"
+  }
+}
