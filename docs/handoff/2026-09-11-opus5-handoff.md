@@ -118,7 +118,7 @@ Nguồn **chưa fetch** (chưa cần cho bước 1 theo plan): microsoft/playwri
 
 ## 4. Việc còn lại, theo thứ tự thực thi
 
-> **Thứ tự thực thi D1–D6 do owner chốt ngày 2026-09-11 nằm ở `docs/handoff/2026-09-11-owner-directives.md`; đọc file đó trước, nó quyết định thứ tự các mục 4.x dưới đây (kiểm kê là D2).**
+> **Thứ tự thực thi D1–D6 (đề xuất của phiên D0, owner chưa xác nhận từng chữ) nằm ở `docs/handoff/2026-09-11-owner-directives.md`; đọc file đó trước, nó quyết định thứ tự các mục 4.x dưới đây (kiểm kê là D2).**
 
 ### 4.1 Chạy lại inventory (bước 1 content program)
 
@@ -166,7 +166,7 @@ Trọng tâm đã soạn cho vài nguồn (giữ lại khi viết prompt mới):
 
 Danh sách hiện tại (chưa ai trả lời): (1) hàng 38 gemini-skills; (2) dòng bản quyền cho `LICENSE`; (3) host nào owner thực dùng thêm (Gemini CLI / Cursor / Codex / Copilot CLI); (4) pack nào bắt buộc phải là core; (5) Phase 0 trên workstation; (6) hai dòng protocol verbatim + design dataset từ kit cũ.
 
-D3 sinh thêm 6 câu nữa, nằm ở `docs/specs/2026-09-11-source-priority.md` §8 (danh sách tối thiểu là stack chạy hay hàng đợi port; mode của spec-kit; provenance của frontend-design; browser tool; có tạo `bk-design` ngay không; Biome có hook hay không). D5 hỏi cả 12 trong một lượt.
+D3 sinh thêm 7 câu nữa, nằm ở `docs/specs/2026-09-11-skill-inventory.md` mục "Questions for D5" (danh sách tối thiểu là stack chạy hay hàng đợi port; mode của spec-kit; provenance của frontend-design; browser tool; có tạo `bk-design` ngay không; Biome có hook hay không). D5 hỏi cả 13 trong một lượt.
 
 ### 4.6 Đóng phiên
 

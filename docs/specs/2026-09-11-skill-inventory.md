@@ -2,7 +2,7 @@
 
 This is D2 from `docs/handoff/2026-09-11-owner-directives.md`: re-run the batch-1 inventory of `docs/handoff/2026-09-11-opus5-handoff.md` §4.1 after the prior session's 16-parallel-agent fan-out died in one shot to a rate limit (`HTTP 429`, model `claude-fable-5-1`, handoff §3.1, §5.1). This pass does the source-registry facts directly (Bash: `git rev-parse`, `find`/LICENSE reads, `gh api`) instead of spawning agents, in batches of at most 3 sources, reported after each batch, per the owner's constraint. No parallel agents were spawned for this document.
 
-**Scope.** One row per source: name, local path, local sha, license presence/kind, role (source to absorb vs. tool that runs alongside the kit), and star count. This is registry-level only — it does not re-litigate per-item absorb/idea/drop decisions (handoff §2.1.7, §4.1's per-source item tables) or set priority order. That is D3 (`docs/handoff/2026-09-11-owner-directives.md`, owner's directive 4), landed as `docs/specs/2026-09-11-source-priority.md`.
+**Scope.** One row per source: name, local path, local sha, license presence/kind, role (source to absorb vs. tool that runs alongside the kit), and star count. This is registry-level only — it does not re-litigate per-item absorb/idea/drop decisions (handoff §2.1.7, §4.1's per-source item tables) or set priority order. That is D3 (directive 4), which after a first pass in a separate file now lives at the end of this document, as the directive's wording requires.
 
 Covers the 16 sources of handoff §4.1 plus Skillmark, which handoff §4.4 also names as a `sources.json` gap. "Antigravity docs" (also named in §4.4) is deliberately **not** a row here — see "Excluded from this pass" below.
 
@@ -67,4 +67,101 @@ This did **not** get written into a skill file: `skills/bk-build/references/stac
 
 - Per-item absorb/idea/drop decisions inside each source (e.g., which of `claude-plugins-official`'s 39 plugins get a `drop` row and why) — handoff §4.1's per-source notes still apply for whoever does that pass.
 - Catalog and pack decisions (handoff §4.3).
-- Priority ordering across sources — that is D3, landed as `docs/specs/2026-09-11-source-priority.md`.
+- Priority ordering across sources — that is D3, below.
+
+---
+
+# D3 · Re-evaluating the owner's minimal stack, and the unified priority order
+
+Directive 4 says the re-evaluation belongs **"trong bản kiểm kê"** — in this inventory. A first pass put it in a separate `docs/specs/2026-09-11-source-priority.md`; that was a deviation from the directive's wording, could not be justified by anything except this document's own earlier scope note, and has been merged here and deleted.
+
+The verbatim of all four directives is in `docs/handoff/2026-09-11-owner-directives.md`. **Read it there, not the rendering in the coverage matrix.** The first pass of D3 was built on that rendering and lost two facts because of it:
+
+| The matrix's rendering | The owner's words | What the loss cost |
+|---|---|---|
+| "#7 OpenCode … when needed" | "#7 OpenCode **dự phòng quota**" | D3 called OpenCode "a category error in a content list" and pushed it to Phase 4. The owner never asked for it to be absorbed — they named it a **quota fallback**. The trigger is live: sixteen research agents died to `HTTP 429` on 2026-09-11 (handoff §3.1) and the work stopped. That verdict is withdrawn |
+| "#18 Biome when needed" | "#18 Biome **hoặc Pint hook**" | Two losses. The owner writes **hook** — the very form D3 refused on its own authority; and **Pint**, the PHP formatter, which D3 never mentioned. #18 is "the stack's formatter, as a hook", not "Biome, as a command" |
+
+## The shape of the answer: one order, not two
+
+The first pass split the deliverable into "axis A, absorption" and "axis B, runs alongside" and argued a single order was incoherent. That does not survive contact with the verbatim:
+
+- Directive 4 says **"Kết quả cần có: một thứ tự ưu tiên hợp nhất"** — one order, singular, explicit.
+- The same directive already asks the evaluation to name "mục nào là công cụ chạy bên cạnh chứ không phải nguồn để hấp thụ". The mixedness of the list is a property the owner told the evaluation to **label**, not a reason the evaluation cannot be merged.
+- The owner's own three tiers — Bắt buộc / Trước khi ship / Thêm khi cần — are themselves a single ordering that already spans sources and tools. The list demonstrates the merge the first pass called impossible.
+
+So: one order below. **"Runs alongside" is a column, not an axis.**
+
+## The unified order
+
+Primary key: the owner's three tiers, not re-sorted — an explicit ordering is not overturned by inference. Within a tier: unblocked before blocked, cheaper before dearer. The union is the old mandatory group (`docs/plans/2026-09-10-content-backlog.md`) and the owner's minimal stack.
+
+| # | Item | Role | Licence — what it permits | Target · blocker | Why here |
+|---|---|---|---|---|---|
+| 1 | **#3 Superpowers** | source | MIT, verified — text with attribution | eight `references/`, all present · none | The owner's "#3 **hoặc** #4" resolves here: Superpowers is the one already absorbed, the only matrix row at that status, and the benchmark baseline. Remaining work is inventory pass 01's gap-check |
+| 2 | **official `code-review` + `pr-review-toolkit`** | source | Apache-2.0 at the repo root and in each plugin's own `LICENSE` (read 2026-09-11) — text with attribution | `bk-review`, `bk-test` · none | 830 lines of method, READMEs excluded (`code-review.md` 92, `review-pr.md` 189, six lenses 549). Unblocked, and it is the only thing that unlocks the seeded-bug fixture two measurement cells depend on (matrix rows 2 and 19). **Old mandatory group; not in the owner's list, and the owner asked only about claude-code-setup — raising it is this document's own call, not a question the owner posed** |
+| 3 | **#21 frontend-design** | source | Apache-2.0 (`LICENSE.txt`, both copies) — text with attribution | `bk-design` · **blocked: the folder does not exist**, and §5.2 admits a skill only when the inventory shows work for it | 71 lines, cheap, genuinely mandatory. Ranked on the blocker, not the value |
+| 4 | **#15 agent-browser** | **runs alongside** | Apache-2.0, but its ten `SKILL.md` files (1,938 lines) document its own CLI — vendor-shipped, so principle 4 says use it, do not re-implement | `bk-test`, `bk-design` name it; `doctor` reports it · none | Absorbable surface: zero. Real work: two lines and one check. The owner names it and not playwright-mcp, which settles the "one browser tool per install" that matrix rows 17–18 left open |
+| 5 | **#1 karpathy-skills** | source | **No licence file — ideas only, never a word of text** | `bk-build` · — | **Closed 2026-09-11.** A 65-line `CLAUDE.md`, four failure modes: two already covered by `bk-protocol`, two landed as paraphrased lines in `bk-build`. Nothing remains; listed so nobody re-reads it |
+| 6 | **#19 vercel agent-skills** | source | **No licence file — ideas only**; 70 React rules must be re-derived clean-room, the dearest form of work per unit of value | `bk-build/references/stacks/` · **blocked: Step 3** | Mandatory by the owner, but its landing file does not exist until the stack-file step, and half the named content (`web-design-guidelines`) is a live fetch of its own rules — see Collisions |
+| 7 | **official `claude-code-setup`** | source | Apache-2.0 | `doctor` · **blocked: `doctor` is "later" in `bin/bearingkit.cjs`** | Old mandatory group, and the item the owner explicitly asks about. Verdict below: keep, demoted, scope cut — on weaker ground than the first pass claimed |
+| 8 | **#17 security-guidance** | source | Apache-2.0 (same repo as 2) | `bk-protocol` security baseline, a `bk-review` lens · none | `hooks/patterns.py` is 360 lines of pure pattern data ("Pure data + one pure helper. No … I/O", its own docstring) — absorbs as prose. Same repo and sha as item 2, so one `NOTICE` entry and one pass. **Unblocked and cheap while items 3, 6 and 7 are blocked**: on evidence it would rank above them, but the owner's tier says "trước khi ship", and the tier is not overturned here — flagged as a question instead |
+| 9 | **#16 pr-agent trên CI** | **runs alongside** | MIT by its own `LICENSE` and the API, read 2026-09-11 (the owner's list said AGPL). Moot: nothing is vendored | `bk-review`'s second-context definition; one benchmark row · none | The owner's words add "trên CI", which is where the independent review has to come from a different model to count |
+| 10 | **#2 rule theo stack** (awesome-cursorrules) | source | CC0-1.0 — vendoring is permitted; **not vendoring is the kit's own decision**, not a licence limit | the eight stack files · **blocked: Step 3** | Cited as the starting read per stack; the text stays the kit's |
+| 11 | **#7 OpenCode, dự phòng quota** | **runs alongside** (a host) | — (nothing taken) | `docs/hosts.md` as a documented fallback; "supported" only after the spec v2 §11 acceptance test · none for documenting | Not a content item, and the owner never asked it to be one. Its value is availability the day the quota dies — which already happened once in this workstream. Cheap to document now, expensive to discover under a rate limit |
+| 12 | **#18 Biome hoặc Pint, hook** | **runs alongside** + **collides** | Apache-2.0; nothing taken | `detect-stack` guardrail list, `bk-ship` · the hook form collides — see Collisions | The owner's own example of a conflict, so the conflict is to be surfaced, not settled by this document |
+
+**Below the line.** **#4 spec-kit** leaves the mandatory set, because the owner wrote "#3 **hoặc** #4" and item 1 takes the slot. The first pass kept both and called the "or" non-exclusive; that was the owner's explicit word being overridden by inference, the same move the first pass refused to allow against `claude-code-setup`. Recorded so the finding is not lost: MIT, 3,031 lines of templates and command prose, `clarify.md` 291 and `analyze.md` 255 map onto `bk-spec` and `bk-audit` — the largest untapped permissively-licensed method surface seen in this pass. It is optional and waits for the owner. Sources outside this union keep the position their matrix row gives them and are not demoted by absence here: mattpocock (16), addyosmani (15), cloudflare (21), the reference MCP servers (23), the `npx skills` channel (24), aider's repo-map idea (26).
+
+## Collisions with a principle already in force
+
+| Item | The collision | Rule it runs into | Recommendation — the decision is the owner's |
+|---|---|---|---|
+| **#18 Biome/Pint as a hook** | A format-on-write hook needs host settings written and an enforcement event | v2 §8: enforcement hooks are "optional extras … scheduled for v0.4, never required", and "the kit writes no host settings"; v2 §4 deleted the stack-profile hook | Guardrail command run by `bk-ship` in v0.2; the hook form at v0.4 if the owner wants it. The first pass wrote "No hook" as a decision — that overreached: the owner's word is "hook", so this is theirs to settle |
+| **#19 `web-design-guidelines`** | It `WebFetch`es *its own rules* from a raw URL at review time, so the skill has no versioned content | v2 §10 records a sha and a tracked-file list per source; v2 §16's drift watch runs against those locked shas. A skill whose body lives outside the repo has neither. Not a ban on fetching — v2 §16 sanctions pinned-documentation lookup; the line is between fetching facts about someone else's technology and fetching the skill's own body | Cite as a pointer; never copy the pattern. Moot for copying anyway — no licence |
+| **#17 security-guidance** | Ships as a hook: eight Python files plus tests around the data | Same hook policy | Absorb `patterns.py` as prose; drop the machinery |
+| **#15 agent-browser** | Ten `SKILL.md` files documenting its own CLI | Principle 4, "official first … not re-implemented"; "vendor-shipped" is on the deliberate-drop list | Name the tool; absorb nothing |
+| **#21 frontend-design** | The same text in two sources — `claude-plugins-official/plugins/frontend-design/skills/frontend-design/SKILL.md` and `anthropics/skills/skills/frontend-design/SKILL.md`, same SHA-256 `b8009ae6…c237df8`, `cmp` clean, 2026-09-11 | §5.2: one source item, one skill, one decision | Recommend the official plugins repo — one `NOTICE` entry and one sha shared with items 2, 7 and 8, leaving matrix row 22 to `mcp-builder`. Not applied; nothing is ported yet |
+
+## `claude-code-setup`: keep, demoted to rank 7, scope cut — on two reasons, not three
+
+The owner asks directly whether it keeps its priority. Answer: **keep**, scoped to the 289-line recommender method plus one table, at rank 7 because `doctor` does not exist.
+
+Reasons that hold:
+
+1. **It is the only baseline for a claim the matrix already promises.** Row 2's measurement cell reads "Setup: `doctor` output vs claude-code-setup recommendations on the same repository", and that file's own rule is that "better" claims quote the measurement column and nothing else. Drop the source and the claim cannot be made at all.
+2. **Cost is low and concentrated.** `SKILL.md` 289 lines; of the 1,188 lines of references, `hooks-patterns.md` (226), `mcp-servers.md` (276) and `plugins-reference.md` (97) describe machinery v2 removed or deferred, and `skills-reference.md` (408) overlaps Superpowers' `writing-skills`, already static checks in `tests/skills.test.cjs`. `subagent-templates.md` (181) splits: its templates duplicate the four hand-written agents v2 fixed, but its "Recommend when / Detection" table is the shape `doctor` needs. 1,007 of 1,477 lines drop.
+
+Reason **withdrawn**: the first pass also argued "it was an explicit owner decision", citing `docs/plans/2026-09-10-content-backlog.md` §"Phase 2 seeding step (owner's explicit ask)". That label cannot be verified — no verbatim of 2026-09-10 exists in this repository, only renderings (see Provenance labels below). Leaning on it was the same error this pass is documenting. The verdict stands on the two reasons above, which is weaker than what the first pass claimed.
+
+**The same omission, unasked:** the official `code-review` plugin is also old-mandatory and also absent from the minimal stack, and the owner did **not** ask about it. Followed literally, `bk-review` would be built from pr-agent — a tool that emits findings, not a method. That is this document's own objection, ranked at item 2, and it is a question for the owner rather than a settled call.
+
+## Provenance labels that cannot be verified
+
+Found by scanning the working tree and the commits that carry D1–D3. Each attaches owner authority to text a session actually composed:
+
+| Location | Label | Status |
+|---|---|---|
+| `docs/specs/2026-09-11-bearingkit-v2-design.md` §1 | "The owner's requirement **in their own words** (2026-09-10 and 2026-09-11)" | A rendering, not a transcript — it is in English and the owner writes Vietnamese. Relabelled |
+| `docs/specs/2026-09-10-coverage-matrix.md`, header and "Rows named by the owner" | "Owner's requirement (2026-09-10)"; the minimal-stack sentence | The minimal-stack sentence is **provably lossy** — it dropped "dự phòng quota" and "hoặc Pint" and both losses propagated into D3. Corrected and marked as a rendering |
+| `docs/handoff/2026-09-11-opus5-handoff.md` §4 | "Thứ tự thực thi D1–D6 **do owner chốt**" | The D1–D6 order is the D0 session's proposal; the same mislabel already corrected in `owner-directives.md`. Fixed |
+| `docs/plans/2026-09-10-content-backlog.md` | "Phase 2 seeding step (**owner's explicit ask**)"; "Mandatory sources (**owner's requirement**, 2026-09-10)" | Unverifiable, no verbatim exists. Left in place, flagged here; a D3 argument that leaned on it has been withdrawn above |
+| `docs/handoff/2026-09-11.md`, spec v2 status line | "approved by the owner" | A different and probably sound claim (approval of a document, not authorship of words). Flagged, not rewritten |
+
+The pattern is not a single incident. Its shape is always the same: a session composes or infers, then labels the result with the owner's authority, and a later session reads the label instead of the evidence.
+
+## Questions for D5 — collected, not asked
+
+Added to the six in `docs/handoff/2026-09-11-opus5-handoff.md` §4.5; D5 asks them in one batch.
+
+1. **#18 Biome/Pint as a hook.** The word is the owner's and it collides with v2 §8. Guardrail command at v0.2 and the hook at v0.4, or change the hook policy now?
+2. **#4 spec-kit.** "#3 hoặc #4" is read here as: Superpowers takes the slot and spec-kit leaves the mandatory set. Confirm — or reopen it, in which case its mode also has to move from "ideas-only" to "adapt", since MIT permits the text and the recorded reason for the restriction is about structure, which is the axis the kit's own rule says not to judge on.
+3. **`frontend-design` provenance** — the official plugins repo over `anthropics/skills`?
+4. **The browser tool** — agent-browser confirmed, playwright-mcp as the documented alternative?
+5. **`bk-design`** — created now to unblock rank 3, or does it wait for the per-item inventory §5.2 requires?
+6. **Tier versus evidence.** Item 8 (security-guidance) is unblocked and cheap while ranks 3, 6 and 7 are blocked. The owner's tier keeps it at 8. Move it up, or keep the tier?
+7. **The official `code-review` plugin** — old-mandatory, absent from the minimal stack, and not something the owner asked about. Keep it at rank 2, or was its omission deliberate too?
+
+---
+
+*D3 written 2026-09-11, audited the same day, then rebuilt after the owner's verbatim directives landed in the repository. Counts come from commands run in those passes (`wc -l`, `find`, `cmp`, `sha256sum`) against the clones in the table above; no star count is used as evidence. Biome (#18) and OpenCode (#7) were not cloned and rest on their matrix rows' 2026-09-11 API reading — noted because nothing is taken from either. What the rebuild changed: the two-axis split became one order with a role column; #7 lost the "category error" verdict; #18 gained Pint and lost the unilateral "no hook"; #4 left the mandatory set; the `claude-code-setup` defence lost one of its three reasons.*
