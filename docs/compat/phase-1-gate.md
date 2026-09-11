@@ -151,4 +151,57 @@ Cleanup: the eval driver hook and the probe rule were removed from the live plug
 
 **Junction, isolated** (2026-09-11 morning, no restart involved, both readings through the same Customizations screen opened by URL): with `~/.gemini/config/plugins/bearingkit` as a junction to the adapter, 2.0 lists nothing from the plugin (budget 98.2% free, only `user_global` 368); switched back to the copied directory minutes later, the same screen lists the eleven skills and the 1,873-token rule again. Antigravity's plugin scanner does not follow a directory junction. The installer now copies by default on Antigravity (a later `install` refreshes the copy); `--antigravity-link` keeps the junction for experiments. The earlier IDE readings with the junction are explained by the same cause.
 
-Still open on Antigravity: the remaining 42 prompts, which cost about one Opus conversation each on the owner's Antigravity plan.
+**The remaining 42 prompts** (tag `rest`, 2026-09-11 morning, 08:20 to about 09:27 local, Antigravity 2.0 v2.12.2, model `claude-opus-4-6-thinking`, same fixture reset before every prompt, same automation): every `-02`, `-03`, `-04` and `-neg-02` prompt of the six intents, one fresh conversation each, all 42 settled on their own (no timeouts, no retries by the driver). Scored from the transcripts: **41/42, 0 false activations**.
+
+| id | intent | expect | got | pass |
+|---|---|---|---|---|
+| q-en-02 | question | none | none | yes |
+| q-en-03 | question | none | none | yes |
+| q-en-04 | question | none | none | yes |
+| q-vi-02 | question | none | none | yes |
+| q-vi-03 | question | none | none | yes |
+| q-vi-04 | question | none | none | yes |
+| q-neg-02 | question | bk-review | bk-review | yes |
+| sm-en-02 | small | bk-build | bk-build | yes |
+| sm-en-03 | small | bk-build | bk-build | yes |
+| sm-en-04 | small | bk-build | none | NO |
+| sm-vi-02 | small | bk-build | bk-build | yes |
+| sm-vi-03 | small | bk-build | bk-build | yes |
+| sm-vi-04 | small | bk-build | bk-build | yes |
+| sm-neg-02 | small | bk-debug | bk-debug | yes |
+| feat-en-02 | feature | bk-spec | bk-spec | yes |
+| feat-en-03 | feature | bk-spec | bk-spec | yes |
+| feat-en-04 | feature | bk-spec | bk-spec | yes |
+| feat-vi-02 | feature | bk-spec | bk-spec | yes |
+| feat-vi-03 | feature | bk-spec | bk-spec | yes |
+| feat-vi-04 | feature | bk-spec | bk-spec | yes |
+| feat-neg-02 | feature | bk-test | bk-test | yes |
+| bug-en-02 | bug | bk-debug | bk-debug | yes |
+| bug-en-03 | bug | bk-debug | bk-debug | yes |
+| bug-en-04 | bug | bk-debug | bk-debug | yes |
+| bug-vi-02 | bug | bk-debug | bk-debug | yes |
+| bug-vi-03 | bug | bk-debug | bk-debug | yes |
+| bug-vi-04 | bug | bk-debug | bk-debug | yes |
+| bug-neg-02 | bug | bk-test | bk-test | yes |
+| rev-en-02 | review | bk-review | bk-review | yes |
+| rev-en-03 | review | bk-review | bk-review | yes |
+| rev-en-04 | review | bk-review | bk-review | yes |
+| rev-vi-02 | review | bk-review | bk-review | yes |
+| rev-vi-03 | review | bk-review | bk-review | yes |
+| rev-vi-04 | review | bk-review | bk-review | yes |
+| rev-neg-02 | review | bk-ship | bk-ship | yes |
+| ship-en-02 | ship | bk-ship | bk-ship | yes |
+| ship-en-03 | ship | bk-ship | bk-ship | yes |
+| ship-en-04 | ship | bk-ship | bk-ship | yes |
+| ship-vi-02 | ship | bk-ship | bk-ship | yes |
+| ship-vi-03 | ship | bk-ship | bk-ship | yes |
+| ship-vi-04 | ship | bk-ship | bk-ship | yes |
+| ship-neg-02 | ship | bk-spec|none | none | yes |
+
+The one miss, `sm-en-04` ("Change the log level of the cache warmup message to debug."): the fixture holds no such message, so the model searched the whole project first (eight greps and listings, four file views), concluded the message does not exist and answered without opening a skill. On Claude Code the same prompt opened `bk-build` in all three runs, because the Skill tool makes the call cheap enough to make before searching; on Antigravity a skill is a `view_file`, and the model preferred to look before it read the skill. Recorded as a miss; the prompt asks for something the fixture cannot deliver, which is a fixture gap to close before the next full run (add the message, keep the prompt).
+
+Harness defect found by this run: the driver ended the whole run at prompt six with `Cannot read properties of null (reading 'focus')`, a race between the composer check and the keystrokes while the section re-mounted its editor. Fixed the same morning (`scripts/antigravity/drive.cjs`: the composer must be present on two consecutive checks, its vanishing is a retryable failure, a prompt retries up to three times before the run ends); the run resumed for the 37 left with nothing lost, since the queue advances only when the hook injects.
+
+**Sixty prompts on Antigravity 2.0, latest reading per prompt** (18 from the spread run and its rerun above, 42 from this run): **58/60 strict, 59/60 with the explain reading accepted**. Misses: `ship-neg-01` (asked to explain `bk-ship`, read it; accepted as above) and `sm-en-04` (fixture gap, above). Prompts that expect a skill: 47/48; prompts that expect none: 11/12 strict, 12/12 with the explain reading. Positives by intent: small 7/8, feature 8/8, bug 8/8, review 8/8, ship 8/8; questions 8/8 direct; the twelve cross-intent negatives all route to the intended other skill.
+
+The eval hook is disarmed (`evals --host antigravity --disarm`), the live plugin carries only the `bearingkit` hook again, and the eval project file plus the staged fixture stay for the next runs.
