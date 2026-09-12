@@ -152,7 +152,7 @@ Cùng hạng với lỗi Skillmark/MIT: dữ kiện kiểm chứng được, s�
 
 `docs/handoff/2026-09-11.md:34` liệt kê "marketplace-first install" trong Rejected options; `v2 §1:16` và §3 lại lấy marketplace làm đường cài chính. Không có dữ kiện nào sai ở đây — hai câu đều là chủ trương, viết ở hai thời điểm, trái nhau.
 
-Nghiêng về phía "dòng ở handoff là mục thời v1 bị chép tiếp": toàn bộ phần còn lại của `:34` đều là mục v1 (`25 skill`, `/kn-`, `path-string hooks`, `docs/superpowers/`), và `2026-09-10-bearingkit-v1-design.md:81` ghi rõ *"the marketplace stays a secondary channel"*. **Nhưng** handoff đó viết *sau* khi v2 đã chốt, nên không loại trừ được nó có ý hẹp hơn (ví dụ: chưa lấy marketplace làm đường chính khi repo còn private và chưa chạy acceptance). Đoán sai thì đoán trúng vào kênh cài chính của kit. → **owner chốt** (câu hỏi ở `docs/specs/2026-09-11-skill-inventory.md`, "Questions for D5").
+Nghiêng về phía "dòng ở handoff là mục thời v1 bị chép tiếp": toàn bộ phần còn lại của `:34` đều là mục v1 (`25 skill`, `/kn-`, `path-string hooks`, `docs/superpowers/`), và `2026-09-10-bearingkit-v1-design.md:81` ghi rõ *"the marketplace stays a secondary channel"*. **Nhưng** handoff đó viết *sau* khi v2 đã chốt, nên không loại trừ được nó có ý hẹp hơn (ví dụ: chưa lấy marketplace làm đường chính khi repo còn private và chưa chạy acceptance). Đoán sai thì đoán trúng vào kênh cài chính của kit. → **owner chốt** (câu 13 ở `docs/specs/2026-09-12-d5-owner-questions.md`, batch D5 2026-09-12).
 
 ---
 

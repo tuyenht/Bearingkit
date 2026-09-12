@@ -164,13 +164,9 @@ Trọng tâm đã soạn cho vài nguồn (giữ lại khi viết prompt mới):
 
 `upstream/sources.json`: sửa sha pr-agent, thêm các nguồn còn thiếu (fullstack-dev-skills, Spartan, ClaudeKit, kit cũ, Skillmark, Antigravity docs) với mode tương ứng; cập nhật cột Status trong ma trận cho nguồn nào đã kiểm kê xong.
 
-### 4.5 Gom câu hỏi cho owner, hỏi **một lần** ở cuối
+### 4.5 Gom câu hỏi cho owner, hỏi **một lần** ở cuối — ĐÃ CHẠY 2026-09-12
 
-Danh sách hiện tại (chưa ai trả lời): (1) hàng 38 gemini-skills; (2) dòng bản quyền cho `LICENSE`; (3) host nào owner thực dùng thêm (Gemini CLI / Cursor / Codex / Copilot CLI); (4) pack nào bắt buộc phải là core; (5) Phase 0 trên workstation; (6) hai dòng protocol verbatim + design dataset từ kit cũ.
-
-D3 sinh thêm 7 câu nữa, nằm ở `docs/specs/2026-09-11-skill-inventory.md` mục "Questions for D5" (danh sách tối thiểu là stack chạy hay hàng đợi port; mode của spec-kit; provenance của frontend-design; browser tool; có tạo `bk-design` ngay không; Biome có hook hay không). D5 hỏi cả 13 trong một lượt.
-
-**Cập nhật 2026-09-12.** Con số "13" ở trên đã cũ hai lần. Một lượt verification ngày 2026-09-11 thêm hai câu (#8 nghĩa của "hoặc" giữa #3 và #4; #9 dựng lại `_build/upstream/` theo sha), và D4 thêm sáu câu (#10–#15) về cách cài — cả tám đều nằm cùng chỗ, mục "Questions for D5" của `docs/specs/2026-09-11-skill-inventory.md`. Đếm hiện tại: 6 câu ở mục 4.5 này + 15 câu ở inventory = **21 câu cho D5**. Câu thứ bảy của D4 — *host nào owner thật sự dùng ngoài Claude Code và Antigravity* — không tạo mục mới vì trùng câu (3) ngay trên; D4 chỉ bổ sung một dữ kiện cho nó: xác minh 2026-09-12 bằng `command -v`, trên máy này **chỉ có `claude`** trên PATH, còn `gemini`, `droid`, `copilot`, `opencode`, `codex`, `cursor-agent` đều không có — tức "mọi công cụ" hôm nay thực tế là 2 host. Đề xuất và lý lẽ đứng sau #10–#15 ở `docs/specs/2026-09-12-install-council.md` (ĐỀ XUẤT, chưa có hiệu lực).
+D5 đã chạy. Batch đầy đủ, đã khử trùng lặp và sắp theo thứ tự chặn/không-chặn (20 câu, gộp từ 6 câu ở mục này + 15 câu ở `docs/specs/2026-09-11-skill-inventory.md` "Questions for D5"), nằm ở `docs/specs/2026-09-12-d5-owner-questions.md`. File đó là bản đầy đủ duy nhất — mục này chỉ còn là con trỏ, không lặp lại danh sách để tránh hai bản song song.
 
 ### 4.6 Đóng phiên
 
