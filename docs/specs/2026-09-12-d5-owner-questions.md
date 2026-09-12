@@ -1,10 +1,10 @@
 # D5 — Batch câu hỏi hợp nhất cho owner, 2026-09-12
 
-> **TRẠNG THÁI: BATCH CÂU HỎI. CHƯA CÓ QUYẾT ĐỊNH NÀO Ở ĐÂY. CHỜ OWNER TRẢ LỜI MỘT LẦN.**
+> **TRẠNG THÁI: MỘT PHẦN ĐÃ CHỐT (2026-09-12). CÒN LẠI CHỜ OWNER.**
 >
-> Đây là D5 (`docs/handoff/2026-09-11-owner-directives.md`, mục "Thứ tự thực thi"): hợp nhất **tất cả** câu hỏi đang chờ owner, đang nằm rải rác ở nhiều file, thành một batch duy nhất, hỏi một lần. Tài liệu này **không tự trả lời, không tự quyết** bất cứ câu nào — nó chỉ tập hợp, khử trùng lặp, sắp thứ tự các câu đã có sẵn ở nơi khác trong repo, và với vài câu, nhắc lại khuyến nghị mà phiên trước đã đưa ra (ghi rõ là khuyến nghị). Không dòng mã, spec hay plan nào bị sửa theo file này.
+> Đây là D5 (`docs/handoff/2026-09-11-owner-directives.md`, mục "Thứ tự thực thi"): hợp nhất **tất cả** câu hỏi đang chờ owner, đang nằm rải rác ở nhiều file, thành một batch duy nhất. Tài liệu này **không tự trả lời, không tự quyết** thay owner — nó chỉ tập hợp, khử trùng lặp, sắp thứ tự, và (với vài câu) nhắc lại hoặc bổ sung khuyến nghị (ghi rõ là khuyến nghị, không phải quyết định). Không dòng mã, spec, ma trận hay `docs/hosts.md` nào bị sửa theo file này — kể cả sau khi có quyết định, việc áp dụng vẫn là một bước riêng, chưa làm.
 >
-> Sau khi owner trả lời: áp dụng câu trả lời vào các file liên quan (ma trận, LICENSE, `docs/hosts.md`, spec v2 §1/§3, v.v.), rồi mới commit.
+> **Cập nhật 2026-09-12, vòng 4 — Tier 1 (1–6) VÀ bốn câu Tier 2 (9,12,14,16) nay đã chốt hết.** Câu 5 (vòng 3): rank = bao hàm, mode = giữ ideas-only, sau khi phát hiện lý do đổi mode ở vòng 1 dựa trên một luật không tồn tại. Câu 9: guardrail v0.2 + hook v0.4, cả hai — owner xác nhận đây là ngữ cảnh "hoặc" điều phối-stack, không loại trừ. Câu 12: chờ inventory, không tạo `bk-design` trước. Câu 14: provenance = claude-plugins-official. Câu 16: đường dẫn cục bộ là chuẩn. Phát hiện #4 của Phụ lục C (v2-design.md tự trỏ nhầm §5.1→§5.2) **đã sửa trực tiếp trong v2-design.md** (xếp cùng hạng dữ kiện-xác-minh-được như §1:28/Skillmark). Thêm **câu 21** (Tier 3, mới, ngoài 20 câu gốc): đề xuất sửa AGENTS.md cho COUNCIL/doctor — nhãn "đề xuất của phiên", KHÔNG phải quyết định owner, chủ động hoãn tới khi có ma sát thật đo được. Còn mở: câu 7,10,11,13,15 (Tier 2, giữ mặc định/hướng nghiêng, chưa owner tự chốt), câu 17–20 (Tier 3, giữ nguyên trạng), câu 21 (Tier 3, đề xuất chờ). Chi tiết: xem **"Quyết định 2026-09-12 và những gì mở khoá"** và **Phụ lục C**.
 
 ---
 
@@ -34,6 +34,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 1. Cách cài chung cho mọi host
 *(gộp từ: `skill-inventory.md` #10)*
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner: A + B′.** Xem mục "Quyết định 2026-09-12 và những gì mở khoá" để biết chính xác việc sẽ mở khoá; CHƯA áp dụng.
 - **Cần quyết định:** Chọn một trong bốn phương án cài đặt đã khảo sát ở `docs/specs/2026-09-12-install-council.md` §6–7.
 - **Lựa chọn:**
   - **A** — Một trang tài liệu duy nhất gom lệnh cài mỗi host, bổ sung đường CLI của Claude Code còn thiếu tài liệu. 0 dòng mã.
@@ -45,6 +46,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 2. Trần cứng cho doctor / install wrapper
 *(gộp từ: `skill-inventory.md` #11 — phụ thuộc câu trả lời của câu 1)*
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** trần cứng = *"doctor chỉ đọc, không ghi một byte nào."* Đây là bất biến, sẽ viết thành acceptance test (chưa viết — xem mục "Quyết định 2026-09-12").
 - **Cần quyết định:** Chốt bất biến cho B′: *"doctor chỉ đọc, không ghi một byte nào vào cấu hình host; mọi thao tác ghi vẫn là lệnh owner tự gõ"* — kiểm bằng test chạy trong HOME giả, so cây thư mục trước/sau. Nếu chọn B thay vì B′: trần tương ứng có nên là *"wrapper chỉ được gọi lệnh cài chính thức của host hoặc copy vào thư mục plugin của chính host; không bao giờ mở hay ghi `settings.json`, `CLAUDE.md`, `opencode.json` hay bất kỳ file cấu hình host nào"* không?
 - **Lựa chọn:** Đồng ý trần đã đề xuất / sửa trần / không áp dụng (nếu chọn A hoặc C ở câu 1).
 - **Bị chặn:** Viết được acceptance test đúng cho doctor/install — cần bất biến chốt trước khi viết test.
@@ -52,13 +54,23 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 3. Phạm vi đọc của doctor
 *(gộp từ: `skill-inventory.md` #12 — phụ thuộc câu 1)*
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** đọc profile hàng ngày thật (`~/.claude`, `~/.gemini`).
 - **Cần quyết định:** `doctor` được đọc profile hàng ngày thật (`~/.claude`, `~/.gemini`), hay chỉ chạy trên profile cách ly và owner tự chạy tay trên profile thật khi cần?
 - **Lựa chọn:** (a) đọc profile hàng ngày — cách duy nhất bắt được bản copy Antigravity đang sống bị lệch (đúng loại lỗi đã xảy ra ở commit `3d7b4eb`); (b) chỉ profile cách ly.
 - **Bị chặn:** Phạm vi quyền đọc của doctor, và có cần xin phép COUNCIL mỗi lần chạy hay không — `AGENTS.md` xếp mọi thứ chạm `~/.claude`/`~/.gemini` vào COUNCIL, ranh giới "đọc thì tự do, ghi thì xin phép" cần owner nói rõ trước khi viết doctor.
-- **Khuyến nghị:** Không nêu — nguồn chỉ trình bày đánh đổi hai phía.
+- **Khuyến nghị gốc:** Không nêu — nguồn chỉ trình bày đánh đổi hai phía.
+
+> **Câu hỏi phụ của owner: mỗi lần chạy doctor có cần xin COUNCIL theo `AGENTS.md` không, và giảm ma sát thế nào mà không phá trần câu 2?**
+>
+> Đọc đúng câu chữ, `AGENTS.md` không phân biệt đọc/ghi: *"COUNCIL... cho anything touches ~/.claude, ~/.gemini..."* — theo nghĩa đen, mọi lần chạy doctor (kể cả chỉ đọc) đều rơi vào COUNCIL, tức phải đề xuất rồi chờ trước MỖI lần chạy. Với một công cụ chẩn đoán định chạy thường xuyên, đây là ma sát thật, không phải diễn giải sai.
+>
+> **Cách giảm ma sát mà không đổi trần câu 2 (doctor không bao giờ ghi):** trần câu 2 là bất biến VỀ HÀNH VI của doctor (không ghi); câu hỏi COUNCIL là về HÀNH VI của phiên chạy nó (có cần hỏi trước không) — hai việc tách được. Đề xuất: sửa `AGENTS.md` để COUNCIL áp dụng cho **ghi/thay đổi** vào `~/.claude`, `~/.gemini`, repo khác, server; còn **đọc thuần tuý bởi một công cụ có bất biến "không ghi" được kiểm bằng test tự động** (chính acceptance test của câu 2) thì là ACT — vì rủi ro của COUNCIL (thay đổi không được soát trước) không tồn tại khi không có gì bị ghi. Trần câu 2 KHÔNG bị phá: doctor vẫn tuyệt đối không ghi; cái đổi chỉ là owner không phải duyệt riêng từng lần CHẠY một công cụ đã chứng minh được là an toàn.
+>
+> **Nhưng đây là đề xuất sửa `AGENTS.md`, tức chính nó là COUNCIL** (thay đổi luật vận hành của cả repo) — tôi không tự sửa `AGENTS.md`. Cần owner gật đầu riêng cho việc sửa AGENTS.md này trước khi bất kỳ phiên nào áp dụng.
 
 ### 4. Thời điểm ra mắt của doctor
 *(gộp từ: `skill-inventory.md` #13 — phụ thuộc câu 1, 3)*
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** giữ v0.3, đúng kế hoạch hiện tại.
 - **Cần quyết định:** Kéo doctor lên trước v0.2 (bắt bản copy Antigravity lệch sớm hơn), hay giữ lịch v0.3 hiện tại (`bin/bearingkit.cjs` đã tự in đúng câu "doctor arrives with v0.3")?
 - **Lựa chọn:** giữ v0.3 / kéo lên trước v0.2.
 - **Bị chặn:** Thứ tự release gate — v0.2 hiện là mốc đo đầu tiên (spec v2 §11); nếu doctor cần có mặt sớm hơn, mốc đó phải viết lại.
@@ -66,16 +78,36 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 5. Nghĩa của "hoặc" giữa Superpowers và spec-kit
 *(gộp từ: `skill-inventory.md` #2 + #8 — hai câu hỏi cùng một quyết định, viết ở hai chỗ khác nhau trong cùng file)*
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** rank = **bao hàm** (spec-kit tính vào nhóm tối thiểu cùng Superpowers); mode = **giữ nguyên ideas-only**.
 - **Cần quyết định:** Chỉ thị 4 viết "#3 superpowers hoặc #4 spec-kit". "Hoặc" ở đây là **bao hàm** (cả hai cùng thoả một chỗ bắt buộc, lấy cả hai không sai) hay **loại trừ** (chỉ một trong hai được tính, cái kia rớt khỏi nhóm bắt buộc)?
 - **Lựa chọn:**
   - (a) Bao hàm — bằng chứng: "hoặc" tiếng Việt thường không mang nghĩa loại trừ kiểu "hoặc...hoặc"/XOR; owner liệt kê "#3 hoặc #4" thành một gạch đầu dòng duy nhất bên cạnh các mục liệt kê rõ ràng khác (#1, #19, #21, #15).
   - (b) Loại trừ — bằng chứng: bản dựng lại kết luận hiện tại của D3 đã đọc theo hướng này, rút lại cách đọc "giữ cả hai, không loại trừ" của lượt đầu vì coi đó là suy diễn đè lên chữ tường minh.
   - *Ghi chú:* cách dùng song song "Biome hoặc Pint" ở #18 không giải quyết được câu này — cặp đó phân biệt được bằng một dữ kiện bên ngoài (stack nào của repo đích dùng Biome hay Pint), còn #3/#4 không có dữ kiện phân biệt tương tự vì cả hai phục vụ cùng lúc `bk-spec`/`bk-plan`.
-- **Bị chặn:** Rank và mode của spec-kit trong bảng ưu tiên hợp nhất (D3) — hiện xếp "dưới vạch", mode "ideas-only". Nếu chọn (a) hoặc mở lại: mode phải đổi sang "adapt" vì MIT cho phép lấy chữ và lý do hạn chế hiện tại (khác biệt cấu trúc) là trục mà luật riêng của kit nói không được dùng để đánh giá.
-- **Khuyến nghị:** Không có — nguồn tự nhận cả hai cách đọc đều có bằng chứng hợp lý, chỉ nói rank hiện tại của spec-kit "hangs entirely on this answer".
+- **Bị chặn:** Rank và mode của spec-kit trong bảng ưu tiên hợp nhất (D3) — hiện xếp "dưới vạch", mode "ideas-only". *(Câu tiếp theo trong bản gốc suy ra mode phải đổi sang "adapt" từ đây, dựa trên nhãn "lý do hạn chế hiện tại (khác biệt cấu trúc) là trục mà luật riêng của kit nói không được dùng để đánh giá" — **nhãn này SAI, không xác minh được ở §5.2 hay bất cứ đâu trong repo**; xem Phụ lục C, dòng 1. Đã sửa nhãn tại chỗ ở đây; kết luận đã được kiểm lại ở khối audit ngay dưới, không phải bị đảo ngược thêm lần nữa.)*
+- **Khuyến nghị gốc (đã sửa bởi audit dưới đây):** Không có — nguồn tự nhận cả hai cách đọc đều có bằng chứng hợp lý, chỉ nói rank hiện tại của spec-kit "hangs entirely on this answer".
+
+> **Audit 2026-09-12, kiểm lại theo yêu cầu owner — bản trước tự mâu thuẫn, đã sửa.**
+>
+> **Owner chỉ đúng chỗ sai:** đề xuất trước ghi rank = loại trừ (spec-kit không tính vào ô bắt buộc) NHƯNG mode = adapt (nâng quyền hấp thụ) — hai vế không tương thích nếu không giải thích được vì sao thứ "không bắt buộc" lại đáng được nâng cấp. Tôi không giải thích được, vì lý do dẫn tới vế mode **đọc sai một nguồn**.
+>
+> **Kiểm lại tại nguồn — phát hiện:** vế mode dựa trên tiền đề "spec v2 §5.2 cấm dùng khác-biệt-cấu-trúc để chấm mode". Tôi vừa đọc lại NGUYÊN VĂN §5.2 (`docs/specs/2026-09-11-bearingkit-v2-design.md` dòng 94–96) — nó chỉ nói: một mục nguồn ứng đúng một skill; giấy phép permissive là ĐIỀU KIỆN CẦN để absorb (không permissive → chỉ idea); drop cần lý do; inventory (không phải từng mục riêng lẻ) chốt catalog cuối theo phép thử §1. **Không có câu nào cấm dùng "khác biệt cấu trúc" làm căn cứ.** Cụm "the axis the kit's own rule says not to judge on" mà bản trước (và văn bản gốc của D3 trong `skill-inventory.md` trước khi tôi xoá) dùng — grep toàn repo không tìm thấy luật này ở đâu khác. Đây là một khẳng định không xác minh được, có thể là suy diễn của một phiên trước bị gán nhầm thành "luật của kit" — đúng loại lỗi mà cả việc D5 này đang cố dọn. Vế mode của tôi dựng trên khẳng định đó, nên **rút lại**, không phải vì owner nói khác, mà vì tự kiểm tra thấy nền móng của nó không đứng vững.
+>
+> **Về "hoặc" (rank) — cân lại 2 bằng chứng mới của owner:**
+> - **Lập luận "danh sách tối thiểu" — thuyết phục, chấp nhận.** Một ngưỡng TỐI THIỂU nêu sàn (cái gì phải có), không nêu trần (cái gì bị cấm). "#3 hoặc #4" trong một danh sách tự khai là "tối thiểu" đọc tự nhiên là "cần ít nhất một trong hai để đạt sàn" — có cả hai vẫn đạt sàn, không vi phạm gì. Muốn đọc thành loại trừ cần chữ tường minh hơn ("chỉ một trong hai", "không phải cả hai") — không có trong nguyên văn chỉ thị 4.
+> - **So sánh với #18 "Biome hoặc Pint" — đúng một phần, có khác biệt logic thật.** Hai cách dùng "hoặc" của owner KHÁC NHAU về hình thức logic, dù cùng không phải loại trừ: ở #18, "hoặc" là **điều phối theo ngữ cảnh** — Biome ứng với target dùng JS/TS, Pint ứng với target dùng PHP; không phải hai thứ cùng áp vào MỘT đối tượng. Ở #3/#4, "hoặc" là **câu hỏi đủ-hay-không trên cùng một đối tượng** — Superpowers và spec-kit cùng phục vụ `bk-spec`/`bk-plan` của MỘT kit, không tách theo ngữ cảnh bên ngoài như Biome/Pint. Nên #18 không "chứng minh" #3/#4 bằng phép so sánh trực tiếp — nhưng KHÔNG cần phép so sánh đó nữa, vì lập luận "sàn tối thiểu" ở trên đã đủ tự đứng.
+>
+> **Kết luận, đã tách đúng 2 trục (không còn mâu thuẫn):**
+> - **Rank:** đổi sang **bao hàm (a)** — spec-kit CÓ tính vào nhóm tối thiểu cùng Superpowers, không bị loại. Đây là điểm tôi đổi ý so với đề xuất trước, dựa trên lập luận sàn-tối-thiểu, không phải vì owner yêu cầu.
+> - **Mode:** **giữ nguyên ideas-only** — rút đề xuất đổi sang adapt. Lý do hiện có cho ideas-only (dòng nguồn: "the kit routes from plain language rather than spec-kit's own commands") là một khác biệt cấu trúc **có thật**, và không có luật nào cấm dùng nó; MIT chỉ mở CỬA để absorb nếu muốn, không BẮT phải absorb. Không có bằng chứng mới nào cho thấy lấy thêm chữ của spec-kit (ngoài ý tưởng đã có qua Superpowers) sẽ bổ sung được gì cho `bk-spec`/`bk-plan`.
+>
+> **Trạng thái: khuyến nghị đã kiểm lại, tự tin hơn nhiều ở phần rank — vẫn để owner đóng dấu CHỐT**, vì phần mode là một lựa chọn biên tập (có đáng absorb hay không), không phải một sự kiện đo được.
+>
+> **Nếu owner đồng ý (rank bao hàm, mode giữ ideas-only):** mở khoá đúng một sửa — `skill-inventory.md`, bảng ưu tiên D3: bỏ ghi chú "spec-kit không tính vào ô bắt buộc", ghi rõ nó cùng Superpowers thoả nhóm tối thiểu; **không** cần sửa `upstream/sources.json` hay `NOTICE` (mode không đổi, không có chữ mới nào được lấy). Khác hẳn danh sách mở khoá ở bản trước — xem mục "Quyết định 2026-09-12" đã cập nhật.
 
 ### 6. Dòng bản quyền cho LICENSE
 *(gộp từ: `docs/handoff/2026-09-11.md` "Decisions waiting on the owner" #2 = `opus5-handoff.md` §4.5 (2))*
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner: `tuyenht`, 2026.** Chưa tạo file LICENSE (owner yêu cầu rõ không làm trong lượt này) — xem mục "Quyết định 2026-09-12" cho việc sẽ mở khoá.
 - **Cần quyết định:** Tên chủ sở hữu bản quyền + năm cho dòng `Copyright (c) <năm> <tên>` trong file LICENSE.
 - **Lựa chọn:** `package.json` đã khai loại MIT; chỉ thiếu dòng bản quyền — owner cho tên + năm muốn dùng.
 - **Bị chặn:** Không tạo được file LICENSE thật — agent bị cấm tự viết file này (nằm trong danh sách "rejected options" của handoff tối 2026-09-11, xem `opus5-handoff.md` §2.2). Repo hiện chưa có file LICENSE dù `package.json` khai MIT.
@@ -94,6 +126,8 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 8. Host nào owner thực dùng thêm
 *(gộp từ: `docs/handoff/2026-09-11.md` "Decisions waiting on the owner" #3 = `opus5-handoff.md` §4.5 (3); D4 xác nhận đây cũng là "câu thứ 7" của riêng nó, không tạo mục mới)*
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner: có dùng thêm cả 4 — Gemini CLI, Cursor, Codex CLI/App, Copilot CLI —, trên MÁY KHÁC, không phải máy đang chạy phiên này.** "Something else" ở lượt trước không có nội dung — owner đã xác nhận không có host thứ 5, mục đó bỏ.
+> **Xung đột đã nêu ở lượt trước — nay đã giải quyết:** dữ kiện `command -v` (chỉ `claude` trên PATH máy này) và việc owner dùng 4 host kia không còn mâu thuẫn, vì owner nói rõ chúng chạy trên máy khác. Acceptance test cho 4 host này (khi chạy) sẽ cần thực hiện trên máy có cài chúng, không phải máy đang chạy phiên này.
 - **Cần quyết định:** Ngoài Claude Code và Antigravity, owner thực sự dùng thêm host nào (Gemini CLI / Cursor / Codex / Copilot CLI / Droid)?
 - **Lựa chọn:** liệt kê host cụ thể / không dùng thêm host nào.
 - **Bị chặn:** Lịch chạy acceptance test cho các host đó (hiện "wired; pending" hoặc "manifest sẵn, chưa xác minh gì").
@@ -101,6 +135,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 9. Biome/Pint — hook hay guardrail command
 *(gộp từ: `skill-inventory.md` #1)*
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** cả hai — guardrail command ở v0.2, hook thật ở v0.4 (không phải chọn một, mà là trình tự thời gian: guardrail trước, hook sau), giữ đúng v2 §8 "the kit writes no host settings". Owner xác nhận thêm: đây chính là chỗ họ dùng "hoặc" theo nghĩa điều phối stack (Biome cho JS/TS, Pint cho PHP) — không loại trừ, khớp đúng phân tích logic đã nêu ở câu 5 (điều phối-theo-ngữ-cảnh khác với đủ-hay-không-trên-cùng-một-đối-tượng).
 - **Cần quyết định:** Chữ "hook" ở chỉ thị 4 ("#18 Biome hoặc Pint hook") va với chính sách hook hiện tại của v2 §8 (enforcement hook hoãn tới v0.4, tuỳ chọn). Dùng guardrail command ở v0.2 rồi mới thành hook thật ở v0.4 (giữ chính sách, chỉ trễ), hay đổi chính sách hook ngay?
 - **Lựa chọn:** guardrail command v0.2 + hook v0.4 / đổi chính sách hook ngay.
 - **Bị chặn:** Cách hiện thực hoá mục "#18" trong tier "thêm khi cần" — chưa cấp bách, nhưng cần chốt trước khi thật sự cài Biome/Pint.
@@ -122,6 +157,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 12. Thời điểm tạo bk-design
 *(gộp từ: `skill-inventory.md` #5)*
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** chờ inventory §5.2 hoàn tất chính thức, không tạo `bk-design` trước.
 - **Cần quyết định:** Tạo thư mục `bk-design` ngay để giải quyết hạng 3 đang bị chặn, hay chờ đúng quy trình per-item inventory §5.2 yêu cầu?
 - **Lựa chọn:** tạo ngay / chờ inventory chính thức hoàn tất (bước 4.2).
 - **Bị chặn:** Việc bắt đầu sprint cho `bk-design` — hạng 3 trong thứ tự ưu tiên hiện đang treo vì lý do này.
@@ -136,6 +172,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 14. Provenance của frontend-design
 *(gộp từ: `skill-inventory.md` #3)*
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** ghi nguồn là `anthropics/claude-plugins-official` — vòng đời rõ hơn. Khớp khuyến nghị đã có sẵn ở `skill-inventory.md` dòng 124 ("Recommend the official plugins repo"); quyết định hôm nay xác nhận, không đảo hướng.
 - **Cần quyết định:** Skill `frontend-design` được absorb — ghi nguồn là `anthropics/claude-plugins-official` hay `anthropics/skills`? (Hai bản giống hệt nhau, SHA-256 khớp tuyệt đối.)
 - **Lựa chọn:** ghi nguồn là claude-plugins-official / ghi nguồn là anthropics/skills / ghi cả hai.
 - **Bị chặn:** Dòng provenance trong `upstream/sources.json`/`NOTICE` — không ảnh hưởng nội dung đã hấp thụ (giống hệt nhau), chỉ ảnh hưởng ghi công.
@@ -150,6 +187,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 16. Dạng chuẩn của lệnh cài khi repo còn private
 *(gộp từ: `skill-inventory.md` #15)*
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** đường dẫn cục bộ là dạng chuẩn trong tài liệu, URL ghi làm biến thể — vì `claude plugin marketplace add` đã xác minh nhận đường dẫn cục bộ, còn URL không chạy được khi repo còn private.
 - **Cần quyết định:** Khi repo còn private, tài liệu (`docs/hosts.md`, README) nên ghi đường dẫn cục bộ là dạng chuẩn (URL là chú thích), hay ngược lại?
 - **Lựa chọn:** đường dẫn cục bộ là chuẩn / URL là chuẩn.
 - **Bị chặn:** Nội dung chính xác của trang cài đặt gộp (phương án A, câu 1) cho tới khi repo public.
@@ -175,7 +213,8 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 19. Hai dòng protocol verbatim + design dataset từ kit cũ
 *(gộp từ: `docs/handoff/2026-09-11.md` "Decisions waiting on the owner" #6 = `opus5-handoff.md` §4.5 (6))*
-- **Cần quyết định:** Hai dòng protocol lấy nguyên văn từ v1 §18, và design dataset từ Antigravity-Core — có cần hấp thụ vào `bk-protocol/SKILL.md`/design-critic không?
+> **Nhãn cần sửa (phát hiện ở Phụ lục C, dòng 2–3):** "hai dòng protocol" không phải một con số đếm được ở v1 §18 — L20 ở đó kể một RỦI RO quá khứ ("hai dòng protocol" từng chỉ tồn tại dạng edit chưa commit), không định danh hai dòng cụ thể nào; đoạn văn ngay sau bảng liệt kê ~13 mục chữ owner viết được lấy verbatim (Autonomy Gate, Council Protocol, Definition of DONE...), phần lớn đã có trong `bk-protocol/SKILL.md` hiện tại. "Design dataset" cũng vậy — đó là một TODO ("nêu chính xác file chứa... design dataset", `opus5-handoff.md` §4.1 dòng 14), chưa ai định danh được file/nội dung thật. Câu hỏi vẫn còn giá trị (có thể còn sót gì đó chưa hấp thụ), nhưng khung "hai dòng" + "một dataset" như đang viết là số đã bị gán chắc hơn mức xác minh được — không đảo kết luận (vẫn ghi nhận, không chặn), chỉ sửa nhãn.
+- **Cần quyết định:** Còn sót phần nào của ~13 mục chữ owner viết (v1 §18, đoạn sau bảng) chưa vào `bk-protocol/SKILL.md`, và design dataset (nếu có, chưa định danh được) từ Antigravity-Core — có cần hấp thụ không?
 - **Lựa chọn:** hấp thụ ngay / để sau.
 - **Bị chặn:** Không gì — nguồn tự ghi rõ "unchanged, not blocking".
 - **Khuyến nghị:** Không nêu; đây là chữ owner tự viết cho kit cũ (thuộc diện "owner's own text may be adapted"), chỉ cần owner biết là còn treo.
@@ -187,7 +226,104 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 - **Bị chặn:** Không gì cấp bách — bằng chứng cho lượt inventory này đã thu thập xong; chỉ ảnh hưởng khả năng tái lập về sau (nếu `_build/` bị dọn, disk mới, máy khác).
 - **Khuyến nghị:** Không nêu.
 
+### 21. Đề xuất sửa AGENTS.md: COUNCIL chỉ áp cho ghi, đọc-có-test-bất-biến là ACT
+*(MỚI — không nằm trong 20 câu gốc của D5 (mục 0). Phát sinh từ câu hỏi phụ của owner ở câu 3; ghi vào batch theo yêu cầu 2026-09-12. Đánh số 21 để không xáo trộn số thứ tự 1–20 đã dùng khắp file.)*
+> **Nhãn: ĐỀ XUẤT CỦA PHIÊN — KHÔNG PHẢI QUYẾT ĐỊNH OWNER. CHƯA DUYỆT.**
+- **Cần quyết định:** Có sửa `AGENTS.md` để COUNCIL chỉ áp cho **ghi/thay đổi** vào `~/.claude`, `~/.gemini`, repo khác, server; còn **đọc** bởi một công cụ có bất biến "không ghi" được kiểm bằng test tự động (như `doctor`, câu 2) thì là ACT — hay không?
+- **Lựa chọn:** sửa AGENTS.md theo hướng trên / giữ nguyên (mọi chạm vào `~/.claude`, `~/.gemini` đều là COUNCIL, không phân biệt đọc/ghi).
+- **Bị chặn:** Không gì cấp bách. Owner nói rõ: hoãn tới khi `doctor` thực sự được viết và ma sát thật được đo — không quyết trước dựa trên suy đoán.
+- **Khuyến nghị:** Đã nêu ở câu 3 (không lặp lại) — ghi nhận ở đây là còn treo, chủ động chờ bằng chứng ma sát đo được trước khi owner quyết.
+
 ---
+
+## Quyết định 2026-09-12 và những gì mở khoá — CHƯA áp dụng, chỉ liệt kê
+
+Owner đã chốt câu 1, 2, 3, 4, 6, 8 làm quyết định thật; câu 5 owner yêu cầu kiểm lại thay vì tự quyết, đã kiểm (xem khối audit trong câu 5 ở trên) — vẫn là khuyến nghị. Tier 2 (trừ câu 9/12/14/16, nhóm riêng không mặc định) và Tier 3 giữ nguyên như owner chỉ định. Mục này liệt kê **chính xác** việc sẽ mở khoá cho từng quyết định — không file nào trong repo bị sửa theo mục này.
+
+### Từ câu 1 (A + B′)
+
+- **`docs/hosts.md`** — mục `## Claude Code` (dòng 16): bổ sung đường CLI không tương tác đã xác minh (`claude plugin marketplace add <url|path|repo>`, `claude plugin install <p>@<m> -y --scope user --json`, `validate`, `list`, `details`, `update` — nguồn: `install-council.md` §5), hiện chưa có ở đây. Bảng đầu file (dòng 5–12) và `README.md` mục `## Install` (dòng 5–14) đã gần đúng hình dạng phương án A (một trang, một dòng/host) — không cần dựng lại từ đầu, chỉ cần thêm đường CLI này.
+- **Mã mới:** một subcommand `doctor` cho `bin/bearingkit.cjs` (hiện chỉ có `antigravity install|uninstall`) — chỉ đọc, theo đặc tả B′ ở `install-council.md` §6: so bản copy Antigravity/`~/.claude` với repo, gọi `claude plugin list`/`validate` (đọc), chạy `hooks/session-start.cjs` xem có in đúng protocol + plugin root; lệch thì in lệnh cần gõ, không tự ghi.
+- **Test mới:** file test cho `doctor` (chạy trong HOME giả, so cây thư mục trước/sau — 0 byte ghi) — có thể tái dùng assertion đã có trong `tests/antigravity-install.test.cjs` nhưng chạy trên bản copy sống thay vì fixture.
+- **`docs/specs/2026-09-11-bearingkit-v2-design.md`** §1 Non-goals — cần RÀ LẠI (không chắc phải sửa): B′ là công cụ chẩn đoán chỉ đọc, không phải "installer" hay "at-runtime shim" mà Non-goals cấm — nhưng nên đọc lại nguyên văn trước khi kết luận không cần đổi gì.
+- **`CHANGELOG.md`** mục `## Unreleased` — thêm một dòng ghi quyết định cài đặt A+B′ (theo đúng thói quen ghi log hiện có của file).
+
+### Từ câu 2 (trần cứng doctor)
+
+- **Test mới** (cùng test đã nêu ở câu 1, không phải việc riêng): assertion cụ thể "0 byte ghi ra ngoài, chạy trong HOME giả, so cây thư mục trước/sau" trở thành **bất biến bắt buộc phải test**, không phải tuỳ chọn.
+- **`install-council.md` §6** — trần đã đề xuất ở đó nay là trần đã chốt, không còn "đề xuất chờ owner".
+
+### Từ câu 3 (phạm vi đọc doctor + câu hỏi phụ COUNCIL)
+
+- **Mã `doctor`** (câu 1): phạm vi đọc = `~/.claude`, `~/.gemini` thật, không phải profile cách ly.
+- **`AGENTS.md`** — mục Autonomy: **ĐỀ XUẤT sửa** (chưa làm, tự nó là COUNCIL) để phân biệt "ghi = COUNCIL" và "đọc bởi công cụ có bất biến-không-ghi được test = ACT". Cần owner gật đầu riêng cho việc sửa AGENTS.md, tách khỏi quyết định phạm vi đọc.
+
+### Từ câu 4 (thời điểm doctor)
+
+- Không mở khoá gì mới — giữ đúng kế hoạch đang có (`bin/bearingkit.cjs` đã in "v0.3"), không có file nào cần sửa vì đây là xác nhận hiện trạng, không phải thay đổi.
+
+### Từ câu 5 (ĐÃ CHỐT — rank bao hàm, mode giữ nguyên)
+
+- **`docs/specs/2026-09-11-skill-inventory.md`** — bảng ưu tiên hợp nhất (D3): sửa đúng MỘT chỗ — ghi chú rank của spec-kit đổi từ "không tính vào ô bắt buộc" sang "cùng Superpowers thoả nhóm tối thiểu". Mode giữ nguyên "ideas-only", không đổi.
+- **`upstream/sources.json`, `NOTICE`** — **không cần sửa**: mode không đổi nên không có chữ mới nào được lấy, không có gì để ghi công thêm.
+
+### Từ câu 6 (LICENSE: tuyenht, 2026)
+
+- **File mới `LICENSE`** ở gốc repo — văn bản MIT chuẩn + dòng `Copyright (c) 2026 tuyenht`. `package.json` đã khai `"license": "MIT"` và đã liệt kê `LICENSE` trong mảng `files` (dòng 29) — tức đã "chờ sẵn" file này, không cần sửa `package.json`.
+- **`README.md`** mục `## License` (dòng 32–34) — hiện chỉ nói "MIT (see `package.json`)"; có thể giữ nguyên hoặc thêm dòng bản quyền, tuỳ owner.
+- Owner đã nói rõ **không tạo file này trong lượt này** — chỉ liệt kê, chưa làm.
+
+### Từ câu 8 (host thêm: Gemini CLI, Cursor, Codex CLI/App, Copilot CLI — dùng trên máy khác)
+
+- **`docs/hosts.md`** — bảng đầu file: 4 dòng đang ghi "not tested / pending" (Gemini CLI dòng 9; Cursor dòng 10; Codex CLI/app dòng 11; Copilot CLI, Factory Droid dòng 12 — dòng này gộp chung với Factory Droid, **không nằm trong 4 host owner vừa xác nhận**, cần tách khi cập nhật) — chỉ đổi sau khi **thật sự chạy** acceptance test (2 câu ở `evals/activation/acceptance.jsonl`), **trên máy có cài các host đó** (không phải máy đang chạy phiên này, theo đúng owner vừa nói).
+- **`README.md`** dòng 12 — dòng gộp "Cursor, Codex, Copilot CLI, Factory Droid | manifests are in place..." cũng cần tách ra tương tự, sau khi có kết quả acceptance thật.
+- Đây là việc **chạy test trên máy khác**, không phải chỉ sửa tài liệu — chưa lên lịch, chỉ ghi nhận là đã có danh sách host để lên lịch.
+
+### Tier 2 (trừ câu 8) — giữ mặc định/hướng đã nghiêng (KHÔNG phải quyết định mới)
+
+- **Có mặc định rõ ghi trong file, giữ nguyên:** câu 7 (không pack nào core), câu 10 (security-guidance giữ hạng 8), câu 11 (code-review plugin giữ hạng 2).
+- **Có hướng đã nghiêng (gần như mặc định), giữ nguyên:** câu 13 (nghiêng đọc (a): dòng "marketplace-first" ở handoff là tàn dư v1), câu 15 (agent-browser + playwright-mcp dự phòng, như tài liệu hiện ghi).
+
+### Nhóm trước đây "cần owner, không mặc định" — nay ĐÃ CHỐT hết (2026-09-12)
+
+Câu 9, 12, 14, 16 (từng tách riêng vì không có mặc định) nay đều đã chốt bởi owner — xem nhãn ĐÃ CHỐT ở từng câu trong Tier 2 phía trên. Nhóm này đóng lại; không còn câu nào trong Tier 2 bị treo vì thiếu mặc định.
+
+### Từ câu 9 (Biome/Pint: guardrail v0.2 + hook v0.4)
+
+- **v0.2 scope** — thêm guardrail command cho Biome/Pint vào danh sách lệnh `bk-ship` chạy; `coverage-matrix.md` hàng 20 đã ghi "detect-stack lists biome (and PHP's Pint...) among guardrail commands when present" — cần kiểm `scripts/detect-stack.cjs` xem đã liệt kê thật chưa hay mới là dự định.
+- **v0.4 scope** — thêm đúng tên Biome/Pint vào mục "optional push and deploy hooks" đã có sẵn ở `docs/specs/2026-09-11-bearingkit-v2-design.md` §13 (bảng Delivery, dòng v0.4).
+- Không áp dụng gì ngay — cả hai đều là việc code cho các mốc sau, chưa tới lượt.
+
+### Từ câu 14 (frontend-design: claude-plugins-official)
+
+- **`upstream/sources.json`, `NOTICE`** — ghi provenance chính thức là `claude-plugins-official` khi thật sự absorb. `skill-inventory.md` dòng 124 tự ghi "Not applied; nothing is ported yet" — quyết định hôm nay xác nhận hướng, không tự kích hoạt việc port.
+
+### Từ câu 16 (đường dẫn cục bộ là chuẩn, URL là biến thể)
+
+- Gộp vào cùng việc mở khoá đã ghi ở câu 1 (không phải mục tách riêng): khi viết lại `docs/hosts.md`/`README.md` theo phương án A, dùng đường dẫn cục bộ làm ví dụ chính, URL ghi làm biến thể có chú thích.
+
+### Tier 3 (17–20)
+
+Giữ nguyên trạng đúng như owner chỉ định, không đổi gì, không có mặc định nào bị áp.
+
+---
+
+## Phụ lục C — Audit mẫu lỗi thứ tư: viện dẫn luật/nguyên tắc không xác minh được
+
+Mẫu lỗi: một trích dẫn §N / "principle N" / "non-goal" / "rejected option" được dùng làm CĂN CỨ cho một kết luận, nhưng nguyên văn nơi nó trỏ tới không nói vậy. Khác ba mẫu đã dọn trước đó (nhãn xuất xứ sai gán cho owner, dữ kiện sai đã xác minh bằng mã, số thừa hưởng từ nguồn cũ không tự đếm lại).
+
+**Phạm vi đã quét:** mọi `§\d+`, "principle N", "non-goal", "rejected option" trong `docs/`, `AGENTS.md`, `skills/bk-protocol/SKILL.md` (196 dòng khớp `§\d+` riêng trong `docs/`). Với mỗi trích dẫn có tính CHẤT VẤN (gán nội dung cụ thể cho một điều khoản, không chỉ là con trỏ vị trí), đã mở nguyên văn đích và đối chiếu. Các trích dẫn thuần con trỏ vị trí ("xem thêm §N", "chi tiết ở §N") không nằm trong phạm vi — không phải căn cứ cho kết luận nào.
+
+| # | Nơi viện dẫn | Trỏ tới đâu | Nội dung được gán | Nguyên văn có nói vậy không | Kết luận bị ảnh hưởng |
+|---|---|---|---|---|---|
+| 1 | `skill-inventory.md` câu #2 gốc (đã xoá, nay là câu 5 batch) | spec v2 §5.2 (ngầm định, không nêu số cụ thể) | "the recorded reason for the restriction is about structure, which is the axis **the kit's own rule says not to judge on**" | **KHÔNG.** Đọc nguyên văn §5.2 (`v2-design.md:94-96`): chỉ nói một-nguồn-một-skill, giấy phép permissive là điều kiện cần để absorb, drop cần lý do, inventory chốt catalog theo test §1. Không câu nào cấm dùng "cấu trúc" làm căn cứ. Grep `structur` toàn `v2-design.md` và `skill-inventory.md`: không tìm thấy luật này ở đâu khác trong repo. | Câu 5 batch — vế "mode phải đổi sang adapt" trong đề xuất VÒNG 1 của tôi. **Đã kiểm lại và rút vòng 2 (trước khi owner chốt); owner đã chốt mode = giữ ideas-only.** Không còn kết luận nào đang treo dựa trên nhãn này — chỉ còn chữ tường thuật ở câu 5 cần sửa nhãn (đã sửa ngay tại chỗ, xem ngoặc trong "Bị chặn" của câu 5). |
+| 2 | `docs/handoff/2026-09-11.md` "Decisions waiting" #6, `opus5-handoff.md` §4.5 (6), batch câu 19 | v1-design.md §18, dòng L20 (bảng field lessons) | "hai dòng protocol lấy nguyên văn" — ngụ ý hai dòng cụ thể, đã định danh, đang chờ hấp thụ | **KHÔNG rõ ràng.** L20 (dòng 381) kể một RỦI RO quá khứ ("two protocol lines the kit lifts verbatim exist only as uncommitted edits on one machine") — không định danh hai dòng nào. Đoạn văn ngay sau bảng (dòng 383) liệt kê **~13 mục** chữ owner viết được lấy verbatim (Autonomy Gate, Council Protocol, Definition of DONE, UX/reversibility checklist, two-block handoff, four-step spec ritual, evidence-or-unverified line, propose-from-real-state line, no-rubber-stamp stance, version-drift warning, tie-breaker order, "no test = not done", "prevent traps by architecture"). Phần lớn ĐÃ có trong `bk-protocol/SKILL.md` hiện tại (đối chiếu trực tiếp: Autonomy Gate ✓, Council ✓ kể cả "no theatrics", Definition of done ✓ kể cả "no test = not done" và "propose from real state"). Không có chỗ nào trong repo định danh chính xác "hai dòng" còn thiếu là dòng nào. | Câu 19 batch — khung "hai dòng" là số bị gán chắc hơn mức xác minh được. Không đảo kết luận (câu 19 vẫn ghi nhận, không chặn) — đã sửa nhãn tại câu 19 (đổi "hai dòng" thành "còn sót phần nào của ~13 mục"). |
+| 3 | Cùng chỗ (batch câu 19) | Không có nguồn cụ thể — TODO trong `opus5-handoff.md` §4.1 dòng 14 | "design dataset từ kit cũ" — ngụ ý một artefact đã biết, chỉ chờ hấp thụ | **KHÔNG.** Dòng 14 gốc là một CHỈ THỊ cho agent tương lai ("nêu chính xác file chứa... design dataset"), không phải một phát hiện đã có. Không file/thư mục nào trong `Antigravity-Core` được nêu tên cụ thể là "design dataset" ở bất cứ đâu tôi tìm thấy trong repo. | Câu 19 batch — cùng dòng với #2, đã sửa nhãn thành "nếu có, chưa định danh được". |
+| 4 | `v2-design.md` dòng 30 (Non-goals) | v2-design.md §5.1 (tự trỏ, trong cùng file) | "they are optional packs decided by the inventory (**§5.1**)" | **KHÔNG khớp nội bộ.** §5.1 chính nó (dòng 92) nói "decided by the inventory (**§5.2**)"; bảng Decisions log (dòng 189) cũng dùng §5.2. Dòng 30 là chỗ DUY NHẤT trong file tự trỏ nhầm về §5.1 thay vì §5.2. | Không kết luận nào bị ảnh hưởng — nội dung ("packs không phải core, do inventory quyết") đúng và nhất quán ở cả 3 chỗ, chỉ riêng số section ở dòng 30 sai. **ĐÃ SỬA 2026-09-12** — owner xếp cùng hạng với §1:28 và Skillmark/MIT (dữ kiện xác minh được, không phải chủ trương): `v2-design.md` dòng 30 nay ghi "§5.2"; thêm một dòng vào Decisions log (§15) ghi lại việc sửa, ngày, và căn cứ. |
+
+**Đã kiểm và KHỚP (không phải lỗi, liệt kê để owner thấy phạm vi đã quét, không phải mọi trích dẫn đều đáng ngờ):** cả 4 trích dẫn trực tiếp làm căn cứ chính cho `install-council.md` (§1 Non-goals dòng 28, §1 Goal 2 dòng 16, §2.1 "Content over machinery" dòng 35, §2.2 "One source, native install" dòng 36) khớp nguyên văn `v2-design.md` từng chữ; §8 ("optional extras... scheduled for v0.4, never required", "the kit writes no host settings") khớp, dùng làm căn cứ cho câu 9; §11 ("acceptance test when the bootstrap wiring or a host changes") khớp; §5.2 (một-nguồn-một-skill, giấy phép, "a skill enters the catalog only when the inventory shows work for it") khớp ở cả 4 chỗ trích lại (opus5-handoff §2.1.7, §4.1 dòng 30, skill-inventory dòng 103, dòng 124); "twenty-line rule" (v2 §6) khớp `bk-protocol/SKILL.md` dòng 18; v1 §17 (outcome benchmark, mười hai fixture task) khớp v2 §11's trích lại; `AGENTS.md` COUNCIL rule ("touches ~/.claude, ~/.gemini, other repositories, or any server") khớp cách tôi đã trích ở câu 3 và ở `install-council.md` dòng 110; Principle 4 "official first... not re-implemented" (v2 §2) khớp trích dẫn ở `skill-inventory.md` dòng 123.
+
+*Ghi 2026-09-12. Phạm vi: `docs/`, `AGENTS.md`, `skills/bk-protocol/SKILL.md`. Không quét `skills/bk-*/SKILL.md` khác hay `agents/*.md` — nếu owner muốn mở rộng, nói rõ thư mục.*
 
 ## Phụ lục A — Đã kiểm, đã loại khỏi batch, và vì sao
 
@@ -226,4 +362,12 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ---
 
-*Ghi 2026-09-12, thực thi D5 (`docs/handoff/2026-09-11-owner-directives.md`). File này là bản đầy đủ duy nhất của mọi câu hỏi đang chờ owner; `opus5-handoff.md` §4.5, `skill-inventory.md` "Questions for D5", và `docs/handoff/2026-09-11.md` "Decisions waiting on the owner" chỉ còn giữ con trỏ về đây. Không câu nào trong 20 câu trên được agent tự trả lời.*
+*Ghi 2026-09-12, thực thi D5 (`docs/handoff/2026-09-11-owner-directives.md`). File này là bản đầy đủ duy nhất của mọi câu hỏi đang chờ owner; `opus5-handoff.md` §4.5, `skill-inventory.md` "Questions for D5", và `docs/handoff/2026-09-11.md` "Decisions waiting on the owner" chỉ còn giữ con trỏ về đây.*
+
+*Cập nhật 2026-09-12, vòng 1 (cùng ngày, sau khi owner trả lời): câu 1, 6 chốt bởi owner; câu 8 chốt một phần, một chi tiết ("Something else") còn cần hỏi lại; câu 5 owner yêu cầu audit thay vì tự chọn — đã audit, kết quả là khuyến nghị chờ owner xác nhận.*
+
+*Cập nhật 2026-09-12, vòng 2: owner chỉ ra đề xuất câu 5 vòng 1 tự mâu thuẫn — đã kiểm lại, tìm thấy lý do gốc (một luật "cấm dùng cấu trúc" gán cho §5.2) không xác minh được khi đọc nguyên văn; đề xuất sửa thành rank = bao hàm, mode = giữ nguyên ideas-only. Owner chốt thêm câu 2, 3, 4, 8.*
+
+*Cập nhật 2026-09-12, vòng 3: owner CHỐT câu 5 (rank bao hàm, mode ideas-only) — tất cả 6 câu Tier 1 nay đã chốt. Theo yêu cầu owner, quét toàn repo tìm mọi viện dẫn §N/principle/non-goal cùng mẫu lỗi với vụ "cấm dùng cấu trúc" — kết quả ở Phụ lục C: thêm đúng 1 lỗi cùng dạng (câu 19, "hai dòng protocol"/"design dataset" không định danh được ở nguồn — đã sửa nhãn, không đổi kết luận câu 19) và 1 lỗi tự trỏ nhầm section trong `v2-design.md` (không ảnh hưởng kết luận nào, chưa sửa ở vòng này).*
+
+*Cập nhật 2026-09-12, vòng 4: owner CHỐT thêm câu 9, 12, 14, 16 (Tier 2, nhóm "không mặc định" đóng lại hết). Owner cho sửa phát hiện #4 của Phụ lục C — đã áp dụng trực tiếp vào `v2-design.md` (dòng 30 và Decisions log §15), là ngoại lệ DUY NHẤT ngoài file batch được sửa trong cả phiên D5. Thêm câu 21 (Tier 3, mới, ngoài 20 câu gốc mục 0): đề xuất sửa AGENTS.md cho COUNCIL/doctor, nhãn "đề xuất của phiên", chưa duyệt, chủ động hoãn. Không câu nào được agent tự quyết mà không owner yêu cầu hoặc xác nhận; câu 21 là đề xuất treo có chủ đích, không phải quyết định.*

@@ -25,9 +25,10 @@ Status: v2.0, approved by the owner on 2026-09-11 · Supersedes `2026-09-10-bear
 
 **Non-goals (v2)**
 
-- A universal installer or an at-runtime shim. Superpowers rejects those for the same reason the kit does: they do not load the bootstrap at session start.
+- A universal installer that writes into host profiles. Every host ships its own install command, and `--plugin-dir` together with the host's own plugin install made the link layer unnecessary (v1's `scripts/install.cjs`, deleted in `156ab09`); the one host without an install command, Antigravity, is served by the copy script named in §3.
+- An at-runtime shim. Superpowers rejects those for the same reason the kit does: they do not load the bootstrap at session start.
 - Per-host rule files for languages. Stack guidance lives in skill references, read on demand.
-- Product discovery, UX pipeline, AI-feature engineering and dependency hygiene as core skills; they are optional packs decided by the inventory (§5.1).
+- Product discovery, UX pipeline, AI-feature engineering and dependency hygiene as core skills; they are optional packs decided by the inventory (§5.2).
 - Copying text from proprietary sources; owner-private material; anything a host or framework vendor already ships.
 
 ## 2. Principles
@@ -189,6 +190,8 @@ Antigravity numbers are read from the Customizations panel. Language guidance an
 | 2026-09-11 | The inventory (§5.2) fixes the final catalog and the optional packs; product discovery, UX, AI-feature and dependency skills are packs, not core, until it says otherwise |
 | 2026-09-11 | Hosts beyond Claude Code and Antigravity are wired from the Superpowers shapes and listed as supported only after the acceptance test |
 | 2026-09-11 | §1 gained a named scope test (does it let one person do a team's work), cited from Non-goals and §5.2; §16 named goal 7's four technology-currency mechanisms — version card, stack profile, pinned-documentation lookup, drift watch — each with who runs it, how often, and the command |
+| 2026-09-12 | Fixed a self-referential pointer in Non-goals (§1): "packs decided by the inventory (§5.1)" corrected to "(§5.2)" — §5.1 itself and this log's 2026-09-11 row both already cite §5.2 for that rule; §1's line was the one place out of step. A verified cross-reference fix, not a policy change (found during D5's audit for citations that don't check out against their target, `docs/specs/2026-09-12-d5-owner-questions.md` Phụ lục C) |
+| 2026-09-12 | Fixed Non-goals (§1): the installer/shim rejection was one merged reason ("do not load the bootstrap at session start") applied to both. Split into two — the shim reason stands; the installer's real rejection reason is that every host now ships its own install command and `--plugin-dir` made the link layer redundant. The merged reason was factually wrong for the installer: v1's `scripts/install.cjs` did load the bootstrap — its `ensureImport()` wrote the import line into `~/.claude/CLAUDE.md`, verified directly by reading `156ab09^:scripts/install.cjs` (`156ab09` is the commit that deleted the file). A verified fact correction (`docs/specs/2026-09-12-install-council.md` §8.1), the Non-goal itself is unchanged |
 
 Earlier decisions: v1 §19.
 
