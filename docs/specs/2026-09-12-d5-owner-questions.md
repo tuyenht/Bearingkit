@@ -107,10 +107,9 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 6. Dòng bản quyền cho LICENSE
 *(gộp từ: `docs/handoff/2026-09-11.md` "Decisions waiting on the owner" #2 = `opus5-handoff.md` §4.5 (2))*
-> **ĐÃ CHỐT 2026-09-12 — quyết định của owner: `tuyenht`, 2026.** Chưa tạo file LICENSE (owner yêu cầu rõ không làm trong lượt này) — xem mục "Quyết định 2026-09-12" cho việc sẽ mở khoá.
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner: `tuyenht`, 2026.** **ĐÃ THỰC HIỆN 2026-09-12** — file `LICENSE` tạo tại commit `7cbf4be`.
 - **Cần quyết định:** Tên chủ sở hữu bản quyền + năm cho dòng `Copyright (c) <năm> <tên>` trong file LICENSE.
 - **Lựa chọn:** `package.json` đã khai loại MIT; chỉ thiếu dòng bản quyền — owner cho tên + năm muốn dùng.
-- **Bị chặn:** Không tạo được file LICENSE thật — agent bị cấm tự viết file này (nằm trong danh sách "rejected options" của handoff tối 2026-09-11, xem `opus5-handoff.md` §2.2). Repo hiện chưa có file LICENSE dù `package.json` khai MIT.
 - **Khuyến nghị:** Không có — chỉ owner biết thông tin này.
 
 ---
