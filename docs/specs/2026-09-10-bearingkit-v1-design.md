@@ -295,7 +295,7 @@ Metrics: activation precision and recall; hook false-block rate; manual invocati
 
 Flow, monthly or on demand: `upstream-watch` fetches each source, diffs tracked files since the locked sha, writes `docs/upstream/<date>-<source>.md`; `bk-audit` decides absorb or skip; changes land in `core/`; evals must stay at or above baseline and fixed tokens must not grow; the sha is advanced.
 
-License table, verified 2026-09-10: Superpowers MIT; anthropics/claude-plugins-official Apache-2.0 including frontend-design and claude-code-setup; spec-kit MIT; context7 MIT; Skillmark MIT; fullstack-dev-skills MIT; anthropics document-skills under Anthropic terms, not open; vercel-labs/agent-skills no license file; ClaudeKit proprietary.
+License table, verified 2026-09-10: Superpowers MIT; anthropics/claude-plugins-official Apache-2.0 including frontend-design and claude-code-setup; spec-kit MIT; context7 MIT; Skillmark ~~MIT~~ **no license file (corrected 2026-09-12 — `docs/specs/2026-09-11-skill-inventory.md`, verified independently twice)**; fullstack-dev-skills MIT; anthropics document-skills under Anthropic terms, not open; vercel-labs/agent-skills no license file; ClaudeKit proprietary.
 
 ## 13. Evals and doctor
 
