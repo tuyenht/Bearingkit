@@ -8,10 +8,7 @@ const [cmd, ...args] = process.argv.slice(2);
 const commands = {
   antigravity: () => require('../scripts/antigravity.cjs').cli(args),
   evals: () => require('../scripts/evals.cjs').run(args),
-  doctor: () => {
-    console.error('doctor arrives with v0.3; until then the static checks run with: node --test tests/*.test.cjs');
-    process.exitCode = 2;
-  },
+  doctor: () => require('../scripts/doctor.cjs').cli(args),
 };
 
 if (!commands[cmd]) {

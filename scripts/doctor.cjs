@@ -1,0 +1,80 @@
+#!/usr/bin/env node
+'use strict';
+// bearingkit doctor. It reads and prints; it never writes a byte, into the kit or into a host profile — the invariant
+// tests/doctor.test.cjs measures by running it in a home of its own and comparing the tree before and after. Every
+// install and every repair stays a command the owner types. Scope: the daily profile, which today means ~/.gemini.
+//
+// The Antigravity copy is the only part of an install that can silently rot: the host loads a real directory copied
+// out of the checkout, and 3d7b4eb shipped one that had lost its host note. tests/antigravity-install.test.cjs proves
+// the installer writes that note; only this reads the copy the host actually loads.
+//
+// It does not shell out to `claude`: booting a host binary to list plugins cannot be shown to write nothing, and the
+// no-write invariant outranks the check. The listing is reported as not run, with the command to run it.
+//
+//   node bin/bearingkit.cjs doctor
+
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const { spawnSync } = require('node:child_process');
+const { MARKER, SCRIPTS } = require('./antigravity.cjs');
+
+const ROOT = path.resolve(__dirname, '..');
+
+const read = (p) => (fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : '');
+
+function files(dir, base = dir) {
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir, { withFileTypes: true })
+    .flatMap((e) => (e.isDirectory() ? files(path.join(dir, e.name), base) : [path.relative(base, path.join(dir, e.name)).split(path.sep).join('/')]))
+    .sort();
+}
+
+// Same files, same bytes. A copy made before the checkout moved on differs here, which is what "older" means once the
+// copy carries no version of its own.
+function sameTree(a, b) {
+  const from = files(a);
+  const to = files(b);
+  return from.length === to.length && from.every((rel, i) => to[i] === rel && fs.readFileSync(path.join(a, rel)).equals(fs.readFileSync(path.join(b, rel))));
+}
+
+function run({ root = ROOT, home = os.homedir(), log = () => {} } = {}) {
+  const dest = path.join(home, '.gemini', 'config', 'plugins', 'bearingkit');
+  const refresh = `node ${path.join(root, 'bin', 'bearingkit.cjs')} antigravity install`;
+  const checks = [];
+  const add = (name, ok, fix) => { checks.push({ name, ok, fix }); return ok; };
+
+  if (add('antigravity copy present', fs.existsSync(path.join(dest, MARKER)), refresh)) {
+    add('antigravity copy marker names this kit', read(path.join(dest, MARKER)).trim() === root, refresh);
+    const rule = read(path.join(dest, 'rules', 'bearingkit.md'));
+    add('antigravity rule carries the protocol, the host note and the kit root',
+      ['trigger: always_on', '## Antigravity host note', 'view_file', 'Kit root', dest].every((m) => rule.includes(m)), refresh);
+    add('antigravity copy carries the scripts the skills call', SCRIPTS.every((s) => fs.existsSync(path.join(dest, ...s.split('/')))), refresh);
+    add('antigravity copy of skills/ matches this checkout', sameTree(path.join(root, 'skills'), path.join(dest, 'skills')), refresh);
+  }
+
+  // The bootstrap every other host installs through its own command: if this stops printing the protocol, or stops
+  // naming the kit root the skills run their scripts from, the plugin is installed and still inert.
+  const hook = path.join(root, 'hooks', 'session-start.cjs');
+  const r = spawnSync(process.execPath, [hook], { encoding: 'utf8' });
+  let context = '';
+  try { context = JSON.parse(r.stdout).hookSpecificOutput.additionalContext; } catch { context = ''; }
+  add('session-start bootstrap prints the protocol and the kit root',
+    r.status === 0 && context.includes('<bearingkit-protocol>') && context.includes(root), `node ${hook}`);
+
+  add('claude code plugin listing: not read, it needs the host', null, 'claude plugin list');
+
+  for (const c of checks) log(`${c.ok === null ? 'skip' : c.ok ? 'ok  ' : 'FAIL'}  ${c.name}`);
+  const commands = [...new Set(checks.filter((c) => c.ok !== true).map((c) => c.fix))];
+  if (commands.length) log('\nrun these yourself; doctor changes nothing:');
+  for (const c of commands) log(`  ${c}`);
+  return { ok: checks.every((c) => c.ok !== false), checks, dest };
+}
+
+function cli() {
+  if (!run({ log: (l) => process.stdout.write(l + '\n') }).ok) process.exitCode = 1;
+}
+
+if (require.main === module) cli();
+
+module.exports = { run, cli, sameTree, files };

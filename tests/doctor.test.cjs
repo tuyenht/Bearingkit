@@ -1,0 +1,105 @@
+'use strict';
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const { spawnSync } = require('node:child_process');
+const { install } = require('../scripts/antigravity.cjs');
+const { fakeKit, snapshot, assertRuleComplete } = require('./fixtures/fake-kit.cjs');
+
+const ROOT = path.resolve(__dirname, '..');
+const BIN = path.join(ROOT, 'bin', 'bearingkit.cjs');
+
+function fakeHome() { return fs.mkdtempSync(path.join(os.tmpdir(), 'bk-home-')); }
+function destIn(home) { return path.join(home, '.gemini', 'config', 'plugins', 'bearingkit'); }
+
+// The invariant is about the command the owner runs, so it is measured on the command, in a home of its own: node
+// resolves os.homedir() from USERPROFILE on Windows and HOME elsewhere, so both are set.
+function runDoctorCli(home) {
+  return spawnSync(process.execPath, [BIN, 'doctor'], { encoding: 'utf8', env: { ...process.env, HOME: home, USERPROFILE: home } });
+}
+
+test('doctor writes not one byte into the profile it reads, on a healthy copy and on a broken one', () => {
+  const home = fakeHome();
+  install({ root: ROOT, dest: destIn(home) });
+
+  const beforeOk = snapshot(home);
+  const ok = runDoctorCli(home);
+  assert.equal(ok.status, 0, `a current copy of this checkout is healthy\n${ok.stdout}${ok.stderr}`);
+  assert.match(ok.stdout, /antigravity/i, 'the run names the checks it made, so "wrote nothing" is not vacuous');
+  assert.deepEqual(snapshot(home), beforeOk, 'a passing run leaves the profile byte for byte as it found it');
+
+  fs.rmSync(path.join(destIn(home), 'rules', 'bearingkit.md'));
+  const beforeFail = snapshot(home);
+  const failed = runDoctorCli(home);
+  assert.notEqual(failed.status, 0, 'a copy without its rule is not healthy');
+  assert.deepEqual(snapshot(home), beforeFail, 'the failing path writes nothing either, and repairs nothing');
+});
+
+test('doctor creates nothing in a profile where the kit was never installed', () => {
+  const home = fakeHome();
+  const r = runDoctorCli(home);
+  assert.notEqual(r.status, 0, 'an absent copy is reported, not passed over');
+  assert.deepEqual(fs.readdirSync(home), [], 'no .gemini, no .claude, nothing: doctor does not prepare the ground it checks');
+  assert.match(r.stdout + r.stderr, /antigravity install/, 'it prints the command the owner types instead of running it');
+});
+
+// The in-process entry takes the kit and the home to read, so a drift can be staged on a throwaway pair.
+function runDoctor(root, home) {
+  const lines = [];
+  const r = require('../scripts/doctor.cjs').run({ root, home, log: (l) => lines.push(l) });
+  return { ...r, out: lines.join('\n') };
+}
+
+function stagedCopy() {
+  const root = fakeKit();
+  const home = fakeHome();
+  const dest = destIn(home);
+  install({ root, dest });
+  assertRuleComplete(fs.readFileSync(path.join(dest, 'rules', 'bearingkit.md'), 'utf8'), dest);
+  assert.equal(runDoctor(root, home).ok, true, 'a copy just written by the installer is healthy');
+  return { root, home, dest };
+}
+
+test('a copy that dropped the Antigravity host note fails, which is the state 3d7b4eb shipped', () => {
+  const { root, home, dest } = stagedCopy();
+  const rule = path.join(dest, 'rules', 'bearingkit.md');
+  const text = fs.readFileSync(rule, 'utf8');
+  // Exactly the 3d7b4eb shape: the note gone, the protocol body and the kit-root line still in place, so nothing but
+  // the note itself distinguishes this copy from a good one.
+  fs.writeFileSync(rule, text.slice(0, text.indexOf('## Antigravity host note')) + text.slice(text.indexOf('Kit root')));
+  const r = runDoctor(root, home);
+  assert.equal(r.ok, false, 'the copy the host actually loads is missing the note, so doctor must not pass it');
+  assert.ok(r.checks.some((c) => c.ok === false && /rule/i.test(c.name)), 'the rule check is the one that fails');
+  assert.match(r.out, /antigravity install/, 'it prints the command that repairs it and does not run it');
+});
+
+test('a copy older than the repository skills/ fails, whether a file changed or a skill was added', () => {
+  const { root, home } = stagedCopy();
+  fs.writeFileSync(path.join(root, 'skills', 'bk-spec', 'SKILL.md'), '---\nname: bk-spec\ndescription: "s"\n---\nbody, revised\n');
+  const changed = runDoctor(root, home);
+  assert.equal(changed.ok, false, 'the copy still carries the old body');
+  assert.ok(changed.checks.some((c) => c.ok === false && /skills/i.test(c.name)));
+
+  const { root: root2, home: home2 } = stagedCopy();
+  fs.mkdirSync(path.join(root2, 'skills', 'bk-ship'), { recursive: true });
+  fs.writeFileSync(path.join(root2, 'skills', 'bk-ship', 'SKILL.md'), '---\nname: bk-ship\ndescription: "x"\n---\nbody\n');
+  assert.equal(runDoctor(root2, home2).ok, false, 'a skill added since the copy was made is missing from it');
+});
+
+test('a copy made from another checkout is reported instead of silently compared', () => {
+  const { home } = stagedCopy();
+  const other = fakeKit();
+  const r = runDoctor(other, home);
+  assert.equal(r.ok, false);
+  assert.ok(r.checks.some((c) => c.ok === false && /marker|kit/i.test(c.name)));
+});
+
+test('doctor never reports ok for the host listing it cannot read without the host', () => {
+  const { root, home } = stagedCopy();
+  const r = runDoctor(root, home);
+  assert.ok(r.checks.some((c) => c.ok === null), 'what it did not run is marked as not run, not as ok');
+  assert.match(r.out, /claude plugin list/, 'and the read-only command the owner can run is printed');
+  assert.equal(r.ok, true, 'a check it declined to run is not a failure');
+});

@@ -34,7 +34,8 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 1. Cách cài chung cho mọi host
 *(gộp từ: `skill-inventory.md` #10)*
-> **ĐÃ CHỐT 2026-09-12 — quyết định của owner: A + B′.** Xem mục "Quyết định 2026-09-12 và những gì mở khoá" để biết chính xác việc sẽ mở khoá; CHƯA áp dụng.
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner: A + B′.** Xem mục "Quyết định 2026-09-12 và những gì mở khoá" để biết chính xác việc sẽ mở khoá.
+> **THỰC HIỆN MỘT PHẦN 2026-09-12: phần B′ (mã) XONG, phần A (tài liệu) CHƯA.** `scripts/doctor.cjs` + `tests/doctor.test.cjs` đã có, `bin/bearingkit.cjs doctor` không còn là placeholder v0.3. Còn nợ: đường CLI Claude Code ở `docs/hosts.md`/README. Một mục của §6 KHÔNG hiện thực hoá — xem ghi chú lệch ở mục "Từ câu 1" bên dưới.
 - **Cần quyết định:** Chọn một trong bốn phương án cài đặt đã khảo sát ở `docs/specs/2026-09-12-install-council.md` §6–7.
 - **Lựa chọn:**
   - **A** — Một trang tài liệu duy nhất gom lệnh cài mỗi host, bổ sung đường CLI của Claude Code còn thiếu tài liệu. 0 dòng mã.
@@ -46,7 +47,8 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 2. Trần cứng cho doctor / install wrapper
 *(gộp từ: `skill-inventory.md` #11 — phụ thuộc câu trả lời của câu 1)*
-> **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** trần cứng = *"doctor chỉ đọc, không ghi một byte nào."* Đây là bất biến, sẽ viết thành acceptance test (chưa viết — xem mục "Quyết định 2026-09-12").
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** trần cứng = *"doctor chỉ đọc, không ghi một byte nào."* Đây là bất biến, viết thành acceptance test.
+> **ĐÃ THỰC HIỆN 2026-09-12:** `tests/doctor.test.cjs`, test đầu tiên của file — chạy `bin/bearingkit.cjs doctor` trong HOME giả (`HOME` và `USERPROFILE`), so cây thư mục trước/sau theo từng đường dẫn, kích thước, mtime và hash nội dung; đo trên cả ba trạng thái: bản copy lành, bản copy hỏng, và profile chưa từng cài. Test được kiểm ngược bằng cách cố tình cho doctor ghi một byte — test đổ đúng như phải đổ, rồi hoàn tác.
 - **Cần quyết định:** Chốt bất biến cho B′: *"doctor chỉ đọc, không ghi một byte nào vào cấu hình host; mọi thao tác ghi vẫn là lệnh owner tự gõ"* — kiểm bằng test chạy trong HOME giả, so cây thư mục trước/sau. Nếu chọn B thay vì B′: trần tương ứng có nên là *"wrapper chỉ được gọi lệnh cài chính thức của host hoặc copy vào thư mục plugin của chính host; không bao giờ mở hay ghi `settings.json`, `CLAUDE.md`, `opencode.json` hay bất kỳ file cấu hình host nào"* không?
 - **Lựa chọn:** Đồng ý trần đã đề xuất / sửa trần / không áp dụng (nếu chọn A hoặc C ở câu 1).
 - **Bị chặn:** Viết được acceptance test đúng cho doctor/install — cần bất biến chốt trước khi viết test.
@@ -55,6 +57,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 ### 3. Phạm vi đọc của doctor
 *(gộp từ: `skill-inventory.md` #12 — phụ thuộc câu 1)*
 > **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** đọc profile hàng ngày thật (`~/.claude`, `~/.gemini`).
+> **ĐÃ THỰC HIỆN 2026-09-12 (mã), CHƯA CHẠY THẬT:** `scripts/doctor.cjs` lấy gốc là `os.homedir()` — profile hàng ngày, không phải profile cách ly. Trong phạm vi owner cho phép, thực tế **chỉ `~/.gemini` được đọc**; `~/.claude` **không** bị đọc lần nào, vì mục duy nhất cần tới nó là listing của host, mà mục đó đã bỏ (xem ghi chú lệch ở câu 1). Nhưng phiên viết nó **không tự chạy** trên profile thật: theo câu chữ `AGENTS.md` hiện hành, việc đó là COUNCIL. Ma sát này nay đã đo được và ghi ở câu 21; `AGENTS.md` giữ nguyên, không sửa.
 - **Cần quyết định:** `doctor` được đọc profile hàng ngày thật (`~/.claude`, `~/.gemini`), hay chỉ chạy trên profile cách ly và owner tự chạy tay trên profile thật khi cần?
 - **Lựa chọn:** (a) đọc profile hàng ngày — cách duy nhất bắt được bản copy Antigravity đang sống bị lệch (đúng loại lỗi đã xảy ra ở commit `3d7b4eb`); (b) chỉ profile cách ly.
 - **Bị chặn:** Phạm vi quyền đọc của doctor, và có cần xin phép COUNCIL mỗi lần chạy hay không — `AGENTS.md` xếp mọi thứ chạm `~/.claude`/`~/.gemini` vào COUNCIL, ranh giới "đọc thì tự do, ghi thì xin phép" cần owner nói rõ trước khi viết doctor.
@@ -71,6 +74,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 ### 4. Thời điểm ra mắt của doctor
 *(gộp từ: `skill-inventory.md` #13 — phụ thuộc câu 1, 3)*
 > **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** giữ v0.3, đúng kế hoạch hiện tại.
+> **VA CHẠM CẦN OWNER ĐỌC, 2026-09-12:** owner ra lệnh viết `doctor` ngay trong phiên này, nên **mã đã có trong cây trước v0.2** và câu "doctor arrives with v0.3" đã bị gỡ khỏi `bin/bearingkit.cjs` (lệnh chạy được từ hôm nay). Phiên **không** tự sửa mốc phát hành: spec v2 §11 hàng v0.2/v0.3 giữ nguyên, không hàng nào nhắc doctor; CHANGELOG ghi nó ở `## Unreleased`. Việc còn lại là của owner: hoặc bản phát hành kế tiếp mang luôn doctor (khi đó nhãn "v0.3" ở câu 4 hết đúng), hoặc giữ nhãn và bản phát hành kế tiếp không quảng cáo lệnh này. Không phiên nào được tự chọn thay.
 - **Cần quyết định:** Kéo doctor lên trước v0.2 (bắt bản copy Antigravity lệch sớm hơn), hay giữ lịch v0.3 hiện tại (`bin/bearingkit.cjs` đã tự in đúng câu "doctor arrives with v0.3")?
 - **Lựa chọn:** giữ v0.3 / kéo lên trước v0.2.
 - **Bị chặn:** Thứ tự release gate — v0.2 hiện là mốc đo đầu tiên (spec v2 §11); nếu doctor cần có mặt sớm hơn, mốc đó phải viết lại.
@@ -232,6 +236,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 - **Lựa chọn:** sửa AGENTS.md theo hướng trên / giữ nguyên (mọi chạm vào `~/.claude`, `~/.gemini` đều là COUNCIL, không phân biệt đọc/ghi).
 - **Bị chặn:** Không gì cấp bách. Owner nói rõ: hoãn tới khi `doctor` thực sự được viết và ma sát thật được đo — không quyết trước dựa trên suy đoán.
 - **Khuyến nghị:** Đã nêu ở câu 3 (không lặp lại) — ghi nhận ở đây là còn treo, chủ động chờ bằng chứng ma sát đo được trước khi owner quyết.
+- **Ma sát đo được, 2026-09-12 (điều kiện owner đặt ra nay đã đủ — `doctor` tồn tại):** phiên viết `doctor` chạy được TOÀN BỘ test (50/50 xanh, gồm cả bất biến không-ghi chạy trong HOME giả) mà **không** cần chạm `~/.claude` hay `~/.gemini` thật một lần nào. Nhưng phiên đó **không chạy được chính `bearingkit doctor`** trên profile thật để xem nó báo gì — đúng việc mà công cụ sinh ra để làm — vì theo đúng câu chữ `AGENTS.md` đó là COUNCIL. Ma sát cụ thể, không phải giả định: (a) không ai xác nhận được bản copy Antigravity đang sống trên máy này có lệch hay không, tức đúng lỗ hổng `3d7b4eb` vẫn mở cho tới khi owner tự gõ lệnh; (b) mỗi lần dùng công cụ chẩn đoán là một vòng đề xuất–chờ, trong khi test tự động đã chứng minh nó không ghi được một byte. Chi phí của việc GIỮ NGUYÊN luật hiện tại vì vậy là: doctor chỉ owner chạy được, phiên không bao giờ tự đọc được kết quả. Đây là **số đo, không phải đề xuất mới** — quyết định vẫn của owner, và phiên vẫn KHÔNG tự sửa `AGENTS.md`.
 
 ---
 
@@ -242,20 +247,21 @@ Owner đã chốt câu 1, 2, 3, 4, 6, 8 làm quyết định thật; câu 5 owne
 ### Từ câu 1 (A + B′)
 
 - **`docs/hosts.md`** — mục `## Claude Code` (dòng 16): bổ sung đường CLI không tương tác đã xác minh (`claude plugin marketplace add <url|path|repo>`, `claude plugin install <p>@<m> -y --scope user --json`, `validate`, `list`, `details`, `update` — nguồn: `install-council.md` §5), hiện chưa có ở đây. Bảng đầu file (dòng 5–12) và `README.md` mục `## Install` (dòng 5–14) đã gần đúng hình dạng phương án A (một trang, một dòng/host) — không cần dựng lại từ đầu, chỉ cần thêm đường CLI này.
-- **Mã mới:** một subcommand `doctor` cho `bin/bearingkit.cjs` (hiện chỉ có `antigravity install|uninstall`) — chỉ đọc, theo đặc tả B′ ở `install-council.md` §6: so bản copy Antigravity/`~/.claude` với repo, gọi `claude plugin list`/`validate` (đọc), chạy `hooks/session-start.cjs` xem có in đúng protocol + plugin root; lệch thì in lệnh cần gõ, không tự ghi.
-- **Test mới:** file test cho `doctor` (chạy trong HOME giả, so cây thư mục trước/sau — 0 byte ghi) — có thể tái dùng assertion đã có trong `tests/antigravity-install.test.cjs` nhưng chạy trên bản copy sống thay vì fixture.
+- **Mã mới:** một subcommand `doctor` cho `bin/bearingkit.cjs` (hiện chỉ có `antigravity install|uninstall`) — chỉ đọc, theo đặc tả B′ ở `install-council.md` §6: so bản copy Antigravity/`~/.claude` với repo, gọi `claude plugin list`/`validate` (đọc), chạy `hooks/session-start.cjs` xem có in đúng protocol + plugin root; lệch thì in lệnh cần gõ, không tự ghi. — **ĐÃ THỰC HIỆN 2026-09-12: `scripts/doctor.cjs`, 80 dòng (đúng trần §6), 6 mục kiểm.**
+- **LỆCH KHỎI §6, CÓ CHỦ ĐÍCH, CHỜ OWNER ĐỌC:** doctor **không** gọi `claude plugin list`/`validate`. Lý do: đó là một tiến trình con khởi động binary của host, không chứng minh được là nó không ghi gì vào `~/.claude` (config migration, khoá, telemetry đều nằm ngoài tầm kiểm soát của kit) — mà trần câu 2 là bất biến CỨNG, cao hơn một mục kiểm. Doctor báo mục đó là `skip` kèm câu lệnh để owner tự chạy, **không bao giờ báo `ok`** cho thứ nó không chạy (đúng nguyên tắc v1 §13: "never reports OK for a check it could not run"). Đảo lại được bất cứ lúc nào nếu owner chấp nhận việc doctor gọi binary của host.
+- **Test mới:** file test cho `doctor` (chạy trong HOME giả, so cây thư mục trước/sau — 0 byte ghi) — có thể tái dùng assertion đã có trong `tests/antigravity-install.test.cjs` nhưng chạy trên bản copy sống thay vì fixture. — **ĐÃ THỰC HIỆN 2026-09-12: `tests/doctor.test.cjs` (6 test) + `tests/fixtures/fake-kit.cjs` (fixture và 4 assertion của rule, dùng chung với `antigravity-install.test.cjs` thay vì viết lại). Hai trạng thái §6 nêu làm phép đo đều dựng lại thành test: bản copy rớt host note (đúng trạng thái `3d7b4eb` đã ship) và bản copy cũ hơn `skills/` trong repo (đổi nội dung một skill, và thêm một skill mới).**
 - **`docs/specs/2026-09-11-bearingkit-v2-design.md`** §1 Non-goals — cần RÀ LẠI (không chắc phải sửa): B′ là công cụ chẩn đoán chỉ đọc, không phải "installer" hay "at-runtime shim" mà Non-goals cấm — nhưng nên đọc lại nguyên văn trước khi kết luận không cần đổi gì.
 - **`CHANGELOG.md`** mục `## Unreleased` — thêm một dòng ghi quyết định cài đặt A+B′ (theo đúng thói quen ghi log hiện có của file).
 
 ### Từ câu 2 (trần cứng doctor)
 
-- **Test mới** (cùng test đã nêu ở câu 1, không phải việc riêng): assertion cụ thể "0 byte ghi ra ngoài, chạy trong HOME giả, so cây thư mục trước/sau" trở thành **bất biến bắt buộc phải test**, không phải tuỳ chọn.
+- **Test mới** (cùng test đã nêu ở câu 1, không phải việc riêng): assertion cụ thể "0 byte ghi ra ngoài, chạy trong HOME giả, so cây thư mục trước/sau" trở thành **bất biến bắt buộc phải test**, không phải tuỳ chọn. — **ĐÃ THỰC HIỆN 2026-09-12**, và đã kiểm ngược (cho doctor cố tình ghi một byte → test đổ, rồi hoàn tác), nên không phải một assertion rỗng.
 - **`install-council.md` §6** — trần đã đề xuất ở đó nay là trần đã chốt, không còn "đề xuất chờ owner".
 
 ### Từ câu 3 (phạm vi đọc doctor + câu hỏi phụ COUNCIL)
 
-- **Mã `doctor`** (câu 1): phạm vi đọc = `~/.claude`, `~/.gemini` thật, không phải profile cách ly.
-- **`AGENTS.md`** — mục Autonomy: **ĐỀ XUẤT sửa** (chưa làm, tự nó là COUNCIL) để phân biệt "ghi = COUNCIL" và "đọc bởi công cụ có bất biến-không-ghi được test = ACT". Cần owner gật đầu riêng cho việc sửa AGENTS.md, tách khỏi quyết định phạm vi đọc.
+- **Mã `doctor`** (câu 1): phạm vi đọc = `~/.claude`, `~/.gemini` thật, không phải profile cách ly. — **ĐÃ THỰC HIỆN 2026-09-12** (`os.homedir()`), nhưng **chưa từng chạy thật lần nào**: phiên viết nó dừng trước ranh giới COUNCIL.
+- **`AGENTS.md`** — mục Autonomy: **ĐỀ XUẤT sửa** (chưa làm, tự nó là COUNCIL) để phân biệt "ghi = COUNCIL" và "đọc bởi công cụ có bất biến-không-ghi được test = ACT". Cần owner gật đầu riêng cho việc sửa AGENTS.md, tách khỏi quyết định phạm vi đọc. — **VẪN CHƯA SỬA 2026-09-12.** Số đo ma sát mà owner đòi trước khi quyết nay đã có, ghi ở câu 21.
 
 ### Từ câu 4 (thời điểm doctor)
 
