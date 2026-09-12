@@ -270,7 +270,7 @@ Owner đã chốt câu 1, 2, 3, 4, 6, 8 làm quyết định thật; câu 5 owne
 
 - **File mới `LICENSE`** ở gốc repo — văn bản MIT chuẩn + dòng `Copyright (c) 2026 tuyenht`. `package.json` đã khai `"license": "MIT"` và đã liệt kê `LICENSE` trong mảng `files` (dòng 29) — tức đã "chờ sẵn" file này, không cần sửa `package.json`.
 - **`README.md`** mục `## License` (dòng 32–34) — hiện chỉ nói "MIT (see `package.json`)"; có thể giữ nguyên hoặc thêm dòng bản quyền, tuỳ owner.
-- Owner đã nói rõ **không tạo file này trong lượt này** — chỉ liệt kê, chưa làm.
+- **ĐÃ THỰC HIỆN 2026-09-12**, commit `7cbf4be`.
 
 ### Từ câu 8 (host thêm: Gemini CLI, Cursor, Codex CLI/App, Copilot CLI — dùng trên máy khác)
 
