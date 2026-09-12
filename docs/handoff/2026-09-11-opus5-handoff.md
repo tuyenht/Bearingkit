@@ -119,6 +119,8 @@ Nguồn **chưa fetch** (chưa cần cho bước 1 theo plan): microsoft/playwri
 ## 4. Việc còn lại, theo thứ tự thực thi
 
 > **Thứ tự thực thi D1–D6 (đề xuất của phiên D0, owner chưa xác nhận từng chữ) nằm ở `docs/handoff/2026-09-11-owner-directives.md`; đọc file đó trước, nó quyết định thứ tự các mục 4.x dưới đây (kiểm kê là D2).**
+>
+> **D4 (chỉ thị 2 — cách cài) đã chạy 2026-09-12. Kết quả ở `docs/specs/2026-09-12-install-council.md`: ba phương án A / B′ / C, khuyến nghị **A + B′**, khảo sát 8 host, lịch sử installer v1, và hai lỗi hồ sơ được phân loại (`v2 §1:28` = dữ kiện sai, ACT sửa ở D6, nội dung sửa đã soạn sẵn ở §8.1 của file đó; `handoff 2026-09-11:34` marketplace-first = xung đột chủ trương, chờ owner). Toàn bộ file đó là **ĐỀ XUẤT, chưa có hiệu lực**: không mã, spec v2, plan hay `docs/hosts.md` nào bị sửa theo nó. Câu hỏi của D4 nằm ở mục 4.5 dưới đây.**
 
 ### 4.1 Chạy lại inventory (bước 1 content program)
 
@@ -167,6 +169,8 @@ Trọng tâm đã soạn cho vài nguồn (giữ lại khi viết prompt mới):
 Danh sách hiện tại (chưa ai trả lời): (1) hàng 38 gemini-skills; (2) dòng bản quyền cho `LICENSE`; (3) host nào owner thực dùng thêm (Gemini CLI / Cursor / Codex / Copilot CLI); (4) pack nào bắt buộc phải là core; (5) Phase 0 trên workstation; (6) hai dòng protocol verbatim + design dataset từ kit cũ.
 
 D3 sinh thêm 7 câu nữa, nằm ở `docs/specs/2026-09-11-skill-inventory.md` mục "Questions for D5" (danh sách tối thiểu là stack chạy hay hàng đợi port; mode của spec-kit; provenance của frontend-design; browser tool; có tạo `bk-design` ngay không; Biome có hook hay không). D5 hỏi cả 13 trong một lượt.
+
+**Cập nhật 2026-09-12.** Con số "13" ở trên đã cũ hai lần. Một lượt verification ngày 2026-09-11 thêm hai câu (#8 nghĩa của "hoặc" giữa #3 và #4; #9 dựng lại `_build/upstream/` theo sha), và D4 thêm sáu câu (#10–#15) về cách cài — cả tám đều nằm cùng chỗ, mục "Questions for D5" của `docs/specs/2026-09-11-skill-inventory.md`. Đếm hiện tại: 6 câu ở mục 4.5 này + 15 câu ở inventory = **21 câu cho D5**. Câu thứ bảy của D4 — *host nào owner thật sự dùng ngoài Claude Code và Antigravity* — không tạo mục mới vì trùng câu (3) ngay trên; D4 chỉ bổ sung một dữ kiện cho nó: xác minh 2026-09-12 bằng `command -v`, trên máy này **chỉ có `claude`** trên PATH, còn `gemini`, `droid`, `copilot`, `opencode`, `codex`, `cursor-agent` đều không có — tức "mọi công cụ" hôm nay thực tế là 2 host. Đề xuất và lý lẽ đứng sau #10–#15 ở `docs/specs/2026-09-12-install-council.md` (ĐỀ XUẤT, chưa có hiệu lực).
 
 ### 4.6 Đóng phiên
 
