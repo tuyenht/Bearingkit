@@ -23,16 +23,16 @@ File này ghi lại chỉ thị và thứ tự thực thi do owner chốt ngày 
 
 > **Khối nguyên văn ở mục đầu file là bản gốc để ĐỐI CHIẾU, không phải hàng đợi việc.** Trước khi thi hành bất cứ mệnh lệnh nào trong khối đó, kiểm trạng thái dưới đây; phần lớn đã xong rồi.
 
-**Trạng thái thật (2026-09-11):**
+**Trạng thái thật (bảng cập nhật 2026-09-13; sáu bước đều đã xong):**
 
 | Bước | Chỉ thị | Trạng thái |
 |---|---|---|
 | D1 | 1 + 3 | đã xong |
 | D2 | — | đã xong |
 | D3 | 4 | đã xong, đã audit |
-| D4 | 2 | **chưa chạy** |
-| D5 | — | **chưa chạy** |
-| D6 | — | **chưa chạy** |
+| D4 | 2 | đã xong 2026-09-12 → `docs/specs/2026-09-12-install-council.md` |
+| D5 | — | đã xong 2026-09-12 → `docs/specs/2026-09-12-d5-owner-questions.md` (11/21 câu owner đã chốt) |
+| D6 | — | đã xong 2026-09-12 → commit `932ea03`, handoff `docs/handoff/2026-09-12.md` |
 
 D1. Chỉ thị 1 + 3 — ghi vào spec v2 §1 và mục cơ chế + plan
 

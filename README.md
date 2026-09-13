@@ -31,4 +31,4 @@ Design: `docs/specs/2026-09-11-bearingkit-v2-design.md`. Session state for contr
 
 ## License
 
-MIT (see `package.json`); third-party notices in `NOTICE`.
+MIT — see [LICENSE](LICENSE) (`Copyright (c) 2026 tuyenht`); third-party notices in [NOTICE](NOTICE).

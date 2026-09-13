@@ -63,7 +63,7 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | Mốc | Trạng thái | Ghi chú |
 |---|---|---|
 | `0.1.0-phase1` | **đã phát hành** 2026-09-11 | layout v1; đo đạc ở `docs/compat/phase-1-gate.md` |
-| **v0.2** | **đang làm** | hạng mục ở §4, cổng ở §5 |
+| **v0.2** | **đang làm** | hạng mục ở §4, cổng ở §5. Thứ tự thực thi bên trong v0.2 theo lộ trình owner chọn 2026-09-13: `docs/plans/2026-09-13-daily-driver.md` |
 | v0.3 | chưa bắt đầu | 6 skill còn lại, agent dùng hàng ngày, 8 file stack, skill test cho mọi skill |
 | v0.4 | chưa bắt đầu | pack tuỳ chọn, hook push/deploy (gồm Biome/Pint theo câu 9), acceptance Gemini CLI / Cursor / Codex |
 | v1.0 | chưa bắt đầu | outcome benchmark, `upstream-watch`, README EN+VI, CI, marketplace, publish từ history đã squash |
@@ -115,7 +115,7 @@ Nguồn thật: `docs/specs/2026-09-12-d5-owner-questions.md`. Không copy nội
 - **11/21 câu đã chốt** (2026-09-12): câu 1, 2, 3, 4, 5, 6, 8, 9, 12, 14, 16.
 - **10 câu còn treo**: 7, 10, 11, 13, 15 (Tier 2 — đang giữ mặc định, không chặn việc nào); 17, 18, 19, 20 (Tier 3 — ghi nhận); 21 (sửa `AGENTS.md`: đọc bởi công cụ có bất biến-không-ghi đã test thì tính ACT hay COUNCIL — điều kiện owner đặt ra nay đã đủ).
 - **2 va chạm mới từ phiên doctor, cần owner đọc**: (a) mã `doctor` đã nằm trong cây trước v0.2 trong khi nhãn đã chốt là "v0.3" (câu 4); (b) `doctor` cố ý không gọi `claude plugin list`/`validate` như §6 mô tả, vì trần "không ghi một byte" là bất biến cứng (câu 1).
-- **Ngã ba lộ trình (mới, 2026-09-13)**: đi hết chương trình như spec, hay chốt một bản "daily driver" dùng được trước rồi quyết phần đuôi sau. Chưa có quyết định; xem khuyến nghị của lượt rà soát trong phần trả lời phiên 2026-09-13, chưa ghi thành quyết định ở đâu.
+- ~~Ngã ba lộ trình~~ — **owner chốt 2026-09-13: lộ trình B, daily driver trước**, kế hoạch ở `docs/plans/2026-09-13-daily-driver.md`. Một quyết định mới sinh ra từ đó, đang chờ owner: `frontend-design` có đích là `bk-design`, mà `bk-design` bị câu 12 chặn — đường (i) port 2 nguồn và để `frontend-design` chờ (đang áp), hay (ii) owner bỏ điều kiện câu 12 cho riêng `bk-design` (plan §"Một quyết định cần owner").
 
 ---
 
@@ -126,14 +126,14 @@ Ba mục đầu (a–c) thừa hưởng từ `docs/handoff/2026-09-12.md`; bốn
 - (a) **`doctor` chưa chạy trên profile thật.** Mọi bằng chứng đến từ HOME giả + kit giả. Nghĩa là bản copy Antigravity ở `~/.gemini/config/plugins/bearingkit` trên máy này chưa được đối chiếu lần nào với checkout — lỗ hổng `3d7b4eb` vẫn mở trên thực địa. Một lệnh là đủ: `node bin/bearingkit.cjs doctor`.
 - (b) **Hai nhãn xuất xứ còn treo, chưa sửa**: `docs/plans/2026-09-10-content-backlog.md` ("owner's explicit ask" / "owner's requirement", 2 câu) và `docs/handoff/2026-09-11.md` (dòng "approved by the owner" cho spec v2). Không có bản gốc để đối chiếu.
 - (c) **`install-council.md` §6 vẫn đọc như thể doctor có gọi `claude plugin list`.** File council là bản ghi lịch sử nên không sửa; chỗ ghi lệch là câu 1 của batch D5.
-- (d) **Bảng D1–D6 trong `docs/handoff/2026-09-11-owner-directives.md` đã cũ**: ghi D4, D5, D6 "**chưa chạy**", trong khi D4 đã ra `docs/specs/2026-09-12-install-council.md`, D5 đã ra `docs/specs/2026-09-12-d5-owner-questions.md`, D6 đã đóng bằng commit `932ea03`. Handoff 2026-09-12 dặn phiên sau "kiểm bảng trạng thái đó trước khi thi hành khối nguyên văn" — mà bảng lại sai theo hướng nguy hiểm nhất: giục làm lại việc đã xong.
-- (e) **`coverage-matrix.md` hàng 20 nói `detect-stack` liệt kê biome** ("detect-stack lists biome (and PHP's Pint and PHPStan) among guardrail commands when present"). Đọc mã: chỉ có `laravel/pint` (`scripts/detect-stack.cjs:100`) và `phpstan` (dòng 101); `grep -ri biome scripts/ skills/ tests/` không khớp gì. Mẫu lỗi #2 (dữ kiện sai, xác minh được bằng mã), cùng hạng với `v2 §1:28` đã sửa.
-- (f) **`README.md` mục `## License` còn trỏ `package.json`** ("MIT (see `package.json`)") trong khi `LICENSE` đã tồn tại từ `7cbf4be`; `NOTICE` đã được cập nhật, README thì chưa.
+- (d) ~~**Bảng D1–D6 đã cũ**~~ — **đã sửa 2026-09-13** (Task 0). Trước khi sửa: ghi D4, D5, D6 "**chưa chạy**", trong khi D4 đã ra `docs/specs/2026-09-12-install-council.md`, D5 đã ra `docs/specs/2026-09-12-d5-owner-questions.md`, D6 đã đóng bằng commit `932ea03`. Handoff 2026-09-12 dặn phiên sau "kiểm bảng trạng thái đó trước khi thi hành khối nguyên văn" — mà bảng lại sai theo hướng nguy hiểm nhất: giục làm lại việc đã xong.
+- (e) ~~**Hàng 20 của ma trận nói `detect-stack` liệt kê biome**~~ — **đã sửa 2026-09-13** (Task 0): hàng đó nay ghi đúng hiện trạng và trỏ việc thêm biome về quyết định câu 9. Trước khi sửa ("detect-stack lists biome (and PHP's Pint and PHPStan) among guardrail commands when present"). Đọc mã: chỉ có `laravel/pint` (`scripts/detect-stack.cjs:100`) và `phpstan` (dòng 101); `grep -ri biome scripts/ skills/ tests/` không khớp gì. Mẫu lỗi #2 (dữ kiện sai, xác minh được bằng mã), cùng hạng với `v2 §1:28` đã sửa.
+- (f) ~~**`README.md` trỏ `package.json` cho license**~~ — **đã sửa 2026-09-13** (Task 0): nay trỏ `LICENSE` và `NOTICE`. Trước khi sửa ("MIT (see `package.json`)") trong khi `LICENSE` đã tồn tại từ `7cbf4be`; `NOTICE` đã được cập nhật, README thì chưa.
 - (g) **`AGENTS.md` dòng 3 còn trỏ `core/AGENTS.md`** là "file chỉ dẫn của sản phẩm", nhưng `core/` đã bị xoá trong restructure v2 (`97843c4`) và nội dung đó nay là `skills/bk-protocol/SKILL.md`. Đây là câu đầu tiên mọi agent mới đọc, nên đường dẫn chết ở đúng chỗ đó là loại lệch đắt nhất. Chưa sửa vì nằm ngoài việc owner giao lượt này (sửa từng cái một, không dồn).
 
 - (h) **`scripts/detect-stack.cjs` không nhận Terraform/HCL** (`grep -in 'terraform\|hcl'` → rỗng), nên trên một repo chỉ có `.tf` nó ném `no-manifest` và skill không có stack profile nào để đọc. Đây là khoảng trống so với công việc hằng ngày của owner, **không phải lệch so với spec**: §5.5 tự ghi danh sách 8 stack là "at first; others as the inventory shows sources", tức là danh sách mở. Lượt rà soát đầu (phần trả lời 2026-09-13) trình bày chỗ này như một lệch của spec — đó là đọc sót cụm "at first", đã sửa lại ở đây.
 
-**Lượt 2026-09-13 đã ghi gì vào repo:** file này (mới, rồi bổ sung §2, rồi tự-audit sửa §2/§7/§8), `docs/handoff/2026-09-13.md`, và **một dòng** trong `AGENTS.md` mục "Where the truth lives" trỏ tới file này — không có gì khác. Tám mục (a)–(h) ở trên đều chưa sửa.
+**Lượt 2026-09-13 đã ghi gì vào repo:** file này (mới, bổ sung §2, tự-audit sửa §2/§7/§8, rồi cập nhật Task 0); `docs/handoff/2026-09-13.md`; `docs/plans/2026-09-13-daily-driver.md`; **một dòng** trong `AGENTS.md` mục "Where the truth lives"; và Task 0 của plan đó — ba sửa dữ kiện (d), (e), (f). Không mã nào đổi. Năm mục còn lại (a), (b), (c), (g), (h) chưa sửa: (a) là việc của owner, (b) không có bản gốc để đối chiếu, (c) là bản ghi lịch sử không sửa, (g) chờ owner gật, (h) là Task 7 của plan.
 
 ---
 
