@@ -16,6 +16,7 @@ One `skills/` source; each host installs it with its own command. A host is list
 - Install: `/plugin marketplace add tuyenht/Bearingkit`, then `/plugin install bearingkit@bearingkit`. While the repository is private (until v1.0), add the marketplace by local path instead: `/plugin marketplace add C:\Projects\Bearingkit`. Uninstall through the `/plugin` menu (the exact `/plugin uninstall` form is unverified).
 - Development and evals, no install: `claude --plugin-dir <path to the checkout>`. The kit's evals runner passes this by default.
 - Bootstrap: `hooks/hooks.json` runs `hooks/session-start.cjs` on startup, clear and compact; it returns the protocol (`skills/bk-protocol/SKILL.md`) as additional context. Skills appear as `bearingkit:bk-<name>`; `bk-protocol` is hidden from the listing.
+- **Host drift, 2026-09-13:** after that day's auto-update, the `/skills` panel lists `bk-protocol` as `user-only · ~80 tok · locked by author` instead of hiding it; on 2.1.267 (2026-09-10) it was absent from `/context all`'s User group. The kit's frontmatter is unchanged. The listing still fits §12 (900 tokens for eleven skills). Evidence: `docs/compat/2026-09-13-daily-profile-readings.md`. The acceptance row above is the record of 2026-09-11 and is not rewritten.
 - Agents: `agents/bk-*.md` load with the plugin.
 - Deny list for secret files, set by you in `~/.claude/settings.json` if wanted: `permissions.deny` with `Read(**/.env*)` and the key-material patterns you use; the kit writes no settings.
 
