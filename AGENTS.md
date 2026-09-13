@@ -7,6 +7,7 @@ This file is for agents developing the kit itself. Claude Code reads it through 
 - Design: `docs/specs/` (current: `2026-09-11-bearingkit-v2-design.md`; decisions log is its §15; the v1 spec stays for its §3 host mechanics and §18 field lessons).
 - Owner migration: `docs/plans/2026-09-10-owner-migration.md`.
 - Session state, open threads, pending decisions: the newest file in `docs/handoff/`. Read it first when resuming; rewrite it before the last commit of a session.
+- Project status across sessions — milestone, per-item state, what is waiting on the owner: `docs/status.md`. It is a dashboard that only counts and points; it holds no decision of its own (questions and decisions stay in `docs/specs/2026-09-12-d5-owner-questions.md`). Rewrite it with the handoff, before the last commit of a session.
 - Nothing important lives only in chat history. If a decision or fact is not in the repo, it does not exist for the next session.
 
 ## Conventions
