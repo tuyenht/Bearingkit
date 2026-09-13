@@ -88,3 +88,5 @@ Task skills read these by relative path and never copy them.
 | `references/correction-cues.md` | Phrases that mark a user correction |
 | `references/handoff-template.md` | Two-block handoff skeleton used by bk-close |
 | `references/meta-routing.md` | What the router keeps from Superpowers' meta-skill, and the authoring convention for skills |
+
+Sources: obra/superpowers 5.1.0 (MIT) via references/meta-routing.md; the protocol body and the other eight references are kit-original, from field lessons (v1 §18); attribution in NOTICE.

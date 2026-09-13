@@ -27,3 +27,5 @@ description: "Execute a plan or a small change that fits in at most three files:
 
 ## Next step
 - bk-test for the suite, then bk-review; bk-debug on an unexpected failure.
+
+Sources: obra/superpowers 5.1.0 (MIT) via references/executing.md, and multica-ai/andrej-karpathy-skills (no license, ideas only: two lines paraphrased into Steps and Gates, no NOTICE entry owed); attribution in NOTICE.

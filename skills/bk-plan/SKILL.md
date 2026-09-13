@@ -26,3 +26,5 @@ description: "Write a phased plan with exit criteria and evidence per phase; res
 
 ## Next step
 - bk-build on phase 1.
+
+Sources: obra/superpowers 5.1.0 (MIT) via references/writing-plans.md; attribution in NOTICE.

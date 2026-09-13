@@ -28,3 +28,5 @@ background: false
 
 ## Next step
 - bk-plan for the accepted verdict; bk-spec when the scope is still unclear.
+
+Sources: no upstream text vendored (no license mode applies) - body is kit-original, from field lessons (v1 §18) and the owner's earlier tools (v1 §7.1); nothing owed in NOTICE.

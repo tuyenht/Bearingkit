@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-13** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · 85 commit (83 trước lượt rà soát 2026-09-13, cộng 2 commit của chính nó) · 50/50 test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-13)
+Cập nhật: **2026-09-13** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · 85 commit (83 trước lượt rà soát 2026-09-13, cộng 2 commit của chính nó) · **51/51** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-13 sau Task 2)
 
 > **File này là BẢNG ĐIỀU KHIỂN, không phải nguồn sự thật.** Nó chỉ trỏ đường và ghi trạng thái; mọi nội dung thật nằm ở nơi khác:
 >
@@ -26,8 +26,9 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | — nguồn đã có `derived` (chữ thật đã port) | 2 | cùng lệnh |
 | Mục trong `NOTICE` | 1 (obra/superpowers) | `grep '^##' NOTICE` |
 | Hàng nguồn trong ma trận | 39 (gồm host candidate, tool, và 8 mục owner loại) | `grep -c '^\| [0-9]'` |
-| Test | 50/50 xanh | `node --test tests/*.test.cjs` |
+| Test | 51/51 xanh | `node --test tests/*.test.cjs` |
 | `skills/<name>/tests/` (§5.3 cần ≥3 prompt mỗi skill) | 0/10 | `find skills -type d -name tests` |
+| `SKILL.md` có dòng provenance + license mode | 11/11 skill đang tồn tại | `grep -h '^Sources:' skills/*/SKILL.md`, có test canh |
 | File stack `bk-build/references/stacks/` (§5.5 cần 8) | 0/8 | thư mục chưa tồn tại |
 | Host đã pass acceptance | 2/7 (Claude Code, Antigravity) | `docs/hosts.md` |
 
@@ -49,7 +50,7 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | 6 | Activation precision ≥0.9 và recall ≥0.9, cả hai host, trên bản v2 (v1 §17) | 2 host | **chưa đo trên v2** |
 | 7 | Outcome benchmark: 12 task, kit ≥ Superpowers về pass rate và ít token hơn (v1 §17) | 12 task | **0/12** — `evals/fixtures/` chỉ có `sample-app`, không có task suite nào |
 | 8 | `upstream-watch` ra báo cáo delta cho mọi nguồn, tối thiểu mỗi tháng (v1 §17) | 1 lệnh chạy được | **chưa có mã** |
-| 9 | Mỗi skill mang provenance + license mode, và `NOTICE` đầy đủ (v1 §17) | 17 skill + `NOTICE` | **chưa đạt** — `NOTICE` không nợ gì, nhưng không SKILL.md nào nêu nguồn (`grep -l 'Adapted from' skills/*/SKILL.md` → rỗng); provenance hiện chỉ nằm ở file `references/` |
+| 9 | Mỗi skill mang provenance + license mode, và `NOTICE` đầy đủ (v1 §17) | 17 skill + `NOTICE` | **11/17** — đủ cho mọi skill đang tồn tại kể từ Task 2 (2026-09-13): mỗi `SKILL.md` có một dòng `Sources:` nêu nguồn và license mode, và `tests/skills.test.cjs` canh để dòng đó không khai ít hơn thứ `references/` thật sự vendor; 6 skill chưa tồn tại là phần còn lại |
 | 10 | Không file cấu hình kit nào trong project (v1 §17, v2 §9) | 0 | **đạt theo kiến trúc**, chưa có test canh |
 | 11 | Host owner thực dùng đã qua acceptance (v2 §3, câu 8) | 6 | **2/6** (4 host còn lại phải chạy trên máy khác) |
 | 12 | Việc phát hành: README EN+VI, CI, marketplace listing, publish từ history squash (v2 §13) | 4 | **0/4** |

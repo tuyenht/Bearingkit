@@ -92,3 +92,36 @@ test('every references file adapted from upstream has a derived entry in upstrea
   }
   for (const key of derived) assert.ok(fs.existsSync(path.join(__dirname, '..', key)), key + ': in a derived map but the file does not exist');
 });
+
+// v1 section 17 asks that every skill carry provenance and a license mode, not only that NOTICE be complete;
+// on 2026-09-13 no SKILL.md named a source, so the body of that criterion was unmet while NOTICE looked fine.
+// The line must not claim less than the skill's own references/ files already vendor.
+test('every skill body carries one provenance line, and it names what its references actually vendor', () => {
+  const sources = require('../upstream/sources.json').sources.map((s) => s.name);
+  for (const name of fs.readdirSync(dir)) {
+    const file = path.join(dir, name, 'SKILL.md');
+    if (!fs.existsSync(file)) continue;
+    const { body } = frontmatter(file);
+    const found = body.split('\n').filter((l) => l.startsWith('Sources:'));
+    assert.equal(found.length, 1, name + ': body needs exactly one line starting "Sources:"');
+    const line = found[0];
+    const refDir = path.join(dir, name, 'references');
+    const vendored = new Set();
+    if (fs.existsSync(refDir)) {
+      for (const f of fs.readdirSync(refDir)) {
+        const m = fs.readFileSync(path.join(refDir, f), 'utf8').match(/^Adapted from ([^:(]+)/m);
+        if (m) vendored.add(m[1].trim());
+      }
+    }
+    if (vendored.size === 0) {
+      assert.match(line, /no upstream text/i, name + ': nothing is vendored, so the line must say so');
+    } else {
+      for (const v of vendored) {
+        assert.ok(line.includes(v), name + ': the line must name ' + v + ', which its references vendor');
+        assert.ok(sources.some((s) => v === s || v.startsWith(s)), name + ': ' + v + ' is not a source in upstream/sources.json');
+      }
+      assert.match(line, /NOTICE/, name + ': a line naming a vendored source must point at NOTICE');
+    }
+    assert.match(line, /\((MIT|Apache-2\.0|CC0-1\.0|no license)/, name + ': the line must carry a license mode');
+  }
+});

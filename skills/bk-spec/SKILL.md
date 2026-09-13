@@ -26,3 +26,5 @@ description: "Pin down a request before building: restate, edge cases, assumptio
 
 ## Next step
 - bk-plan when COUNCIL or more than three files; bk-build when ACT and at most three files; bk-audit when the request is really an investigation.
+
+Sources: obra/superpowers 5.1.0 (MIT) via references/brainstorming.md; attribution in NOTICE.

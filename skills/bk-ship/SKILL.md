@@ -26,3 +26,5 @@ description: "Finish work that is already done: run detected guardrails, paste o
 
 ## Next step
 - bk-close; bk-ops --deploy when a deployment follows.
+
+Sources: obra/superpowers 5.1.0 (MIT) via references/finishing.md; attribution in NOTICE.

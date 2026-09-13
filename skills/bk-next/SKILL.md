@@ -25,3 +25,5 @@ description: "Recommend the next step from the real repository state (git, plans
 
 ## Next step
 - The skill named in step 3, or bk-close when the session should end.
+
+Sources: no upstream text vendored (no license mode applies) - body is kit-original, from field lessons (v1 §18) and the owner's earlier tools (v1 §7.1); nothing owed in NOTICE.

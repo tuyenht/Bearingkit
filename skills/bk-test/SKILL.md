@@ -25,3 +25,5 @@ description: "Tests as the contract, TDD by default; --browser forces rendered c
 
 ## Next step
 - bk-review, or back to bk-build when a test exposed a gap.
+
+Sources: obra/superpowers 5.1.0 (MIT) via references/tdd.md; attribution in NOTICE.

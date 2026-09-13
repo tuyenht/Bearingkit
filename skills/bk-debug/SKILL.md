@@ -25,3 +25,5 @@ description: "Root cause before any fix; four phases; council after three failed
 
 ## Next step
 - bk-test for the surrounding suite, then bk-review.
+
+Sources: obra/superpowers 5.1.0 (MIT) via references/systematic-debugging.md; attribution in NOTICE.

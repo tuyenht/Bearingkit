@@ -27,3 +27,5 @@ background: false
 
 ## Next step
 - bk-ship, or back to bk-build on blocking findings.
+
+Sources: obra/superpowers 5.1.0 (MIT) via references/code-review-exchange.md; attribution in NOTICE.
