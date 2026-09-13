@@ -62,6 +62,24 @@ test('the set keeps Phase 1 at sixty and adds three per skill intent, with uniqu
 // The gap this closes: for three days the set measured five skills while ten were installed, and nothing said so.
 // bk-plan, bk-close, bk-audit and bk-next had no prompt at all, so a routing regression in any of them was invisible.
 // A skill that ships without prompts now fails the suite instead of failing silently in a gate run.
+// A prompt that names a file the fixture does not have sends the model hunting, and a hunt can end in a skill call
+// the run then scores as a false activation — the "fixture gap behind sm-en-04" of the Phase 1 gate was this. Phase 1
+// is frozen as the baseline and carries one known instance: q-en-01 names src/http/retry.ts, which the fixture never
+// had (it has src/lib/http.ts). So the check covers the prompts added after Phase 1, which is where every future
+// skill's prompts land too.
+test('prompts outside Phase 1 name only files the fixture actually has', () => {
+  const fs = require('node:fs');
+  const fixture = path.join(__dirname, '..', 'evals', 'fixtures', 'sample-app');
+  let checked = 0;
+  for (const p of promptSet().filter((x) => SKILL_INTENTS.includes(x.intent))) {
+    for (const m of p.prompt.matchAll(/(?:src|tests)\/[A-Za-z0-9_/-]+\.[A-Za-z]+/g)) {
+      checked++;
+      assert.ok(fs.existsSync(path.join(fixture, m[0])), `${p.id} names ${m[0]}, which the fixture does not have`);
+    }
+  }
+  assert.ok(checked >= 3, 'the check means nothing unless some prompts name files; they stopped doing so');
+});
+
 test('every task skill that exists has at least two positive prompts', () => {
   const fs = require('node:fs');
   const skills = fs.readdirSync(path.join(__dirname, '..', 'skills'))
