@@ -75,6 +75,29 @@ test('every skill body is within 100 lines, cites only reference files that exis
   }
 });
 
+// Spec §5.3 #3: a skill is not finished until skills/<name>/tests/ holds at least three prompts with the expected
+// outcome. The list is the eight lifecycle skills because they are v0.2's scope (spec §13); the rest arrive at v0.3,
+// and "every skill" here would fail for work that is not due yet. The four sections are what makes a case readable by
+// a harness and comparable between skills: the prompt, the state it assumes, what must be observable, and the one
+// wrong behaviour the case exists to catch. Written clean-room — Skillmark, whose format §11 calls compatible, ships
+// no license file, so nothing is copied from it.
+const V02_SKILLS = ['bk-spec', 'bk-plan', 'bk-build', 'bk-test', 'bk-debug', 'bk-review', 'bk-ship', 'bk-close'];
+test('the eight lifecycle skills carry at least three test cases each, in a shape a harness can read', () => {
+  for (const name of V02_SKILLS) {
+    const testDir = path.join(dir, name, 'tests');
+    assert.ok(fs.existsSync(testDir), `${name}: no tests/ directory`);
+    const cases = fs.readdirSync(testDir).filter((f) => f.endsWith('.md'));
+    assert.ok(cases.length >= 3, `${name}: ${cases.length} test cases, spec 5.3 asks for at least three`);
+    for (const c of cases) {
+      const text = fs.readFileSync(path.join(testDir, c), 'utf8');
+      for (const section of ['**Prompt**', '**Setup**', '**Expected**', '**Fails if**']) {
+        assert.ok(text.includes(section), `${name}/tests/${c}: no ${section} section`);
+      }
+      assert.match(text, /^> \S.*/m, `${name}/tests/${c}: the quoted prompt line is empty`);
+    }
+  }
+});
+
 // Spec section 12: anything adapted from an upstream source is recorded in upstream/sources.json (derived map) and points at NOTICE.
 test('every references file adapted from upstream has a derived entry in upstream/sources.json and names NOTICE', () => {
   const sources = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'upstream', 'sources.json'), 'utf8')).sources;
