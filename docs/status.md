@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-13** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · 85 commit (83 trước lượt rà soát 2026-09-13, cộng 2 commit của chính nó) · **51/51** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-13 sau Task 2)
+Cập nhật: **2026-09-14** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · 85 commit (83 trước lượt rà soát 2026-09-13, cộng 2 commit của chính nó) · **57/57** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-14 sau Task 3)
 
 > **File này là BẢNG ĐIỀU KHIỂN, không phải nguồn sự thật.** Nó chỉ trỏ đường và ghi trạng thái; mọi nội dung thật nằm ở nơi khác:
 >
@@ -26,7 +26,7 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | — nguồn đã có `derived` (chữ thật đã port) | 2 | cùng lệnh |
 | Mục trong `NOTICE` | 1 (obra/superpowers) | `grep '^##' NOTICE` |
 | Hàng nguồn trong ma trận | 39 (gồm host candidate, tool, và 8 mục owner loại) | `grep -c '^\| [0-9]'` |
-| Test | 51/51 xanh | `node --test tests/*.test.cjs` |
+| Test | 57/57 xanh | `node --test tests/*.test.cjs` |
 | `skills/<name>/tests/` (§5.3 cần ≥3 prompt mỗi skill) | 0/10 | `find skills -type d -name tests` |
 | `SKILL.md` có dòng provenance + license mode | 11/11 skill đang tồn tại | `grep -h '^Sources:' skills/*/SKILL.md`, có test canh |
 | File stack `bk-build/references/stacks/` (§5.5 cần 8) | 0/8 | thư mục chưa tồn tại |
@@ -43,7 +43,7 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | # | Mục (nguồn) | Đích | Hôm nay |
 |---|---|---|---|
 | 1 | Catalog đủ skill (v2 §5.1) | 17 | **11/17** |
-| 2 | Mỗi skill đạt cả 5 điều kiện quality bar (v2 §5.3) | 17/17 | **0/17** — không skill nào có `tests/` |
+| 2 | Mỗi skill đạt cả 5 điều kiện quality bar (v2 §5.3) | 17/17 | **0/17** — §5.3 #4 (activation prompt) đã đóng cho 10 skill đang tồn tại từ 2026-09-14, nhưng #3 (`skills/<name>/tests/`) vẫn 0/10, nên chưa skill nào đủ cả năm |
 | 3 | File stack (v2 §5.5) | 8 | **0/8** |
 | 4 | Nguồn **lấy chữ hoặc lấy ý** đã có quyết định + `NOTICE`/`derived` khi lấy chữ | 11 | **2/11** — mẫu số 11 chỉ gồm `adapt` + `ideas-only`; 11 nguồn `reference` không nằm ở đây nhưng vẫn sinh việc, và việc đó được đếm ở mục 1–3 (ví dụ awesome-cursorrules và vercel agent-skills là nguyên liệu của file stack, mục 3) |
 | 5 | Fixed context ≤5,000 đo bằng `/context` trên bản v2 (v1 §17, v2 §12) | 1 số | **chưa đo trên v2** — số v1 (~2,650) vẫn là bằng chứng về độ lớn (`phase-1-gate.md` tự ghi "the measurements stand"), nhưng §11 đòi đọc lại ở mốc phát hành |
@@ -89,7 +89,7 @@ Phạm vi v0.2 theo §13 là **tám skill lifecycle** (`bk-spec`, `bk-plan`, `bk
 | 10 | Nguồn bắt buộc 2–4 — `code-review`, `frontend-design`, `claude-code-setup` (+ `pr-review-toolkit`) từ `claude-plugins-official` (Apache-2.0) | **chưa** | `derived: {}` rỗng → chưa chữ nào được port. Khi port phải làm cùng lúc ba việc: ghi nguồn trong file dẫn xuất, thêm mục `NOTICE`, cập nhật `derived` |
 | 11 | Các nguồn còn lại theo thứ tự D3 (spec-kit, mattpocock, addyosmani, vercel agent-skills…) | **chưa** | ma trận: phần lớn còn `designed` |
 | 12 | §5.3 #3 — `tests/` ≥3 prompt cho **tám** skill của v0.2 | **chưa** | 0/8 (toàn kit 0/10) |
-| 13 | §5.3 #4 — activation 2 positive + 1 negative mỗi skill, cả hai ngôn ngữ | **một phần** | bộ 60 prompt nhắm 5 skill (`bk-spec`, `bk-build`, `bk-review`, `bk-debug`, `bk-ship`). Trong tám skill v0.2 còn thiếu `bk-plan`, `bk-close`, và `bk-test` (hiện chỉ là nhánh phụ 2 lần). Ngoài tám: thiếu `bk-audit`, `bk-next` |
+| 13 | §5.3 #4 — activation 2 positive + 1 negative mỗi skill, cả hai ngôn ngữ | **xong cho 10 skill đang tồn tại** 2026-09-14 | 15 prompt mới cho `bk-plan`, `bk-close`, `bk-audit`, `bk-next`, `bk-test`; bộ 60 → 75, Phase 1 giữ nguyên để còn so được. `tests/evals.test.cjs` nay đỏ nếu một skill tồn tại mà có dưới 2 positive — bất biến này sẽ đòi prompt cho `bk-design` ngay khi nó ra đời |
 | 14 | Guardrail command Biome/Pint (quyết định câu 9, phần v0.2) | **chưa** | `scripts/detect-stack.cjs` có `pint` (dòng 100) và `phpstan` (dòng 101) nhưng **không có biome** ở bất cứ đâu trong `scripts/`, `skills/`, `tests/` — xem §7 (e) |
 | 15 | Phần A của câu 1 — đường CLI `claude plugin …` trong `docs/hosts.md` + `README.md` | **chưa** | `grep 'claude plugin ' docs/hosts.md README.md` không khớp; hiện chỉ có dạng slash-command `/plugin` |
 | 16 | Sửa rank spec-kit trong `skill-inventory.md` (câu 5) | **chưa** | đúng một chỗ: "không tính vào ô bắt buộc" → "cùng Superpowers thoả nhóm tối thiểu" |
@@ -116,7 +116,7 @@ Nguồn thật: `docs/specs/2026-09-12-d5-owner-questions.md`. Không copy nội
 - **11/21 câu đã chốt** (2026-09-12): câu 1, 2, 3, 4, 5, 6, 8, 9, 12, 14, 16.
 - **10 câu còn treo**: 7, 10, 11, 13, 15 (Tier 2 — đang giữ mặc định, không chặn việc nào); 17, 18, 19, 20 (Tier 3 — ghi nhận); 21 (sửa `AGENTS.md`: đọc bởi công cụ có bất biến-không-ghi đã test thì tính ACT hay COUNCIL — điều kiện owner đặt ra nay đã đủ).
 - **2 va chạm mới từ phiên doctor, cần owner đọc**: (a) mã `doctor` đã nằm trong cây trước v0.2 trong khi nhãn đã chốt là "v0.3" (câu 4); (b) `doctor` cố ý không gọi `claude plugin list`/`validate` như §6 mô tả, vì trần "không ghi một byte" là bất biến cứng (câu 1).
-- ~~Ngã ba lộ trình~~ — **owner chốt 2026-09-13: lộ trình B, daily driver trước**, kế hoạch ở `docs/plans/2026-09-13-daily-driver.md`. Một quyết định mới sinh ra từ đó, đang chờ owner: `frontend-design` có đích là `bk-design`, mà `bk-design` bị câu 12 chặn — đường (i) port 2 nguồn và để `frontend-design` chờ (đang áp), hay (ii) owner bỏ điều kiện câu 12 cho riêng `bk-design` (plan §"Một quyết định cần owner").
+- ~~Ngã ba lộ trình~~ — **owner chốt 2026-09-13: lộ trình B, daily driver trước**, kế hoạch ở `docs/plans/2026-09-13-daily-driver.md`. ~~Câu sinh ra từ đó về `frontend-design`/`bk-design`~~ — **owner chốt 2026-09-14: đường (ii)**, nới điều kiện câu 12 **chỉ cho riêng `bk-design`**; mọi skill khác vẫn chờ inventory. Ghi ở nguồn thật (`d5-owner-questions.md` câu 12) kèm lý do, và thành Task 6b của plan.
 
 ---
 

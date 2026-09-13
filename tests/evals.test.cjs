@@ -23,18 +23,54 @@ test('parseStream returns none without a Skill call', () => {
   assert.equal(parseStream(''), 'none');
 });
 
-test('phase-1 prompt set is well formed: sixty prompts, six intents, ten each, unique ids', () => {
-  const prompts = loadPrompts(path.join(__dirname, '..', 'evals', 'activation', 'phase-1.jsonl'));
-  assert.equal(prompts.length, 60);
-  const intents = ['question', 'small', 'feature', 'bug', 'review', 'ship'];
-  for (const i of intents) {
+const PHASE1 = ['question', 'small', 'feature', 'bug', 'review', 'ship'];
+// Spec §11 extends the set by "two positives and one negative per new skill"; each skill intent is named after its
+// skill, so `plan` holds the prompts that must reach bk-plan.
+const SKILL_INTENTS = ['plan', 'close', 'audit', 'next', 'test'];
+const promptSet = () => loadPrompts(path.join(__dirname, '..', 'evals', 'activation', 'phase-1.jsonl'));
+
+test('the set keeps Phase 1 at sixty and adds three per skill intent, with unique ids', () => {
+  const prompts = promptSet();
+  assert.equal(prompts.length, 75);
+  assert.equal(new Set(prompts.map((p) => p.id)).size, prompts.length, 'ids are unique');
+
+  // Phase 1's sixty are the baseline every later run is compared against, so their shape may not drift.
+  assert.equal(prompts.filter((p) => PHASE1.includes(p.intent)).length, 60);
+  for (const i of PHASE1) {
     const group = prompts.filter((p) => p.intent === i);
     assert.equal(group.length, 10, i);
     assert.equal(group.filter((p) => p.id.includes('-neg-')).length, 2, `${i} negatives`);
     assert.equal(group.filter((p) => p.lang === 'vi' && !p.id.includes('-neg-')).length, 4, `${i} vietnamese positives`);
   }
+
+  for (const i of SKILL_INTENTS) {
+    const group = prompts.filter((p) => p.intent === i);
+    assert.equal(group.length, 3, i);
+    const positives = group.filter((p) => !p.id.includes('-neg-'));
+    const negatives = group.filter((p) => p.id.includes('-neg-'));
+    assert.equal(positives.length, 2, `${i} positives`);
+    assert.equal(negatives.length, 1, `${i} negative`);
+    assert.deepEqual(positives.map((p) => p.lang).sort(), ['en', 'vi'], `${i}: one positive per language`);
+    assert.ok(positives.every((p) => p.expect === `bk-${i}`), `${i}: positives name bk-${i}`);
+    assert.ok(!negatives[0].expect.split('|').includes(`bk-${i}`), `${i}: the negative must not expect bk-${i}`);
+  }
+
   const expects = new Set(prompts.flatMap((p) => p.expect.split('|')));
   for (const e of expects) assert.ok(e === 'none' || /^bk-[a-z]+$/.test(e), e);
+});
+
+// The gap this closes: for three days the set measured five skills while ten were installed, and nothing said so.
+// bk-plan, bk-close, bk-audit and bk-next had no prompt at all, so a routing regression in any of them was invisible.
+// A skill that ships without prompts now fails the suite instead of failing silently in a gate run.
+test('every task skill that exists has at least two positive prompts', () => {
+  const fs = require('node:fs');
+  const skills = fs.readdirSync(path.join(__dirname, '..', 'skills'))
+    .filter((n) => n !== 'bk-protocol' && fs.existsSync(path.join(__dirname, '..', 'skills', n, 'SKILL.md')));
+  const prompts = promptSet();
+  for (const skill of skills) {
+    const positives = prompts.filter((p) => !p.id.includes('-neg-') && p.expect.split('|').includes(skill));
+    assert.ok(positives.length >= 2, `${skill}: ${positives.length} positive prompts, needs at least two`);
+  }
 });
 
 test('expect alternatives: either route passes, and a "none" alternative counts a false activation only when both miss', () => {
@@ -95,14 +131,15 @@ test('--per-intent takes a spread: English positive, Vietnamese positive, negati
   const { sample } = require('../scripts/evals.cjs');
   const prompts = loadPrompts(path.join(__dirname, '..', 'evals', 'activation', 'phase-1.jsonl'));
   const three = sample(prompts, 3);
-  assert.equal(three.length, 18);
-  for (const intent of ['question', 'small', 'feature', 'bug', 'review', 'ship']) {
+  // Eleven intents at three each: the six of Phase 1 and the five skill intents, which hold exactly three anyway.
+  assert.equal(three.length, 33);
+  for (const intent of [...PHASE1, ...SKILL_INTENTS]) {
     const g = three.filter((p) => p.intent === intent);
     assert.equal(g.filter((p) => p.lang === 'en' && !p.id.includes('-neg-')).length, 1, `${intent} en`);
     assert.equal(g.filter((p) => p.lang === 'vi' && !p.id.includes('-neg-')).length, 1, `${intent} vi`);
     assert.equal(g.filter((p) => p.id.includes('-neg-')).length, 1, `${intent} neg`);
   }
-  assert.equal(sample(prompts, 10).length, 60, 'asking for more than exists returns everything');
+  assert.equal(sample(prompts, 10).length, 75, 'asking for more than exists returns everything');
   assert.equal(sample(prompts, 4).filter((p) => p.intent === 'bug').map((p) => p.id).join(','), 'bug-en-01,bug-en-02,bug-vi-01,bug-neg-01');
 });
 

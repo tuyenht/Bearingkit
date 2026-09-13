@@ -58,3 +58,18 @@
 {"id":"ship-vi-04","intent":"ship","lang":"vi","prompt":"Soạn mô tả PR cho những gì vừa làm.","expect":"bk-ship"}
 {"id":"ship-neg-01","intent":"ship","lang":"en","prompt":"Explain how bk-ship works.","expect":"none"}
 {"id":"ship-neg-02","intent":"ship","lang":"vi","prompt":"Deploy bản này lên staging.","expect":"bk-spec|none"}
+{"id": "plan-en-01", "intent": "plan", "lang": "en", "prompt": "Break the invoice export work into phases with exit criteria before we touch code.", "expect": "bk-plan"}
+{"id": "plan-vi-01", "intent": "plan", "lang": "vi", "prompt": "Lập kế hoạch từng bước để thay lớp cache trong src/lib/cache.ts, chia phase kèm tiêu chí xong cho từng phase.", "expect": "bk-plan"}
+{"id": "plan-neg-01", "intent": "plan", "lang": "en", "prompt": "Just bump the upload retry timeout from 5s to 30s in src/lib/http.ts.", "expect": "bk-build"}
+{"id": "close-en-01", "intent": "close", "lang": "en", "prompt": "Wrap up the session and write the handoff for the next one.", "expect": "bk-close"}
+{"id": "close-vi-01", "intent": "close", "lang": "vi", "prompt": "Kết phiên giúp tôi, ghi bàn giao để phiên sau đọc.", "expect": "bk-close"}
+{"id": "close-neg-01", "intent": "close", "lang": "vi", "prompt": "Tóm tắt nhanh mấy thay đổi vừa rồi trong src/lib/cache.ts, tôi chưa kết phiên đâu.", "expect": "none"}
+{"id": "audit-en-01", "intent": "audit", "lang": "en", "prompt": "Should we move invoice PDF generation off the request path onto a queue? Lay out the options and recommend one.", "expect": "bk-audit"}
+{"id": "audit-vi-01", "intent": "audit", "lang": "vi", "prompt": "Có nên tách phần upload ra service riêng không? Đánh giá các phương án giúp tôi.", "expect": "bk-audit"}
+{"id": "audit-neg-01", "intent": "audit", "lang": "vi", "prompt": "Câu query Postgres cho trang invoices đang quét tuần tự 4 triệu dòng, tối ưu lại giúp tôi.", "expect": "none"}
+{"id": "next-en-01", "intent": "next", "lang": "en", "prompt": "Where were we, and what should I pick up next?", "expect": "bk-next"}
+{"id": "next-vi-01", "intent": "next", "lang": "vi", "prompt": "Tiếp theo làm gì? Tôi đang dở việc gì trong repo này?", "expect": "bk-next"}
+{"id": "next-neg-01", "intent": "next", "lang": "en", "prompt": "Open the newest handoff file and show it to me.", "expect": "none"}
+{"id": "test-en-01", "intent": "test", "lang": "en", "prompt": "Write tests for the invoice list API route in src/app/api/invoices/route.ts.", "expect": "bk-test"}
+{"id": "test-vi-01", "intent": "test", "lang": "vi", "prompt": "Viết test cho form đăng ký ở src/app/signup/page.tsx.", "expect": "bk-test"}
+{"id": "test-neg-01", "intent": "test", "lang": "en", "prompt": "The settings test started failing right after the cache change; work out why.", "expect": "bk-debug"}

@@ -161,6 +161,8 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 ### 12. Thời điểm tạo bk-design
 *(gộp từ: `skill-inventory.md` #5)*
 > **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** chờ inventory §5.2 hoàn tất chính thức, không tạo `bk-design` trước.
+>
+> **SỬA 2026-09-14 — quyết định của owner, đường (ii):** nới điều kiện **chỉ cho riêng `bk-design`**. Được tạo `bk-design` và port `frontend-design` trong `docs/plans/2026-09-13-daily-driver.md` mà không chờ inventory §5.2 hoàn tất. Điều kiện "chờ inventory hoàn tất" **vẫn áp cho mọi skill khác**. Lý do owner cân nhắc khi chốt: React/Next là việc hằng ngày nên bản daily driver thiếu skill UI là thiếu đúng chỗ dùng nhiều nhất; riêng skill này inventory gần như không thêm được gì nữa (D3 đã xếp `frontend-design` vào nhóm bắt buộc, câu 14 đã chốt provenance là `claude-plugins-official`, giấy phép Apache-2.0 đã xác minh); và mục đích gốc của câu 12 — không tạo skill rỗng việc — vẫn được tôn trọng vì `frontend-design` chính là việc đằng sau nó.
 - **Cần quyết định:** Tạo thư mục `bk-design` ngay để giải quyết hạng 3 đang bị chặn, hay chờ đúng quy trình per-item inventory §5.2 yêu cầu?
 - **Lựa chọn:** tạo ngay / chờ inventory chính thức hoàn tất (bước 4.2).
 - **Bị chặn:** Việc bắt đầu sprint cho `bk-design` — hạng 3 trong thứ tự ưu tiên hiện đang treo vì lý do này.
