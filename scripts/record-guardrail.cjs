@@ -24,16 +24,24 @@ function parseArgs(argv) {
   return out;
 }
 
+// Nothing else creates the store in v2: the stack-profile hook that used to was deleted with the rule layer, and the
+// session-start bootstrap writes nothing by design. This recorder is its only writer, so it opens its own file when
+// none exists — one per directory per day, so a session's runs accumulate in one place and prune clears them later.
+// Without this, the command bk-ship tells the model to run (no --session) could only ever fail.
 function selectState(args) {
   const cwd = path.resolve(args.cwd || process.cwd());
   if (args.session) return new State({ host: args.host || 'claude', sessionId: args.session, cwd });
-  return State.latest({ cwd });
+  const found = State.latest({ cwd });
+  if (found) return found;
+  const created = new State({ host: args.host || 'local', sessionId: `auto-${new Date().toISOString().slice(0, 10)}`, cwd });
+  created.prune();
+  return created;
 }
 
 function record(args) {
   const state = selectState(args);
   if (!state) {
-    throw new Error('no session state for this directory; start a session (the stack-profile hook creates it) or pass --session <id>');
+    throw new Error('could not open or create session state; set BEARINGKIT_STATE_DIR to a writable directory');
   }
   const now = new Date().toISOString();
   if (args.command !== undefined) {

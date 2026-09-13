@@ -11,7 +11,9 @@ const commands = {
   doctor: () => require('../scripts/doctor.cjs').cli(args),
 };
 
-if (!commands[cmd]) {
+// Object.hasOwn, not a truthiness test: `commands[cmd]` also resolves `constructor`, `toString` and the rest of
+// Object.prototype, and those were dispatched as commands that did nothing and exited 0.
+if (!Object.hasOwn(commands, String(cmd))) {
   console.error('usage: bearingkit <antigravity install|antigravity uninstall|evals|doctor> [options]');
   process.exit(2);
 }

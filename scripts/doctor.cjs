@@ -38,9 +38,12 @@ function sameTree(a, b) {
   return from.length === to.length && from.every((rel, i) => to[i] === rel && fs.readFileSync(path.join(a, rel)).equals(fs.readFileSync(path.join(b, rel))));
 }
 
-function run({ root = ROOT, home = os.homedir(), log = () => {} } = {}) {
-  const dest = path.join(home, '.gemini', 'config', 'plugins', 'bearingkit');
-  const refresh = `node ${path.join(root, 'bin', 'bearingkit.cjs')} antigravity install`;
+// `dest` mirrors `antigravity install --dest`: without it, a copy installed anywhere else reads as absent here, and
+// the repair line doctor prints would install a second copy at the default location instead of refreshing the one
+// the host actually loads.
+function run({ root = ROOT, home = os.homedir(), dest: destOpt, log = () => {} } = {}) {
+  const dest = destOpt ? path.resolve(destOpt) : path.join(home, '.gemini', 'config', 'plugins', 'bearingkit');
+  const refresh = `node ${path.join(root, 'bin', 'bearingkit.cjs')} antigravity install${destOpt ? ` --dest ${dest}` : ''}`;
   const checks = [];
   const add = (name, ok, fix) => { checks.push({ name, ok, fix }); return ok; };
 
@@ -71,8 +74,10 @@ function run({ root = ROOT, home = os.homedir(), log = () => {} } = {}) {
   return { ok: checks.every((c) => c.ok !== false), checks, dest };
 }
 
-function cli() {
-  if (!run({ log: (l) => process.stdout.write(l + '\n') }).ok) process.exitCode = 1;
+function cli(argv = []) {
+  const i = argv.indexOf('--dest');
+  const dest = i !== -1 && argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[i + 1] : undefined;
+  if (!run({ dest, log: (l) => process.stdout.write(l + '\n') }).ok) process.exitCode = 1;
 }
 
 if (require.main === module) cli();

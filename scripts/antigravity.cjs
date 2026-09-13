@@ -67,17 +67,20 @@ function install(opts = {}) {
   actions.push(`+ copy ${manifest} → ${path.join(dest, 'plugin.json')}`);
   actions.push(`+ copy ${skills} → ${path.join(dest, 'skills')} (dereferenced)`);
   actions.push(`+ copy ${SCRIPTS.join(', ')} → ${path.join(dest, 'scripts')}`);
-  actions.push(`+ write ${path.join(dest, 'rules', 'bearingkit.md')} (protocol body, host note, kit root; trigger: always_on)`);
   actions.push(`+ write ${marker}`);
+  actions.push(`+ write ${path.join(dest, 'rules', 'bearingkit.md')} (protocol body, host note, kit root; trigger: always_on)`);
   for (const a of actions) log(a);
   if (!dryRun) {
     if (fs.existsSync(dest)) fs.rmSync(dest, { recursive: true, force: true });
     fs.mkdirSync(path.join(dest, 'rules'), { recursive: true });
+    // The marker is written before the payload, not after: a copy interrupted part way (a file locked while the host
+    // is running is the reachable case on Windows) then still carries it, so the next install refreshes the directory
+    // instead of refusing to touch what it can no longer recognise as its own.
+    fs.writeFileSync(marker, root + '\n');
     fs.copyFileSync(manifest, path.join(dest, 'plugin.json'));
     fs.cpSync(skills, path.join(dest, 'skills'), { recursive: true, dereference: true });
     for (const s of SCRIPTS) { const to = path.join(dest, ...s.split('/')); fs.mkdirSync(path.dirname(to), { recursive: true }); fs.copyFileSync(path.join(root, ...s.split('/')), to); }
     fs.writeFileSync(path.join(dest, 'rules', 'bearingkit.md'), ruleText(root, dest));
-    fs.writeFileSync(marker, root + '\n');
   }
   return { dest, actions, dryRun };
 }

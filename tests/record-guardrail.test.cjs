@@ -35,11 +35,33 @@ test('records an independent review with its scope', () => {
   assert.deepEqual(d.independentReview.scope, ['src/auth/login.ts', 'src/auth/session.ts']);
 });
 
-test('fails clearly when no state exists and no session is given', () => {
+// This used to assert the opposite: with no state and no --session the recorder failed, and the error told the user
+// to start a session so "the stack-profile hook" would create one. That hook was deleted with the rule layer in the
+// v2 restructure and nothing replaced it, so the exact command bk-ship/SKILL.md tells the model to run — no --session
+// — could only fail. The recorder is the only writer of this store left, so it creates its own file.
+test('records without --session by creating the state for the directory, since nothing else creates it', () => {
   const base = tmp();
-  const r = run(['--command', 'x', '--exit', '0', '--cwd', 'C:/nowhere'], { BEARINGKIT_STATE_DIR: base });
+  const cwd = 'C:/proj-fresh';
+  const r = run(['--command', 'pnpm test', '--exit', '0', '--cwd', cwd], { BEARINGKIT_STATE_DIR: base });
+  assert.equal(r.status, 0, r.stderr);
+  const d = State.latest({ cwd, baseDir: base }).read();
+  assert.deepEqual(d.guardrailRuns.map((g) => [g.command, g.exitCode]), [['pnpm test', 0]]);
+});
+
+test('a second record the same day in the same directory lands in the same file, not a new one', () => {
+  const base = tmp();
+  const cwd = 'C:/proj-same-day';
+  assert.equal(run(['--command', 'a', '--exit', '0', '--cwd', cwd], { BEARINGKIT_STATE_DIR: base }).status, 0);
+  assert.equal(run(['--command', 'b', '--exit', '1', '--cwd', cwd], { BEARINGKIT_STATE_DIR: base }).status, 0);
+  assert.equal(fs.readdirSync(base).filter((f) => f.endsWith('.json')).length, 1);
+  const d = State.latest({ cwd, baseDir: base }).read();
+  assert.deepEqual(d.guardrailRuns.map((g) => g.command), ['a', 'b']);
+});
+
+test('an unwritable state directory fails loudly, and the message names no hook that does not exist', () => {
+  const r = run(['--command', 'x', '--exit', '0', '--cwd', 'C:/proj-x'], { BEARINGKIT_STATE_DIR: path.join(__dirname, 'fixtures', 'fake-kit.cjs') });
   assert.equal(r.status, 1);
-  assert.match(r.stderr, /no session state/);
+  assert.doesNotMatch(r.stderr, /stack-profile/);
 });
 
 test('creates the state when --session is given', () => {

@@ -37,6 +37,21 @@ test('doctor writes not one byte into the profile it reads, on a healthy copy an
   assert.deepEqual(snapshot(home), beforeFail, 'the failing path writes nothing either, and repairs nothing');
 });
 
+// antigravity install takes --dest; doctor read only the default location, so a copy installed elsewhere read as
+// absent and the repair line it printed would have installed a second copy instead of refreshing the live one.
+test('doctor follows --dest, the way the installer does', () => {
+  const home = fakeHome();
+  const elsewhere = path.join(fakeHome(), 'plugins', 'bearingkit');
+  install({ root: ROOT, dest: elsewhere });
+
+  const blind = spawnSync(process.execPath, [BIN, 'doctor'], { encoding: 'utf8', env: { ...process.env, HOME: home, USERPROFILE: home } });
+  assert.notEqual(blind.status, 0, 'the default location holds no copy, so this run must fail');
+
+  const aimed = spawnSync(process.execPath, [BIN, 'doctor', '--dest', elsewhere], { encoding: 'utf8', env: { ...process.env, HOME: home, USERPROFILE: home } });
+  assert.equal(aimed.status, 0, `the copy at --dest is healthy\n${aimed.stdout}${aimed.stderr}`);
+  assert.match(aimed.stdout, /ok {2}\s+antigravity copy present/);
+});
+
 test('doctor creates nothing in a profile where the kit was never installed', () => {
   const home = fakeHome();
   const r = runDoctorCli(home);
