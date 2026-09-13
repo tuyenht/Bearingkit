@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-13** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · 83 commit · 50/50 test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-13)
+Cập nhật: **2026-09-13** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · 85 commit (83 trước lượt rà soát 2026-09-13, cộng 2 commit của chính nó) · 50/50 test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-13)
 
 > **File này là BẢNG ĐIỀU KHIỂN, không phải nguồn sự thật.** Nó chỉ trỏ đường và ghi trạng thái; mọi nội dung thật nằm ở nơi khác:
 >
@@ -33,21 +33,23 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 
 ---
 
-## 2. "Hoàn thành" là gì — 12 mục, hôm nay **2/12**
+## 2. "Hoàn thành" là gì — 12 mục; hôm nay **0 mục đạt có phép đo**, 1 mục đạt theo thiết kế, 11 mục chưa
 
 Đây là bản suy ra từ ba nơi, không phải luật mới: `v1 §17` (Success metrics v1.0), `v2 §13` (hàng v1.0), `v2 §5.3` (quality bar mỗi skill). Kit xem là hoàn thành khi cả 12 dòng dưới đây đóng.
+
+> **Sửa của lượt tự-audit 2026-09-13:** bản đầu của mục này ghi "2/12", đếm mục 9 và mục 10 là đạt. Sai ở mục 9: `v1 §17` đòi "**every skill carries provenance and license mode**; NOTICE complete" — bản đầu chỉ giữ nửa sau (`NOTICE`) rồi cho điểm đạt. `grep -l 'Adapted from' skills/*/SKILL.md` → **không SKILL.md nào nêu nguồn**, nên mục 9 chưa đạt. Mục 10 đạt theo thiết kế nhưng không có phép kiểm nào canh, nên không đếm là đạt có bằng chứng.
 
 | # | Mục (nguồn) | Đích | Hôm nay |
 |---|---|---|---|
 | 1 | Catalog đủ skill (v2 §5.1) | 17 | **11/17** |
 | 2 | Mỗi skill đạt cả 5 điều kiện quality bar (v2 §5.3) | 17/17 | **0/17** — không skill nào có `tests/` |
 | 3 | File stack (v2 §5.5) | 8 | **0/8** |
-| 4 | Nguồn cần nội dung đã có quyết định + `NOTICE`/`derived` khi lấy chữ | 11 | **2/11** |
-| 5 | Fixed context ≤5,000 đo bằng `/context` trên bản v2 (v1 §17, v2 §12) | 1 số | **chưa đo** |
+| 4 | Nguồn **lấy chữ hoặc lấy ý** đã có quyết định + `NOTICE`/`derived` khi lấy chữ | 11 | **2/11** — mẫu số 11 chỉ gồm `adapt` + `ideas-only`; 11 nguồn `reference` không nằm ở đây nhưng vẫn sinh việc, và việc đó được đếm ở mục 1–3 (ví dụ awesome-cursorrules và vercel agent-skills là nguyên liệu của file stack, mục 3) |
+| 5 | Fixed context ≤5,000 đo bằng `/context` trên bản v2 (v1 §17, v2 §12) | 1 số | **chưa đo trên v2** — số v1 (~2,650) vẫn là bằng chứng về độ lớn (`phase-1-gate.md` tự ghi "the measurements stand"), nhưng §11 đòi đọc lại ở mốc phát hành |
 | 6 | Activation precision ≥0.9 và recall ≥0.9, cả hai host, trên bản v2 (v1 §17) | 2 host | **chưa đo trên v2** |
-| 7 | Outcome benchmark: 12 task, kit ≥ Superpowers về pass rate và ít token hơn (v1 §17) | 12 task | **0/12 — chưa có task nào** |
+| 7 | Outcome benchmark: 12 task, kit ≥ Superpowers về pass rate và ít token hơn (v1 §17) | 12 task | **0/12** — `evals/fixtures/` chỉ có `sample-app`, không có task suite nào |
 | 8 | `upstream-watch` ra báo cáo delta cho mọi nguồn, tối thiểu mỗi tháng (v1 §17) | 1 lệnh chạy được | **chưa có mã** |
-| 9 | `NOTICE` đầy đủ cho mọi nguồn đã port (v1 §17) | không nợ | **đạt** (1 mục cho 1 nguồn đã port; không nghĩa vụ treo) |
+| 9 | Mỗi skill mang provenance + license mode, và `NOTICE` đầy đủ (v1 §17) | 17 skill + `NOTICE` | **chưa đạt** — `NOTICE` không nợ gì, nhưng không SKILL.md nào nêu nguồn (`grep -l 'Adapted from' skills/*/SKILL.md` → rỗng); provenance hiện chỉ nằm ở file `references/` |
 | 10 | Không file cấu hình kit nào trong project (v1 §17, v2 §9) | 0 | **đạt theo kiến trúc**, chưa có test canh |
 | 11 | Host owner thực dùng đã qua acceptance (v2 §3, câu 8) | 6 | **2/6** (4 host còn lại phải chạy trên máy khác) |
 | 12 | Việc phát hành: README EN+VI, CI, marketplace listing, publish từ history squash (v2 §13) | 4 | **0/4** |
@@ -129,15 +131,17 @@ Ba mục đầu (a–c) thừa hưởng từ `docs/handoff/2026-09-12.md`; bốn
 - (f) **`README.md` mục `## License` còn trỏ `package.json`** ("MIT (see `package.json`)") trong khi `LICENSE` đã tồn tại từ `7cbf4be`; `NOTICE` đã được cập nhật, README thì chưa.
 - (g) **`AGENTS.md` dòng 3 còn trỏ `core/AGENTS.md`** là "file chỉ dẫn của sản phẩm", nhưng `core/` đã bị xoá trong restructure v2 (`97843c4`) và nội dung đó nay là `skills/bk-protocol/SKILL.md`. Đây là câu đầu tiên mọi agent mới đọc, nên đường dẫn chết ở đúng chỗ đó là loại lệch đắt nhất. Chưa sửa vì nằm ngoài việc owner giao lượt này (sửa từng cái một, không dồn).
 
-**Lượt 2026-09-13 đã ghi gì vào repo:** file này (mới, rồi bổ sung §2 và §8), và **một dòng** trong `AGENTS.md` mục "Where the truth lives" trỏ tới file này — không có gì khác. Bảy mục (a)–(g) ở trên đều chưa sửa.
+- (h) **`scripts/detect-stack.cjs` không nhận Terraform/HCL** (`grep -in 'terraform\|hcl'` → rỗng), nên trên một repo chỉ có `.tf` nó ném `no-manifest` và skill không có stack profile nào để đọc. Đây là khoảng trống so với công việc hằng ngày của owner, **không phải lệch so với spec**: §5.5 tự ghi danh sách 8 stack là "at first; others as the inventory shows sources", tức là danh sách mở. Lượt rà soát đầu (phần trả lời 2026-09-13) trình bày chỗ này như một lệch của spec — đó là đọc sót cụm "at first", đã sửa lại ở đây.
+
+**Lượt 2026-09-13 đã ghi gì vào repo:** file này (mới, rồi bổ sung §2, rồi tự-audit sửa §2/§7/§8), `docs/handoff/2026-09-13.md`, và **một dòng** trong `AGENTS.md` mục "Where the truth lives" trỏ tới file này — không có gì khác. Tám mục (a)–(h) ở trên đều chưa sửa.
 
 ---
 
-## 8. Rủi ro lớn nhất hiện nay: kit chưa được dùng thật
+## 8. Rủi ro mở
 
-Ghi lại vì nó không nằm ở đâu khác trong repo: kit đã có 11 skill, 2 host pass acceptance, nhưng **chưa có bằng chứng nào về việc nó được dùng cho một việc thật**. `docs/plans/2026-09-10-owner-migration.md` (Phase 2: bỏ Spartan, bỏ ClaudeKit, bỏ plugin Superpowers) vẫn ở trạng thái `PLANNED`; phép đo duy nhất về profile hằng ngày là 71.9k token memory của bộ kit cũ (`docs/compat/phase-1-gate.md`). Nghĩa là: mỗi phiên viết nội dung cho kit đang được điều khiển bởi bộ kit cũ, không phải bởi kit này.
+Luồng mở và rủi ro thuộc handoff, không thuộc file này (luật #3 ở §10). Rủi ro lớn nhất đang mở — **không có bằng chứng trong repo về việc kit được dùng cho một việc thật ngoài eval và acceptance**, trong khi `owner-migration.md` còn `PLANNED` — nằm ở `docs/handoff/2026-09-13.md`, Block 2, Open threads, kèm giới hạn của bằng chứng đó.
 
-Hệ quả: các "field lesson" mà spec §5.3 đòi (mỗi dòng trong body phải truy được về một nguồn hoặc một bài học thực địa) không được sinh thêm. `v2 §13` xếp "agents in daily use" vào v0.3, nhưng không có mục nào đòi *skills* in daily use ở bất cứ mốc nào.
+Bản đầu của file này (cùng ngày) viết mục này thành một đoạn lập luận dài, vi phạm chính luật #3 nó đặt ra; lượt tự-audit rút xuống thành con trỏ này.
 
 ---
 
