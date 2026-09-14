@@ -72,5 +72,13 @@
   "bk-audit": [
     "audit",
     "brainstorming"
+  ],
+  "bk-design": [
+    "frontend-design",
+    "design",
+    "ui-ux-pro-max",
+    "ui-styling",
+    "web-design-guidelines",
+    "ux"
   ]
 }

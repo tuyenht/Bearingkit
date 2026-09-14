@@ -2,6 +2,14 @@
 
 Bearingkit is distributed under the MIT license in `LICENSE` (declared in `package.json`). Parts of `skills/` are adapted from other open-source projects. Each entry below names the project, its license, the exact version, and the kit files that derive from it; `upstream/sources.json` records the same with the commit sha and the file-level map, and every derived file names its sources in its opening paragraph. Nothing here changes the license of the kit; the notices below are kept as their licenses require.
 
+## anthropics/claude-plugins-official
+
+- Repository: https://github.com/anthropics/claude-plugins-official, commit `3b600518a637492d37c9877aeb49c2a55d939c04` (recorded in `upstream/sources.json`, read 2026-09-14).
+- License: Apache License 2.0. The repository ships the licence text at `LICENSE` and no `NOTICE` file, so there is no upstream notice to carry forward; the plugin declares its author as Anthropic (`plugins/frontend-design/.claude-plugin/plugin.json`).
+- Adapted into `skills/bk-design/references/distinctive-ui.md` from `plugins/frontend-design/skills/frontend-design/SKILL.md`. The file is rewritten in the kit's form: the generic-default clusters, the typographic tells, the motion and hero rules, the two-pass process, the restraint rule and the writing rules are retained; the studio-persona framing and the client-relationship prose are not.
+- The same text ships byte-identical in `anthropics/skills` at `skills/frontend-design/SKILL.md` (SHA-256 `b8009ae690dfa69edc7f08bb8715f32db8817112cfa4388741dbaf876c237df8`, checked 2026-09-11 and again 2026-09-14). This repository is named as the provenance because its release cycle is the clearer one, a decision recorded as question 14 of `docs/specs/2026-09-12-d5-owner-questions.md`.
+- Nothing from `code-review`, `pr-review-toolkit` or `claude-code-setup` in the same repository is vendored yet; when they are, this entry gains their files.
+
 ## obra/superpowers 5.1.0
 
 - Repository: https://github.com/obra/superpowers, tag `v5.1.0`, commit `f2cbfbefebbfef77321e4c9abc9e949826bea9d7` (verified 2026-09-11 against the Claude Code plugin cache of the same version).

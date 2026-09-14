@@ -26,12 +26,12 @@ test('parseStream returns none without a Skill call', () => {
 const PHASE1 = ['question', 'small', 'feature', 'bug', 'review', 'ship'];
 // Spec §11 extends the set by "two positives and one negative per new skill"; each skill intent is named after its
 // skill, so `plan` holds the prompts that must reach bk-plan.
-const SKILL_INTENTS = ['plan', 'close', 'audit', 'next', 'test'];
+const SKILL_INTENTS = ['plan', 'close', 'audit', 'next', 'test', 'design'];
 const promptSet = () => loadPrompts(path.join(__dirname, '..', 'evals', 'activation', 'phase-1.jsonl'));
 
 test('the set keeps Phase 1 at sixty and adds three per skill intent, with unique ids', () => {
   const prompts = promptSet();
-  assert.equal(prompts.length, 75);
+  assert.equal(prompts.length, 78);
   assert.equal(new Set(prompts.map((p) => p.id)).size, prompts.length, 'ids are unique');
 
   // Phase 1's sixty are the baseline every later run is compared against, so their shape may not drift.
@@ -59,9 +59,6 @@ test('the set keeps Phase 1 at sixty and adds three per skill intent, with uniqu
   for (const e of expects) assert.ok(e === 'none' || /^bk-[a-z]+$/.test(e), e);
 });
 
-// The gap this closes: for three days the set measured five skills while ten were installed, and nothing said so.
-// bk-plan, bk-close, bk-audit and bk-next had no prompt at all, so a routing regression in any of them was invisible.
-// A skill that ships without prompts now fails the suite instead of failing silently in a gate run.
 // A prompt that names a file the fixture does not have sends the model hunting, and a hunt can end in a skill call
 // the run then scores as a false activation — the "fixture gap behind sm-en-04" of the Phase 1 gate was this. Phase 1
 // is frozen as the baseline and carries one known instance: q-en-01 names src/http/retry.ts, which the fixture never
@@ -80,6 +77,10 @@ test('prompts outside Phase 1 name only files the fixture actually has', () => {
   assert.ok(checked >= 3, 'the check means nothing unless some prompts name files; they stopped doing so');
 });
 
+// The gap this closes: for three days the set measured five skills while ten were installed, and nothing said so.
+// bk-plan, bk-close, bk-audit and bk-next had no prompt at all, so a routing regression in any of them was invisible.
+// A skill that ships without prompts now fails the suite instead of failing silently in a gate run; it is what
+// caught bk-design half-built on 2026-09-14, before its prompts existed.
 test('every task skill that exists has at least two positive prompts', () => {
   const fs = require('node:fs');
   const skills = fs.readdirSync(path.join(__dirname, '..', 'skills'))
@@ -149,15 +150,15 @@ test('--per-intent takes a spread: English positive, Vietnamese positive, negati
   const { sample } = require('../scripts/evals.cjs');
   const prompts = loadPrompts(path.join(__dirname, '..', 'evals', 'activation', 'phase-1.jsonl'));
   const three = sample(prompts, 3);
-  // Eleven intents at three each: the six of Phase 1 and the five skill intents, which hold exactly three anyway.
-  assert.equal(three.length, 33);
+  // Twelve intents at three each: the six of Phase 1 and the six skill intents, which hold exactly three anyway.
+  assert.equal(three.length, 36);
   for (const intent of [...PHASE1, ...SKILL_INTENTS]) {
     const g = three.filter((p) => p.intent === intent);
     assert.equal(g.filter((p) => p.lang === 'en' && !p.id.includes('-neg-')).length, 1, `${intent} en`);
     assert.equal(g.filter((p) => p.lang === 'vi' && !p.id.includes('-neg-')).length, 1, `${intent} vi`);
     assert.equal(g.filter((p) => p.id.includes('-neg-')).length, 1, `${intent} neg`);
   }
-  assert.equal(sample(prompts, 10).length, 75, 'asking for more than exists returns everything');
+  assert.equal(sample(prompts, 10).length, 78, 'asking for more than exists returns everything');
   assert.equal(sample(prompts, 4).filter((p) => p.intent === 'bug').map((p) => p.id).join(','), 'bug-en-01,bug-en-02,bug-vi-01,bug-neg-01');
 });
 

@@ -73,3 +73,6 @@
 {"id": "test-en-01", "intent": "test", "lang": "en", "prompt": "Write tests for the invoice list API route in src/app/api/invoices/route.ts.", "expect": "bk-test"}
 {"id": "test-vi-01", "intent": "test", "lang": "vi", "prompt": "Viết test cho form đăng ký ở src/app/signup/page.tsx.", "expect": "bk-test"}
 {"id": "test-neg-01", "intent": "test", "lang": "en", "prompt": "The settings test started failing right after the cache change; work out why.", "expect": "bk-debug"}
+{"id": "design-en-01", "intent": "design", "lang": "en", "prompt": "Design a landing page for a tool that tracks bearing wear in industrial pumps.", "expect": "bk-design"}
+{"id": "design-vi-01", "intent": "design", "lang": "vi", "prompt": "Thiết kế lại màn hình cài đặt cho gọn và dễ nhìn hơn.", "expect": "bk-design"}
+{"id": "design-neg-01", "intent": "design", "lang": "en", "prompt": "Apply the palette and spacing from the design doc we already agreed to the settings page.", "expect": "bk-build"}

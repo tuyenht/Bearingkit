@@ -280,3 +280,28 @@ Yêu cầu tiếp theo của owner: sửa những gì mục 1–3 đã xác minh
 Không mục nào trong sáu việc trên đổi rank, đổi quyết định absorb/idea/drop, hay đổi mode của bất kỳ nguồn nào — chỉ sửa số sai, làm rõ diễn đạt mập mờ, và dán nhãn "kế hoạch" cho số mô tả việc chưa xảy ra, đúng phạm vi owner cho phép.
 
 *Mục 4 ghi 2026-09-12. Lệnh dùng để xác minh trước khi sửa: đọc lại nguyên văn D3 (`Read`), `grep -in Skillmark` toàn repo, đối chiếu với các lệnh đã chạy trong mục 2–3 (không chạy lại — kết quả 2026-09-11 dùng nguyên vì cùng đối tượng trên đĩa, chưa có gì thay đổi giữa hai lượt).*
+
+---
+
+# Kiểm kê mức từng mục · anthropics/claude-plugins-official → frontend-design, 2026-09-14
+
+Đây là kiểu kiểm kê mà §5.2 mô tả, làm **cho đúng một nguồn** — nguồn mà Task 6b thật sự port — chứ không phải lượt kiểm kê toàn bộ. Lượt toàn bộ vẫn chưa chạy; câu 12 chỉ được nới cho riêng `bk-design` (quyết định của owner 2026-09-14), mọi skill khác vẫn chờ.
+
+Nguồn: `_build/upstream/claude-plugins-official/plugins/frontend-design/skills/frontend-design/SKILL.md`, commit `3b60051`, Apache-2.0, 71 dòng. Bản trong `anthropics/skills` **byte-identical** (SHA-256 `b8009ae6…c237df8`, kiểm 2026-09-11 và lại 2026-09-14), nên chọn repo nào cũng không mất chữ nào; câu 14 chốt repo plugin.
+
+| # | Mục trong nguồn | Quyết định | Hạ cánh ở đâu · lý do |
+|---|---|---|---|
+| 1 | Năm cụm mặc định của thiết kế do AI sinh (cream+terracotta, near-black+acid, broadsheet, SaaS-card, template chrome) | **absorb** | `references/distinctive-ui.md` — đây là phần có giá trị nhất và không nguồn nào khác trong ma trận có |
+| 2 | Ba dấu hiệu typography (nhấn một từ, all-caps label, label thừa phía trên) | **absorb** | cùng file |
+| 3 | Quy tắc motion (một khoảnh khắc dàn dựng, không fade-slide mọi section) | **absorb** | cùng file |
+| 4 | Quy tắc hero (mở bằng thứ đặc trưng nhất của chủ đề) | **absorb** | cùng file |
+| 5 | Quy trình hai lượt: viết plan (4–6 hex, typeface + vai trò, wireframe ASCII, nguyên tắc) rồi **review plan trước khi code** | **absorb** | cùng file, và thành Gate của `bk-design` — đây là thứ biến hướng dẫn thành một cổng kiểm được |
+| 6 | Quy tắc viết chữ trong giao diện (đặt tên theo người dùng, active voice, một tên cho một hành động, lỗi và trạng thái rỗng là chỉ dẫn) | **absorb** | cùng file |
+| 7 | Ghi chú CSS specificity (`.section` vs `.cta` triệt tiêu nhau) | **absorb** | cùng file, giữ nguyên ý vì nó là một lỗi cụ thể lặp lại |
+| 8 | Quy tắc restraint (dồn táo bạo vào một chỗ; bỏ bớt một thứ trước khi ship) | **absorb** | cùng file + Gates |
+| 9 | Sàn chất lượng (responsive, focus bàn phím, reduced motion, contrast) | **absorb** | Gates của `bk-design`, vì nó là điều kiện kiểm được chứ không phải lời khuyên |
+| 10 | Khung nhân vật "design lead ở studio", quan hệ với khách hàng | **drop** | Giọng persona; kit mô tả hành động, không đóng vai (§5.4) |
+| 11 | Gợi ý tự ghi chú lại những gì đã thử | **drop** | Trùng chức năng với handoff của `bk-close` |
+| 12 | Câu "a picture is worth 1000 tokens" và lời khuyên chụp màn hình | **idea** | Thành một bước trong Steps (critique có screenshot khi host làm được), không lấy chữ |
+
+Nghĩa vụ Apache-2.0 đã làm cùng lúc, đúng ba việc đã ghi ở handoff 2026-09-12: file dẫn xuất nêu nguồn ở đoạn mở đầu, `NOTICE` có mục mới, `upstream/sources.json` có `derived` + `absorbed`. Repo nguồn **không có file `NOTICE`**, nên không có notice thượng nguồn nào phải mang theo; đã kiểm bằng `find`.

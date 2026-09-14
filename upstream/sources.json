@@ -140,7 +140,12 @@
         "plugins/claude-code-setup/skills/claude-automation-recommender/references/subagent-templates.md",
         "plugins/security-guidance/hooks/patterns.py"
       ],
-      "derived": {}
+      "derived": {
+        "skills/bk-design/references/distinctive-ui.md": [
+          "plugins/frontend-design/skills/frontend-design/SKILL.md"
+        ]
+      },
+      "absorbed": "2026-09-14 - frontend-design only. The kit file keeps the generic-default clusters, the typographic tells, the motion and hero rules, the two-pass plan-then-review process, the restraint rule and the writing rules, rewritten in the kit's form; it drops the studio-persona framing and the client-relationship prose. The same text ships byte-identical in anthropics/skills (SHA-256 b8009ae690dfa69edc7f08bb8715f32db8817112cfa4388741dbaf876c237df8, checked 2026-09-11 and 2026-09-14); this repository is recorded as the provenance per question 14 of the D5 batch. code-review, pr-review-toolkit and claude-code-setup from the same repository are not yet ported."
     },
     {
       "name": "multica-ai/andrej-karpathy-skills",

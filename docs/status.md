@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-14** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · 85 commit (83 trước lượt rà soát 2026-09-13, cộng 2 commit của chính nó) · **59/59** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-14 sau Task 4)
+Cập nhật: **2026-09-14** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · 96 commit (đếm trước commit đóng của lượt 2026-09-14) · **59/59** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-14 sau Task 6b)
 
 > **File này là BẢNG ĐIỀU KHIỂN, không phải nguồn sự thật.** Nó chỉ trỏ đường và ghi trạng thái; mọi nội dung thật nằm ở nơi khác:
 >
@@ -15,19 +15,19 @@ Cập nhật: **2026-09-14** · Nhánh `main` · `package.json` 0.1.0 · tag duy
 
 ## 1. Đang ở đâu
 
-Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc, cài bằng lệnh của từng host, không installer). Hai host đã qua acceptance test. Phần **máy móc** gần như xong; phần **nội dung** — chắt lọc các nguồn thành bộ skill chuẩn — mới đi được 2 trong 11 nguồn cần nội dung. Đang ở giữa mốc **v0.2**, và cổng v0.2 còn 2/3 điều kiện chưa đo trên bản v2.
+Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc, cài bằng lệnh của từng host, không installer). Hai host đã qua acceptance test. Phần **máy móc** gần như xong; phần **nội dung** — chắt lọc các nguồn thành bộ skill chuẩn — mới đi được 3 trong 11 nguồn cần nội dung. Đang ở giữa mốc **v0.2**, và cổng v0.2 còn 2/3 điều kiện chưa đo trên bản v2.
 
 | Đếm được hôm nay | Số | Lệnh / nguồn |
 |---|---|---|
-| Skill trong catalog §5.1 đã tồn tại | 11/17 (10 skill hiện + `bk-protocol`) | `ls skills/` |
-| — còn thiếu | `bk-map`, `bk-research`, `bk-design`, `bk-perf`, `bk-db`, `bk-ops` | §5.1 |
+| Skill trong catalog §5.1 đã tồn tại | **12/17** (11 skill hiện + `bk-protocol`) | `ls skills/` |
+| — còn thiếu | `bk-map`, `bk-research`, `bk-perf`, `bk-db`, `bk-ops` | §5.1 |
 | Nguồn trong `upstream/sources.json` | 22 (adapt 5 · ideas-only 6 · reference 11) | đọc file bằng `node -e` |
-| — nguồn **cần nội dung** (adapt + ideas-only) | 11, đã xong 2 (superpowers, karpathy) | cùng lệnh |
-| — nguồn đã có `derived` (chữ thật đã port) | 2 | cùng lệnh |
-| Mục trong `NOTICE` | 1 (obra/superpowers) | `grep '^##' NOTICE` |
+| — nguồn **cần nội dung** (adapt + ideas-only) | 11, đã xong **3** (superpowers, karpathy, claude-plugins-official một phần) | cùng lệnh |
+| — nguồn đã có `derived` (chữ thật đã port) | **3** | cùng lệnh |
+| Mục trong `NOTICE` | **2** (obra/superpowers, anthropics/claude-plugins-official) | `grep '^##' NOTICE` |
 | Hàng nguồn trong ma trận | 39 (gồm host candidate, tool, và 8 mục owner loại) | `grep -c '^\| [0-9]'` |
 | Test | 59/59 xanh | `node --test tests/*.test.cjs` |
-| `skills/<name>/tests/` (§5.3 cần ≥3 prompt mỗi skill) | **8/10** — 24 case cho tám skill lifecycle; `bk-audit` và `bk-next` thuộc v0.3 | `find skills -type d -name tests` |
+| `skills/<name>/tests/` (§5.3 cần ≥3 prompt mỗi skill) | **9/11** — 27 case; `bk-audit` và `bk-next` thuộc v0.3 | `find skills -type d -name tests` |
 | `SKILL.md` có dòng provenance + license mode | 11/11 skill đang tồn tại | `grep -h '^Sources:' skills/*/SKILL.md`, có test canh |
 | File stack `bk-build/references/stacks/` (§5.5 cần 8) | 0/8 | thư mục chưa tồn tại |
 | Host đã pass acceptance | 2/7 (Claude Code, Antigravity) | `docs/hosts.md` |
@@ -42,15 +42,15 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 
 | # | Mục (nguồn) | Đích | Hôm nay |
 |---|---|---|---|
-| 1 | Catalog đủ skill (v2 §5.1) | 17 | **11/17** |
+| 1 | Catalog đủ skill (v2 §5.1) | 17 | **12/17** — `bk-design` thêm 2026-09-14 |
 | 2 | Mỗi skill đạt cả 5 điều kiện quality bar (v2 §5.3) | 17/17 | **0/17 đủ cả năm, nhưng tám skill lifecycle nay đạt 4/5**: #1 body ≤100 dòng, #3 `tests/` ≥3 case (2026-09-14), #4 activation prompt (2026-09-14), #5 acceptance trên hai host. Điều kiện còn thiếu cho cả tám là **#2** — mỗi *dòng luật* trong body truy được về một nguồn hoặc một field lesson; dòng `Sources:` nêu nguồn của skill chứ chưa chứng minh từng dòng |
 | 3 | File stack (v2 §5.5) | 8 | **0/8** |
-| 4 | Nguồn **lấy chữ hoặc lấy ý** đã có quyết định + `NOTICE`/`derived` khi lấy chữ | 11 | **2/11** — mẫu số 11 chỉ gồm `adapt` + `ideas-only`; 11 nguồn `reference` không nằm ở đây nhưng vẫn sinh việc, và việc đó được đếm ở mục 1–3 (ví dụ awesome-cursorrules và vercel agent-skills là nguyên liệu của file stack, mục 3) |
+| 4 | Nguồn **lấy chữ hoặc lấy ý** đã có quyết định + `NOTICE`/`derived` khi lấy chữ | 11 | **3/11** — mẫu số 11 chỉ gồm `adapt` + `ideas-only`; 11 nguồn `reference` không nằm ở đây nhưng vẫn sinh việc, và việc đó được đếm ở mục 1–3 (ví dụ awesome-cursorrules và vercel agent-skills là nguyên liệu của file stack, mục 3) |
 | 5 | Fixed context ≤5,000 đo bằng `/context` trên bản v2 (v1 §17, v2 §12) | 1 số | **chưa đo trên v2** — số v1 (~2,650) vẫn là bằng chứng về độ lớn (`phase-1-gate.md` tự ghi "the measurements stand"), nhưng §11 đòi đọc lại ở mốc phát hành |
 | 6 | Activation precision ≥0.9 và recall ≥0.9, cả hai host, trên bản v2 (v1 §17) | 2 host | **chưa đo trên v2** |
 | 7 | Outcome benchmark: 12 task, kit ≥ Superpowers về pass rate và ít token hơn (v1 §17) | 12 task | **0/12** — `evals/fixtures/` chỉ có `sample-app`, không có task suite nào |
 | 8 | `upstream-watch` ra báo cáo delta cho mọi nguồn, tối thiểu mỗi tháng (v1 §17) | 1 lệnh chạy được | **chưa có mã** |
-| 9 | Mỗi skill mang provenance + license mode, và `NOTICE` đầy đủ (v1 §17) | 17 skill + `NOTICE` | **11/17** — đủ cho mọi skill đang tồn tại kể từ Task 2 (2026-09-13): mỗi `SKILL.md` có một dòng `Sources:` nêu nguồn và license mode, và `tests/skills.test.cjs` canh để dòng đó không khai ít hơn thứ `references/` thật sự vendor; 6 skill chưa tồn tại là phần còn lại |
+| 9 | Mỗi skill mang provenance + license mode, và `NOTICE` đầy đủ (v1 §17) | 17 skill + `NOTICE` | **12/17** — đủ cho mọi skill đang tồn tại kể từ Task 2 (2026-09-13): mỗi `SKILL.md` có một dòng `Sources:` nêu nguồn và license mode, và `tests/skills.test.cjs` canh để dòng đó không khai ít hơn thứ `references/` thật sự vendor; 5 skill chưa tồn tại là phần còn lại |
 | 10 | Không file cấu hình kit nào trong project (v1 §17, v2 §9) | 0 | **đạt theo kiến trúc**, chưa có test canh |
 | 11 | Host owner thực dùng đã qua acceptance (v2 §3, câu 8) | 6 | **2/6** (4 host còn lại phải chạy trên máy khác) |
 | 12 | Việc phát hành: README EN+VI, CI, marketplace listing, publish từ history squash (v2 §13) | 4 | **0/4** |
