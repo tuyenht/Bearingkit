@@ -233,7 +233,11 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 21. Đề xuất sửa AGENTS.md: COUNCIL chỉ áp cho ghi, đọc-có-test-bất-biến là ACT
 *(MỚI — không nằm trong 20 câu gốc của D5 (mục 0). Phát sinh từ câu hỏi phụ của owner ở câu 3; ghi vào batch theo yêu cầu 2026-09-12. Đánh số 21 để không xáo trộn số thứ tự 1–20 đã dùng khắp file.)*
-> **Nhãn: ĐỀ XUẤT CỦA PHIÊN — KHÔNG PHẢI QUYẾT ĐỊNH OWNER. CHƯA DUYỆT.**
+> **ĐÃ CHỐT 2026-09-15 — quyết định của owner: SỬA, theo hướng tách đọc/ghi.** `AGENTS.md` mục Autonomy nay ghi: **đọc** `~/.claude`/`~/.gemini` **bằng một lệnh của kit có bất biến không-ghi được test cưỡng chế** (hôm nay là `bearingkit doctor`, đo bởi `tests/doctor.test.cjs` chạy trong HOME riêng và so cây thư mục từng byte trước/sau) là **ACT**; mọi **lệnh ghi** (`antigravity install`, `uninstall`) vẫn **COUNCIL**; đọc bằng bất cứ cách nào khác — lệnh tuỳ hứng, công cụ không có bất biến đó — vẫn COUNCIL. Đã thi hành cùng ngày.
+>
+> **Ma sát cuối cùng dẫn tới quyết định (đo lần thứ tư, 2026-09-13 → 2026-09-15):** trong ba ngày owner phải tự gõ `doctor`/`antigravity install` bốn lần, và owner hỏi hai lần "sao không tự chạy được". Lần chạy đầu tiên của phiên ngay sau khi luật đổi báo `FAIL antigravity copy of skills/ matches this checkout` — đúng drift do Task 5 và 6b tạo ra, tức là công cụ trả lời được câu hỏi mà trước đó không ai hỏi được nếu owner không ngồi gõ.
+>
+> *(Nhãn cũ, giữ để đọc được lịch sử: ĐỀ XUẤT CỦA PHIÊN — KHÔNG PHẢI QUYẾT ĐỊNH OWNER. CHƯA DUYỆT.)*
 - **Cần quyết định:** Có sửa `AGENTS.md` để COUNCIL chỉ áp cho **ghi/thay đổi** vào `~/.claude`, `~/.gemini`, repo khác, server; còn **đọc** bởi một công cụ có bất biến "không ghi" được kiểm bằng test tự động (như `doctor`, câu 2) thì là ACT — hay không?
 - **Lựa chọn:** sửa AGENTS.md theo hướng trên / giữ nguyên (mọi chạm vào `~/.claude`, `~/.gemini` đều là COUNCIL, không phân biệt đọc/ghi).
 - **Bị chặn:** Không gì cấp bách. Owner nói rõ: hoãn tới khi `doctor` thực sự được viết và ma sát thật được đo — không quyết trước dựa trên suy đoán.
