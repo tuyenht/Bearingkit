@@ -63,10 +63,21 @@ function parseQuota(text) {
       const w = o.rate_limit_info.unifiedWindows || {};
       const fh = w.five_hour || {};
       // The top-level resetsAt belongs to whichever window the event is about; the five-hour window carries its own.
-      last = { fiveHour: fh.utilization ?? null, sevenDay: w.seven_day ? w.seven_day.utilization : null, resetsAt: fh.resetsAt || o.rate_limit_info.resetsAt || null, status: o.rate_limit_info.status };
+      last = { fiveHour: fh.utilization ?? null, sevenDay: w.seven_day ? w.seven_day.utilization : null, resetsAt: fh.resetsAt || o.rate_limit_info.resetsAt || null, sevenDayResetsAt: w.seven_day ? w.seven_day.resetsAt || null : null, status: o.rate_limit_info.status };
     }
   }
   return last;
+}
+
+// A run stops itself before it exhausts the account. Returns the window that is at or over its ceiling, or null.
+function quotaStop(quota, limits) {
+  if (!quota) return null;
+  if (quota.fiveHour != null && quota.fiveHour >= limits.fiveHour) return { window: 'five-hour', used: quota.fiveHour, limit: limits.fiveHour, resetsAt: quota.resetsAt };
+  // The seven-day window is the expensive one to hit: it refills over days, so a run that exhausts it takes the
+  // owner's own tool away for the rest of the week. It went unguarded until 2026-09-15, when a seventy-eight prompt
+  // run was about to start with that window already at 89%.
+  if (quota.sevenDay != null && quota.sevenDay >= limits.sevenDay) return { window: 'seven-day', used: quota.sevenDay, limit: limits.sevenDay, resetsAt: quota.sevenDayResetsAt || null };
+  return null;
 }
 
 // Claude Code loads, for every ancestor of the working directory, CLAUDE.md, CLAUDE.local.md, .claude/CLAUDE.md and
@@ -292,10 +303,11 @@ async function run(argv) {
   if (args['stage-only']) return;
   const opts = { model: args.model || 'sonnet', configDir: args['config-dir'] ? path.resolve(args['config-dir']) : null, cwd, turns: args.turns ? Number(args.turns) : 6, pluginDir: args['plugin-dir'] === 'none' ? null : path.resolve(String(args['plugin-dir'] || ROOT)) };
   const equivalents = args.equivalents ? JSON.parse(fs.readFileSync(path.resolve(args.equivalents), 'utf8')) : null;
-  const maxUtil = args['max-utilization'] ? Number(args['max-utilization']) : 0.9;
+  const limits = { fiveHour: args['max-utilization'] ? Number(args['max-utilization']) : 0.9, sevenDay: args['max-seven-day'] ? Number(args['max-seven-day']) : 0.95 };
   const tag = args.tag ? '-' + String(args.tag).replace(/[^a-z0-9-]/gi, '') : '';
   const results = [];
   let quota = null;
+  let stopped = null;
   for (const p of prompts) {
     if (resetFixture && !resetFixture()) process.stdout.write('warning: fixture reset failed before ' + p.id + '\n');
     const r = runClaudePrompt(p.prompt, opts);
@@ -304,18 +316,22 @@ async function run(argv) {
     quota = r.quota || quota;
     process.stdout.write(`${p.id.padEnd(12)} expect=${p.expect.padEnd(10)} got=${r.got.padEnd(10)} ${passes(row, equivalents) ? 'ok' : 'MISS'}\n`);
     if (args.raw) fs.writeFileSync(path.join(outDir, `${date}-${p.id}${tag}.raw.jsonl`), r.raw);
-    if (quota && quota.fiveHour !== null && quota.fiveHour >= maxUtil) {
-      process.stdout.write(`stopping: five-hour window at ${Math.round(quota.fiveHour * 100)}% (limit ${Math.round(maxUtil * 100)}%), resets ${quota.resetsAt ? new Date(quota.resetsAt * 1000).toLocaleString() : 'unknown'}; rerun the rest with --id\n`);
+    const stop = quotaStop(quota, limits);
+    if (stop) {
+      stopped = stop;
+      const rest = prompts.slice(prompts.indexOf(p) + 1).map((x) => x.id);
+      process.stdout.write(`stopping: ${stop.window} window at ${Math.round(stop.used * 100)}% (limit ${Math.round(stop.limit * 100)}%), resets ${stop.resetsAt ? new Date(stop.resetsAt * 1000).toLocaleString() : 'unknown'}\n`);
+      if (rest.length) process.stdout.write(`rerun the remaining ${rest.length} with --id ${rest.join(',')}\n`);
       break;
     }
   }
   if (resetFixture) resetFixture();
   const summary = summarize(results, equivalents);
   const quotaNote = quota ? ` · quota after run: five-hour ${Math.round((quota.fiveHour || 0) * 100)}%, seven-day ${Math.round((quota.sevenDay || 0) * 100)}%` : '';
-  const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · plugin: ${opts.pluginDir || 'none'} · cwd: ${opts.cwd} · prompts: ${results.length}${equivalents ? ' · equivalents: ' + path.basename(args.equivalents) : ''}${quotaNote}`;
+  const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · plugin: ${opts.pluginDir || 'none'} · cwd: ${opts.cwd} · prompts: ${results.length} of ${prompts.length}${equivalents ? ' · equivalents: ' + path.basename(args.equivalents) : ''}${quotaNote}${stopped ? ` · **stopped early on the ${stopped.window} ceiling**, ${prompts.length - results.length} prompt(s) not run` : ''}`;
   const out = path.join(outDir, `${date}-claude${args.intent ? '-' + args.intent : ''}${tag}.md`);
   fs.writeFileSync(out, table(results, summary, 'claude', meta, equivalents));
   process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}.${quotaNote} Written: ${out}\n`);
 }
 
-module.exports = { run, parseStream, parseQuota, loadPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };
+module.exports = { run, parseStream, parseQuota, quotaStop, loadPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };

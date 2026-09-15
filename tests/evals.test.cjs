@@ -143,7 +143,22 @@ test('parseQuota reads the five-hour window and its own reset time, not the even
   assert.equal(q.fiveHour, 0.73);
   assert.equal(q.sevenDay, 0.32);
   assert.equal(q.resetsAt, 1);
+  assert.equal(q.sevenDayResetsAt, 2, 'a seven-day stop must print the seven-day reset, not the five-hour one');
   assert.equal(parseQuota('nothing here'), null);
+});
+
+// The runner stops itself before it exhausts the owner's account. Both windows are real limits and the seven-day one
+// is the expensive one to hit: it was the guard that did not exist on 2026-09-15, when a run was about to start with
+// the seven-day window already at 89% and only the five-hour ceiling being checked.
+test('the run stops on either window, not only the five-hour one', () => {
+  const { quotaStop } = require('../scripts/evals.cjs');
+  const limits = { fiveHour: 0.9, sevenDay: 0.95 };
+  assert.equal(quotaStop(null, limits), null, 'no reading yet is not a reason to stop');
+  assert.equal(quotaStop({ fiveHour: null, sevenDay: null }, limits), null, 'a reading with no numbers is not a reason to stop');
+  assert.equal(quotaStop({ fiveHour: 0.4, sevenDay: 0.5 }, limits), null, 'below both ceilings the run continues');
+  assert.match(quotaStop({ fiveHour: 0.91, sevenDay: 0.5 }, limits).window, /five-hour/);
+  assert.match(quotaStop({ fiveHour: 0.4, sevenDay: 0.96 }, limits).window, /seven-day/);
+  assert.equal(quotaStop({ fiveHour: 0.4, sevenDay: 0.95 }, limits).window, 'seven-day', 'the ceiling is inclusive');
 });
 
 test('--per-intent takes a spread: English positive, Vietnamese positive, negative, then round again', () => {
