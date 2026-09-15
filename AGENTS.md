@@ -1,6 +1,6 @@
 # Working on the Bearingkit repository
 
-This file is for agents developing the kit itself. Claude Code reads it through `CLAUDE.md`; Antigravity reads it directly. The product's own instruction file is `core/AGENTS.md`; do not confuse the two.
+This file is for agents developing the kit itself. Claude Code reads it through `CLAUDE.md`; Antigravity reads it directly. The product's own instruction file is `skills/bk-protocol/SKILL.md`, which `hooks/session-start.cjs` injects at session start; it was `core/AGENTS.md` until the v2 restructure (`97843c4`) removed `core/`. Do not confuse the two.
 
 ## Where the truth lives
 
