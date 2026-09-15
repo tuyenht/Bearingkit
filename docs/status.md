@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-14** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · 96 commit (đếm trước commit đóng của lượt 2026-09-14) · **59/59** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-14 sau Task 6b)
+Cập nhật: **2026-09-15** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · 97 commit (đếm trước commit đóng của lượt 2026-09-15) · **59/59** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-15 sau Task 5)
 
 > **File này là BẢNG ĐIỀU KHIỂN, không phải nguồn sự thật.** Nó chỉ trỏ đường và ghi trạng thái; mọi nội dung thật nằm ở nơi khác:
 >
@@ -23,7 +23,7 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | — còn thiếu | `bk-map`, `bk-research`, `bk-perf`, `bk-db`, `bk-ops` | §5.1 |
 | Nguồn trong `upstream/sources.json` | 22 (adapt 5 · ideas-only 6 · reference 11) | đọc file bằng `node -e` |
 | — nguồn **cần nội dung** (adapt + ideas-only) | 11, đã xong **3** (superpowers, karpathy, claude-plugins-official một phần) | cùng lệnh |
-| — nguồn đã có `derived` (chữ thật đã port) | **3** | cùng lệnh |
+| — nguồn đã có `derived` (chữ thật đã port) | **3** nguồn, **19** file dẫn xuất | cùng lệnh |
 | Mục trong `NOTICE` | **2** (obra/superpowers, anthropics/claude-plugins-official) | `grep '^##' NOTICE` |
 | Hàng nguồn trong ma trận | 39 (gồm host candidate, tool, và 8 mục owner loại) | `grep -c '^\| [0-9]'` |
 | Test | 59/59 xanh | `node --test tests/*.test.cjs` |
@@ -86,7 +86,7 @@ Phạm vi v0.2 theo §13 là **tám skill lifecycle** (`bk-spec`, `bk-plan`, `bk
 | 7 | Chốt catalog cuối (§5.2: kiểm kê "fixes the final catalog") | **chưa** | phụ thuộc #6; cũng là điều kiện owner đặt cho `bk-design` (câu 12) |
 | 8 | Nguồn bắt buộc 1/4 — Superpowers 5.1.0 (MIT) | **xong** 2026-09-11 | 8 file `references/`, `NOTICE`, `derived` 15 file |
 | 9 | karpathy-skills (không giấy phép → chỉ lấy ý) | **xong** 2026-09-11 | 2 dòng paraphrase trong `skills/bk-build/SKILL.md`; không nợ `NOTICE` |
-| 10 | Nguồn bắt buộc 2–4 — `code-review`, `frontend-design`, `claude-code-setup` (+ `pr-review-toolkit`) từ `claude-plugins-official` (Apache-2.0) | **chưa** | `derived: {}` rỗng → chưa chữ nào được port. Khi port phải làm cùng lúc ba việc: ghi nguồn trong file dẫn xuất, thêm mục `NOTICE`, cập nhật `derived` |
+| 10 | Nguồn bắt buộc 2–4 — `code-review`, `frontend-design`, `claude-code-setup` (+ `pr-review-toolkit`) từ `claude-plugins-official` (Apache-2.0) | **3/4 xong** | `frontend-design` → `bk-design` (2026-09-14); `code-review` + `pr-review-toolkit` → `bk-review`/`bk-test` (2026-09-15). Mỗi lần đủ ba việc: nguồn trong file dẫn xuất, mục `NOTICE`, `derived`. Còn `claude-code-setup` (Task 6) |
 | 11 | Các nguồn còn lại theo thứ tự D3 (spec-kit, mattpocock, addyosmani, vercel agent-skills…) | **chưa** | ma trận: phần lớn còn `designed` |
 | 12 | §5.3 #3 — `tests/` ≥3 prompt cho **tám** skill của v0.2 | **xong** 2026-09-14 | 24 case, 3 mỗi skill, bốn mục cố định (Prompt/Setup/Expected/Fails if) để một harness đọc được và để so giữa các skill; `tests/skills.test.cjs` canh cả số lượng lẫn bốn mục |
 | 13 | §5.3 #4 — activation 2 positive + 1 negative mỗi skill, cả hai ngôn ngữ | **xong cho 10 skill đang tồn tại** 2026-09-14 | 15 prompt mới cho `bk-plan`, `bk-close`, `bk-audit`, `bk-next`, `bk-test`; bộ 60 → 75, Phase 1 giữ nguyên để còn so được. `tests/evals.test.cjs` nay đỏ nếu một skill tồn tại mà có dưới 2 positive — bất biến này sẽ đòi prompt cho `bk-design` ngay khi nó ra đời |

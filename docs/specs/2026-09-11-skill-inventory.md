@@ -305,3 +305,31 @@ Nguồn: `_build/upstream/claude-plugins-official/plugins/frontend-design/skills
 | 12 | Câu "a picture is worth 1000 tokens" và lời khuyên chụp màn hình | **idea** | Thành một bước trong Steps (critique có screenshot khi host làm được), không lấy chữ |
 
 Nghĩa vụ Apache-2.0 đã làm cùng lúc, đúng ba việc đã ghi ở handoff 2026-09-12: file dẫn xuất nêu nguồn ở đoạn mở đầu, `NOTICE` có mục mới, `upstream/sources.json` có `derived` + `absorbed`. Repo nguồn **không có file `NOTICE`**, nên không có notice thượng nguồn nào phải mang theo; đã kiểm bằng `find`.
+
+---
+
+# Kiểm kê mức từng mục · code-review + pr-review-toolkit → bk-review, bk-test, 2026-09-15
+
+Cùng khuôn với lượt `frontend-design` ngày 2026-09-14: kiểm kê **chỉ cho nguồn đang port**, không tuyên bố kiểm kê toàn bộ đã xong.
+
+Nguồn: `_build/upstream/claude-plugins-official/plugins/code-review/commands/code-review.md` (92 dòng) và `plugins/pr-review-toolkit/` (6 agent + 1 command, 738 dòng), commit `3b60051`, Apache-2.0.
+
+| # | Mục trong nguồn | Quyết định | Hạ cánh ở đâu · lý do |
+|---|---|---|---|
+| 1 | Năm lượt đọc độc lập: luật của project, chỉ đọc diff, lịch sử `git blame`, comment ở các PR trước trên cùng file, comment trong code | **absorb** | `bk-review/references/review-lenses.md`. Kit trước đây chỉ có lens theo *loại lỗi*; ba lượt 3–5 là chiều **nguồn đọc**, hoàn toàn mới |
+| 2 | Thang tin cậy 0–100 kèm mỏ neo cho 0/25/50/75/100, lọc ở 80 | **absorb** | cùng file. Kit đã chấm 0–100 và báo ≥80 nhưng **không có rubric**, nên điểm là cảm tính |
+| 3 | Danh sách 8 kiểu false positive (lỗi có sẵn, nitpick, thứ linter bắt được, thứ code cố ý tắt, dòng tác giả không sửa…) | **absorb** | cùng file. Đây là phần đắt nhất: nó quyết định cái gì **không** được báo |
+| 4 | Checklist silent-failure (chất lượng log, phản hồi cho người dùng, độ rộng của catch, fallback có được đặc tả không, mock chỉ thuộc test) | **absorb** | cùng file. Kit đã có lens "silent failures" nhưng không có checklist |
+| 5 | Bốn trục đánh giá type mới (encapsulation, biểu đạt invariant, tính hữu ích, cưỡng chế) | **absorb** | cùng file, thành một lens mới trong Steps của `bk-review` |
+| 6 | Kiểm comment (đối chiếu từng khẳng định với code, ưu tiên "tại sao", gắn cờ comment sẽ mục) | **absorb** | cùng file, thành một lens mới |
+| 7 | Cân bằng khi simplify (rõ hơn ngắn, không ternary lồng, giữ abstraction có ích, chỉ động vào chỗ vừa sửa) | **absorb** | cùng file; kit đã có lens simplification nhưng không có giới hạn |
+| 8 | Lens test coverage: hành vi thay vì số dòng, 5 loại lỗ hổng, kiểm chất lượng test, thang 1–10 | **absorb** | `bk-test/references/coverage-lens.md` — đây là "test lens" mà ma trận hàng 2 đã hẹn từ đầu |
+| 9 | "Mỗi test đề xuất phải nêu được lỗi cụ thể nó bắt" + kiểm xem test cũ đã phủ chưa | **absorb** | cùng file. Nó biến đề xuất test thành thứ bác bỏ được |
+| 10 | Định dạng comment lên GitHub, emoji, footer, luật link kèm sha đầy đủ | **drop** | Thuộc sản phẩm, không thuộc phương pháp. Kit không viết lên PR |
+| 11 | Điều phối agent theo model (Haiku kiểm tư cách, 5 Sonnet song song, Haiku chấm điểm) | **drop** | Host-specific. Ai chạy lens ở host nào là việc của `bk-protocol/references/host-tools.md`; luật "reviewer không phải tác giả" của kit đã phủ phần bản chất |
+| 12 | Kiểm tư cách PR (đóng, draft, đã review rồi) | **drop** | Kit review một diff cục bộ, không có vòng đời PR để kiểm |
+| 13 | Luật style của một project cụ thể trong code-simplifier (ES modules, `function` thay arrow, Props tường minh) | **drop** | Đó là luật của project đó. Kit đọc luật từ instruction file của project, không mang theo luật của người khác |
+| 14 | Giọng nhân vật ("elite auditor", "zero tolerance") và các khối ví dụ hội thoại trong frontmatter | **drop** | §5.4: body mô tả hành động, không đóng vai |
+| 15 | "Lập todo list trước" | **idea** | Không lấy chữ; hành vi này đã nằm trong cách kit chạy nhiều bước |
+
+Nghĩa vụ Apache-2.0 làm cùng lúc: hai file dẫn xuất nêu nguồn ở đoạn mở đầu, `NOTICE` mở rộng mục sẵn có, `upstream/sources.json` thêm hai khoá `derived` và cập nhật `absorbed`.
