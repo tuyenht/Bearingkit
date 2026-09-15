@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-15** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · 97 commit (đếm trước commit đóng của lượt 2026-09-15) · **60/60** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-15 sau Task 7)
+Cập nhật: **2026-09-15** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · số commit không ghi ở đây: nó tự cũ sau mỗi commit của chính phiên đang viết (đã vấp hai lần); đếm bằng `git log --oneline | wc -l` · **60/60** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-15 sau Task 7)
 
 > **File này là BẢNG ĐIỀU KHIỂN, không phải nguồn sự thật.** Nó chỉ trỏ đường và ghi trạng thái; mọi nội dung thật nằm ở nơi khác:
 >
