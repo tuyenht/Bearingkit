@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-15** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · 97 commit (đếm trước commit đóng của lượt 2026-09-15) · **59/59** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-15 sau Task 5)
+Cập nhật: **2026-09-15** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · 97 commit (đếm trước commit đóng của lượt 2026-09-15) · **60/60** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-15 sau Task 7)
 
 > **File này là BẢNG ĐIỀU KHIỂN, không phải nguồn sự thật.** Nó chỉ trỏ đường và ghi trạng thái; mọi nội dung thật nằm ở nơi khác:
 >
@@ -26,10 +26,10 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | — nguồn đã có `derived` (chữ thật đã port) | **3** nguồn, **19** file dẫn xuất | cùng lệnh |
 | Mục trong `NOTICE` | **2** (obra/superpowers, anthropics/claude-plugins-official) | `grep '^##' NOTICE` |
 | Hàng nguồn trong ma trận | 39 (gồm host candidate, tool, và 8 mục owner loại) | `grep -c '^\| [0-9]'` |
-| Test | 59/59 xanh | `node --test tests/*.test.cjs` |
+| Test | 60/60 xanh | `node --test tests/*.test.cjs` |
 | `skills/<name>/tests/` (§5.3 cần ≥3 prompt mỗi skill) | **9/11** — 27 case; `bk-audit` và `bk-next` thuộc v0.3 | `find skills -type d -name tests` |
 | `SKILL.md` có dòng provenance + license mode | 11/11 skill đang tồn tại | `grep -h '^Sources:' skills/*/SKILL.md`, có test canh |
-| File stack `bk-build/references/stacks/` (§5.5 cần 8) | 0/8 | thư mục chưa tồn tại |
+| File stack `bk-build/references/stacks/` (§5.5 cần 8) | **3/8** — `typescript-react`, `kotlin`, `sql`, cộng `index.md` ánh xạ profile → file | `ls skills/bk-build/references/stacks/` |
 | Host đã pass acceptance | 2/7 (Claude Code, Antigravity) | `docs/hosts.md` |
 
 ---
@@ -44,7 +44,7 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 |---|---|---|---|
 | 1 | Catalog đủ skill (v2 §5.1) | 17 | **12/17** — `bk-design` thêm 2026-09-14 |
 | 2 | Mỗi skill đạt cả 5 điều kiện quality bar (v2 §5.3) | 17/17 | **0/17 đủ cả năm, nhưng tám skill lifecycle nay đạt 4/5**: #1 body ≤100 dòng, #3 `tests/` ≥3 case (2026-09-14), #4 activation prompt (2026-09-14), #5 acceptance trên hai host. Điều kiện còn thiếu cho cả tám là **#2** — mỗi *dòng luật* trong body truy được về một nguồn hoặc một field lesson; dòng `Sources:` nêu nguồn của skill chứ chưa chứng minh từng dòng |
-| 3 | File stack (v2 §5.5) | 8 | **0/8** |
+| 3 | File stack (v2 §5.5) | 8 | **3/8** — ba stack owner dùng hằng ngày, viết 2026-09-15. Version card của cả ba ghi thẳng: chỉ đối chiếu ở mức fixture, **chưa** đối chiếu với project thật nào, vì máy viết ra chúng không có project của ba stack đó |
 | 4 | Nguồn **lấy chữ hoặc lấy ý** đã có quyết định + `NOTICE`/`derived` khi lấy chữ | 11 | **3/11** — mẫu số 11 chỉ gồm `adapt` + `ideas-only`; 11 nguồn `reference` không nằm ở đây nhưng vẫn sinh việc, và việc đó được đếm ở mục 1–3 (ví dụ awesome-cursorrules và vercel agent-skills là nguyên liệu của file stack, mục 3) |
 | 5 | Fixed context ≤5,000 đo bằng `/context` trên bản v2 (v1 §17, v2 §12) | 1 số | **chưa đo trên v2** — số v1 (~2,650) vẫn là bằng chứng về độ lớn (`phase-1-gate.md` tự ghi "the measurements stand"), nhưng §11 đòi đọc lại ở mốc phát hành |
 | 6 | Activation precision ≥0.9 và recall ≥0.9, cả hai host, trên bản v2 (v1 §17) | 2 host | **chưa đo trên v2** |
@@ -90,7 +90,7 @@ Phạm vi v0.2 theo §13 là **tám skill lifecycle** (`bk-spec`, `bk-plan`, `bk
 | 11 | Các nguồn còn lại theo thứ tự D3 (spec-kit, mattpocock, addyosmani, vercel agent-skills…) | **chưa** | ma trận: phần lớn còn `designed` |
 | 12 | §5.3 #3 — `tests/` ≥3 prompt cho **tám** skill của v0.2 | **xong** 2026-09-14 | 24 case, 3 mỗi skill, bốn mục cố định (Prompt/Setup/Expected/Fails if) để một harness đọc được và để so giữa các skill; `tests/skills.test.cjs` canh cả số lượng lẫn bốn mục |
 | 13 | §5.3 #4 — activation 2 positive + 1 negative mỗi skill, cả hai ngôn ngữ | **xong cho 10 skill đang tồn tại** 2026-09-14 | 15 prompt mới cho `bk-plan`, `bk-close`, `bk-audit`, `bk-next`, `bk-test`; bộ 60 → 75, Phase 1 giữ nguyên để còn so được. `tests/evals.test.cjs` nay đỏ nếu một skill tồn tại mà có dưới 2 positive — bất biến này sẽ đòi prompt cho `bk-design` ngay khi nó ra đời |
-| 14 | Guardrail command Biome/Pint (quyết định câu 9, phần v0.2) | **chưa** | `scripts/detect-stack.cjs` có `pint` (dòng 100) và `phpstan` (dòng 101) nhưng **không có biome** ở bất cứ đâu trong `scripts/`, `skills/`, `tests/` — xem §7 (e) |
+| 14 | Guardrail command Biome/Pint (quyết định câu 9, phần v0.2) | **xong** 2026-09-15 | `detect-stack` nhận `@biomejs/biome` hoặc `biome.json` và đặt `biome check --error-on-warnings .` làm lệnh lint, thay cho script `lint` nó bao. Test đỏ trước, fixture riêng. Hook thật vẫn là v0.4 |
 | 15 | Phần A của câu 1 — đường CLI `claude plugin …` trong `docs/hosts.md` + `README.md` | **chưa** | `grep 'claude plugin ' docs/hosts.md README.md` không khớp; hiện chỉ có dạng slash-command `/plugin` |
 | 16 | Sửa rank spec-kit trong `skill-inventory.md` (câu 5) | **chưa** | đúng một chỗ: "không tính vào ô bắt buộc" → "cùng Superpowers thoả nhóm tối thiểu" |
 | 17 | Rà `v2 §1 Non-goals` xem B′ có cần nói gì thêm | **chưa** | khả năng cao không phải sửa (doctor chỉ đọc, không phải installer) |
@@ -137,6 +137,7 @@ Ba mục đầu (a–c) thừa hưởng từ `docs/handoff/2026-09-12.md`; bốn
 - (i) ~~`bk-protocol` hiện trong panel `/skills`~~ — **đã kết luận 2026-09-13, là host đổi chứ không phải kit đổi.** `/skills` liệt kê nó `user-only · ~80 tok`; ngày 2026-09-10 trên 2.1.267 nó **vắng mặt** khỏi nhóm User của `/context all`. Frontmatter kit không đổi; hôm đó host tự cập nhật. Ngân sách §12 vẫn đạt: **900 token cho 11 skill** trên trần 1,700 (ước chiếu 17 skill ≈ 1,390). Spec §6 và §12 đã sửa, `docs/hosts.md` có ghi chú drift, §15 có hai dòng log. Số và phương pháp: `docs/compat/2026-09-13-daily-profile-readings.md`.
 - (j) ~~Hình dạng bằng chứng acceptance prompt 1 đổi~~ — **đã kết luận: bootstrap CÓ nạp.** Câu kiểm "không được đọc file nào, kit root là gì" được trả lời trong 4 giây, **không gọi tool nào**, trích đúng dòng chỉ tồn tại trong text mà `hooks/session-start.cjs` bơm vào. Vậy ba lần search ở prompt 1 là model tự chọn trích `file:line`, không phải bootstrap vắng.
 - (k) **Thu hẹp, chưa đóng.** Trong profile thật 196 skill, câu `Let's make a react todo list` có hành động đầu tiên là `Skill(bearingkit:bk-spec)` — không thăm dò trước, không skill đối thủ nào chiếm lượt. Đó là **một điểm dữ liệu, không phải một phép đo**: bộ 60 prompt chưa bao giờ chạy trong profile này. Câu hỏi phạm vi cho Task 8 vẫn còn: chạy một lần (cách ly, so được với Phase 1) hay hai lần (thêm profile thật).
+- (o) **`detect-stack` còn sót guardrail của vài hệ sinh thái.** Đối chiếu với bảng lệnh của `claude-code-setup` (ý duy nhất dùng được từ Task 6): kit nhận `tsc`, script `test`/`lint`/`build`, biome, pint, phpstan, ruff, pytest, gradle, cmake, go test, cargo test, dotnet test. **Chưa nhận**: prettier và eslint khi chạy độc lập (không qua script), black, mypy/pyright, gofmt, rustfmt, ktlint, detekt. Không chặn gì — mỗi project khai guardrail trong instruction file của nó — nhưng là danh sách sẵn cho lần mở rộng `detect-stack` tiếp theo.
 - (n) **`q-en-01` của Phase 1 trỏ vào `src/http/retry.ts`, file fixture không có** (fixture có `src/lib/http.ts`). Phát hiện khi audit Task 3, **cố ý không sửa**: 60 prompt của Phase 1 là đường cơ sở duy nhất so được với các lần chạy trước, đụng vào là mất khả năng so sánh. Hệ quả cần biết khi đọc kết quả Task 8: prompt này `expect: none`, nên nếu model đi tìm một file không tồn tại rồi gọi nhầm skill, nó bị tính là false activation mà nguyên nhân là fixture, không phải routing. `tests/evals.test.cjs` nay chặn lỗi cùng loại cho mọi prompt **ngoài** Phase 1.
 - (m) **Audit mã 2026-09-13 — bốn lỗi đã sửa, ba lỗi còn để lại có chủ đích.** Đã sửa (có test, `CHANGELOG.md`): đường ghi guardrail của §8 chết trong v2; `bin` thoát 0 cho lệnh không tồn tại; `doctor` bỏ `--dest`; marker copy ghi sau payload. **Còn để lại, không chặn gì:** (1) `parseArgs` trong `antigravity.cjs` và `record-guardrail.cjs` coi positional sau một cờ là giá trị của cờ, nên `--dry-run install` không chạy được — thứ tự đúng có ghi trong usage; (2) `State.latest` so `cwd` phân biệt hoa thường, nên `C:\Projects` và `c:\projects` sinh hai file state trên Windows; (3) `prune()` chỉ chạy khi state được tạo tự động, không chạy trên đường `--session`.
 - (l) **Bản copy Antigravity đã đồng bộ lại** 2026-09-13: owner chạy `antigravity install` (gỡ bản cũ, chép `skills/` đã dereference, 3 script, viết lại `rules/bearingkit.md` và marker). **Đã xác nhận 2026-09-13**: sau `antigravity install`, `doctor` báo sáu mục `ok` và một `skip`. Cùng với lần `FAIL` trước đó, đây là negative control đầy đủ: phép kiểm đã được thấy đỏ rồi mới được tin khi xanh.

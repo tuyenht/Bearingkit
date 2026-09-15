@@ -68,9 +68,19 @@ test('every skill body is within 100 lines, cites only reference files that exis
     }
     const refDir = path.join(dir, name, 'references');
     if (!fs.existsSync(refDir)) continue;
-    for (const ref of fs.readdirSync(refDir)) {
-      assert.ok(body.includes('references/' + ref), name + ': references/' + ref + ' is never cited by its SKILL.md');
-      assert.ok(!fs.readFileSync(path.join(refDir, ref), 'utf8').startsWith('﻿'), name + '/references/' + ref + ': starts with a BOM');
+    for (const entry of fs.readdirSync(refDir, { withFileTypes: true })) {
+      // A subdirectory is cited as a directory, not file by file: spec §5.5 puts one file per stack under
+      // references/stacks/ and the skill opens whichever one the stack profile names at run time, so listing all
+      // eight in the body would be noise the body has to keep in sync.
+      if (entry.isDirectory()) {
+        assert.ok(body.includes('references/' + entry.name + '/'), `${name}: references/${entry.name}/ is never cited by its SKILL.md`);
+        for (const f of fs.readdirSync(path.join(refDir, entry.name))) {
+          assert.ok(!fs.readFileSync(path.join(refDir, entry.name, f), 'utf8').startsWith('﻿'), `${name}/references/${entry.name}/${f}: starts with a BOM`);
+        }
+        continue;
+      }
+      assert.ok(body.includes('references/' + entry.name), name + ': references/' + entry.name + ' is never cited by its SKILL.md');
+      assert.ok(!fs.readFileSync(path.join(refDir, entry.name), 'utf8').startsWith('﻿'), name + '/references/' + entry.name + ': starts with a BOM');
     }
   }
 });
@@ -105,10 +115,15 @@ test('every references file adapted from upstream has a derived entry in upstrea
   for (const name of fs.readdirSync(dir)) {
     const refDir = path.join(dir, name, 'references');
     if (!fs.existsSync(refDir)) continue;
-    for (const ref of fs.readdirSync(refDir)) {
-      const text = fs.readFileSync(path.join(refDir, ref), 'utf8');
+    // Walks subdirectories too: a stack file under references/stacks/ can be adapted from upstream (the matrix
+    // points the eight of spec §5.5 at awesome-cursorrules and others), and it owes the same record as any other.
+    const walk = (d, prefix) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (
+      e.isDirectory() ? walk(path.join(d, e.name), prefix + e.name + '/') : [[path.join(d, e.name), prefix + e.name]]
+    ));
+    for (const [file, rel] of walk(refDir, '')) {
+      const text = fs.readFileSync(file, 'utf8');
       if (!/^Adapted from /m.test(text)) continue;
-      const key = 'skills/' + name + '/references/' + ref;
+      const key = 'skills/' + name + '/references/' + rel;
       assert.ok(derived.has(key), key + ': adapted from upstream but absent from every derived map');
       assert.match(text, /`NOTICE`/, key + ': must point at NOTICE');
     }
@@ -131,8 +146,13 @@ test('every skill body carries one provenance line, and it names what its refere
     const refDir = path.join(dir, name, 'references');
     const vendored = new Set();
     if (fs.existsSync(refDir)) {
-      for (const f of fs.readdirSync(refDir)) {
-        const m = fs.readFileSync(path.join(refDir, f), 'utf8').match(/^Adapted from ([^:(]+)/m);
+      // Recurses, because references/stacks/ holds one file per stack (spec §5.5) and a stack file adapted from
+      // upstream owes the same Sources line as any other reference.
+      const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (
+        e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]
+      ));
+      for (const f of walk(refDir)) {
+        const m = fs.readFileSync(f, 'utf8').match(/^Adapted from ([^:(]+)/m);
         if (m) vendored.add(m[1].trim());
       }
     }

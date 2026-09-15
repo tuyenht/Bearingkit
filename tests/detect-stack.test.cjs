@@ -20,6 +20,16 @@ test('node + pnpm + next + prisma', () => {
   assert.match(p.versionCard, /Next 15/);
 });
 
+// Question 9, decided 2026-09-12: biome is a guardrail command at v0.2 and a real hook at v0.4. The matrix row for
+// biome had claimed detect-stack already listed it; it did not, which the audit of 2026-09-13 caught.
+test('node with biome: it becomes the lint guardrail, ahead of the script that wraps it', () => {
+  const p = detect(fx('node-biome'));
+  assert.ok(p.commands.lint.includes('biome check'), 'lint comes from biome, got ' + p.commands.lint);
+  assert.ok(p.commands.lint.includes('--error-on-warnings'), 'a guardrail must fail on warnings, got ' + p.commands.lint);
+  assert.ok(p.guardrails.some((g) => g.includes('biome')), 'biome is in the guardrail list');
+  assert.equal(p.guardrails.filter((g) => g.includes('lint') || g.includes('biome')).length, 1, 'not both the script and biome');
+});
+
 test('laravel with pest and pint', () => {
   const p = detect(fx('laravel'));
   assert.deepEqual(p.languages, ['php']);

@@ -10,7 +10,7 @@ Bearingkit is distributed under the MIT license in `LICENSE` (declared in `packa
 - Adapted into `skills/bk-test/references/coverage-lens.md` from `plugins/pr-review-toolkit/agents/pr-test-analyzer.md`: behavioural coverage over line coverage, the gap list, the test-quality checks and the criticality scale.
 - Adapted into `skills/bk-design/references/distinctive-ui.md` from `plugins/frontend-design/skills/frontend-design/SKILL.md`. The file is rewritten in the kit's form: the generic-default clusters, the typographic tells, the motion and hero rules, the two-pass process, the restraint rule and the writing rules are retained; the studio-persona framing and the client-relationship prose are not.
 - The same text ships byte-identical in `anthropics/skills` at `skills/frontend-design/SKILL.md` (SHA-256 `b8009ae690dfa69edc7f08bb8715f32db8817112cfa4388741dbaf876c237df8`, checked 2026-09-11 and again 2026-09-14). This repository is named as the provenance because its release cycle is the clearer one, a decision recorded as question 14 of `docs/specs/2026-09-12-d5-owner-questions.md`.
-- Nothing from `claude-code-setup` in the same repository is vendored yet; when it is, this entry gains its files.
+- Nothing is vendored from `claude-code-setup` in the same repository, and on present evidence nothing will be: it was read in full on 2026-09-15 and inventoried at zero items absorbed, because it recommends host-specific automation and MCP servers the kit does not install. The reasoning is in `docs/specs/2026-09-11-skill-inventory.md`; whether the source stays ideas-only is the owner's call.
 
 ## obra/superpowers 5.1.0
 

@@ -66,6 +66,13 @@ function node(dir) {
   if (scripts.test) commands.test = run('test');
   if (exists(dir, 'tsconfig.json')) commands.typecheck = pm === 'npm' ? 'npx tsc --noEmit' : pm === 'yarn' ? 'yarn tsc --noEmit' : pm === 'bun' ? 'bunx tsc --noEmit' : 'pnpm exec tsc --noEmit';
   if (scripts.lint) commands.lint = run('lint');
+  // Biome replaces the ESLint-and-Prettier pair and runs in milliseconds, so when a project has it the direct call is
+  // the guardrail, ahead of a `lint` script that usually just wraps it (owner's decision on question 9, 2026-09-12:
+  // guardrail command now, a real hook at v0.4). `--error-on-warnings` makes a warning fail the gate, which is what a
+  // guardrail is for; without it biome exits 0 on warnings and the ship step would read that as green.
+  if (deps['@biomejs/biome'] || exists(dir, 'biome.json') || exists(dir, 'biome.jsonc')) {
+    commands.lint = pm === 'npm' ? 'npx biome check --error-on-warnings .' : pm === 'yarn' ? 'yarn biome check --error-on-warnings .' : pm === 'bun' ? 'bunx biome check --error-on-warnings .' : 'pnpm exec biome check --error-on-warnings .';
+  }
   if (scripts.build) commands.build = run('build');
   const hot = [...HOT_DEFAULT];
   if (deps.prisma || deps['@prisma/client']) hot.push('**/prisma/schema.prisma');
