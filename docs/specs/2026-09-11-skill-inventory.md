@@ -333,3 +333,28 @@ Nguồn: `_build/upstream/claude-plugins-official/plugins/code-review/commands/c
 | 15 | "Lập todo list trước" | **idea** | Không lấy chữ; hành vi này đã nằm trong cách kit chạy nhiều bước |
 
 Nghĩa vụ Apache-2.0 làm cùng lúc: hai file dẫn xuất nêu nguồn ở đoạn mở đầu, `NOTICE` mở rộng mục sẵn có, `upstream/sources.json` thêm hai khoá `derived` và cập nhật `absorbed`.
+
+---
+
+# Kiểm kê mức từng mục · claude-code-setup, 2026-09-15 — **kết luận: gần như không port được**
+
+Nguồn: `_build/upstream/claude-plugins-official/plugins/claude-code-setup/`, commit `3b60051`, Apache-2.0. Một skill (`claude-automation-recommender`, 289 dòng) + 5 file reference (1.188 dòng): hooks theo ngôn ngữ, MCP server theo hạ tầng, plugin chính thức, skill chính thức, mẫu subagent. **Đã đọc hết cấu trúc, không chỉ SKILL.md.**
+
+Đây là **nguồn bắt buộc thứ tư** owner đặt ra (spec §1). D3 đã hạ nó xuống hạng 7 và cắt phạm vi. Lượt kiểm kê này đi tới kết luận mạnh hơn: **phần lớn nằm ngoài phạm vi kit**, và lý do không phải chất lượng nguồn mà là kit đã chọn khác.
+
+| # | Mục trong nguồn | Quyết định | Lý do |
+|---|---|---|---|
+| 1 | Bản chất skill: quét codebase rồi **khuyến nghị** hook/subagent/skill/plugin/MCP cho Claude Code | **drop** | Host-specific tận gốc — nguyên tắc 6 của kit đòi thân skill mô tả hành động, không tên công cụ của một host. Một `bk-setup` như vậy sẽ chỉ chạy được trên Claude Code |
+| 2 | Bảng chỉ dấu codebase → khuyến nghị (ngôn ngữ, framework, DB, test, CI, issue tracker) | **drop, trùng** | `scripts/detect-stack.cjs` đã đọc manifest và lockfile để ra stack profile; nửa phân tích của nguồn là thứ kit đã có, chạy bằng mã thay vì bằng prompt |
+| 3 | `references/mcp-servers.md` — context7, Playwright, Supabase, Convex, PostgreSQL, Neon… | **drop** | Non-goal ghi thẳng trong spec §1: kit **không cài MCP nào**; context7 chỉ được *ghi tài liệu* theo từng host ở `docs/hosts.md`. Khuyến nghị MCP là việc kit cố ý không làm |
+| 4 | `references/plugins-reference.md`, `skills-reference.md` — catalog plugin/skill chính thức + lệnh `claude plugin …` | **drop** | Catalog của hệ sinh thái một host, thay đổi theo tuần; kit ghi cách cài theo host ở `docs/hosts.md` và không nhân bản catalog |
+| 5 | `references/subagent-templates.md` — code-reviewer, security-reviewer, test-writer, api-documenter, performance-analyzer, ui-reviewer, dependency-updater, migration-helper | **drop, đã phủ** | Kit có 4 persona đơn nguồn ở `bk-protocol/references/personas.md`; `bk-review --security` đã là lens bảo mật. Thêm 8 agent là thêm 8 mô tả vào listing mọi host, đúng thứ Task 5 vừa từ chối |
+| 6 | Lập trường **chỉ đọc**: "analyzes and outputs recommendations, does NOT create or modify any files" | **idea, đã có sẵn** | Kit tới cùng kết luận độc lập và mạnh hơn: `doctor` có **bất biến không-ghi cưỡng chế bằng test**, không chỉ là câu tuyên bố; `bk-close --docs` cũng chỉ đề xuất, không áp |
+| 7 | `references/hooks-patterns.md` — lệnh format/type-check theo ngôn ngữ (prettier, eslint, black, ruff, gofmt, rustfmt, tsc, mypy/pyright) | **idea, DÙNG ĐƯỢC** | Đây là **thứ duy nhất có giá trị ngay**: một checklist đối chiếu xem `detect-stack` còn sót guardrail nào. Nó thuộc **Task 7** (thêm biome, rà lệnh theo stack), không phải một bản port. Lấy ý, không lấy chữ: tên lệnh là dữ kiện, không phải sáng tác |
+| 8 | Kỷ luật đầu ra: "khuyến nghị 1–2 cái mỗi loại, đừng làm ngợp" | **idea** | Hợp với cách `doctor` chỉ in lệnh cho mục hỏng. Không có chữ nào cần lấy |
+
+## Kết luận và câu cho owner
+
+Của nguồn bắt buộc này: **0 mục absorb, 5 drop, 3 idea** — trong đó đúng **một** idea (mục 7) sinh việc thật, và việc đó nằm ở Task 7. Không có `NOTICE` nào phải thêm, vì không chữ nào được lấy; `upstream/sources.json` giữ nguyên `derived` cho phần này.
+
+**Không tự hạ nhãn "bắt buộc" của owner.** Câu hỏi để owner quyết, ghi ở đây và nhắc trong handoff: (a) chấp nhận nguồn này là **ideas-only**, đóng lại, ghi vào ma trận hàng 2 rằng phần `claude-code-setup` không port; hay (b) owner muốn một skill `bk-setup` thật — thì đó là **mục mới của catalog**, phải qua scope test §5.2 ("có giúp một người làm việc của cả đội không") và phải giải quyết mâu thuẫn host-specific ở mục 1.
