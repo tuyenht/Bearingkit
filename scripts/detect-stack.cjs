@@ -256,6 +256,11 @@ function terraform(dir) {
   // directory prepared by `terraform init` and `tflint --init`, both of which download, so the kit never runs them.
   const commands = { format: 'terraform fmt -check -recursive', validate: 'terraform validate' };
   if (exists(dir, '.tflint.hcl')) commands.lint = 'tflint';
+  // A fresh clone fails validate with an error that says to run `terraform init`, and a plain init configures the
+  // remote backend. The acting agent reads the profile, not this file, so the safe preparation travels with it.
+  const prepare = ['`terraform init -backend=false` (downloads providers and modules, never touches the backend or state)'];
+  if (commands.lint) prepare.push('`tflint --init` (downloads the plugins .tflint.hcl declares)');
+  const notes = [`terraform validate${commands.lint ? ' and tflint need' : ' needs'} an initialised directory: prepare it with ${prepare.join(' and ')}. A plain \`terraform init\` configures the remote backend, so it is COUNCIL.`];
   return {
     languages: ['terraform'],
     frameworks,
@@ -264,6 +269,7 @@ function terraform(dir) {
     guardrails: [commands.format, commands.validate, commands.lint].filter(Boolean),
     sourceExtensions: ['.tf', '.tfvars', '.hcl'],
     hotPathGlobs: [...HOT_DEFAULT, '**/*iam*.tf', '**/backend.tf', '**/*security_group*.tf', '**/*kms*.tf', '**/*secret*.tf', '**/*.tfvars', '**/*.tfstate*'],
+    notes,
     versionCard: card([{ name: 'terraform', label: 'Terraform', major: required ? Number(required[1]) : null }, ...frameworks]),
   };
 }
@@ -298,6 +304,8 @@ function detect(dir = process.cwd(), opts = {}) {
     sourceExtensions: uniq(parts.flatMap((p) => p.sourceExtensions)),
     hotPathGlobs: uniq(parts.flatMap((p) => p.hotPathGlobs)),
     versionCard: parts.map((p) => p.versionCard).filter(Boolean).join(' · '),
+    // Preconditions a guardrail has that its command line cannot say. Empty for most stacks; the key is always there.
+    notes: uniq(parts.flatMap((p) => p.notes || [])),
   };
   profile.parity = { missingBinaries: missingBinaries(commands, dir, opts.path) };
   return profile;

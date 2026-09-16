@@ -146,6 +146,13 @@ test('terraform: fmt, validate and tflint are the gates; plan and apply never ar
   assert.ok(p.sourceExtensions.includes('.tf'));
   assert.ok(p.hotPathGlobs.some((g) => g.includes('iam')));
   assert.ok(p.hotPathGlobs.includes('**/*.tfvars'));
+  // A fresh clone fails validate with a message that says to run terraform init, and a plain init configures the
+  // remote backend. The profile is what the acting agent reads, so the safe preparation is stated there.
+  const note = p.notes.join(' ');
+  assert.match(note, /terraform init -backend=false/, 'the profile names the init that never touches the backend');
+  assert.match(note, /tflint --init/);
+  assert.match(note, /COUNCIL/, 'a plain init is named as COUNCIL');
+  assert.deepEqual(detect(fx('python')).notes, [], 'a stack with nothing to say has an empty list, not a missing key');
 });
 
 test('empty directory throws no-manifest', () => {
