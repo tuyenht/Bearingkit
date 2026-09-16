@@ -31,4 +31,4 @@ The categories are not equal, and the order matters more than any single rule. W
 
 ## Guardrails `detect-stack` will name
 
-`tsc --noEmit` when a `tsconfig.json` exists; the project's `test` and `lint` scripts; `biome check --error-on-warnings .` instead of the lint script when the project has Biome. Run what the profile names, in full, and paste it.
+`tsc --noEmit` when a `tsconfig.json` exists; the project's `test` and `lint` scripts; `biome check --error-on-warnings .` instead of the lint script when the project has Biome. With no lint script and no Biome, ESLint is called directly as `eslint --max-warnings 0 .`, and Prettier, when present without Biome, as `prettier --check .` — never a `format` script, which usually writes. Run what the profile names, in full, and paste it.

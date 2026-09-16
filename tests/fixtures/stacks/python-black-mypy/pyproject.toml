@@ -1,0 +1,13 @@
+[project]
+name = "fixture-python-black-mypy"
+version = "0.1.0"
+dependencies = ["django>=5.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "black>=24", "mypy>=1.10"]
+
+[tool.black]
+line-length = 100
+
+[tool.mypy]
+strict = true

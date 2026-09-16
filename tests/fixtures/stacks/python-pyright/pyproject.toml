@@ -1,0 +1,7 @@
+[project]
+name = "fixture-python-pyright"
+version = "0.1.0"
+dependencies = ["flask>=3.0"]
+
+[tool.pyright]
+typeCheckingMode = "strict"

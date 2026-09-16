@@ -1,0 +1,11 @@
+{
+  "name": "fixture-node-eslint-prettier",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "eslint": "9.0.0",
+    "prettier": "3.3.0"
+  }
+}

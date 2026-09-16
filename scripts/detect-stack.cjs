@@ -5,14 +5,15 @@
 //
 // Manifest → fields (priority order when several manifests share a root):
 //   composer.json            → php      laravel, livewire, inertia, pest, phpunit, symfony    vendor/bin/pest|phpunit, pint --test, phpstan analyse
-//   build.gradle(.kts)       → kotlin/java  android, compose, spring                         ./gradlew test | gradlew.bat test | gradle test
+//   build.gradle(.kts)       → kotlin/java  android, compose, spring                         ./gradlew test | gradlew.bat test | gradle test, ktlintCheck, detekt
 //   *.sln / *.csproj         → csharp   dotnet                                               dotnet test
-//   go.mod                   → go                                                            go test ./...
-//   Cargo.toml               → rust                                                          cargo test
+//   go.mod                   → go                                                            go test ./..., go vet ./..., golangci-lint run
+//   Cargo.toml               → rust                                                          cargo test, cargo fmt --check
 //   CMakeLists.txt/Presets   → c-cpp                                                         cmake --build build, ctest --test-dir build
-//   pyproject/requirements   → python   django, fastapi, flask, sqlalchemy, pytest, ruff     pytest, ruff check .
+//   pyproject/requirements   → python   django, fastapi, flask, sqlalchemy, pytest, ruff     pytest, mypy . | pyright, ruff check ., black --check .
 //   package.json             → typescript/javascript  next, react, vue, nuxt, electron, express, nest, prisma, vitest, jest, playwright
-//                              <pm> test, <pm> exec tsc --noEmit, <pm> lint, <pm> build
+//                              <pm> test, <pm> exec tsc --noEmit, <pm> lint | biome check | eslint, prettier --check, <pm> build
+//   *.tf / .terraform.lock.hcl → terraform  aws, google, azurerm, kubernetes, helm providers terraform fmt -check, terraform validate, tflint
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -47,6 +48,8 @@ const NODE_KNOWN = [
   ['express', 'express', 'Express'], ['@nestjs/core', 'nest', 'NestJS'], ['prisma', 'prisma', 'Prisma'], ['@prisma/client', 'prisma', 'Prisma'],
   ['vitest', 'vitest', 'Vitest'], ['jest', 'jest', 'Jest'], ['@playwright/test', 'playwright', 'Playwright'], ['typescript', 'typescript', 'TypeScript'],
 ];
+const ESLINT_CONFIGS = ['eslint.config.js', 'eslint.config.mjs', 'eslint.config.cjs', 'eslint.config.ts', '.eslintrc', '.eslintrc.js', '.eslintrc.cjs', '.eslintrc.json', '.eslintrc.yml', '.eslintrc.yaml'];
+const PRETTIER_CONFIGS = ['.prettierrc', '.prettierrc.json', '.prettierrc.yml', '.prettierrc.yaml', '.prettierrc.js', '.prettierrc.cjs', '.prettierrc.mjs', 'prettier.config.js', 'prettier.config.cjs', 'prettier.config.mjs'];
 const NODE_CARD = new Set(['next', 'react', 'vue', 'nuxt', 'electron', 'express', 'nest', 'prisma', 'typescript']);
 
 function node(dir) {
@@ -64,15 +67,21 @@ function node(dir) {
   const scripts = pkg.scripts || {};
   const commands = {};
   if (scripts.test) commands.test = run('test');
-  if (exists(dir, 'tsconfig.json')) commands.typecheck = pm === 'npm' ? 'npx tsc --noEmit' : pm === 'yarn' ? 'yarn tsc --noEmit' : pm === 'bun' ? 'bunx tsc --noEmit' : 'pnpm exec tsc --noEmit';
+  const exec = (cmd) => (pm === 'npm' ? 'npx ' : pm === 'yarn' ? 'yarn ' : pm === 'bun' ? 'bunx ' : 'pnpm exec ') + cmd;
+  if (exists(dir, 'tsconfig.json')) commands.typecheck = exec('tsc --noEmit');
+  const biome = deps['@biomejs/biome'] || exists(dir, 'biome.json') || exists(dir, 'biome.jsonc');
+  // A project's own lint script is its decision and wins. Without one, ESLint is called directly, with
+  // `--max-warnings 0` because it exits 0 on warnings otherwise and the gate would read them as green.
   if (scripts.lint) commands.lint = run('lint');
+  else if (!biome && (deps.eslint || pkg.eslintConfig || ESLINT_CONFIGS.some((f) => exists(dir, f)))) commands.lint = exec('eslint --max-warnings 0 .');
   // Biome replaces the ESLint-and-Prettier pair and runs in milliseconds, so when a project has it the direct call is
   // the guardrail, ahead of a `lint` script that usually just wraps it (owner's decision on question 9, 2026-09-12:
   // guardrail command now, a real hook at v0.4). `--error-on-warnings` makes a warning fail the gate, which is what a
   // guardrail is for; without it biome exits 0 on warnings and the ship step would read that as green.
-  if (deps['@biomejs/biome'] || exists(dir, 'biome.json') || exists(dir, 'biome.jsonc')) {
-    commands.lint = pm === 'npm' ? 'npx biome check --error-on-warnings .' : pm === 'yarn' ? 'yarn biome check --error-on-warnings .' : pm === 'bun' ? 'bunx biome check --error-on-warnings .' : 'pnpm exec biome check --error-on-warnings .';
-  }
+  if (biome) commands.lint = exec('biome check --error-on-warnings .');
+  // Prettier is checked, never run: a `format` script is usually `prettier --write`, which changes the tree instead of
+  // judging it. Biome formats as well, so a project that has it does not get Prettier as a second gate.
+  else if (deps.prettier || pkg.prettier || PRETTIER_CONFIGS.some((f) => exists(dir, f))) commands.format = exec('prettier --check .');
   if (scripts.build) commands.build = run('build');
   const hot = [...HOT_DEFAULT];
   if (deps.prisma || deps['@prisma/client']) hot.push('**/prisma/schema.prisma');
@@ -83,7 +92,7 @@ function node(dir) {
     frameworks: frameworks.filter((f) => f.name !== 'typescript'),
     packageManager: pm,
     commands,
-    guardrails: [commands.test, commands.typecheck, commands.lint].filter(Boolean),
+    guardrails: [commands.test, commands.typecheck, commands.lint, commands.format].filter(Boolean),
     sourceExtensions: ext,
     hotPathGlobs: hot,
     versionCard: card(frameworks.filter((f) => NODE_CARD.has(f.name))),
@@ -133,12 +142,15 @@ function python(dir) {
   const commands = {};
   if (has('pytest') || /\[tool\.pytest/.test(text) || exists(dir, 'tests')) commands.test = 'pytest';
   if (has('ruff') || /\[tool\.ruff/.test(text)) commands.lint = 'ruff check .';
+  if (has('black') || /\[tool\.black\]/.test(text)) commands.format = 'black --check .';
+  if (has('mypy') || /\[tool\.mypy\]/.test(text) || exists(dir, 'mypy.ini')) commands.typecheck = 'mypy .';
+  else if (has('pyright') || /\[tool\.pyright\]/.test(text) || exists(dir, 'pyrightconfig.json')) commands.typecheck = 'pyright';
   return {
     languages: ['python'],
     frameworks,
     packageManager: pm,
     commands,
-    guardrails: [commands.test, commands.lint].filter(Boolean),
+    guardrails: [commands.test, commands.typecheck, commands.lint, commands.format].filter(Boolean),
     sourceExtensions: ['.py'],
     hotPathGlobs: [...HOT_DEFAULT, 'alembic/**'],
     versionCard: card(frameworks.filter((f) => ['django', 'fastapi', 'flask', 'sqlalchemy'].includes(f.name))),
@@ -158,13 +170,17 @@ function gradle(dir) {
   const kv = text.match(/kotlin\([^)]*\)\s*version\s*"(\d+)/) || text.match(/org\.jetbrains\.kotlin[^"']*["'](\d+)/);
   if (kotlin) frameworks.push({ name: 'kotlin', label: 'Kotlin', major: kv ? Number(kv[1]) : null });
   const wrapper = exists(dir, 'gradlew');
-  const test = wrapper ? (process.platform === 'win32' ? 'gradlew.bat test' : './gradlew test') : 'gradle test';
+  const task = (name) => (wrapper ? (process.platform === 'win32' ? `gradlew.bat ${name}` : `./gradlew ${name}`) : `gradle ${name}`);
+  // ktlint and detekt arrive as Gradle plugins in practice, so their tasks are what the gate runs.
+  const commands = { test: task('test'), build: task('build') };
+  if (/ktlint/.test(text)) commands.lint = task('ktlintCheck');
+  if (/detekt/.test(text)) commands.static = task('detekt');
   return {
     languages: [kotlin ? 'kotlin' : 'java'],
     frameworks,
     packageManager: 'gradle',
-    commands: { test, build: test.replace(/ test$/, ' build') },
-    guardrails: [test],
+    commands,
+    guardrails: [commands.test, commands.lint, commands.static].filter(Boolean),
     sourceExtensions: kotlin ? ['.kt', '.kts', '.java'] : ['.java'],
     hotPathGlobs: [...HOT_DEFAULT],
     versionCard: [card(frameworks.filter((f) => f.name === 'kotlin')), ...frameworks.filter((f) => f.name !== 'kotlin').map((f) => f.label)].filter(Boolean).join(', '),
@@ -201,15 +217,55 @@ function go(dir) {
   const mod = readText(dir, 'go.mod');
   if (!mod) return null;
   const v = mod.match(/^go\s+(\d+\.\d+)/m);
-  return { languages: ['go'], frameworks: [], packageManager: 'go', commands: { test: 'go test ./...', build: 'go build ./...' },
-    guardrails: ['go test ./...'], sourceExtensions: ['.go'], hotPathGlobs: [...HOT_DEFAULT], versionCard: v ? `Go ${v[1]}` : 'Go' };
+  // gofmt is not here on purpose: `gofmt -l` prints the files it would change and still exits 0, so as a gate it passes
+  // on exactly the tree it should stop. `go vet` exits non-zero when it reports something, and a project that wants
+  // formatting enforced configures it in golangci-lint, which fails when its checks do.
+  const commands = { test: 'go test ./...', static: 'go vet ./...', build: 'go build ./...' };
+  if (['.golangci.yml', '.golangci.yaml', '.golangci.toml', '.golangci.json'].some((f) => exists(dir, f))) commands.lint = 'golangci-lint run';
+  return { languages: ['go'], frameworks: [], packageManager: 'go', commands,
+    guardrails: [commands.test, commands.static, commands.lint].filter(Boolean), sourceExtensions: ['.go'], hotPathGlobs: [...HOT_DEFAULT], versionCard: v ? `Go ${v[1]}` : 'Go' };
 }
 
 // ---------- rust ----------
 function rust(dir) {
   if (!exists(dir, 'Cargo.toml')) return null;
-  return { languages: ['rust'], frameworks: [], packageManager: 'cargo', commands: { test: 'cargo test', build: 'cargo build' },
-    guardrails: ['cargo test'], sourceExtensions: ['.rs'], hotPathGlobs: [...HOT_DEFAULT], versionCard: 'Rust' };
+  return { languages: ['rust'], frameworks: [], packageManager: 'cargo', commands: { test: 'cargo test', format: 'cargo fmt --check', build: 'cargo build' },
+    guardrails: ['cargo test', 'cargo fmt --check'], sourceExtensions: ['.rs'], hotPathGlobs: [...HOT_DEFAULT], versionCard: 'Rust' };
+}
+
+// ---------- terraform ----------
+// Reads the directory it is given, like every detector here: a multi-root layout (one directory per environment)
+// is detected when the session runs inside an environment directory, not from the repository's top level.
+const TF_PROVIDERS = [['aws', 'AWS provider'], ['google', 'Google provider'], ['azurerm', 'AzureRM provider'], ['kubernetes', 'Kubernetes provider'], ['helm', 'Helm provider']];
+
+function terraform(dir) {
+  const entries = (() => { try { return fs.readdirSync(dir); } catch { return []; } })();
+  const tf = entries.filter((f) => f.endsWith('.tf'));
+  if (!tf.length && !exists(dir, '.terraform.lock.hcl')) return null;
+  const text = tf.map((f) => readText(dir, f) || '').join('\n');
+  const lock = readText(dir, '.terraform.lock.hcl') || '';
+  const frameworks = [];
+  for (const [name, label] of TF_PROVIDERS) {
+    // The lock file holds the version actually installed; the constraint in required_providers is only a range.
+    const locked = lock.match(new RegExp(`provider\\s+"[^"]*/${name}"\\s*\\{\\s*version\\s*=\\s*"(\\d+)`));
+    const declared = new RegExp(`source\\s*=\\s*"[^"]*/${name}"`).test(text);
+    if (locked || declared) frameworks.push({ name, label, major: locked ? Number(locked[1]) : null });
+  }
+  const required = text.match(/required_version\s*=\s*"[^"\d]*(\d+)/);
+  // plan and apply read remote state with real credentials, so neither is ever a gate. validate and tflint need a
+  // directory prepared by `terraform init` and `tflint --init`, both of which download, so the kit never runs them.
+  const commands = { format: 'terraform fmt -check -recursive', validate: 'terraform validate' };
+  if (exists(dir, '.tflint.hcl')) commands.lint = 'tflint';
+  return {
+    languages: ['terraform'],
+    frameworks,
+    packageManager: 'terraform',
+    commands,
+    guardrails: [commands.format, commands.validate, commands.lint].filter(Boolean),
+    sourceExtensions: ['.tf', '.tfvars', '.hcl'],
+    hotPathGlobs: [...HOT_DEFAULT, '**/*iam*.tf', '**/backend.tf', '**/*security_group*.tf', '**/*kms*.tf', '**/*secret*.tf', '**/*.tfvars', '**/*.tfstate*'],
+    versionCard: card([{ name: 'terraform', label: 'Terraform', major: required ? Number(required[1]) : null }, ...frameworks]),
+  };
 }
 
 // ---------- parity ----------
@@ -223,7 +279,7 @@ function missingBinaries(commands, dir, envPath) {
 }
 
 // ---------- merge ----------
-const DETECTORS = [php, gradle, dotnet, go, rust, cmake, python, node];
+const DETECTORS = [php, gradle, dotnet, go, rust, cmake, python, node, terraform];
 
 function detect(dir = process.cwd(), opts = {}) {
   const parts = DETECTORS.map((f) => f(dir)).filter(Boolean);

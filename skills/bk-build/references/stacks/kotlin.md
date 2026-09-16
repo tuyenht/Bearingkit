@@ -24,4 +24,4 @@
 
 ## Guardrails `detect-stack` will name
 
-The Gradle test task when a `build.gradle.kts` is present. If the project adds a formatter or a static analyser — ktlint, detekt — it belongs in the same guardrail list, and until `detect-stack` learns to spot them the project's instruction files are where the acting skill finds them.
+The Gradle `test` task when a build file is present, `ktlintCheck` when the build applies the ktlint Gradle plugin, and `detekt` when it applies detekt — through the wrapper when the project has one. A formatter or analyser wired any other way (a standalone ktlint binary, kotlinter's `lintKotlin`) is not detected, and the project's instruction files are where the acting skill finds it.
