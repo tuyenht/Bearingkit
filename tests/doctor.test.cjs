@@ -103,6 +103,30 @@ test('a copy older than the repository skills/ fails, whether a file changed or 
   assert.equal(runDoctor(root2, home2).ok, false, 'a skill added since the copy was made is missing from it');
 });
 
+// Found 2026-09-16: after detect-stack.cjs changed, doctor still reported the copied scripts as fine, because it only
+// checked that they existed. The skills inside the copy call those scripts, so a stale one is a stale kit.
+test('a copy whose scripts are older than the checkout fails', () => {
+  const { root, home } = stagedCopy();
+  fs.writeFileSync(path.join(root, 'scripts', 'detect-stack.cjs'), '// stub, revised\n');
+  const r = runDoctor(root, home);
+  assert.equal(r.ok, false, 'the copy still carries the old script');
+  assert.ok(r.checks.some((c) => c.ok === false && /scripts/i.test(c.name)), 'the scripts check is the one that fails');
+});
+
+// The rule check looked for five markers. A note whose wording changed, or a protocol body from an older checkout,
+// keeps every marker and passed. The rule is generated, so the exact text the installer would write now is the test.
+test('a rule that keeps every marker but differs from what the installer writes now fails', () => {
+  const { root, home, dest } = stagedCopy();
+  const rule = path.join(dest, 'rules', 'bearingkit.md');
+  const text = fs.readFileSync(rule, 'utf8');
+  assert.ok(text.includes('This host has no skill tool.'), 'the sentence this test edits is in the note');
+  fs.writeFileSync(rule, text.replace('This host has no skill tool.', 'This host may have a skill tool.'));
+  assertRuleComplete(fs.readFileSync(rule, 'utf8'), dest);
+  const r = runDoctor(root, home);
+  assert.equal(r.ok, false, 'every marker is still there, and the note says something else');
+  assert.ok(r.checks.some((c) => c.ok === false && /rule/i.test(c.name)));
+});
+
 test('a copy made from another checkout is reported instead of silently compared', () => {
   const { home } = stagedCopy();
   const other = fakeKit();

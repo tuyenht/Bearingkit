@@ -17,7 +17,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { MARKER, SCRIPTS } = require('./antigravity.cjs');
+const { MARKER, SCRIPTS, ruleText } = require('./antigravity.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 
@@ -32,6 +32,8 @@ function files(dir, base = dir) {
 
 // Same files, same bytes. A copy made before the checkout moved on differs here, which is what "older" means once the
 // copy carries no version of its own.
+const sameFile = (a, b) => fs.existsSync(a) && fs.existsSync(b) && fs.readFileSync(a).equals(fs.readFileSync(b));
+
 function sameTree(a, b) {
   const from = files(a);
   const to = files(b);
@@ -49,10 +51,14 @@ function run({ root = ROOT, home = os.homedir(), dest: destOpt, log = () => {} }
 
   if (add('antigravity copy present', fs.existsSync(path.join(dest, MARKER)), refresh)) {
     add('antigravity copy marker names this kit', read(path.join(dest, MARKER)).trim() === root, refresh);
+    // The rule is generated from the protocol, the host note and the kit root, so the only honest comparison is with
+    // the text the installer would write now; checking for a few markers passed a note whose wording had changed.
     const rule = read(path.join(dest, 'rules', 'bearingkit.md'));
-    add('antigravity rule carries the protocol, the host note and the kit root',
-      ['trigger: always_on', '## Antigravity host note', 'view_file', 'Kit root', dest].every((m) => rule.includes(m)), refresh);
-    add('antigravity copy carries the scripts the skills call', SCRIPTS.every((s) => fs.existsSync(path.join(dest, ...s.split('/')))), refresh);
+    add('antigravity rule carries the protocol, the host note and the kit root, as the installer writes them now',
+      rule === ruleText(root, dest), refresh);
+    // The skills in the copy run these scripts, so a script older than the checkout is as stale as an older skill.
+    add('antigravity copy of the scripts the skills call matches this checkout',
+      SCRIPTS.every((s) => sameFile(path.join(root, ...s.split('/')), path.join(dest, ...s.split('/')))), refresh);
     add('antigravity copy of skills/ matches this checkout', sameTree(path.join(root, 'skills'), path.join(dest, 'skills')), refresh);
   }
 
