@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-15** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · số commit không ghi ở đây: nó tự cũ sau mỗi commit của chính phiên đang viết (đã vấp hai lần); đếm bằng `git log --oneline | wc -l` · **69/69** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-16 sau Terraform và guardrail còn sót)
+Cập nhật: **2026-09-15** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · số commit không ghi ở đây: nó tự cũ sau mỗi commit của chính phiên đang viết (đã vấp hai lần); đếm bằng `git log --oneline | wc -l` · **73/73** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-16 sau bản sửa `doctor`)
 
 > **File này là BẢNG ĐIỀU KHIỂN, không phải nguồn sự thật.** Nó chỉ trỏ đường và ghi trạng thái; mọi nội dung thật nằm ở nơi khác:
 >
@@ -26,7 +26,7 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | — nguồn đã có `derived` (chữ thật đã port) | **3** nguồn, **19** file dẫn xuất | cùng lệnh |
 | Mục trong `NOTICE` | **2** (obra/superpowers, anthropics/claude-plugins-official) | `grep '^##' NOTICE` |
 | Hàng nguồn trong ma trận | 39 (gồm host candidate, tool, và 8 mục owner loại) | `grep -c '^\| [0-9]'` |
-| Test | 69/69 xanh | `node --test tests/*.test.cjs` |
+| Test | 73/73 xanh | `node --test tests/*.test.cjs` |
 | `skills/<name>/tests/` (§5.3 cần ≥3 prompt mỗi skill) | **9/11** — 27 case; `bk-audit` và `bk-next` thuộc v0.3 | `find skills -type d -name tests` |
 | `SKILL.md` có dòng provenance + license mode | 11/11 skill đang tồn tại | `grep -h '^Sources:' skills/*/SKILL.md`, có test canh |
 | File stack `bk-build/references/stacks/` (§5.5 cần 8) | **3/8** — `typescript-react`, `kotlin`, `sql`, cộng `index.md` ánh xạ profile → file | `ls skills/bk-build/references/stacks/` |
@@ -113,8 +113,8 @@ Phạm vi v0.2 theo §13 là **tám skill lifecycle** (`bk-spec`, `bk-plan`, `bk
 
 Nguồn thật: `docs/specs/2026-09-12-d5-owner-questions.md`. Không copy nội dung ở đây, chỉ đếm và trỏ.
 
-- **11/21 câu đã chốt** (2026-09-12): câu 1, 2, 3, 4, 5, 6, 8, 9, 12, 14, 16.
-- **10 câu còn treo**: 7, 10, 11, 13, 15 (Tier 2 — đang giữ mặc định, không chặn việc nào); 17, 18, 19, 20 (Tier 3 — ghi nhận); 21 (sửa `AGENTS.md`: đọc bởi công cụ có bất biến-không-ghi đã test thì tính ACT hay COUNCIL — điều kiện owner đặt ra nay đã đủ).
+- **13/22 câu đã chốt**: câu 1, 2, 3, 4, 5, 6, 8, 9, 12, 14, 16 (2026-09-12); **21** (2026-09-15: tách đọc/ghi trong `AGENTS.md`); **22** (2026-09-16: `claude-code-setup` → owner muốn skill `bk-setup`; thiết kế đề xuất ở `docs/specs/2026-09-16-bk-setup-design.md`, **chờ duyệt** trước khi dựng thành Task 6c). *(Bản trước của dòng này vẫn ghi 11/21 và liệt câu 21 là còn treo sau khi nó đã chốt — sửa 2026-09-16.)*
+- **9 câu còn treo**: 7, 10, 11, 13, 15 (Tier 2 — đang giữ mặc định, không chặn việc nào); 17, 18, 19, 20 (Tier 3 — ghi nhận).
 - **2 va chạm mới từ phiên doctor, cần owner đọc**: (a) mã `doctor` đã nằm trong cây trước v0.2 trong khi nhãn đã chốt là "v0.3" (câu 4); (b) `doctor` cố ý không gọi `claude plugin list`/`validate` như §6 mô tả, vì trần "không ghi một byte" là bất biến cứng (câu 1).
 - ~~Ngã ba lộ trình~~ — **owner chốt 2026-09-13: lộ trình B, daily driver trước**, kế hoạch ở `docs/plans/2026-09-13-daily-driver.md`. ~~Câu sinh ra từ đó về `frontend-design`/`bk-design`~~ — **owner chốt 2026-09-14: đường (ii)**, nới điều kiện câu 12 **chỉ cho riêng `bk-design`**; mọi skill khác vẫn chờ inventory. Ghi ở nguồn thật (`d5-owner-questions.md` câu 12) kèm lý do, và thành Task 6b của plan.
 
