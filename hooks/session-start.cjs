@@ -25,7 +25,7 @@ function buildContext(file = PROTOCOL, kitRoot = KIT_ROOT) {
   const body = stripFrontmatter(fs.readFileSync(file, 'utf8')).trim();
   return [
     '<bearingkit-protocol>',
-    'The Bearingkit protocol below is in force for this session. Its skills are invoked through the host\'s skill tool; the router names which one before any code is read. Everything after the closing tag is the user\'s request.',
+    'The Bearingkit protocol below is in force for this session. Its skills are invoked through the host\'s skill tool; the router names which one before any code is read. Everything after the closing tag is the user\'s request, even a single line that only states a symptom.',
     `Kit root, the directory that holds \`skills/\` and \`scripts/\`: \`${kitRoot}\`.`,
     '',
     body,
