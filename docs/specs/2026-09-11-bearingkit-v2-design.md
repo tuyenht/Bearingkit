@@ -116,7 +116,7 @@ Language and framework guidance lives in `skills/bk-build/references/stacks/<sta
 
 ### 5.6 Stack profile
 
-`scripts/detect-stack.cjs` (v1 §6) prints the stack profile: languages, framework majors from lockfiles, package manager, test, lint, type-check and build commands, hot-path globs, an environment-parity check. Skills that need guardrail commands or hot paths run it once per session from the project root (`node <kit>/scripts/detect-stack.cjs`, where `<kit>` is the directory that holds `skills/`, known from the skill file's own path). Nothing is injected by a hook.
+`scripts/detect-stack.cjs` (v1 §6) prints the stack profile: languages, framework majors from lockfiles, package manager, test, lint, type-check and build commands, hot-path globs, an environment-parity check, and notes: preconditions a guardrail has that its command line cannot say (the first is Terraform's, 2026-09-16: `validate` needs an initialised directory, and a plain `terraform init` configures the remote backend). Skills that need guardrail commands or hot paths run it once per session from the project root (`node <kit>/scripts/detect-stack.cjs`, where `<kit>` is the directory that holds `skills/`, known from the skill file's own path). Nothing is injected by a hook.
 
 ## 6. bk-protocol: the bootstrap
 
@@ -195,6 +195,7 @@ Antigravity numbers are read from the Customizations panel. Language guidance an
 
 | 2026-09-13 | Corrected §6 and §12: `bk-protocol` is no longer hidden from Claude's skill listing. The kit did not change — its frontmatter still carries both keys — the host did, in the auto-update the owner took that day: the panel now lists the skill as `user-only · ~80 tok`. Measured against the 2026-09-10 reading where it was absent from `/context all`'s User group. The §12 ceiling still holds (900 of 1,700 at eleven skills), so this is a fact correction, not a budget change (`docs/compat/2026-09-13-daily-profile-readings.md`) |
 | 2026-09-13 | Two claims verified in the owner's daily profile rather than the isolated one, and recorded because neither had ever been tested there: the session-start bootstrap does load (the kit-root line was answered with no tool call), and the feature prompt still routes to `bk-spec` as the first action among 196 listed skills. One prompt is a data point; the sixty-prompt set has never run in that profile (`docs/compat/2026-09-13-daily-profile-readings.md`) |
+| 2026-09-16 | The stack profile (§5.6) gains Terraform as a language and a `notes` field, and names the guardrails projects used to supply themselves (ESLint, Prettier, black, mypy or pyright, go vet, golangci-lint, cargo fmt, ktlint, detekt), each in the form that fails; `plan`, `apply` and `init` are never guardrails. The v2 bootstrap regained the clause that a single line stating a symptom is the request: the restructure had dropped it with the old block format, and the gate of the same day met the 2026-09-10 failure again on the same prompt. The owner chose a `bk-setup` skill over an ideas-only close for claude-code-setup (D5 question 22); its design, which would take the catalog from seventeen to eighteen, is proposed in `docs/specs/2026-09-16-bk-setup-design.md` and not yet approved, so §5.1 is unchanged. |
 
 Earlier decisions: v1 §19.
 
