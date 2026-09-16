@@ -246,6 +246,16 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ---
 
+### 22. `claude-code-setup`: ideas-only, hay một skill `bk-setup`
+*(MỚI — phát sinh từ kiểm kê mức từng mục ngày 2026-09-15, cuối `docs/specs/2026-09-11-skill-inventory.md`. Đánh số 22 vì cùng lý do với câu 21.)*
+> **ĐÃ CHỐT 2026-09-16 — quyết định của owner: (b), muốn một skill `bk-setup`.** Hỏi bằng câu hỏi có lựa chọn; khuyến nghị của phiên lúc đó là (a), owner chọn khác. Hệ quả mà chính file kiểm kê đã nêu trước khi hỏi: một mục catalog mới (17 → 18), qua scope test §5.2, và giải mâu thuẫn host-specific. Thiết kế đề xuất: `docs/specs/2026-09-16-bk-setup-design.md` — **chờ owner duyệt thiết kế** trước khi dựng (Task 6c của `docs/plans/2026-09-13-daily-driver.md`).
+- **Cần quyết định:** nguồn bắt buộc thứ tư kiểm kê ra 0 absorb / 5 drop / 3 idea — (a) chấp nhận ideas-only và đóng lại, hay (b) dựng một skill `bk-setup` thật?
+- **Lựa chọn:** (a) / (b).
+- **Bị chặn:** việc đóng hàng 2 của ma trận cho phần `claude-code-setup`; một trong ba câu của Task 9.
+- **Khuyến nghị lúc hỏi:** (a) — phần lớn nguồn là host-specific và khuyến nghị MCP mà kit cố ý không làm. Owner chọn (b); phiên không mở lại câu này.
+
+---
+
 ## Quyết định 2026-09-12 và những gì mở khoá — CHƯA áp dụng, chỉ liệt kê
 
 Owner đã chốt câu 1, 2, 3, 4, 6, 8 làm quyết định thật; câu 5 owner yêu cầu kiểm lại thay vì tự quyết, đã kiểm (xem khối audit trong câu 5 ở trên) — vẫn là khuyến nghị. Tier 2 (trừ câu 9/12/14/16, nhóm riêng không mặc định) và Tier 3 giữ nguyên như owner chỉ định. Mục này liệt kê **chính xác** việc sẽ mở khoá cho từng quyết định — không file nào trong repo bị sửa theo mục này.
