@@ -131,9 +131,23 @@ test('equivalents make a baseline run meaningful', () => {
   assert.equal(s.pass, 1);
 });
 
+// A label with alternatives (bk-spec|none) is one cell. Written raw, its pipe splits the cell in two, so the table
+// renders an extra column and anything that reads the table back shifts got and pass by one (seen 2026-09-16: a
+// scorer read the 57/60 baseline as 56/60).
+test('the result table escapes the pipe inside an expect label', () => {
+  const { table } = require('../scripts/evals.cjs');
+  const results = [{ id: 'ship-neg-02', intent: 'ship', expect: 'bk-spec|none', got: 'none' }];
+  const text = table(results, summarize(results), 'claude', 'meta');
+  const row = text.split('\n').find((l) => l.startsWith('| ship-neg-02 '));
+  assert.equal(row, '| ship-neg-02 | ship | bk-spec\\|none | none | yes |');
+  assert.equal(row.split(/(?<!\\)\|/).length - 2, 5, 'five cells, not six');
+});
+
 test('checklist renders one row per prompt', () => {
   const text = checklist([{ id: 'x', intent: 'bug', prompt: 'a | b', expect: 'bk-debug' }]);
   assert.match(text, /\| x \| bug \| a \\\| b \| bk-debug \|  \|/);
+  const alt = checklist([{ id: 'y', intent: 'ship', prompt: 'Deploy', expect: 'bk-spec|none' }]);
+  assert.ok(alt.includes('| y | ship | Deploy | bk-spec\\|none |  |'), 'the expect cell escapes its pipe too');
 });
 
 test('parseQuota reads the five-hour window and its own reset time, not the event-level one', () => {

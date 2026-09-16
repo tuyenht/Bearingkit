@@ -218,7 +218,8 @@ function summarize(results, equivalents) {
 
 function table(results, summary, host, meta, equivalents) {
   const lines = [`# Activation evals · ${host} · ${new Date().toISOString().slice(0, 10)}`, '', meta, '', '| id | intent | expect | got | pass |', '|---|---|---|---|---|'];
-  for (const r of results) lines.push(`| ${r.id} | ${r.intent} | ${r.expect} | ${r.got} | ${passes(r, equivalents) ? 'yes' : 'NO'} |`);
+  // An expect label with alternatives (a|b) is one cell; its pipe is escaped so the table keeps five columns.
+  for (const r of results) lines.push(`| ${r.id} | ${r.intent} | ${String(r.expect).replace(/\|/g, '\\|')} | ${r.got} | ${passes(r, equivalents) ? 'yes' : 'NO'} |`);
   lines.push('', '| intent | positives routed | all prompts |', '|---|---|---|');
   for (const [k, v] of Object.entries(summary.byIntent)) lines.push(`| ${k} | ${v.positivesPass}/${v.positives} | ${v.pass}/${v.total} |`);
   lines.push('', `Overall: ${summary.pass}/${summary.total} · false activations on "none" prompts: ${summary.falseActivations}`);
@@ -227,7 +228,7 @@ function table(results, summary, host, meta, equivalents) {
 
 function checklist(prompts) {
   const lines = ['# Activation checklist · antigravity', '', 'Run each prompt in a fresh conversation; write the skill that activated (or none) in the last column.', '', '| id | intent | prompt | expect | got |', '|---|---|---|---|---|'];
-  for (const p of prompts) lines.push(`| ${p.id} | ${p.intent} | ${p.prompt.replace(/\|/g, '\\|')} | ${p.expect} |  |`);
+  for (const p of prompts) lines.push(`| ${p.id} | ${p.intent} | ${p.prompt.replace(/\|/g, '\\|')} | ${String(p.expect).replace(/\|/g, '\\|')} |  |`);
   return lines.join('\n') + '\n';
 }
 
