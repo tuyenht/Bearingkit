@@ -267,6 +267,17 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ---
 
+### 24. Hai hàng ngân sách con vượt trần: cắt nội dung, hay chia lại trần trong cùng tổng 5.000
+*(MỚI — đo 2026-09-17, `docs/compat/2026-09-16-daily-driver-gate.md`, mục "Measured afterwards".)*
+> **CHỜ OWNER.** Khuyến nghị của phiên: (a).
+- **Dữ kiện, đã đo** (Claude Code 2.1.274, `claude -p "/context all"`, profile cách ly): tổng cố định **≈3.950 ≤ 5.000** — đạt. Nhưng protocol bơm lúc mở phiên **≈2.500 > 2.300**, và danh sách 4 agent **414 > 300**. Protocol v2 lớn hơn v1 (1.900) vì đã gộp baseline bảo mật, host notes và bảng chỉ mục references vào văn bản luôn được nạp.
+- **Cần quyết định:** giữ trần từng hàng như hợp đồng, hay chỉ giữ trần tổng.
+- **Lựa chọn:** (a) **cắt** — mô tả 4 agent xuống cỡ 75 token mỗi cái, protocol bớt cỡ 250 token (bảng chỉ mục references là chỗ dày nhất; test đòi body `bk-protocol` phải nêu từng file reference, nên chỉ rút gọn mô tả được, không bỏ hàng); sau đó chạy lại kiểm hồi quy trên Claude Code và acceptance trên hai host. (b) **chia lại trần** trong cùng tổng: protocol ≤2.600, agent ≤450 — chỉ sửa spec §12, không đụng nội dung. (c) để nguyên, ghi nhận vượt.
+- **Bị chặn:** không gì — tổng vẫn đạt. Chỉ không nên cắt khi một lượt đo Antigravity đang chạy trên đúng văn bản hiện tại.
+- **Khuyến nghị:** (a). Nhẹ là một phần giá trị của kit, và nguyên tắc 9 gọi ngân sách là hợp đồng; (b) hợp lệ nhưng là dời cột mốc sau khi đo. Làm sau khi nửa Antigravity của cổng đã có số.
+
+---
+
 ## Quyết định 2026-09-12 và những gì mở khoá — CHƯA áp dụng, chỉ liệt kê
 
 Owner đã chốt câu 1, 2, 3, 4, 6, 8 làm quyết định thật; câu 5 owner yêu cầu kiểm lại thay vì tự quyết, đã kiểm (xem khối audit trong câu 5 ở trên) — vẫn là khuyến nghị. Tier 2 (trừ câu 9/12/14/16, nhóm riêng không mặc định) và Tier 3 giữ nguyên như owner chỉ định. Mục này liệt kê **chính xác** việc sẽ mở khoá cho từng quyết định — không file nào trong repo bị sửa theo mục này.

@@ -95,6 +95,22 @@ What differs between the two runs is the kit's layout (v1 install → v2 plugin,
 
 ## Not measured in this run
 
-- **`/context` in the isolated profile** (the §12 budget, ≤5,000 fixed): the reading needs an interactive session; `claude --help` on 2.1.270 offers no print-mode equivalent. Owner action.
+- **`/context` in the isolated profile** (the §12 budget, ≤5,000 fixed): first thought to need an interactive session, because `claude --help` on 2.1.270 lists no print-mode equivalent. That was wrong: `claude -p "/context all"` prints the full breakdown, and it was read on 2026-09-17 (section below).
 - **The two acceptance prompts in the daily profile**: a `claude -p` session there writes its transcript under `~/.claude`, which `AGENTS.md` keeps COUNCIL. Owner action; the command is in the handoff. **In the isolated profile they were run again** on 2026-09-17 (2.1.274, kit at `1b5bff6`), because the bootstrap sentence and the host had both changed since the 2026-09-11 pass: prompt 1 answered ACT and COUNCIL in one turn with no tool call — the runner marks that `no-action`, which since `a0cd431` is read from the stream rather than scored — and prompt 2 invoked `bk-spec` first. Pass; `docs/hosts.md` records it.
-- **Antigravity** — neither the set through the DevTools driver nor acceptance. The app must be started with `--remote-debugging-port=1405`, and the live copy is stale (`doctor`: skills and scripts differ from the checkout), so `antigravity install` comes first. The v0.2 gate asks for both hosts; this document closes the Claude Code half only.
+- **Antigravity** — run separately, after the owner approved the package on 2026-09-17; its numbers are recorded in their own section once the run ends.
+
+## Measured afterwards, 2026-09-17 (Claude Code 2.1.274, kit at `446d009`)
+
+**Fixed context, isolated profile** — `claude -p "/context all"` from the staged fixture, model `claude-opus-5[1m]` (the profile's default, as in the Phase 1 readings), once with the kit loaded by `--plugin-dir` and once without it:
+
+| Budget row (spec §12) | Budget | Measured | How |
+|---|---|---|---|
+| protocol injected at session start | ≤2,300 | **≈2,500 — over** | "Messages" reads 2.5k with the kit and 8 without; the host prints it rounded to a tenth of a thousand, so the true figure lies between about 2,450 and 2,550, over the row either way. v1's protocol and baseline read 1,900 as memory files |
+| skill listing (18 core) | ≤1,700 | **≈1,040** | the twelve `bearingkit:bk-*` rows of the Skills section, each printed as an approximation (`bk-design` and `bk-setup` ~110, `bk-build`, `bk-ship` and `bk-spec` ~100, `bk-review` ~90, `bk-audit` ~80, five at ~70); `bk-protocol` is not listed. The Skills category reads 5.2k with the kit and 4.2k without, which agrees |
+| agents listing (4) | ≤300 | **414 — over** | Custom Agents section: `bk-design-critic` 116, `bk-query-optimizer` 110, `bk-reviewer` 108, `bk-researcher` 80 |
+| auto-memory index | ≤200 | **0** | no memory row in either reading |
+| **total fixed** | **≤5,000** | **≈3,950 — within** | the four rows above |
+
+The total holds with about 1,000 to spare; two rows are over their own allocation. Whether to trim the protocol and the agent descriptions or to re-balance the rows inside the same total is question 24 of `docs/specs/2026-09-12-d5-owner-questions.md`.
+
+**Acceptance in the daily profile** — `evals --file evals/activation/acceptance.jsonl` with no `--config-dir`, streams kept (`evals/results/2026-09-17-*-acceptance-daily-clean.raw.jsonl`), approved by the owner as a listed item. The listing held **129 skills**, twelve of them the kit's. Prompt 1 answered ACT and COUNCIL in one turn with no tool call; prompt 2 invoked `bearingkit:bk-spec` first. **Pass.** This is a clean run, separate from the two sessions of the 11:59 incident, whose result is not used. The app must be started with `--remote-debugging-port=1405`, and the live copy is stale (`doctor`: skills and scripts differ from the checkout), so `antigravity install` comes first. The v0.2 gate asks for both hosts; this document closes the Claude Code half only.

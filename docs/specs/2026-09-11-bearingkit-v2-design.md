@@ -152,11 +152,11 @@ Unchanged from v1 §6: the kit reads a project's manifests and instruction files
 
 | Item | Budget | Measurement |
 |---|---|---|
-| protocol injected at session start | ≤2,300 | `/context` memory or system-context line |
+| protocol injected at session start | ≤2,300 | `/context` memory or system-context line; **≈2,500 on 2026-09-17** ("Messages" 2.5k with the kit, 8 without), over the row |
 | skill listing (18 core since 2026-09-17; `bk-protocol` listed as `user-only` and charged since the host change of 2026-09-13) | ≤1,700 | `/context`; eleven skills read 900 by the panel's per-skill figures on 2026-09-13, about 1,390 projected at seventeen and about 1,470 at eighteen — projections, not readings |
-| agents listing (4) | ≤300 | `/context` |
+| agents listing (4) | ≤300 | `/context`; **414 on 2026-09-17**, over the row |
 | auto-memory index | ≤200 | `/context` |
-| **total fixed** | **≤5,000** (sum 4,500) | isolated profile, plugin loaded, default listing budget |
+| **total fixed** | **≤5,000** (sum 4,500) | isolated profile, plugin loaded, default listing budget; **≈3,950 on 2026-09-17** (Claude Code 2.1.274, `claude -p "/context all"`, skills ≈1,040, memory 0), within the total; the two rows over it are D5 question 24 |
 
 Antigravity numbers are read from the Customizations panel. Language guidance and references cost 0 until read.
 

@@ -83,6 +83,7 @@ Priority across these rows and the mandatory group of 2026-09-10 is set by D3, a
 | Claim | Number | Source |
 |---|---|---|
 | Fixed context per session, kit | about 2,650 tokens | `docs/compat/phase-1-gate.md`, third `/context` reading |
+| Fixed context per session, kit v2 plugin, Claude Code 2.1.274 | about 3,950 tokens: protocol ≈2,500, skill listing ≈1,040, agents 414, memory 0 | `docs/compat/2026-09-16-daily-driver-gate.md`, "Measured afterwards" |
 | Fixed context per session, daily profile (Spartan + ClaudeKit residue + Superpowers + rules), memory files only | 71.9k tokens | same document, second reading; agents and skill listing of that profile not included |
 | Activation on six intents, kit, Claude Code | clean sixty-prompt run 57/60 with 0 false activations; after two fixes found by it, affected intents 10/10 on rerun | same document, confirmation section |
 | Activation on six intents, kit v2 plugin, Claude Code 2.1.270 | 58/60 on the sixty, equal to the 2026-09-10 run re-scored under the same labels (57/60 under that evening's); 0 false activations; recall 0.958, precision 1.000; the eighteen prompts added since: 17/18 as measured, 18/18 after one label correction | `docs/compat/2026-09-16-daily-driver-gate.md` |
