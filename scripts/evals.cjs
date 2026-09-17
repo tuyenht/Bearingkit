@@ -69,6 +69,42 @@ function parseQuota(text) {
   return last;
 }
 
+// The init event of a stream: host version and the skills listing, the kit's counted apart from the rest. From
+// 2026-09-17 the host syncs the account's skills into the isolated profile, so the listing is read, not assumed.
+function parseInit(text) {
+  for (const line of String(text).split('\n')) {
+    if (!line.includes('"init"')) continue;
+    let o;
+    try { o = JSON.parse(line); } catch { continue; }
+    if (o && o.type === 'system' && o.subtype === 'init') {
+      const skills = Array.isArray(o.skills) ? o.skills.map(String) : [];
+      const kit = skills.filter((s) => s.startsWith('bearingkit:'));
+      return { version: o.claude_code_version || 'unknown', total: skills.length, kit: kit.length, others: skills.filter((s) => !s.startsWith('bearingkit:')) };
+    }
+  }
+  return null;
+}
+
+// One line for the result table: how many sessions saw which listing, and every listed skill that is not the kit's.
+function listingNote(inits) {
+  if (!inits.length) return 'Skills in the listing: no session ran';
+  const groups = new Map();
+  const others = new Set();
+  const versions = new Set();
+  let missing = 0;
+  for (const i of inits) {
+    if (!i) { missing++; continue; }
+    versions.add(i.version);
+    for (const o of i.others) others.add(o);
+    const key = `${i.total} skills (${i.kit} from the kit)`;
+    groups.set(key, (groups.get(key) || 0) + 1);
+  }
+  const sessions = (n) => `${n} session${n === 1 ? '' : 's'}`;
+  const parts = [...groups].sort((a, b) => b[1] - a[1]).map(([k, n]) => `${k} in ${sessions(n)}`);
+  if (missing) parts.push(`no init event in ${sessions(missing)}`);
+  return `Skills in the listing: ${parts.join('; ')} · host ${[...versions].sort().join(', ') || 'unknown'} · not from the kit: ${[...others].sort().join(', ') || 'none'}`;
+}
+
 // A run stops itself before it exhausts the account. Returns the window that is at or over its ceiling, or null.
 function quotaStop(quota, limits) {
   if (!quota) return null;
@@ -184,7 +220,7 @@ function runClaudePrompt(prompt, opts) {
   // read as part of the injected context, both seen on 2026-09-10). Marked "no-action" rather than scored as
   // "none" so it stands out in the table; read the raw stream, then rerun.
   const acted = /"type":"user"/.test(raw) || /"type":"tool_use"/.test(raw) || !/"num_turns":1\b/.test(raw);
-  return { got: acted ? parseStream(raw) : 'no-action', raw, stderr: r.stderr || '', status: r.status, quota: parseQuota(raw) };
+  return { got: acted ? parseStream(raw) : 'no-action', raw, stderr: r.stderr || '', status: r.status, quota: parseQuota(raw), init: parseInit(raw) };
 }
 
 // A result passes when the skill invoked is the expected one, or, for a baseline run against another setup,
@@ -311,6 +347,7 @@ async function run(argv) {
   const limits = { fiveHour: args['max-utilization'] ? Number(args['max-utilization']) : 0.9, sevenDay: args['max-seven-day'] ? Number(args['max-seven-day']) : 0.95 };
   const tag = args.tag ? '-' + String(args.tag).replace(/[^a-z0-9-]/gi, '') : '';
   const results = [];
+  const inits = [];
   let quota = null;
   let stopped = null;
   for (const p of prompts) {
@@ -318,6 +355,7 @@ async function run(argv) {
     const r = runClaudePrompt(p.prompt, opts);
     const row = { ...p, got: r.got };
     results.push(row);
+    inits.push(r.init);
     quota = r.quota || quota;
     process.stdout.write(`${p.id.padEnd(12)} expect=${p.expect.padEnd(10)} got=${r.got.padEnd(10)} ${passes(row, equivalents) ? 'ok' : 'MISS'}\n`);
     if (args.raw) fs.writeFileSync(path.join(outDir, `${date}-${p.id}${tag}.raw.jsonl`), r.raw);
@@ -335,8 +373,9 @@ async function run(argv) {
   const quotaNote = quota ? ` · quota after run: five-hour ${Math.round((quota.fiveHour || 0) * 100)}%, seven-day ${Math.round((quota.sevenDay || 0) * 100)}%` : '';
   const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · plugin: ${opts.pluginDir || 'none'} · cwd: ${opts.cwd} · prompts: ${results.length} of ${prompts.length}${equivalents ? ' · equivalents: ' + path.basename(args.equivalents) : ''}${quotaNote}${stopped ? ` · **stopped early on the ${stopped.window} ceiling**, ${prompts.length - results.length} prompt(s) not run` : ''}`;
   const out = path.join(outDir, `${date}-claude${args.intent ? '-' + args.intent : ''}${tag}.md`);
-  fs.writeFileSync(out, table(results, summary, 'claude', meta, equivalents));
-  process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}, no-action ${summary.noAction}.${quotaNote} Written: ${out}\n`);
+  const listing = listingNote(inits);
+  fs.writeFileSync(out, table(results, summary, 'claude', meta + '\n\n' + listing, equivalents));
+  process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}, no-action ${summary.noAction}.${quotaNote}\n${listing}\nWritten: ${out}\n`);
 }
 
-module.exports = { run, parseStream, parseQuota, quotaStop, loadPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };
+module.exports = { run, parseStream, parseQuota, parseInit, listingNote, quotaStop, loadPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };

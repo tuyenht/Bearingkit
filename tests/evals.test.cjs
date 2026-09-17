@@ -180,6 +180,28 @@ test('checklist renders one row per prompt', () => {
   assert.ok(alt.includes('| y | ship | Deploy | bk-spec\\|none |  |'), 'the expect cell escapes its pipe too');
 });
 
+// From 2026-09-17 the host syncs the account's skills and plugins into the isolated profile, so the listing of a run
+// is read from each stream's init event and written into the result table, where a reader sees it without the streams.
+test('parseInit reads the host version and the skills listing from the init event', () => {
+  const { parseInit } = require('../scripts/evals.cjs');
+  const init = JSON.stringify({ type: 'system', subtype: 'init', claude_code_version: '2.1.274', skills: ['debug', 'bearingkit:bk-spec', 'anthropic-skills:pdf', 'bearingkit:bk-build'] });
+  assert.deepEqual(parseInit('noise\n' + init + '\n' + JSON.stringify({ type: 'result' })), { version: '2.1.274', total: 4, kit: 2, others: ['debug', 'anthropic-skills:pdf'] });
+  assert.equal(parseInit(streamNoSkill), null, 'a stream without an init event gives nothing');
+});
+
+test('listingNote counts sessions per listing and names what is not the kit', () => {
+  const { listingNote } = require('../scripts/evals.cjs');
+  const a = { version: '2.1.274', total: 43, kit: 12, others: ['debug', 'slides'] };
+  const b = { version: '2.1.274', total: 41, kit: 12, others: ['debug'] };
+  const note = listingNote([a, a, b, null]);
+  assert.match(note, /43 skills \(12 from the kit\) in 2 sessions/);
+  assert.match(note, /41 skills \(12 from the kit\) in 1 session\b/);
+  assert.match(note, /no init event in 1 session/);
+  assert.match(note, /host 2\.1\.274/);
+  assert.match(note, /not from the kit: debug, slides/, 'the names are the union over all sessions, sorted');
+  assert.equal(listingNote([]), 'Skills in the listing: no session ran');
+});
+
 test('parseQuota reads the five-hour window and its own reset time, not the event-level one', () => {
   const { parseQuota } = require('../scripts/evals.cjs');
   const ev = JSON.stringify({ type: 'rate_limit_event', rate_limit_info: { status: 'allowed', resetsAt: 2, rateLimitType: 'seven_day', unifiedWindows: { five_hour: { utilization: 0.73, resetsAt: 1 }, seven_day: { utilization: 0.32, resetsAt: 2 } } } });
