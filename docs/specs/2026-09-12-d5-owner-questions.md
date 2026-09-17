@@ -248,7 +248,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 22. `claude-code-setup`: ideas-only, hay một skill `bk-setup`
 *(MỚI — phát sinh từ kiểm kê mức từng mục ngày 2026-09-15, cuối `docs/specs/2026-09-11-skill-inventory.md`. Đánh số 22 vì cùng lý do với câu 21.)*
-> **ĐÃ CHỐT 2026-09-16 — quyết định của owner: (b), muốn một skill `bk-setup`.** Hỏi bằng câu hỏi có lựa chọn; khuyến nghị của phiên lúc đó là (a), owner chọn khác. Hệ quả mà chính file kiểm kê đã nêu trước khi hỏi: một mục catalog mới (17 → 18), qua scope test §5.2, và giải mâu thuẫn host-specific. Thiết kế đề xuất: `docs/specs/2026-09-16-bk-setup-design.md` — **chờ owner duyệt thiết kế** trước khi dựng (Task 6c của `docs/plans/2026-09-13-daily-driver.md`).
+> **ĐÃ CHỐT 2026-09-16 — quyết định của owner: (b), muốn một skill `bk-setup`.** Hỏi bằng câu hỏi có lựa chọn; khuyến nghị của phiên lúc đó là (a), owner chọn khác. Hệ quả mà chính file kiểm kê đã nêu trước khi hỏi: một mục catalog mới (17 → 18), qua scope test §5.2, và giải mâu thuẫn host-specific. Thiết kế: `docs/specs/2026-09-16-bk-setup-design.md` — **duyệt và dựng 2026-09-17** (Task 6c), sau khi owner giao các quyết định đang chờ cho khuyến nghị của phiên: "Tiếp tục xử lý theo khuyến nghị tốt nhất có thể cho tôi đi."
 - **Cần quyết định:** nguồn bắt buộc thứ tư kiểm kê ra 0 absorb / 5 drop / 3 idea — (a) chấp nhận ideas-only và đóng lại, hay (b) dựng một skill `bk-setup` thật?
 - **Lựa chọn:** (a) / (b).
 - **Bị chặn:** việc đóng hàng 2 của ma trận cho phần `claude-code-setup`; một trong ba câu của Task 9.
@@ -258,7 +258,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 23. `bug-en-03`: chấp nhận một khoảng trống hẹp, hay đưa lại hook chạy theo từng prompt
 *(MỚI — phát sinh từ cổng đo 2026-09-16/17, `docs/compat/2026-09-16-daily-driver-gate.md`. Đánh số 23 vì cùng lý do với câu 21.)*
-> **CHỜ OWNER.** Khuyến nghị của phiên: (a).
+> **ĐÃ CHỐT 2026-09-17 — (a), theo ủy quyền của owner** ("Tiếp tục xử lý theo khuyến nghị tốt nhất có thể cho tôi đi."), vì (a) là khuyến nghị của phiên. `bug-en-03` là giới hạn đã biết; prompt giữ nguyên trong bộ 60. Owner nói khác thì câu này mở lại.
 - **Dữ kiện, đã đo:** prompt `bug-en-03` — *"Uploads over 5 MB silently disappear."* — không được mô hình coi là yêu cầu, **có kit hay không cũng vậy** (3/3 mỗi bên, `claude-sonnet-5`; cổng và lượt chạy lại trượt câu này trên Claude Code 2.1.270, các thí nghiệm chạy trên 2.1.274 sau khi CLI tự cập nhật): nó trả lời *"What would you like to work on?"*. Thêm hai chữ neo vào ứng dụng (*"… in the app."*) thì có kit đi `bk-debug` (2/2), không kit thì tự lục code (2/2). Kit v1 từng làm câu này qua bằng một chỉ dẫn nằm ở **cấp memory** (`core/AGENTS.md` được import); v2 nạp protocol qua SessionStart, tức **cấp system-reminder**, và hai cách viết khác nhau của chỉ dẫn đó đều không đổi được kết quả (3/3 mỗi cách).
 - **Cần quyết định:** kit có cần bù cho một câu trần thuật mơ hồ như vậy không.
 - **Lựa chọn:** (a) chấp nhận, ghi là giới hạn đã biết, giữ nguyên prompt trong bộ Phase 1 để còn so được với đường cơ sở; (b) đưa lại một hook chạy mỗi prompt (`UserPromptSubmit`) nói rõ "tin nhắn trên là yêu cầu" cho prompt rất ngắn — **đổi thiết kế**: spec §3 đã bỏ hook theo từng prompt khi chuyển sang v2, và nó tốn token ở mọi lượt; (c) tìm cách đặt chỉ dẫn ở cấp memory mà không cần installer — chưa có cách nào đã kiểm trên host.

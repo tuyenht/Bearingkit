@@ -1,6 +1,6 @@
 # `bk-setup` — đề xuất thiết kế, 2026-09-16
 
-Status: **PROPOSED — chờ owner duyệt thiết kế** (COUNCIL theo `AGENTS.md`: đổi thiết kế thì đề xuất rồi chờ). **Phạm vi đã được owner chốt**: câu 22 của `docs/specs/2026-09-12-d5-owner-questions.md`, 2026-09-16, đường (b). File này chỉ trả lời "làm thế nào", không mở lại "có làm không".
+Status: **ĐÃ DUYỆT VÀ ĐÃ DỰNG 2026-09-17** — owner giao các quyết định đang chờ cho khuyến nghị của phiên ("Tiếp tục xử lý theo khuyến nghị tốt nhất có thể cho tôi đi."), và khuyến nghị của phiên là duyệt thiết kế này. Một điểm được làm rõ lúc dựng, xem cuối §4. (Trước đó: PROPOSED — chờ owner duyệt thiết kế, COUNCIL theo `AGENTS.md`.) **Phạm vi đã được owner chốt**: câu 22 của `docs/specs/2026-09-12-d5-owner-questions.md`, 2026-09-16, đường (b). File này chỉ trả lời "làm thế nào", không mở lại "có làm không".
 
 ---
 
@@ -53,6 +53,7 @@ Vì vậy `bk-setup` **không giữ catalog** plugin hay MCP. Nó khuyến ngh�
 - Sửa file chỉ dẫn **của chính project** là việc tài liệu → **ACT**, với một điều kiện riêng của skill: mỗi dòng thêm vào phải có bằng chứng đi kèm, vì một dòng sai ở đó đánh lừa mọi phiên sau.
 - Bất cứ thứ gì trong **profile của host ở cấp người dùng** (hook trong `~/.claude`, cấu hình MCP) ảnh hưởng mọi project → "consequences you cannot bound" → **COUNCIL**, đưa ra dưới dạng lệnh cho owner chạy.
 - **Không cài gì.** Giống lập trường chỉ-đọc của nguồn (mục 6 bảng kiểm kê), nhưng ở kit nó là cổng, không chỉ là câu tuyên bố.
+- **Làm rõ khi dựng (2026-09-17):** gắn hook **ở cấp project** (`.claude/settings.json`, workspace plugin của Antigravity) là trường hợp thứ ba mà hai gạch trên chưa nói. Nó chạy lệnh ở mọi lần sửa của mọi phiên, nên không phải việc tài liệu: skill đưa đúng đoạn cấu hình và chỉ áp khi owner duyệt — khớp với chữ "đề xuất" ở bước 4.
 
 ## 5. Không làm gì
 
