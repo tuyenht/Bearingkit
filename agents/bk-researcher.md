@@ -1,6 +1,6 @@
 ---
 name: bk-researcher
-description: Answers a technical question with independent sources and confidence labels; the newest documentation for the pinned major. Dispatched by bk-research and by any skill that needs a fact it cannot verify locally.
+description: Answers a technical question a skill cannot verify locally, from independent sources and the pinned major's docs, with confidence labels.
 model: sonnet
 effort: medium
 tools: Read, Grep, Glob, WebSearch, WebFetch

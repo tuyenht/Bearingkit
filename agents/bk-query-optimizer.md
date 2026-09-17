@@ -1,6 +1,6 @@
 ---
 name: bk-query-optimizer
-description: Diagnoses slow database queries from EXPLAIN output, comparing logical reads and plan shape, never wall-clock alone. Dispatched by bk-db and bk-perf. Uses only the connection the project exposes, prefers a read-only role, never prints credentials.
+description: Diagnoses a slow query from its EXPLAIN plan (logical reads, plan shape), read-only, never printing credentials. For bk-db and bk-perf.
 model: sonnet
 effort: medium
 tools: Read, Grep, Glob, Bash

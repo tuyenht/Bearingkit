@@ -31,6 +31,14 @@ test('the bootstrap says the user message is the request wherever the host puts 
   assert.doesNotMatch(opening, /after the closing tag/, 'no claim about where the host places the message');
 });
 
+// Spec §12 gives the injected protocol 2,300 tokens. On 2026-09-17 `/context` read 2.5k for a context of 7,424
+// characters and 2.6k for 7,547, a little under three characters a token; 6,500 characters keeps the block under the
+// allocation at the low end of that ratio. The reading, not this proxy, is what the budget is checked against.
+test('the injected protocol stays within its budget', () => {
+  const length = buildContext().length;
+  assert.ok(length <= 6500, `the bootstrap context is ${length} characters, budget 6,500 (about 2,300 tokens)`);
+});
+
 test('the output carries the three keys the hosts read, with the same text', () => {
   const o = output('X');
   assert.equal(o.hookSpecificOutput.hookEventName, 'SessionStart');

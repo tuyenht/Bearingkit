@@ -1,6 +1,6 @@
 ---
 name: bk-reviewer
-description: Independent review gate for hot paths (auth, sessions, roles, payments, data deletion, migrations, uploads, user-authored HTML or URLs, tenant scoping, external contracts). Never the author of the change under review. Dispatched by bk-review and bk-ship.
+description: Independent review of hot-path changes (auth, payments, data deletion, migrations, tenancy) by a non-author. For bk-review and bk-ship.
 model: opus
 effort: high
 memory: project

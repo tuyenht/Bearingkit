@@ -1,6 +1,6 @@
 ---
 name: bk-design-critic
-description: Rejects generic and inaccessible UI before it ships: default palettes, centered-everything, placeholder copy, contrast below 4.5:1, missing focus states, motion without a reduced-motion path, undeclared design tokens. Dispatched by bk-design and bk-review for UI diffs.
+description: Reviews a UI change for generic defaults and accessibility gaps (contrast, focus states, reduced motion, tokens). For bk-design, bk-review.
 model: sonnet
 effort: medium
 tools: Read, Grep, Glob, Bash

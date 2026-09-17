@@ -15,6 +15,16 @@ function frontmatter(text) {
   return out;
 }
 
+// Spec §12 gives the four agent listings 300 tokens. On 2026-09-17 `/context` read them at 116, 110, 108 and 80
+// (414) for descriptions of 269, 247, 254 and 210 characters, the name and tool list adding about 25 each; 140
+// characters keeps an agent near 75. What an agent must not do lives in its body, which the listing never loads.
+test('every agent description fits the listing budget', () => {
+  for (const f of fs.readdirSync(path.join(root, 'agents'))) {
+    const fm = frontmatter(fs.readFileSync(path.join(root, 'agents', f), 'utf8'));
+    assert.ok(fm.description.length <= 140, `agents/${f}: description is ${fm.description.length} characters, budget 140`);
+  }
+});
+
 // personas.md is the single source; agents/ carries one hand-written file per persona for hosts with agent definitions.
 test('every persona has an agent file with the same name, a description and a model', () => {
   const personas = fs.readFileSync(path.join(root, 'skills', 'bk-protocol', 'references', 'personas.md'), 'utf8');
