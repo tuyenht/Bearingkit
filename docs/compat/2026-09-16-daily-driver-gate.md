@@ -1,10 +1,10 @@
-# Daily-driver gate · Claude Code · 2026-09-16 to 2026-09-17
+# Daily-driver gate · Claude Code and Antigravity · 2026-09-16 to 2026-09-17
 
-> Task 8 of `docs/plans/2026-09-13-daily-driver.md`, in the scope the owner approved on 2026-09-14: the prompt set once in the isolated profile, reported as **two separate numbers**, plus two acceptance prompts in the daily profile. The set grew from 60 to 78 since the Phase 1 gate, and new `expect: none` negatives feed the same false-activation counter, so the runner's combined line (`Overall 75/78, false activations 1`) is not a result and is not quoted as one anywhere else.
+> Task 8 of `docs/plans/2026-09-13-daily-driver.md`, in the scope the owner approved on 2026-09-14: the prompt set once in the isolated profile, reported as **two separate numbers**, plus two acceptance prompts in the daily profile. The Antigravity half, run on 2026-09-17 in a package the owner approved that day, has its own section at the end, followed by two findings of that run that concern both hosts. The set grew from 60 to 78 since the Phase 1 gate, and new `expect: none` negatives feed the same false-activation counter, so the runner's combined line (`Overall 75/78, false activations 1`) is not a result and is not quoted as one anywhere else.
 
 Result table: `evals/results/2026-09-16-claude-gate.md` (not tracked; raw streams beside it, `*-gate.raw.jsonl`). Scored with a split scorer that was first run against the 2026-09-10 clean run and reproduced its recorded 57/60, 46/48 and 0 exactly — after it had first read that run as 56/60, which is how the unescaped pipe in the result table was found and fixed (`2330f60`). The scorer now lives in the repository as `scripts/evals-split.cjs`, with tests, and reproduces every number below from the result table.
 
-**Beyond the approved single run**, and disclosed as such: a one-prompt quota probe before the gate, one 30-prompt rerun, fourteen diagnostic sessions and one 27-prompt regression check, all in the same isolated profile. Across all of them the five-hour window peaked at 24 % (during the gate) and the seven-day window at 7 %, both read from the streams.
+**Beyond the approved single run**, and disclosed as such: a one-prompt quota probe before the gate, one 30-prompt rerun, fourteen diagnostic sessions and one 27-prompt regression check, all in the same isolated profile. Across all of them the five-hour window peaked at 24 % (during the gate) and the seven-day window at 7 %, both read from the streams. On the evening of 2026-09-17, sixteen more sessions there measured the reference-path fix (end of this document); the windows read 58 % and 15 % after them, the five-hour figure including the session that ran them. On Antigravity, one prompt was run a second time, on its own quota.
 
 ## Result
 
@@ -20,7 +20,7 @@ Result table: `evals/results/2026-09-16-claude-gate.md` (not tracked; raw stream
 | Precision (of the sessions that invoked a skill, the share that invoked an expected one; the spec names the metric without defining it, so the definition is stated and applied to both runs) | **1.000** (46/46) | 0.958 (46/48) |
 | Per intent | question 10/10 · small 10/10 · feature 10/10 · bug 9/10 · review 10/10 · ship 9/10 | question 9/10 · small 10/10 · feature 9/10 · bug 9/10 · review 10/10 · ship 10/10 |
 
-**Verdict:** the v2 restructure did not lower routing on the sixty. Under the same labels the count is equal, false activations stay at zero, and precision and recall are both above the 0.9 of v1 §17 — **on Claude Code only; Antigravity was not run** (below). Neither miss is a v2 regression: `bug-en-03` fails the same way with no kit loaded at all (diagnosis below), and `ship-en-04` routed to `bk-ship` when the ship intent was run again.
+**Verdict:** the v2 restructure did not lower routing on the sixty. Under the same labels the count is equal, false activations stay at zero, and precision and recall are both above the 0.9 of v1 §17 — on Claude Code; Antigravity is measured in its own section below, with the same verdict. Neither miss is a v2 regression: `bug-en-03` fails the same way with no kit loaded at all (diagnosis below), and `ship-en-04` routed to `bk-ship` when the ship intent was run again.
 
 **2 · The eighteen prompts added since Phase 1 — a first reading, with no baseline: 17/18 as measured.**
 
@@ -97,7 +97,7 @@ What differs between the two runs is the kit's layout (v1 install → v2 plugin,
 
 - **`/context` in the isolated profile** (the §12 budget, ≤5,000 fixed): first thought to need an interactive session, because `claude --help` on 2.1.270 lists no print-mode equivalent. That was wrong: `claude -p "/context all"` prints the full breakdown, and it was read on 2026-09-17 (section below).
 - **The two acceptance prompts in the daily profile**: a `claude -p` session there writes its transcript under `~/.claude`, which `AGENTS.md` keeps COUNCIL. Owner action; the command is in the handoff. **In the isolated profile they were run again** on 2026-09-17 (2.1.274, kit at `1b5bff6`), because the bootstrap sentence and the host had both changed since the 2026-09-11 pass: prompt 1 answered ACT and COUNCIL in one turn with no tool call — the runner marks that `no-action`, which since `a0cd431` is read from the stream rather than scored — and prompt 2 invoked `bk-spec` first. Pass; `docs/hosts.md` records it.
-- **Antigravity** — run separately, after the owner approved the package on 2026-09-17; its numbers are recorded in their own section once the run ends.
+- **Antigravity** — run separately, after the owner approved the package on 2026-09-17: section "Antigravity, 2026-09-17" below.
 
 ## Measured afterwards, 2026-09-17 (Claude Code 2.1.274, kit at `446d009`)
 
@@ -113,4 +113,76 @@ What differs between the two runs is the kit's layout (v1 install → v2 plugin,
 
 The total holds with about 1,000 to spare; two rows are over their own allocation. Whether to trim the protocol and the agent descriptions or to re-balance the rows inside the same total is question 24 of `docs/specs/2026-09-12-d5-owner-questions.md`.
 
-**Acceptance in the daily profile** — `evals --file evals/activation/acceptance.jsonl` with no `--config-dir`, streams kept (`evals/results/2026-09-17-*-acceptance-daily-clean.raw.jsonl`), approved by the owner as a listed item. The listing held **129 skills**, twelve of them the kit's. Prompt 1 answered ACT and COUNCIL in one turn with no tool call; prompt 2 invoked `bearingkit:bk-spec` first. **Pass.** This is a clean run, separate from the two sessions of the 11:59 incident, whose result is not used. The app must be started with `--remote-debugging-port=1405`, and the live copy is stale (`doctor`: skills and scripts differ from the checkout), so `antigravity install` comes first. The v0.2 gate asks for both hosts; this document closes the Claude Code half only.
+**Acceptance in the daily profile** — `evals --file evals/activation/acceptance.jsonl` with no `--config-dir`, streams kept (`evals/results/2026-09-17-*-acceptance-daily-clean.raw.jsonl`), approved by the owner as a listed item. The listing held **129 skills**, twelve of them the kit's. Prompt 1 answered ACT and COUNCIL in one turn with no tool call; prompt 2 invoked `bearingkit:bk-spec` first. **Pass.** This is a clean run, separate from the two sessions of the 11:59 incident, whose result is not used. The v0.2 gate asks for both hosts; the Antigravity half follows.
+
+## Antigravity, 2026-09-17
+
+The package the owner approved that day: install, arm, drive, score, disarm. Result tables (not tracked): `evals/results/2026-09-17-antigravity-gate-ag.md`, `…-gate-ag-rerun.md`, `…-acceptance-ag.md`, with the driver logs beside them; the three queues, whose entries point at the conversation transcripts, are kept in `_build/`. Scored with `scripts/evals-split.cjs`. Antigravity 2.0 **v2.12.2** (read from its DevTools user agent), the version of the baseline; the fixture reset before every conversation; `doctor` after the run: six `ok`, so the conversations read the copied content of `dd18bb5`, the last commit that changes what the copy carries.
+
+**1 · The gate — the sixty Phase 1 prompts, all on `claude-opus-4-6-thinking`, the baseline's model: 58/60 strict, 59/60 with the explain reading.**
+
+| | This run | Baseline, Antigravity 2026-09-11 (v1 layout; latest reading per prompt, not one clean run) |
+|---|---|---|
+| All prompts | **58/60** strict · **59/60** with the explain reading | 58/60 · 59/60 |
+| Positives routed | **47/48** | 47/48 |
+| Negatives | **11/12** strict · 12/12 with the explain reading | 11/12 · 12/12 |
+| False activations, every `expect: none` prompt | **1/12** strict (`ship-neg-01`) · 0/12 with the explain reading | the same |
+| Recall | **0.979** | 0.979 |
+| Precision | **0.979** strict (47/48) · 1.000 with the explain reading | the same |
+| Per intent | question 10/10 · small 10/10 · feature 10/10 · bug 10/10 · review 10/10 · ship 8/10 | small 9/10 (`sm-en-04`) · ship 9/10 (`ship-neg-01`) · the other four 10/10 |
+
+**Verdict:** on Antigravity too, the v2 restructure did not lower routing on the sixty: every number equals the baseline, strict and with the explain reading, on the same model and host version. The misses moved. `sm-en-04`, the baseline's fixture gap, was closed in the fixture since and now routes to `bk-build`; the new miss is `ship-en-04`, the prompt Claude Code also missed at its gate. With both halves measured, the activation condition of the v0.2 gate (§13) holds on both hosts, and so do precision and recall ≥ 0.9 (v1 §17).
+
+| id | prompt | got | reading |
+|---|---|---|---|
+| `ship-en-04` | Prepare the PR description for what we did. | none: `git log`, `git show`, a search for handoff files and an artifact of an earlier conversation, then a subagent to read the source; `bk-ship` never opened | the fixture holds one commit and no work, so "what we did" is empty, and the model investigated instead of routing — as Claude Code did at its gate before routing on the rerun. It reads as a property of this prompt against this fixture more than of either host (drift item (n) of `docs/status.md`) |
+| `ship-neg-01` | Explain how bk-ship works. | opened `skills/bk-ship/SKILL.md`, then explained it | with no skill tool, explaining a skill means reading its file; the host note says that is not an invocation, the scorer counts it strictly, and the baseline recorded the same reading |
+
+**2 · The twenty-one prompts added since Phase 1, with no baseline: 21/21.** Positives 14/14, negatives 7/7, false activations 0/2, recall 1.000, precision 1.000 (19/19). Per intent: plan 3/3 · close 3/3 · audit 3/3 · next 3/3 · test 3/3 · design 3/3 · setup 3/3. Each neighbour negative went where it was written to go, `audit-neg-01` to `bk-debug` under its corrected label. **Two models:** the three plan prompts and `close-en-01` ran on Opus, the other seventeen on `gemini-3.8-flash-high` (below), so this number compares with Claude Code's 18/18 on nothing but the count. `bug-en-03`, Claude Code's known miss, routed to `bk-debug` here; host and model both differ, so that says nothing about question 23.
+
+**3 · Acceptance, on `gemini-3.8-flash-high`: pass.** Prompt 1 named ACT and COUNCIL in one step with no tool call; prompt 2 opened `skills/bk-spec/SKILL.md` as its first action. Both answers came in Vietnamese to English prompts, and so did most of the run: of the 44 English prompts, 41 got replies containing Vietnamese (31 of 33 on Opus, 10 of 11 on Flash; counted by the presence of Vietnamese letters, so a reply that only quotes Vietnamese would count too). Prompt 1's answer also carried a heading label, `[Bearingkit Systems Architect]`, that no kit file contains. The copy runs beside the owner's own Antigravity configuration, the likely source of both (not read to confirm); the protocol's "answer in the language the user writes in" is overridden there. The row in `docs/hosts.md` records the model.
+
+### What happened during the run, and what was run again
+
+All times local, 2026-09-17.
+
+- 17:01 armed 81 prompts. 17:02 one conversation driven on its own, then the rest from 17:03, on Opus.
+- From 18:25 the streams were interrupted. The owner reports, in chat, that Opus had reached its usage limit and that they switched the app's model to Gemini 3.8 Flash (High). `close-en-01` had already opened `bk-close` when two "The stream was interrupted" errors arrived. `close-vi-01` got two before any action, then a message the driver never sends (*"Tiếp tục đi"*), and only after that opened `bk-close`.
+- The driver timed out waiting for `close-vi-01`, then exited with status 0 and nothing in its log: a DevTools request left pending by a page reload was never answered, the event loop emptied, and Node stopped. Fixed in `7d7af3f`: every request settles when the socket closes or a timeout passes, the driver reconnects before a retry, and an early exit is logged. The queue lost nothing; it advances only when the hook injects.
+- 20:00 to 20:22 the remaining sixteen, on Flash; 20:26 acceptance. **20:32 `close-vi-01` again, alone, on Flash:** `bk-close` first, 50 steps, no error, no extra message. Its row in the counts above is this rerun; both results were `bk-close`, so no number moved, but only the rerun is a measurement.
+- Every other conversation was checked for the same two things. None holds a user message after the prompt. Six Opus conversations hold host-side "model output must contain either output text or tool calls" errors, which the host retried by itself; in four the error came after the first action, and the two where it came first (`q-en-04`, `q-vi-04`) are questions that were then answered without a skill. No score changes.
+- 20:41 the eval hook was removed (`--disarm`); `doctor` read six `ok` and one `skip`.
+
+## Found by this run: kit references looked up at the kit root, on both hosts
+
+Reading the transcripts for interruptions showed conversations opening `<copy>/references/<file>`, a path that does not exist. The same check on the Claude Code streams of the gate:
+
+| | Sessions that asked for `<kit>/references/<file>` | Later opened the file from its real place | Files asked for |
+|---|---|---|---|
+| Antigravity, this run (gate, rerun, acceptance) | **25 of 84** — 13 of 65 on Opus, 12 of 19 on Flash | 15, two to six tool calls later; not 10 (9 of the Opus 13, 1 of the Flash 12) | protocol references (`gate-patterns`, `rba-lite`, `evidence`, `council`, `handoff-template`, `host-tools`) and skill references (`brainstorming`, `systematic-debugging`, `finishing`, `coverage-lens`, `distinctive-ui`) |
+| Claude Code, the gate of 2026-09-16 | **8 of 78** | 0 within the six turns | protocol references only (`gate-patterns`, `rba-lite`, `handoff-template`, `council`) |
+
+**Cause.** The protocol's References section said *"Task skills read these by relative path"*, and spec §5.4 cites another skill's file as `bk-protocol/references/<file>`, relative to `skills/`, which nothing stated. The protocol reaches the model as injected context, a hook's output on Claude Code and a rule on Antigravity, so the only anchor it has is the kit root line, and `references/<file>` was read against that. On Claude Code a skill's own references resolve, because the skill tool reports the skill's base directory; on Antigravity a skill is a file opened with `view_file`, and both models also looked for a skill's own references at the kit root.
+
+**Fix, inside §5.4's notation.** The References section now names its directory, `<kit>/skills/bk-protocol/references/`, and says that a path written `bk-<skill>/references/<file>` is under `<kit>/skills/`, not the kit root. The Antigravity host note adds that a skill's own `references/<file>` sits next to its `SKILL.md`. Cost, estimated from the added text and not read with `/context`: about 30 tokens on the protocol row, which is already over its allocation (question 24), and about 25 on the Antigravity rule. `tests/skills.test.cjs` and the rule assertions shared by the install and doctor tests were seen failing first.
+
+**Measured on Claude Code before the fix was committed.** The eight gate prompts that had asked at the kit root, each run once against the unfixed kit (`7d7af3f`) and once against the fixed one (then committed unchanged as `3b9c8fa`), alternating prompt by prompt, both kits frozen in detached worktrees; 2.1.274, `claude-sonnet-5`, isolated profile, staged fixture; streams in `_build/refs-results/` (not tracked). Counted from every tool call of every session:
+
+| | Asked for `<kit>/references/<file>` | Read a kit reference from its real place | Routed to the expected skill |
+|---|---|---|---|
+| Unfixed | **4 of 8** | 2 of 8 (`council`, and `bk-spec`'s own `brainstorming`) | 8 of 8 |
+| Fixed | **0 of 8** | **7 of 8** (`handoff-template`, `gate-patterns`, `rba-lite`, `council`) | 8 of 8 |
+
+Eight sessions an arm, one run each: enough to show the direction on both counts, not to give a rate. The gate itself had 8 of 8 at the kit root for these prompts, which were chosen because they had done so. Quota after: five-hour 58 %, seven-day 15 %; the five-hour figure includes the session that ran the measurement. The acceptance prompts were run again on Claude Code at `3b9c8fa`, since the protocol had changed (§11): prompt 1 named ACT and COUNCIL in one turn with no tool call, prompt 2 invoked `bk-spec` first — pass. **Antigravity is not measured yet**: the live copy carries the old protocol and host note until `antigravity install` runs again, a write under `~/.gemini` that waits for the owner; until then `doctor` reports `FAIL` on the rule and on `skills/`, as it should.
+
+## Correction to the conditions: the isolated profile's listing changed on 2026-09-17
+
+The Conditions table above says the profile's `skills/` was empty and the listing held 31 skills. That was true of the gate. Read from every stream's `init` event since:
+
+| From (local time, 2026-09-17) | Listing in the isolated profile | Runs affected |
+|---|---|---|
+| 11:01 | 32: an unprefixed `slides` skill joined, still on 2.1.270; no directory of the profile holds it, so presumably the host's own | the rerun on `92013ef` (29/30) |
+| 11:21 | 40 with the kit, 29 without: Claude Code 2.1.274 copied eight skills of the owner's claude.ai account into `_build/profile/claude/skills/synced/`, listed as `anthropic-skills:docs`, `docx`, `import-memory`, `morning`, `pdf`, `pptx`, `skill-creator`, `xlsx` | the `bug-en-03` diagnosis from its second session on, the 27-prompt regression check, the isolated acceptance rerun at `1b5bff6` (and 41 at `69389f7`, with `bk-setup`) |
+| 20:41 | 43: a synced plugin, `cowork-plugin-management`, added two skills (`_build/profile/claude/plugins/synced/`) | fifteen of the sixteen sessions above; the first had 41 |
+
+No conclusion in this document changes. `bug-en-03` failed identically with 31, 32 and 40 skills listed, and the bare-host control (E2) is the host plus the eight synced skills, none of which concerns uploads. The `/context` reading counted the kit's rows one by one, so the synced skills sit outside its numbers. What does change is what "isolated" means: the profile now carries whatever the account syncs, and the runner does not record the listing in its result table, so a reader cannot see it without the streams (open item in `docs/status.md`).

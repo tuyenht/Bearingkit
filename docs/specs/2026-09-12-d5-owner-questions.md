@@ -275,6 +275,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 - **Lựa chọn:** (a) **cắt** — mô tả 4 agent xuống cỡ 75 token mỗi cái, protocol bớt cỡ 250 token (bảng chỉ mục references là chỗ dày nhất; test đòi body `bk-protocol` phải nêu từng file reference, nên chỉ rút gọn mô tả được, không bỏ hàng); sau đó chạy lại kiểm hồi quy trên Claude Code và acceptance trên hai host. (b) **chia lại trần** trong cùng tổng: protocol ≤2.600, agent ≤450 — chỉ sửa spec §12, không đụng nội dung. (c) để nguyên, ghi nhận vượt.
 - **Bị chặn:** không gì — tổng vẫn đạt. Chỉ không nên cắt khi một lượt đo Antigravity đang chạy trên đúng văn bản hiện tại.
 - **Khuyến nghị:** (a). Nhẹ là một phần giá trị của kit, và nguyên tắc 9 gọi ngân sách là hợp đồng; (b) hợp lệ nhưng là dời cột mốc sau khi đo. Làm sau khi nửa Antigravity của cổng đã có số.
+- **Cập nhật 2026-09-17 tối:** nửa Antigravity đã có số (58/60 strict, bằng đường cơ sở), không lượt đo nào đang chạy, nên điều kiện thời điểm của khuyến nghị đã thoả. Protocol **dày thêm khoảng 30 token** (ước lượng theo đoạn chữ thêm vào, chưa đọc lại bằng `/context`) vì bản sửa lỗi đường dẫn tham chiếu (mục References nay nêu thư mục `<kit>/skills/bk-protocol/references/` và cách hiểu `bk-<skill>/references/<file>`). Câu đó sửa một lỗi đã đo trên cả hai host (`docs/compat/2026-09-16-daily-driver-gate.md`, mục "Found by this run"), nên nếu chọn (a) thì phải cắt ở chỗ khác, không cắt câu này.
 
 ---
 
