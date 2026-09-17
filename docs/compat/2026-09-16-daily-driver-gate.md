@@ -2,7 +2,7 @@
 
 > Task 8 of `docs/plans/2026-09-13-daily-driver.md`, in the scope the owner approved on 2026-09-14: the prompt set once in the isolated profile, reported as **two separate numbers**, plus two acceptance prompts in the daily profile. The set grew from 60 to 78 since the Phase 1 gate, and new `expect: none` negatives feed the same false-activation counter, so the runner's combined line (`Overall 75/78, false activations 1`) is not a result and is not quoted as one anywhere else.
 
-Result table: `evals/results/2026-09-16-claude-gate.md` (not tracked; raw streams beside it, `*-gate.raw.jsonl`). Scored with a split scorer that was first run against the 2026-09-10 clean run and reproduced its recorded 57/60, 46/48 and 0 exactly — after it had first read that run as 56/60, which is how the unescaped pipe in the result table was found and fixed (`2330f60`).
+Result table: `evals/results/2026-09-16-claude-gate.md` (not tracked; raw streams beside it, `*-gate.raw.jsonl`). Scored with a split scorer that was first run against the 2026-09-10 clean run and reproduced its recorded 57/60, 46/48 and 0 exactly — after it had first read that run as 56/60, which is how the unescaped pipe in the result table was found and fixed (`2330f60`). The scorer now lives in the repository as `scripts/evals-split.cjs`, with tests, and reproduces every number below from the result table.
 
 **Beyond the approved single run**, and disclosed as such: a one-prompt quota probe before the gate, one 30-prompt rerun, fourteen diagnostic sessions and one 27-prompt regression check, all in the same isolated profile. Across all of them the five-hour window peaked at 24 % (during the gate) and the seven-day window at 7 %, both read from the streams.
 
