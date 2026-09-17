@@ -31,7 +31,7 @@ One `skills/` source; each host installs it with its own command. A host is list
 ## Gemini CLI
 
 - Install: `gemini extensions install https://github.com/tuyenht/Bearingkit` (a local path works while the repository is private); update with `gemini extensions update bearingkit`. Unverified until the acceptance test runs there.
-- Bootstrap: `gemini-extension.json` names `GEMINI.md`, which imports `./skills/bk-protocol/SKILL.md`.
+- Bootstrap: `gemini-extension.json` names `GEMINI.md`, which imports `./skills/bk-protocol/SKILL.md`. Unlike Claude Code's hook and Antigravity's rule, nothing here adds a kit-root line, and since the 2026-09-17 trim (D5 question 24) the protocol no longer says `<kit>` is "known from this file's own path". The first acceptance run here must check that the model resolves `<kit>` (a `detect-stack` call, a `bk-protocol/references/` read); if it does not, `GEMINI.md` is the place for a kit-root line, not the protocol.
 - Shares `~/.gemini/GEMINI.md` conventions with Antigravity's `user_global` rule; install both only if you use both.
 
 ## Cursor
