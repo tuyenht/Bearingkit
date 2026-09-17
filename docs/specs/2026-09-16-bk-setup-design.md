@@ -27,6 +27,8 @@ Mục 1 của bảng kiểm kê drop bản chất của nguồn vì nó là reco
 | file chỉ dẫn của project mà host đọc | tên file và việc nó có import được file khác không (repo này: `CLAUDE.md` chỉ chứa `@AGENTS.md`) |
 | chạy một lệnh kiểm sau mỗi lần sửa | sự kiện hook nếu host có; nếu không có thì ghi "không có" |
 
+**Làm rõ khi dựng (2026-09-17):** thành **ba** hàng. Hàng thứ ba mang dòng tra tài liệu, vì bản đầu của skill trỏ tới `docs/hosts.md` của kit — file mà bản copy Antigravity không mang; một test nay canh điều đó. Mỗi ô của cả ba hàng ghi nguồn (spec v1 §3, tài liệu hooks của Claude Code đọc 2026-09-17, ghi chú cài đặt của kit).
+
 **Giá trị của hai hàng này chưa được xác minh** cho host nào ngoài những gì repo này tự dùng; chúng được đọc từ tài liệu của từng host lúc dựng skill, mỗi ô một nguồn, ô nào không xác minh được ghi "chưa xác minh" thay vì đoán. Host không có sự kiện sau-khi-sửa thì guardrail ở lại trong file chỉ dẫn và `bk-ship` chạy nó — đúng nguyên tắc 8 (gate nằm trong skill; hook là phần thêm nơi host có sự kiện).
 
 ### 3.2 MCP và catalog của host

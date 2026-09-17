@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-17** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · số commit không ghi ở đây: nó tự cũ sau mỗi commit của chính phiên đang viết (đã vấp hai lần); đếm bằng `git log --oneline | wc -l` · **74/74** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-17 sau bản sửa cách chấm `no-action` và câu mở đầu của bootstrap)
+Cập nhật: **2026-09-17** · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · số commit không ghi ở đây: nó tự cũ sau mỗi commit của chính phiên đang viết (đã vấp hai lần); đếm bằng `git log --oneline | wc -l` · **76/76** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-17 sau khi dựng `bk-setup`)
 
 > **File này là BẢNG ĐIỀU KHIỂN, không phải nguồn sự thật.** Nó chỉ trỏ đường và ghi trạng thái; mọi nội dung thật nằm ở nơi khác:
 >
@@ -26,7 +26,7 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | — nguồn đã có `derived` (chữ thật đã port) | **3** nguồn, **19** file dẫn xuất | cùng lệnh |
 | Mục trong `NOTICE` | **2** (obra/superpowers, anthropics/claude-plugins-official) | `grep '^##' NOTICE` |
 | Hàng nguồn trong ma trận | 39 (gồm host candidate, tool, và 8 mục owner loại) | `grep -c '^\| [0-9]'` |
-| Test | 74/74 xanh | `node --test tests/*.test.cjs` |
+| Test | 76/76 xanh | `node --test tests/*.test.cjs` |
 | `skills/<name>/tests/` (§5.3 cần ≥3 prompt mỗi skill) | **10/12** — 30 case; `bk-audit` và `bk-next` thuộc v0.3 | `find skills -type d -name tests` |
 | `SKILL.md` có dòng provenance + license mode | 12/12 skill đang tồn tại | `grep -h '^Sources:' skills/*/SKILL.md`, có test canh |
 | File stack `bk-build/references/stacks/` (§5.5 cần 8) | **3/8** — `typescript-react`, `kotlin`, `sql`, cộng `index.md` ánh xạ profile → file | `ls skills/bk-build/references/stacks/` |
@@ -65,7 +65,7 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 |---|---|---|
 | `0.1.0-phase1` | **đã phát hành** 2026-09-11 | layout v1; đo đạc ở `docs/compat/phase-1-gate.md` |
 | **v0.2** | **đang làm** | hạng mục ở §4, cổng ở §5. Thứ tự thực thi bên trong v0.2 theo lộ trình owner chọn 2026-09-13: `docs/plans/2026-09-13-daily-driver.md` |
-| v0.3 | chưa bắt đầu | 6 skill còn lại, agent dùng hàng ngày, 8 file stack, skill test cho mọi skill |
+| v0.3 | chưa bắt đầu | 5 skill còn lại (`bk-map`, `bk-research`, `bk-perf`, `bk-db`, `bk-ops`), agent dùng hàng ngày, 8 file stack, skill test cho mọi skill |
 | v0.4 | chưa bắt đầu | pack tuỳ chọn, hook push/deploy (gồm Biome/Pint theo câu 9), acceptance Gemini CLI / Cursor / Codex |
 | v1.0 | chưa bắt đầu | outcome benchmark, `upstream-watch`, README EN+VI, CI, marketplace, publish từ history đã squash |
 
@@ -89,7 +89,7 @@ Phạm vi v0.2 theo §13 là **tám skill lifecycle** (`bk-spec`, `bk-plan`, `bk
 | 10 | Nguồn bắt buộc 2–4 — `code-review`, `frontend-design`, `claude-code-setup` (+ `pr-review-toolkit`) từ `claude-plugins-official` (Apache-2.0) | **3/4 xong** | `frontend-design` → `bk-design` (2026-09-14); `code-review` + `pr-review-toolkit` → `bk-review`/`bk-test` (2026-09-15). Mỗi lần đủ ba việc: nguồn trong file dẫn xuất, mục `NOTICE`, `derived`. `claude-code-setup` đã kiểm kê 2026-09-15 và **kết luận không port được** (0 absorb / 5 drop / 3 idea) — một idea chuyển sang Task 7; owner cần quyết chấp nhận ideas-only hay muốn skill `bk-setup` mới |
 | 11 | Các nguồn còn lại theo thứ tự D3 (spec-kit, mattpocock, addyosmani, vercel agent-skills…) | **chưa** | ma trận: phần lớn còn `designed` |
 | 12 | §5.3 #3 — `tests/` ≥3 prompt cho **tám** skill của v0.2 | **xong** 2026-09-14 | 24 case, 3 mỗi skill, bốn mục cố định (Prompt/Setup/Expected/Fails if) để một harness đọc được và để so giữa các skill; `tests/skills.test.cjs` canh cả số lượng lẫn bốn mục |
-| 13 | §5.3 #4 — activation 2 positive + 1 negative mỗi skill, cả hai ngôn ngữ | **xong cho 12/12 skill task** (2026-09-14, cập nhật 2026-09-17) | 15 prompt cho `bk-plan`, `bk-close`, `bk-audit`, `bk-next`, `bk-test` ở Task 3, rồi 3 cho `bk-design` ở Task 6b và 3 cho `bk-setup` ở Task 6c: bộ 60 → **81**, Phase 1 giữ nguyên 60 để còn so được. Bất biến "mỗi skill tồn tại phải có ≥2 positive" trong `tests/evals.test.cjs` đã làm đúng việc của nó: tạo thư mục `bk-design` mà chưa có prompt là suite đỏ ngay |
+| 13 | §5.3 #4 — activation 2 positive + 1 negative mỗi skill, cả hai ngôn ngữ | **xong cho 12/12 skill task** (2026-09-14, cập nhật 2026-09-17) | 15 prompt cho `bk-plan`, `bk-close`, `bk-audit`, `bk-next`, `bk-test` ở Task 3, rồi 3 cho `bk-design` ở Task 6b và 3 cho `bk-setup` ở Task 6c: bộ 60 → **81**, Phase 1 giữ nguyên 60 để còn so được. Bất biến "mỗi skill tồn tại phải có ≥2 positive" trong `tests/evals.test.cjs` đã làm đúng việc của nó: tạo thư mục `bk-design` mà chưa có prompt là suite đỏ ngay. Chiều ngược lại cũng có test từ 2026-09-17: nhãn nào nêu một skill thì skill đó phải tồn tại. `bk-setup` đo lần đầu 3/3 trong profile cách ly |
 | 14 | Guardrail command Biome/Pint (quyết định câu 9, phần v0.2) | **xong** 2026-09-15 | `detect-stack` nhận `@biomejs/biome` hoặc `biome.json` và đặt `biome check --error-on-warnings .` làm lệnh lint, thay cho script `lint` nó bao. Test đỏ trước, fixture riêng. Hook thật vẫn là v0.4 |
 | 15 | Phần A của câu 1 — đường CLI `claude plugin …` trong `docs/hosts.md` + `README.md` | **chưa** | `grep 'claude plugin ' docs/hosts.md README.md` không khớp; hiện chỉ có dạng slash-command `/plugin` |
 | 16 | Sửa rank spec-kit trong `skill-inventory.md` (câu 5) | **chưa** | đúng một chỗ: "không tính vào ô bắt buộc" → "cùng Superpowers thoả nhóm tối thiểu" |
@@ -103,7 +103,7 @@ Phạm vi v0.2 theo §13 là **tám skill lifecycle** (`bk-spec`, `bk-plan`, `bk
 
 | Điều kiện | Trạng thái | Chi tiết |
 |---|---|---|
-| Acceptance pass trên cả hai host | **đạt** | Claude Code: **chạy lại 2026-09-17** trên 2.1.274 vì cả câu bootstrap lẫn host đều đổi — pass, trong profile cách ly (`docs/hosts.md`). Antigravity: đo 2026-09-11; bootstrap của nó (rule từ `bk-protocol` + host note) không đổi từ đó, phiên bản host chưa kiểm lại. Chỉ phải chạy lại khi bootstrap hoặc host đổi (§11 cadence) |
+| Acceptance pass trên cả hai host | **đạt** | Claude Code: **chạy lại hai lần 2026-09-17** trên 2.1.274, trong profile cách ly — sau khi câu bootstrap và host đổi (`1b5bff6`), rồi sau khi router có hàng `bk-setup` (`69389f7`): pass cả hai (`docs/hosts.md`). Antigravity: đo 2026-09-11; bootstrap của nó (rule từ `bk-protocol` + host note) không đổi từ đó, phiên bản host chưa kiểm lại. Chỉ phải chạy lại khi bootstrap hoặc host đổi (§11 cadence) |
 | Bộ activation ≥ số của Phase 1 | **Claude Code: đạt** 2026-09-16 — **58/60**, bằng đường cơ sở 2026-09-10 khi chấm cùng nhãn (57/60 theo nhãn của tối hôm đó), 0 false activation; 18 prompt mới đọc lần đầu 17/18 (18/18 sau khi sửa một nhãn sai). **Antigravity: chưa chạy.** Phạm vi owner gật 2026-09-14: bộ prompt một lần trong profile cách ly + 2 câu acceptance trong profile thật, báo hai số tách nhau | mọi kết quả 60-prompt trong `evals/results/` đều ngày 2026-09-10 (layout v1); sau restructure chỉ có acceptance 2 prompt. Đúng cadence §11 (đo ở mốc phát hành) — việc đã lên lịch, không phải nợ quá hạn. **Hệ quả về thứ tự: prompt cho các skill còn thiếu (#13) phải viết TRƯỚC lần chạy này, nếu không sẽ phải chạy hai lần và trả quota hai lần** (#13 đã xong 2026-09-14/15). **Chặn hiện tại, đo 2026-09-15: cửa sổ quota bảy ngày ở 89%** (reset 16/9 10:00), năm giờ 43% — không đủ cho 78 prompt liền mạch, và một lần chạy dừng giữa chừng thì không so được với 57/60. Đã vá `scripts/evals.cjs` để nó dừng có kiểm soát ở cả hai cửa sổ thay vì chỉ cửa sổ năm giờ |
 | Fixed context ≤ 5,000 qua `/context` | **chưa đo trên bản v2** | số ~2,650 là của v1 (`docs/compat/phase-1-gate.md`); hai số 43,8xx là so sánh `claude -p` trước/sau khi port Superpowers, và chính file đó nói nó "không thay thế" số gate |
 
