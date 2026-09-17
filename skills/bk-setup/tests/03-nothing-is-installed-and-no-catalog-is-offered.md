@@ -7,7 +7,7 @@
 A Next.js project whose lockfile pins a framework major newer than what the model knows. No documentation lookup tool is configured on the host.
 
 **Expected**
-1. One recommendation for documentation lookup, pointing at the line the kit's `docs/hosts.md` documents for that host, as a command for the owner to run.
+1. One recommendation for documentation lookup, taken from the lookup row of `bk-protocol/references/host-tools.md` for that host, as a command for the owner to run.
 2. The answer says plainly that the kit keeps no catalog of servers or plugins and recommends none beyond that lookup.
 3. The rest of the report covers the instruction files and guardrails, at most two recommendations per group.
 

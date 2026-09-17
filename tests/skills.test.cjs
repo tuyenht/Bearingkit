@@ -108,6 +108,22 @@ test('the eight lifecycle skills carry at least three test cases each, in a shap
   }
 });
 
+// A skill runs from whichever copy of the kit its host loaded, and the Antigravity copy carries skills/ and three
+// scripts, nothing else. A kit file a skill cites must therefore be one of those: on 2026-09-17 bk-setup pointed at
+// the kit's docs/hosts.md, which that copy does not have.
+test('every kit file a skill cites is carried by every host copy', () => {
+  const { SCRIPTS } = require('../scripts/antigravity.cjs');
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));
+  let cited = 0;
+  for (const file of walk(dir).filter((f) => f.endsWith('.md'))) {
+    for (const m of fs.readFileSync(file, 'utf8').matchAll(/(?:the kit's `|<kit>\/)([A-Za-z0-9_./-]+)/g)) {
+      cited++;
+      assert.ok(m[1].startsWith('skills/') || SCRIPTS.includes(m[1]), `${path.relative(dir, file)} cites the kit's ${m[1]}, which a host copy does not carry`);
+    }
+  }
+  assert.ok(cited >= 2, 'the check means nothing unless skills cite kit files; they stopped doing so');
+});
+
 // Spec section 12: anything adapted from an upstream source is recorded in upstream/sources.json (derived map) and points at NOTICE.
 test('every references file adapted from upstream has a derived entry in upstream/sources.json and names NOTICE', () => {
   const sources = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'upstream', 'sources.json'), 'utf8')).sources;

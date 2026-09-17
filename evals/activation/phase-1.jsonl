@@ -78,4 +78,4 @@
 {"id": "design-neg-01", "intent": "design", "lang": "en", "prompt": "Apply the palette and spacing from the design doc we already agreed to the settings page.", "expect": "bk-build"}
 {"id": "setup-en-01", "intent": "setup", "lang": "en", "prompt": "Set up this repo so coding agents work well in it.", "expect": "bk-setup"}
 {"id": "setup-vi-01", "intent": "setup", "lang": "vi", "prompt": "Chuẩn bị repo này cho các agent làm việc: file chỉ dẫn, lệnh kiểm tra, những chỗ phải cẩn thận.", "expect": "bk-setup"}
-{"id": "setup-neg-01", "intent": "setup", "lang": "en", "prompt": "Add a lint script to package.json.", "expect": "bk-build"}
+{"id": "setup-neg-01", "intent": "setup", "lang": "en", "prompt": "Add a typecheck script to package.json.", "expect": "bk-build"}
