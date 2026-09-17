@@ -26,12 +26,12 @@ test('parseStream returns none without a Skill call', () => {
 const PHASE1 = ['question', 'small', 'feature', 'bug', 'review', 'ship'];
 // Spec §11 extends the set by "two positives and one negative per new skill"; each skill intent is named after its
 // skill, so `plan` holds the prompts that must reach bk-plan.
-const SKILL_INTENTS = ['plan', 'close', 'audit', 'next', 'test', 'design'];
+const SKILL_INTENTS = ['plan', 'close', 'audit', 'next', 'test', 'design', 'setup'];
 const promptSet = () => loadPrompts(path.join(__dirname, '..', 'evals', 'activation', 'phase-1.jsonl'));
 
 test('the set keeps Phase 1 at sixty and adds three per skill intent, with unique ids', () => {
   const prompts = promptSet();
-  assert.equal(prompts.length, 78);
+  assert.equal(prompts.length, 81);
   assert.equal(new Set(prompts.map((p) => p.id)).size, prompts.length, 'ids are unique');
 
   // Phase 1's sixty are the baseline every later run is compared against, so their shape may not drift.
@@ -89,6 +89,18 @@ test('every task skill that exists has at least two positive prompts', () => {
   for (const skill of skills) {
     const positives = prompts.filter((p) => !p.id.includes('-neg-') && p.expect.split('|').includes(skill));
     assert.ok(positives.length >= 2, `${skill}: ${positives.length} positive prompts, needs at least two`);
+  }
+});
+
+// A label naming a skill the kit does not have can never pass, and nothing said so: a prompt set can run ahead of
+// the catalog by a whole release. Every kit skill a label names must exist; "none" is the only other value.
+test('every skill a prompt expects exists in skills/', () => {
+  const fs = require('node:fs');
+  for (const p of promptSet()) {
+    for (const alt of p.expect.split('|')) {
+      if (alt === 'none') continue;
+      assert.ok(fs.existsSync(path.join(__dirname, '..', 'skills', alt, 'SKILL.md')), `${p.id} expects ${alt}, which has no skills/${alt}/SKILL.md`);
+    }
   }
 });
 
@@ -197,15 +209,16 @@ test('--per-intent takes a spread: English positive, Vietnamese positive, negati
   const { sample } = require('../scripts/evals.cjs');
   const prompts = loadPrompts(path.join(__dirname, '..', 'evals', 'activation', 'phase-1.jsonl'));
   const three = sample(prompts, 3);
-  // Twelve intents at three each: the six of Phase 1 and the six skill intents, which hold exactly three anyway.
-  assert.equal(three.length, 36);
+  // Three per intent: the six of Phase 1 and every skill intent, which holds exactly three anyway. Derived rather
+  // than written out, because each new skill grows the set and a written count went red twice for that reason alone.
+  assert.equal(three.length, (PHASE1.length + SKILL_INTENTS.length) * 3);
   for (const intent of [...PHASE1, ...SKILL_INTENTS]) {
     const g = three.filter((p) => p.intent === intent);
     assert.equal(g.filter((p) => p.lang === 'en' && !p.id.includes('-neg-')).length, 1, `${intent} en`);
     assert.equal(g.filter((p) => p.lang === 'vi' && !p.id.includes('-neg-')).length, 1, `${intent} vi`);
     assert.equal(g.filter((p) => p.id.includes('-neg-')).length, 1, `${intent} neg`);
   }
-  assert.equal(sample(prompts, 10).length, 78, 'asking for more than exists returns everything');
+  assert.equal(sample(prompts, 10).length, prompts.length, 'asking for more than exists returns everything');
   assert.equal(sample(prompts, 4).filter((p) => p.intent === 'bug').map((p) => p.id).join(','), 'bug-en-01,bug-en-02,bug-vi-01,bug-neg-01');
 });
 

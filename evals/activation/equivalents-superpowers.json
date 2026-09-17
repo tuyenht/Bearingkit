@@ -80,5 +80,11 @@
     "ui-styling",
     "web-design-guidelines",
     "ux"
+  ],
+  "bk-setup": [
+    "claude-automation-recommender",
+    "init",
+    "init-project",
+    "init-rules"
   ]
 }

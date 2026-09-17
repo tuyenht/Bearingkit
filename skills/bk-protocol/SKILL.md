@@ -31,6 +31,7 @@ Name the intent, then invoke the matching skill as your first action, before rea
 | review | bk-review |
 | ship, commit, push, PR | bk-ship |
 | design, UI, look and feel | bk-design |
+| set up a project for agents: instruction files, guardrails, hot paths | bk-setup |
 | data, ops, research | bk-spec until their skills exist; remote changes stay COUNCIL; research answers carry sources and confidence labels |
 
 If there is a one-percent chance a skill applies, open it, and drop it if it does not fit. A request to add, change, rename, or fix something in the code is never answered by editing straight away; it goes through bk-build (small, ACT) or bk-spec (feature) first. Skills hand off in a chain, spec → plan → build → test → review → ship → close, and the chain stops only at COUNCIL points.
