@@ -256,6 +256,17 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ---
 
+### 23. `bug-en-03`: chấp nhận một khoảng trống hẹp, hay đưa lại hook chạy theo từng prompt
+*(MỚI — phát sinh từ cổng đo 2026-09-16/17, `docs/compat/2026-09-16-daily-driver-gate.md`. Đánh số 23 vì cùng lý do với câu 21.)*
+> **CHỜ OWNER.** Khuyến nghị của phiên: (a).
+- **Dữ kiện, đã đo:** prompt `bug-en-03` — *"Uploads over 5 MB silently disappear."* — không được mô hình coi là yêu cầu, **có kit hay không cũng vậy** (3/3 mỗi bên, Claude Code 2.1.270, `claude-sonnet-5`): nó trả lời *"What would you like to work on?"*. Thêm hai chữ neo vào ứng dụng (*"… in the app."*) thì có kit đi `bk-debug` (2/2), không kit thì tự lục code (2/2). Kit v1 từng làm câu này qua bằng một chỉ dẫn nằm ở **cấp memory** (`core/AGENTS.md` được import); v2 nạp protocol qua SessionStart, tức **cấp system-reminder**, và hai cách viết khác nhau của chỉ dẫn đó đều không đổi được kết quả (3/3 mỗi cách).
+- **Cần quyết định:** kit có cần bù cho một câu trần thuật mơ hồ như vậy không.
+- **Lựa chọn:** (a) chấp nhận, ghi là giới hạn đã biết, giữ nguyên prompt trong bộ Phase 1 để còn so được với đường cơ sở; (b) đưa lại một hook chạy mỗi prompt (`UserPromptSubmit`) nói rõ "tin nhắn trên là yêu cầu" cho prompt rất ngắn — **đổi thiết kế**: spec §3 đã bỏ hook theo từng prompt khi chuyển sang v2, và nó tốn token ở mọi lượt; (c) tìm cách đặt chỉ dẫn ở cấp memory mà không cần installer — chưa có cách nào đã kiểm trên host.
+- **Bị chặn:** không gì. Nửa Claude Code của cổng đã có số; câu này chỉ quyết một prompt có còn được coi là lỗi của kit hay không.
+- **Khuyến nghị:** (a). Khoảng trống hẹp (một câu sáu từ đọc giống thông báo của nền tảng), host trần cũng hỏng y hệt, dùng thật thì người dùng gỡ trong một lượt, còn (b) mở lại đúng thứ v2 đã cố ý bỏ, chỉ để đổi một prompt.
+
+---
+
 ## Quyết định 2026-09-12 và những gì mở khoá — CHƯA áp dụng, chỉ liệt kê
 
 Owner đã chốt câu 1, 2, 3, 4, 6, 8 làm quyết định thật; câu 5 owner yêu cầu kiểm lại thay vì tự quyết, đã kiểm (xem khối audit trong câu 5 ở trên) — vẫn là khuyến nghị. Tier 2 (trừ câu 9/12/14/16, nhóm riêng không mặc định) và Tier 3 giữ nguyên như owner chỉ định. Mục này liệt kê **chính xác** việc sẽ mở khoá cho từng quyết định — không file nào trong repo bị sửa theo mục này.
