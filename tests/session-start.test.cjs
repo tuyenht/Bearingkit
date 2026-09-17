@@ -18,7 +18,7 @@ test('the bootstrap carries the protocol body without its frontmatter', () => {
 });
 
 // The opening sentence used to say "everything after the closing tag is the user's request". Asked on 2026-09-17,
-// the model on Claude Code 2.1.270 reported the block after the user's message, followed by the host's own
+// the model on Claude Code 2.1.274 reported the block after the user's message, followed by the host's own
 // reminders, so the sentence pointed at the wrong place; it now makes no claim about position. What this sentence does
 // not do, measured the same day: fix "Uploads over 5 MB silently disappear.", which the bare host also answers with
 // "what would you like to work on?" (3 of 3) and which routes once it says "in the app"
