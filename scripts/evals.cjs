@@ -274,11 +274,11 @@ async function run(argv) {
       const s = ag.score(agOpts);
       const equivalents = args.equivalents ? JSON.parse(fs.readFileSync(path.resolve(args.equivalents), 'utf8')) : null;
       const summary = summarize(s.results, equivalents);
-      const meta = `Host: antigravity · scored from conversation transcripts · prompts done: ${s.results.length}, still queued: ${s.pending} · injected block seen in ${s.results.filter((r) => r.injected).length} conversations · models: ${[...new Set(s.results.map((r) => r.modelName))].join(', ') || 'unknown'}`;
+      const meta = `Host: antigravity · scored from conversation transcripts · prompts done: ${s.results.length}, still queued: ${s.pending} · harness note seen in ${s.results.filter((r) => r.injected).length} conversations · models: ${[...new Set(s.results.map((r) => r.modelName))].join(', ') || 'unknown'}`;
       const tag = s.tag ? '-' + String(s.tag).replace(/[^a-z0-9-]/gi, '') : '';
       const out = path.join(outDir, `${date}-antigravity${tag}.md`);
       fs.writeFileSync(out, table(s.results, summary, 'antigravity', meta, equivalents));
-      for (const r of s.results) process.stdout.write(`${String(r.id).padEnd(12)} expect=${String(r.expect).padEnd(16)} got=${String(r.got).padEnd(14)} ${passes(r, equivalents) ? 'ok' : 'MISS'}${r.injected ? '' : '  (no [bearingkit] block)'}\n`);
+      for (const r of s.results) process.stdout.write(`${String(r.id).padEnd(12)} expect=${String(r.expect).padEnd(16)} got=${String(r.got).padEnd(14)} ${passes(r, equivalents) ? 'ok' : 'MISS'}${r.injected ? '' : '  (no harness note: read this transcript)'}\n`);
       process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}; ${s.pending} still queued. Written: ${out}\n`);
       return;
     }

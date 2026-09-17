@@ -11,10 +11,12 @@ const driver = require('../scripts/antigravity/eval-driver.cjs');
 const tmp = (p) => fs.mkdtempSync(path.join(os.tmpdir(), `bk-${p}-`));
 const line = (o) => JSON.stringify(o);
 
-test('activation is read from the first SKILL.md tool call; injected block detected; text items match responses', () => {
+// injected: the eval driver's [bearingkit-eval] note is in the transcript, so the harness put the prompt in. The v1
+// [bearingkit] block no longer exists: v2 loads the protocol as an always-on rule, which no transcript records.
+test('activation is read from the first SKILL.md tool call; the harness note is detected; text items match responses', () => {
   const t = [
     line({ type: 'USER_INPUT', content: '<USER_REQUEST>\nAdd CSV export\n</USER_REQUEST>' }),
-    line({ type: 'EPHEMERAL_MESSAGE', content: '[bearingkit] stack: typescript\n[/bearingkit]' }),
+    line({ type: 'EPHEMERAL_MESSAGE', content: '[bearingkit-eval] The line "bk eval" above is a harness trigger, not a request. [/bearingkit-eval]' }),
     line({ type: 'PLANNER_RESPONSE', content: 'Reading the skill', tool_calls: [{ name: 'view_file', args: { AbsolutePath: '"C:\\\\Users\\\\x\\\\.gemini\\\\config\\\\plugins\\\\bearingkit\\\\skills\\\\bk-spec\\\\SKILL.md"' } }] }),
     line({ type: 'PLANNER_RESPONSE', content: 'then', tool_calls: [{ name: 'view_file', args: { AbsolutePath: 'C:/x/skills/bk-plan/SKILL.md' } }] }),
   ].join('\n');
@@ -22,13 +24,15 @@ test('activation is read from the first SKILL.md tool call; injected block detec
   // The model's reaction to the trigger line (before the injected prompt) is not scored.
   const withTrigger = [
     line({ type: 'USER_INPUT', content: '<USER_REQUEST>\nReply with OK and wait for my next message.\n</USER_REQUEST>' }),
-    line({ type: 'EPHEMERAL_MESSAGE', content: '[bearingkit] stack\n[/bearingkit]' }),
+    line({ type: 'EPHEMERAL_MESSAGE', content: '[bearingkit-eval] harness trigger [/bearingkit-eval]' }),
     line({ type: 'PLANNER_RESPONSE', content: 'peek', tool_calls: [{ name: 'view_file', args: { AbsolutePath: 'C:/p/skills/bk-audit/SKILL.md' } }] }),
     line({ type: 'USER_INPUT', content: '<USER_REQUEST>\nWhat does the retry decorator do?\n</USER_REQUEST>' }),
     line({ type: 'PLANNER_RESPONSE', content: 'The file does not exist.', tool_calls: [{ name: 'view_file', args: { AbsolutePath: 'C:/p/src/http/retry.ts' } }] }),
   ].join('\n');
   assert.deepEqual(activationFromTranscript(withTrigger, { prompt: 'What does the retry decorator do?', expect: 'none' }), { got: 'none', injected: true, promptSeen: true });
   assert.deepEqual(activationFromTranscript('not json\n' + line({ type: 'PLANNER_RESPONSE', content: 'answered directly' })), { got: 'none', injected: false, promptSeen: false });
+  const v1Only = line({ type: 'EPHEMERAL_MESSAGE', content: '[bearingkit] stack: typescript\n[/bearingkit]' });
+  assert.equal(activationFromTranscript(v1Only).injected, false, 'the v1 stack block is not the harness note');
   assert.equal(activationFromTranscript(line({ type: 'PLANNER_RESPONSE', content: 'GLOB-PROBE-OK' }), { kind: 'text', expect: 'GLOB-PROBE-OK' }).got, 'GLOB-PROBE-OK');
   assert.equal(activationFromTranscript(line({ type: 'PLANNER_RESPONSE', content: 'no idea' }), { kind: 'text', expect: 'GLOB-PROBE-OK' }).got, 'none');
 });

@@ -36,7 +36,9 @@ function activationFromTranscript(text, item) {
   for (const line of allLines) {
     let o;
     try { o = JSON.parse(line); } catch { continue; }
-    if (o && o.type === 'EPHEMERAL_MESSAGE' && /\[bearingkit\]/.test(typeof o.content === 'string' ? o.content : JSON.stringify(o.content || ''))) injected = true;
+    // The eval driver's own note: proof that the harness, not the owner, put the prompt in. (v1 looked for the kit's
+    // [bearingkit] block; v2 loads the protocol as an always-on rule, which a transcript never records.)
+    if (o && o.type === 'EPHEMERAL_MESSAGE' && /\[bearingkit-eval\]/.test(typeof o.content === 'string' ? o.content : JSON.stringify(o.content || ''))) injected = true;
   }
   for (const line of lines) {
     let o;
