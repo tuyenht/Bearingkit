@@ -108,6 +108,29 @@ test('the eight lifecycle skills carry at least three test cases each, in a shap
   }
 });
 
+// Spec §5.4 cites another skill's file as `bk-protocol/references/<file>`, relative to `skills/`. The protocol reaches
+// the model as injected context, not as a file it opened, so "relative" had no anchor but the kit root line: in the
+// 2026-09-16/17 gate, 8 of 78 Claude Code sessions and 25 of 84 Antigravity conversations asked for
+// `<kit>/references/<file>`, which does not exist (docs/compat/2026-09-16-daily-driver-gate.md).
+test('the protocol says where its references live and how a cross-skill path resolves', () => {
+  const { body } = frontmatter(path.join(dir, 'bk-protocol', 'SKILL.md'));
+  const refs = body.slice(body.indexOf('## References'));
+  assert.ok(refs.includes('`<kit>/skills/bk-protocol/references/`'), 'the References section names its own directory by kit path');
+  assert.match(refs, /`bk-<skill>\/references\/<file>` is under `<kit>\/skills\/`, not the kit root/, 'the cross-skill form of spec 5.4 is resolved explicitly');
+  for (const m of body.matchAll(/`references\/([a-z0-9-]+\.md)`/g)) {
+    assert.ok(fs.existsSync(path.join(dir, 'bk-protocol', 'references', m[1])), 'the protocol cites a file that is not in its references: ' + m[1]);
+  }
+  let crossCited = 0;
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));
+  for (const file of walk(dir).filter((f) => f.endsWith('.md'))) {
+    for (const m of fs.readFileSync(file, 'utf8').matchAll(/`(bk-[a-z]+)\/references\/([a-z0-9-]+\.md)`/g)) {
+      crossCited++;
+      assert.ok(fs.existsSync(path.join(dir, m[1], 'references', m[2])), `${path.relative(dir, file)} cites ${m[1]}/references/${m[2]}, which does not exist`);
+    }
+  }
+  assert.ok(crossCited >= 5, 'the resolution rule means nothing unless skills cite each other this way; they stopped doing so');
+});
+
 // A skill runs from whichever copy of the kit its host loaded, and the Antigravity copy carries skills/ and three
 // scripts, nothing else. A kit file a skill cites must therefore be one of those: on 2026-09-17 bk-setup pointed at
 // the kit's docs/hosts.md, which that copy does not have.

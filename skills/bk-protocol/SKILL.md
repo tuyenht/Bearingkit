@@ -77,7 +77,7 @@ Tool names differ per host; skills describe actions, and `references/host-tools.
 
 ## References
 
-Task skills read these by relative path and never copy them.
+These are in `<kit>/skills/bk-protocol/references/`; a path written `bk-<skill>/references/<file>` is under `<kit>/skills/`, not the kit root. Skills read them there, never copy them.
 
 | File | Holds |
 |---|---|

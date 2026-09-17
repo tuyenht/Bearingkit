@@ -47,6 +47,9 @@ function assertRuleComplete(rule, dest) {
   assert.ok(rule.startsWith('---\ntrigger: always_on\n---\n# Bearingkit'), 'rule starts with the always-on frontmatter then the body');
   assert.ok(!rule.includes('user-invocable') && !rule.includes('name: bk-protocol'), 'skill frontmatter stripped');
   assert.ok(rule.includes('## Antigravity host note') && rule.includes('view_file'), 'the host note that makes the model open SKILL.md first is appended');
+  // Without a skill tool there is no base directory: in the 2026-09-17 gate both models on this host looked for a
+  // skill's own references/<file> at the kit root.
+  assert.ok(rule.includes('A skill\'s own `references/<file>` sits next to its `SKILL.md`'), 'the host note says where a skill\'s own references are');
   assert.ok(rule.includes('Kit root') && rule.includes(dest), 'the rule names the copy as the kit root, so skills can run the scripts');
 }
 
