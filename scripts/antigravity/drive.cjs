@@ -92,7 +92,10 @@ async function runOne(c, projectId, trigger) {
   if (!projectId) throw new Error('usage: node drive.cjs <projectId> [maxPrompts]');
   const max = Number(maxArg || 1);
   const trigger = readQueue().trigger; // the phrase the armed driver expects
-  const c = await connect();
+  let c = await connect();
+  // A run that ends early must say so: before the client rejected on a closed socket, the process could simply stop.
+  let finished = false;
+  process.on('exit', (code) => { if (!finished) console.log(`driver exited before finishing (status ${code})`); });
   // One prompt failing to start (composer race, transient DevTools error) retries after a pause instead of ending
   // the run; three failures in a row end it, since by then the app itself needs a look.
   let failures = 0;
@@ -104,6 +107,9 @@ async function runOne(c, projectId, trigger) {
       console.log(`${i + 1}. retry ${failures} after error: ${e.message || e}`);
       if (failures >= 3) throw new Error(`three consecutive failures, last: ${e.message || e}`);
       await sleep(5000);
+      // A socket closed by a page reload cannot be reused, so the retry starts from a fresh connection.
+      try { c.close(); } catch { /* already closed */ }
+      c = await connect();
       i -= 1;
       continue;
     }
@@ -111,5 +117,6 @@ async function runOne(c, projectId, trigger) {
     if (!r.id) break;
     await sleep(2000);
   }
+  finished = true;
   c.close();
 })().catch((e) => { console.error('driver error:', e.message || e); process.exit(1); });
