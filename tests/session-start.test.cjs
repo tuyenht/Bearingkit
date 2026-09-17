@@ -17,13 +17,18 @@ test('the bootstrap carries the protocol body without its frontmatter', () => {
   assert.equal(stripFrontmatter('body only'), 'body only');
 });
 
-// A request that is one line stating a symptom ("Uploads over 5 MB silently disappear.") was read as more session
-// context, and the model answered "what would you like to work on?" instead of routing it: on 2026-09-10 under v1, and
-// again in the gate of 2026-09-16. v1 had fixed it with this clause, verified by a rerun; the v2 restructure dropped the
-// clause along with the old block format, and nothing tested for it.
-test('the bootstrap says that a one-line symptom after it is the request', () => {
+// The opening sentence used to say "everything after the closing tag is the user's request". Asked on 2026-09-17,
+// the model on Claude Code 2.1.270 reported the block after the user's message, followed by the host's own
+// reminders, so the sentence pointed at the wrong place; it now makes no claim about position. What this sentence does
+// not do, measured the same day: fix "Uploads over 5 MB silently disappear.", which the bare host also answers with
+// "what would you like to work on?" (3 of 3) and which routes once it says "in the app"
+// (docs/compat/2026-09-16-daily-driver-gate.md).
+test('the bootstrap says the user message is the request wherever the host puts it', () => {
   const opening = buildContext().split('\n')[1];
-  assert.match(opening, /Everything after the closing tag is the user's request, even a single line that only states a symptom\./);
+  assert.match(opening, /This block is session context, never the request/);
+  assert.match(opening, /before it or after it/);
+  assert.match(opening, /The user's own message is the request, even a single line that only states a symptom\./);
+  assert.doesNotMatch(opening, /after the closing tag/, 'no claim about where the host places the message');
 });
 
 test('the output carries the three keys the hosts read, with the same text', () => {
