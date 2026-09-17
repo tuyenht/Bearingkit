@@ -66,10 +66,10 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | Mốc | Trạng thái | Ghi chú |
 |---|---|---|
 | `0.1.0-phase1` | **đã phát hành** 2026-09-11 | layout v1; đo đạc ở `docs/compat/phase-1-gate.md` |
-| **v0.2** | **đang làm** | hạng mục ở §4, cổng ở §5. Thứ tự thực thi bên trong v0.2 theo lộ trình owner chọn 2026-09-13: `docs/plans/2026-09-13-daily-driver.md` |
-| v0.3 | chưa bắt đầu | 5 skill còn lại (`bk-map`, `bk-research`, `bk-perf`, `bk-db`, `bk-ops`), agent dùng hàng ngày, 8 file stack, skill test cho mọi skill |
+| **v0.2** | **đang làm** | hạng mục ở §4, cổng ở §5. Lộ trình owner chọn 2026-09-13 (`docs/plans/2026-09-13-daily-driver.md`) **đóng 2026-09-17**; việc kế tiếp theo câu 25 là kiểm kê từng mục (§4 #6), sau khi xong phần cắt nội dung của câu 24 và gói đo Antigravity |
+| v0.3 | chưa bắt đầu | 5 skill còn lại (`bk-map`, `bk-research`, `bk-perf`, `bk-db`, `bk-ops`) theo thứ tự kiểm kê chỉ ra (câu 25), agent dùng hàng ngày, 8 file stack, skill test cho mọi skill, khung benchmark với 2–3 task mẫu (câu 26) |
 | v0.4 | chưa bắt đầu | pack tuỳ chọn, hook push/deploy (gồm Biome/Pint theo câu 9), acceptance Gemini CLI / Cursor / Codex |
-| v1.0 | chưa bắt đầu | outcome benchmark, `upstream-watch`, README EN+VI, CI, marketplace, publish từ history đã squash |
+| v1.0 | chưa bắt đầu | outcome benchmark đủ 12 task, `upstream-watch`, README EN+VI, CI, marketplace, publish từ history đã squash |
 
 ---
 
@@ -115,8 +115,9 @@ Phạm vi v0.2 theo §13 là **tám skill lifecycle** (`bk-spec`, `bk-plan`, `bk
 
 Nguồn thật: `docs/specs/2026-09-12-d5-owner-questions.md`. Không copy nội dung ở đây, chỉ đếm và trỏ.
 
-- **14/24 câu đã chốt**: câu 1, 2, 3, 4, 5, 6, 8, 9, 12, 14, 16 (2026-09-12); **21** (2026-09-15: tách đọc/ghi trong `AGENTS.md`); **22** (2026-09-16: `claude-code-setup` → owner muốn skill `bk-setup`; thiết kế duyệt và dựng 2026-09-17 theo ủy quyền); **23** (2026-09-17: (a), `bug-en-03` là giới hạn đã biết, theo ủy quyền). *(Bản trước của dòng này vẫn ghi 11/21 và liệt câu 21 là còn treo sau khi nó đã chốt — sửa 2026-09-16.)*
-- **10 câu còn treo**: 7, 10, 11, 13, 15 (Tier 2 — đang giữ mặc định, không chặn việc nào); 17, 18, 19, 20 (Tier 3 — ghi nhận); **24** (mới, 2026-09-17: hai hàng ngân sách con vượt — cắt nội dung hay chia lại trần; khuyến nghị: cắt).
+- **17/26 câu đã chốt**: câu 1, 2, 3, 4, 5, 6, 8, 9, 12, 14, 16 (2026-09-12); **21** (2026-09-15: tách đọc/ghi trong `AGENTS.md`); **22** (2026-09-16: `claude-code-setup` → owner muốn skill `bk-setup`; thiết kế duyệt và dựng 2026-09-17 theo ủy quyền); **23** (2026-09-17: (a), `bug-en-03` là giới hạn đã biết, theo ủy quyền); **24, 25, 26** (2026-09-17 tối, owner chọn: cắt nội dung; kiểm kê trước năm skill; khung benchmark ở v0.3, đủ 12 task ở v1.0). *(Bản trước của dòng này vẫn ghi 11/21 và liệt câu 21 là còn treo sau khi nó đã chốt — sửa 2026-09-16.)*
+- **9 câu còn treo**: 7, 10, 11, 13, 15 (Tier 2 — đang giữ mặc định, không chặn việc nào); 17, 18, 19, 20 (Tier 3 — ghi nhận).
+- **Việc owner đã duyệt, chưa làm xong:** gói đo bản sửa đường dẫn trên Antigravity (đối chứng trên bản copy cũ → `antigravity install` → bản mới → acceptance → gỡ hook), chạy **sau** khi cắt nội dung theo câu 24, để chỉ cài và đo một lần.
 - **2 va chạm mới từ phiên doctor, cần owner đọc**: (a) mã `doctor` đã nằm trong cây trước v0.2 trong khi nhãn đã chốt là "v0.3" (câu 4); (b) `doctor` cố ý không gọi `claude plugin list`/`validate` như §6 mô tả, vì trần "không ghi một byte" là bất biến cứng (câu 1).
 - ~~Ngã ba lộ trình~~ — **owner chốt 2026-09-13: lộ trình B, daily driver trước**, kế hoạch ở `docs/plans/2026-09-13-daily-driver.md`. ~~Câu sinh ra từ đó về `frontend-design`/`bk-design`~~ — **owner chốt 2026-09-14: đường (ii)**, nới điều kiện câu 12 **chỉ cho riêng `bk-design`**; mọi skill khác vẫn chờ inventory. Ghi ở nguồn thật (`d5-owner-questions.md` câu 12) kèm lý do, và thành Task 6b của plan.
 

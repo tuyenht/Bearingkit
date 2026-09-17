@@ -269,13 +269,27 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 24. Hai hàng ngân sách con vượt trần: cắt nội dung, hay chia lại trần trong cùng tổng 5.000
 *(MỚI — đo 2026-09-17, `docs/compat/2026-09-16-daily-driver-gate.md`, mục "Measured afterwards".)*
-> **CHỜ OWNER.** Khuyến nghị của phiên: (a).
+> **ĐÃ CHỐT 2026-09-17 tối — quyết định của owner: (a), cắt nội dung** (câu hỏi có lựa chọn; (a) là khuyến nghị của phiên). Đi kèm, owner duyệt thứ tự đã đề xuất trong cùng lượt hỏi: cắt trước, rồi mới cài lại bản copy Antigravity và đo ở đó một lần cho cả bản sửa đường dẫn lẫn bản cắt.
 - **Dữ kiện, đã đo** (Claude Code 2.1.274, `claude -p "/context all"`, profile cách ly): tổng cố định **≈3.950 ≤ 5.000** — đạt. Nhưng protocol bơm lúc mở phiên **≈2.500 > 2.300**, và danh sách 4 agent **414 > 300**. Protocol v2 lớn hơn v1 (1.900) vì đã gộp baseline bảo mật, host notes và bảng chỉ mục references vào văn bản luôn được nạp.
 - **Cần quyết định:** giữ trần từng hàng như hợp đồng, hay chỉ giữ trần tổng.
 - **Lựa chọn:** (a) **cắt** — mô tả 4 agent xuống cỡ 75 token mỗi cái, protocol bớt cỡ 250 token (bảng chỉ mục references là chỗ dày nhất; test đòi body `bk-protocol` phải nêu từng file reference, nên chỉ rút gọn mô tả được, không bỏ hàng); sau đó chạy lại kiểm hồi quy trên Claude Code và acceptance trên hai host. (b) **chia lại trần** trong cùng tổng: protocol ≤2.600, agent ≤450 — chỉ sửa spec §12, không đụng nội dung. (c) để nguyên, ghi nhận vượt.
 - **Bị chặn:** không gì — tổng vẫn đạt. Chỉ không nên cắt khi một lượt đo Antigravity đang chạy trên đúng văn bản hiện tại.
 - **Khuyến nghị:** (a). Nhẹ là một phần giá trị của kit, và nguyên tắc 9 gọi ngân sách là hợp đồng; (b) hợp lệ nhưng là dời cột mốc sau khi đo. Làm sau khi nửa Antigravity của cổng đã có số.
 - **Cập nhật 2026-09-17 tối:** nửa Antigravity đã có số (58/60 strict, bằng đường cơ sở), không lượt đo nào đang chạy, nên điều kiện thời điểm của khuyến nghị đã thoả. Protocol **dày thêm khoảng 30 token** (ước lượng theo đoạn chữ thêm vào, chưa đọc lại bằng `/context`) vì bản sửa lỗi đường dẫn tham chiếu (mục References nay nêu thư mục `<kit>/skills/bk-protocol/references/` và cách hiểu `bk-<skill>/references/<file>`). Câu đó sửa một lỗi đã đo trên cả hai host (`docs/compat/2026-09-16-daily-driver-gate.md`, mục "Found by this run"), nên nếu chọn (a) thì phải cắt ở chỗ khác, không cắt câu này.
+
+---
+
+### 25. Năm skill còn thiếu: làm theo thứ tự nào
+*(MỚI — câu của Task 9, `docs/plans/2026-09-13-daily-driver.md`. Đánh số 25 vì cùng lý do với câu 21.)*
+> **ĐÃ CHỐT 2026-09-17 tối — quyết định của owner: kiểm kê trước** (câu hỏi có lựa chọn; đó là khuyến nghị của phiên). Điều kiện của câu 12 giữ nguyên cho `bk-map`, `bk-research`, `bk-perf`, `bk-db`, `bk-ops`: làm kiểm kê từng mục §5.2 (hạng mục #6 của v0.2), chốt catalog (#7), rồi dựng năm skill theo thứ tự kiểm kê chỉ ra.
+- **Lựa chọn lúc hỏi:** kiểm kê trước; nới câu 12 cho `bk-db` rồi `bk-ops` (việc Postgres và Terraform/AWS hằng ngày) như đã làm với `bk-design`; theo thứ tự spec §5.1 (`bk-map`, `bk-research` trước), vẫn chờ kiểm kê.
+
+---
+
+### 26. Benchmark 12 task: làm lúc nào
+*(MỚI — câu của Task 9. Đánh số 26 vì cùng lý do với câu 21.)*
+> **ĐÃ CHỐT 2026-09-17 tối — quyết định của owner: dựng khung sớm, chạy đủ ở v1.0** (câu hỏi có lựa chọn; đó là khuyến nghị của phiên). Ở v0.3: khung chạy và 2–3 task mẫu, để lộ vấn đề thiết kế sớm; ở v1.0: đủ 12 task, khi catalog đã chốt, để khỏi trả quota chạy lại. Spec §13 ghi theo.
+- **Lựa chọn lúc hỏi:** dựng khung sớm, chạy đủ ở v1.0; làm ngay trước v0.3; chờ hẳn v1.0 như §13 ghi lúc đó.
 
 ---
 
