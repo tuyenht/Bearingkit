@@ -120,6 +120,24 @@ test('summarize counts passes, positives and false activations', () => {
   assert.equal(s.byIntent.bug.positivesPass, 1);
 });
 
+// A session that ends in one turn with no tool call is marked no-action: the prompt may not have been taken as a
+// request, or a question may have been answered from knowledge alone, and only the stream tells which. Either way no
+// skill was invoked, so it is never a false activation; on 2026-09-17 a diagnostic question answered without a tool
+// was counted as one.
+test('a no-action session is reported on its own and never counted as a false activation', () => {
+  const { table } = require('../scripts/evals.cjs');
+  const results = [
+    { id: 'probe-01', intent: 'question', expect: 'none', got: 'no-action' },
+    { id: 'q-en-02', intent: 'question', expect: 'none', got: 'bk-spec' },
+    { id: 'bug-en-03', intent: 'bug', expect: 'bk-debug', got: 'no-action' },
+  ];
+  const s = summarize(results);
+  assert.equal(s.falseActivations, 1, 'only the session that invoked a skill');
+  assert.equal(s.noAction, 2);
+  assert.equal(s.pass, 0, 'no-action is not a pass either: someone has to read the stream');
+  assert.match(table(results, s, 'claude', 'meta'), /no-action sessions \(read their streams\): 2/);
+});
+
 test('equivalents make a baseline run meaningful', () => {
   const { passes } = require('../scripts/evals.cjs');
   const eq = JSON.parse(require('node:fs').readFileSync(path.join(__dirname, '..', 'evals', 'activation', 'equivalents-superpowers.json'), 'utf8'));

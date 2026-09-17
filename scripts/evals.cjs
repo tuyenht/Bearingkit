@@ -203,17 +203,21 @@ function passes(r, equivalents) {
 function summarize(results, equivalents) {
   const byIntent = {};
   let falseActivations = 0;
+  let noAction = 0;
   for (const r of results) {
     const b = (byIntent[r.intent] = byIntent[r.intent] || { total: 0, pass: 0, positives: 0, positivesPass: 0 });
     const pass = passes(r, equivalents);
     const alts = alternatives(r.expect);
     b.total++; if (pass) b.pass++;
     if (!alts.includes('none') && !r.id.includes('-neg-')) { b.positives++; if (pass) b.positivesPass++; }
-    if (alts.includes('none') && !pass) falseActivations++;
+    // No skill was invoked in a no-action session, so it cannot be a false activation; it is counted apart because
+    // only its stream says whether the prompt was answered directly or never taken as a request.
+    if (r.got === 'no-action') noAction++;
+    else if (alts.includes('none') && !pass) falseActivations++;
   }
   const total = results.length;
   const pass = results.filter((r) => passes(r, equivalents)).length;
-  return { byIntent, total, pass, falseActivations };
+  return { byIntent, total, pass, falseActivations, noAction };
 }
 
 function table(results, summary, host, meta, equivalents) {
@@ -222,7 +226,7 @@ function table(results, summary, host, meta, equivalents) {
   for (const r of results) lines.push(`| ${r.id} | ${r.intent} | ${String(r.expect).replace(/\|/g, '\\|')} | ${r.got} | ${passes(r, equivalents) ? 'yes' : 'NO'} |`);
   lines.push('', '| intent | positives routed | all prompts |', '|---|---|---|');
   for (const [k, v] of Object.entries(summary.byIntent)) lines.push(`| ${k} | ${v.positivesPass}/${v.positives} | ${v.pass}/${v.total} |`);
-  lines.push('', `Overall: ${summary.pass}/${summary.total} · false activations on "none" prompts: ${summary.falseActivations}`);
+  lines.push('', `Overall: ${summary.pass}/${summary.total} · false activations on "none" prompts: ${summary.falseActivations} · no-action sessions (read their streams): ${summary.noAction}`);
   return lines.join('\n') + '\n';
 }
 
@@ -332,7 +336,7 @@ async function run(argv) {
   const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · plugin: ${opts.pluginDir || 'none'} · cwd: ${opts.cwd} · prompts: ${results.length} of ${prompts.length}${equivalents ? ' · equivalents: ' + path.basename(args.equivalents) : ''}${quotaNote}${stopped ? ` · **stopped early on the ${stopped.window} ceiling**, ${prompts.length - results.length} prompt(s) not run` : ''}`;
   const out = path.join(outDir, `${date}-claude${args.intent ? '-' + args.intent : ''}${tag}.md`);
   fs.writeFileSync(out, table(results, summary, 'claude', meta, equivalents));
-  process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}.${quotaNote} Written: ${out}\n`);
+  process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}, no-action ${summary.noAction}.${quotaNote} Written: ${out}\n`);
 }
 
 module.exports = { run, parseStream, parseQuota, quotaStop, loadPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };
