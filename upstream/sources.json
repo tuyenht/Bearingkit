@@ -397,7 +397,7 @@
       "license": "proprietary, owner-authored (\"Copyright (c) 2026 Antigravity-Core. All Rights Reserved.\"); it is the owner's own repo, so the owner's own text may be adapted — any third-party text vendored inside it may not",
       "mode": "adapt (owner's own text only)",
       "verified": "2026-09-11",
-      "local": "C:\\Projects\\Antigravity-Core",
+      "local": "C:\\Projects\\Antigravity-Core, the owner's repository at this sha (read with the owner's leave on 2026-09-18 by fetching this commit, read-only, into _build/upstream/tuyenht_Antigravity-Core, the copy the item-level inventory read; the public remote has only the older 1c744167)",
       "note": "coverage matrix row 11 (\"owner's previous kit\"); the kit this migration supersedes — see docs/plans/2026-09-10-owner-migration.md",
       "tracked": [],
       "derived": {}

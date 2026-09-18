@@ -65,7 +65,7 @@ Lấy từ Spartan (ghi chú (d) của nguồn đó) và awesome-cursorrules. T�
 **B — cần trước sprint của một skill cụ thể; trả lời sau được**
 
 - **B1. Vue.** v1 §232 xếp Vue và Electron vào `typescript-react`, còn bảng định tuyến của v2 gửi project TypeScript không có React sang `node.md`. *Khuyến nghị:* nếu owner không có project Vue, giữ v2 (Vue không có stack file). Nếu có, `typescript-react.md` thêm một mục Vue.
-- **B2. Phạm vi `bk-guard`.** Guard cho lỗi đã biết (v1), guard cho thao tác phá huỷ (các dòng kiểm kê), hay cả hai. *Khuyến nghị:* cả hai trong một pack, dựng khi owner cần.
+- **B2. Phạm vi `bk-guard`.** *(Dữ kiện 2026-09-18, từ kiểm kê Antigravity-Core: ví dụ "Prisma 7 + Next" mà v1 §7.2 dùng để tả `bk-guard` chính là skill `prisma7-nextjs-guard` trong kit cũ của owner, tức phạm vi v1 là guard cho lỗi đã biết theo phiên bản.)* Guard cho lỗi đã biết (v1), guard cho thao tác phá huỷ (các dòng kiểm kê), hay cả hai. *Khuyến nghị:* cả hai trong một pack, dựng khi owner cần.
 - **B3. Danh sách MCP opt-in** (matrix hàng 6, 17, 23) đụng luật "kit không giới thiệu công cụ nào ngoài dòng tra tài liệu" (`bk-setup` bước 5, 2026-09-17). *Khuyến nghị:* chỉ giữ context7 như đã ghi trong `docs/hosts.md`. Một công cụ chỉ được nêu tên trong skill nào thật sự dùng nó (agent-browser trong `bk-test`).
 - **B4. `doctor` báo công cụ bên thứ ba đã cài hay chưa** (agent-browser, biome, Pint; matrix hàng 18). *Khuyến nghị:* được, vì đó là kiểm có mặt, không phải giới thiệu; một mục `skip` không bao giờ là lời khuyên cài.
 - **B5. `npx skills` làm kênh phát hành phụ** (matrix hàng 24, v1.0). *Khuyến nghị:* giữ đúng như một phép kiểm "cài qua kênh này thì skill vẫn kích hoạt"; kit không dùng `find-skills`.
