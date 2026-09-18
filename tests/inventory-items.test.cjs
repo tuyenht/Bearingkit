@@ -79,3 +79,60 @@ test('check reports every item the inventory does not name, qualified by the sou
     'toolkit/rules/core/NAMING.md',
   ]);
 });
+
+// The review of each batch rests on two more measurements: every row obeys §5.2 (one target, one decision, text only
+// where the licence allows it), and the totals table matches the rows. Both ran from a session scratchpad until
+// 2026-09-18, which the next session could not reproduce.
+const header = '| # | Mục | Loại | Dòng | Làm gì | Skill đích | Quyết định | Lý do |';
+const row = (n, id, kind, lines, target, decision, reason = 'why') => `| ${n} | \`${id}\` | ${kind} | ${lines} | what | ${target} | ${decision} | ${reason} |`;
+
+test('rows accepts §5.2 rows and reports each way a row can break the rule', () => {
+  const { rows } = require('../scripts/inventory-items.cjs');
+  const good = [header, '|---|', row(1, 'demo:skills/a', 'skill', 3, 'bk-build', 'idea'), row(2, 'demo:skills/b', 'skill', 3, '—', 'drop'),
+    row(3, 'demo:(tool)', 'tool', 0, 'kit', 'idea'), row(4, 'demo:group/ts', 'group', 5, 'bk-build', 'idea'),
+    '| `demo:.codex/skills/a` | 1 | có | idea |', row(9, 'other:skills/a', 'skill', 3, 'nowhere', 'maybe')].join('\n');
+  assert.deepEqual(rows(good, 'demo'), { counts: { absorb: 0, idea: 3, drop: 1 }, problems: [] });
+
+  const bad = [
+    row(1, 'demo:skills/a', 'skill', 3, 'bk-nowhere', 'idea'),
+    row(2, 'demo:skills/b', 'skill', 3, '—', 'idea'),
+    row(3, 'demo:skills/c', 'skill', 3, 'bk-build', 'absorb'),
+    row(4, 'demo:skills/d', 'skill', 3, 'bk-build', 'maybe'),
+    row(5, 'demo:skills/e', 'skill', 3, 'bk-build', 'drop', ''),
+    row(6, 'demo:skills/a', 'skill', 3, 'bk-build', 'drop'),
+    '| 7 | `demo:skills/f` | skill | 3 | a `x | y` cell | bk-build | idea | why |',
+  ].join('\n');
+  const { problems } = rows(bad, 'demo');
+  for (const expected of ['unknown target', 'idea with no target', 'absorb where the licence allows no text', 'unknown decision', 'empty cell', 'duplicate', '9 cells']) {
+    assert.ok(problems.some((p) => p.includes(expected)), 'expected a problem naming: ' + expected + '\n' + problems.join('\n'));
+  }
+  assert.deepEqual(rows(row(1, 'demo:skills/c', 'skill', 3, 'bk-build', 'absorb'), 'demo', { textAllowed: true }).problems, []);
+});
+
+test('totals counts items the way the totals table does and reports every mismatch', () => {
+  const { totals } = require('../scripts/inventory-items.cjs');
+  const doc = [
+    '| Nguồn | Nhãn | Mục | absorb | idea | drop | Kiểm độ phủ |',
+    '|---|---|---|---|---|---|---|',
+    '| demo/one | `one` | 8 | 1 | 6 | 1 | 8/8 |',
+    '| demo/two | `two` | 3 | 0 | 1 | 1 | wrong on purpose |',
+    header, '|---|',
+    row(1, 'one:skills/a', 'skill', 40, 'bk-build', 'absorb'),
+    row(2, 'one:group/ts', 'group', 5, 'bk-build', 'idea'),
+    row(3, 'one:rules/x.mdc', 'rule', 12, '—', 'drop'),
+    '| `one:.codex/skills/a` | 1 | có | idea |',
+    row(1, 'two:skills/a', 'skill', 9, 'bk-test', 'idea'),
+    row(2, 'two:skills/b', 'skill', 9, '—', 'drop'),
+    row(1, 'three:skills/a', 'skill', 9, '—', 'drop'),
+  ].join('\n');
+  const result = totals(doc);
+  assert.deepEqual(result.counted.one, { items: 8, absorb: 1, idea: 6, drop: 1 }, 'a group counts its files, a mirror counts one');
+  assert.deepEqual(result.mismatches.sort(), ['three: missing from the totals table', 'two: table 3/0/1/1, rows 2/0/1/1']);
+});
+
+test('every skill folder of the kit is a target the row check accepts', () => {
+  const { TARGETS } = require('../scripts/inventory-items.cjs');
+  for (const name of fs.readdirSync(path.join(__dirname, '..', 'skills'))) {
+    if (fs.existsSync(path.join(__dirname, '..', 'skills', name, 'SKILL.md'))) assert.ok(TARGETS.has(name), name);
+  }
+});

@@ -4,10 +4,12 @@
 // against them, so "every item has a row" is a measurement rather than a claim
 // (docs/plans/2026-09-18-item-inventory.md). An item is a folder with a SKILL.md (its whole subtree belongs to it),
 // a commands/, agents/ or rules/ markdown file, a hooks.json, a Cursor rule file, or a plugin folder holding none of
-// those.
+// those. `rows` checks that each row of a source obeys §5.2, and `totals` that the totals table matches the rows.
 //
 //   node scripts/inventory-items.cjs list <source dir>
 //   node scripts/inventory-items.cjs check <inventory.md> <source dir> <label>
+//   node scripts/inventory-items.cjs rows <inventory.md> <label> [--text-allowed]
+//   node scripts/inventory-items.cjs totals <inventory.md>
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -61,6 +63,76 @@ function check(inventoryText, items, label) {
   return items.filter((i) => !inventoryText.includes('`' + label + ':' + i.id + '`')).map((i) => i.id);
 }
 
+// What a row may name as its target (spec §5.1): the eighteen skills, the optional packs, `kit` for the kit's own
+// machinery (install channel, test format, benchmark), and `—` for a drop that lands nowhere.
+const TARGETS = new Set([
+  'bk-protocol', 'bk-map', 'bk-research', 'bk-spec', 'bk-audit', 'bk-plan', 'bk-build', 'bk-test', 'bk-debug',
+  'bk-review', 'bk-ship', 'bk-close', 'bk-next', 'bk-design', 'bk-perf', 'bk-db', 'bk-ops', 'bk-setup',
+  'bk-product', 'bk-ux', 'bk-agent', 'bk-deps', 'bk-preview', 'bk-guard', 'kit', '—',
+]);
+const DECISIONS = ['absorb', 'idea', 'drop'];
+const cellsOf = (line) => line.split('|').slice(1, -1).map((c) => c.trim());
+
+// A row is `| n | `<label>:<id>` | kind | lines | what | target | decision | reason |`. Lines that do not start with a
+// number (a mirror table, the totals table) are not rows.
+function rows(inventoryText, label, { textAllowed = false } = {}) {
+  const counts = { absorb: 0, idea: 0, drop: 0 };
+  const problems = [];
+  const seen = new Set();
+  for (const line of inventoryText.split('\n')) {
+    if (!/^\| \d+ \| /.test(line) || !line.includes('`' + label + ':')) continue;
+    const cells = cellsOf(line);
+    const id = (cells[1] || '').replace(/`/g, '');
+    if (cells.length !== 8) { problems.push(`${id}: ${cells.length} cells, not 8 (a | inside a cell?)`); continue; }
+    const [, , , , what, target, decision, reason] = cells;
+    if (seen.has(id)) problems.push(`${id}: duplicate`);
+    seen.add(id);
+    if (!TARGETS.has(target)) problems.push(`${id}: unknown target "${target}"`);
+    if (!what || !reason) problems.push(`${id}: empty cell`);
+    if (!DECISIONS.includes(decision)) { problems.push(`${id}: unknown decision "${decision}"`); continue; }
+    if (decision !== 'drop' && target === '—') problems.push(`${id}: ${decision} with no target`);
+    if (decision === 'absorb' && !textAllowed) problems.push(`${id}: absorb where the licence allows no text`);
+    counts[decision]++;
+  }
+  return { counts, problems };
+}
+
+// Counts per item, as the totals table does: a `group` row counts its files (the Dòng cell), and a mirror-table line
+// (`| `<label>:<id>` | <original row> | <identical?> | <decision> |`) counts one item with its original's decision.
+function totals(inventoryText) {
+  const lines = inventoryText.split('\n');
+  const counted = {};
+  const add = (label, decision, n) => {
+    const c = (counted[label] ||= { items: 0, absorb: 0, idea: 0, drop: 0 });
+    if (!DECISIONS.includes(decision)) return;
+    c.items += n;
+    c[decision] += n;
+  };
+  for (const line of lines) {
+    const m = line.match(/^\| \d+ \| `([a-z0-9-]+):/);
+    if (m) {
+      const cells = cellsOf(line);
+      if (cells.length === 8) add(m[1], cells[6], cells[2] === 'group' ? Number(cells[3]) : 1);
+      continue;
+    }
+    const mirror = line.match(/^\| `([a-z0-9-]+):[^`]+` \| \d+ \| [^|]+ \| (absorb|idea|drop) \|$/);
+    if (mirror) add(mirror[1], mirror[2], 1);
+  }
+  const table = {};
+  for (const line of lines) {
+    const m = line.match(/^\| [^|]+ \| `([a-z0-9-]+)` \| (\d+) \| (\d+) \| (\d+) \| (\d+) \|/);
+    if (m) table[m[1]] = { items: +m[2], absorb: +m[3], idea: +m[4], drop: +m[5] };
+  }
+  const f = (c) => `${c.items}/${c.absorb}/${c.idea}/${c.drop}`;
+  const mismatches = [];
+  for (const [label, c] of Object.entries(counted)) {
+    if (!table[label]) mismatches.push(`${label}: missing from the totals table`);
+    else if (f(table[label]) !== f(c)) mismatches.push(`${label}: table ${f(table[label])}, rows ${f(c)}`);
+  }
+  for (const label of Object.keys(table)) if (!counted[label]) mismatches.push(`${label}: in the totals table, no rows`);
+  return { counted, table, mismatches };
+}
+
 if (require.main === module) {
   const [cmd, a, b, c] = process.argv.slice(2);
   if (cmd === 'list' && a) {
@@ -75,10 +147,21 @@ if (require.main === module) {
     for (const m of missing) process.stdout.write(`missing ${c}:${m}\n`);
     process.stdout.write(`${items.length - missing.length}/${items.length} items of ${c} have a row\n`);
     process.exitCode = missing.length ? 1 : 0;
+  } else if (cmd === 'rows' && a && b) {
+    const { counts, problems } = rows(fs.readFileSync(path.resolve(a), 'utf8'), b, { textAllowed: process.argv.includes('--text-allowed') });
+    for (const p of problems) process.stdout.write(`problem ${p}\n`);
+    process.stdout.write(`${b}: ${counts.absorb} absorb, ${counts.idea} idea, ${counts.drop} drop, ${problems.length} problems\n`);
+    process.exitCode = problems.length ? 1 : 0;
+  } else if (cmd === 'totals' && a) {
+    const { counted, mismatches } = totals(fs.readFileSync(path.resolve(a), 'utf8'));
+    for (const m of mismatches) process.stdout.write(`mismatch ${m}\n`);
+    const all = Object.values(counted).reduce((s, c) => ({ items: s.items + c.items, absorb: s.absorb + c.absorb, idea: s.idea + c.idea, drop: s.drop + c.drop }), { items: 0, absorb: 0, idea: 0, drop: 0 });
+    process.stdout.write(`${Object.keys(counted).length} sources, ${all.items} items: ${all.absorb} absorb, ${all.idea} idea, ${all.drop} drop, ${mismatches.length} mismatches\n`);
+    process.exitCode = mismatches.length ? 1 : 0;
   } else {
-    process.stdout.write('usage: inventory-items.cjs list <source dir> | check <inventory.md> <source dir> <label>\n');
+    process.stdout.write('usage: inventory-items.cjs list <source dir> | check <inventory.md> <source dir> <label> | rows <inventory.md> <label> [--text-allowed] | totals <inventory.md>\n');
     process.exitCode = 2;
   }
 }
 
-module.exports = { list, check };
+module.exports = { list, check, rows, totals, TARGETS };

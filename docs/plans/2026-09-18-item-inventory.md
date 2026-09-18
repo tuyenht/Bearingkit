@@ -44,10 +44,10 @@ Hai ngoại lệ có chủ đích, ghi rõ để owner thấy: (1) `awesome-curs
 ## Cách làm một đợt
 
 1. Liệt kê mục của mỗi nguồn trong đợt bằng script; số mục ghi vào đầu mục của nguồn đó.
-2. Đọc từng mục (một agent nghiên cứu cho mỗi nguồn, tối đa ba agent cùng lúc — §5.2 và bài học 429; agent nhận catalog §5.1, luật §5.2, quality bar §5.3 và định nghĩa mục ở trên, không nhận hội thoại).
+2. Đọc từng mục (một agent nghiên cứu cho mỗi nguồn, tối đa ba agent cùng lúc — §5.2 và bài học 429; agent nhận catalog §5.1, luật §5.2, quality bar §5.3 và định nghĩa mục ở trên, không nhận hội thoại). Brief chung: `docs/plans/2026-09-18-item-inventory-agent-brief.md` (trong repo từ 2026-09-18; trước đó nằm ở `_build/`, không được track).
 3. Agent của owner (phiên chính) duyệt từng dòng: một mục đúng một skill đích và một quyết định; `absorb` chỉ khi giấy phép cho phép lấy chữ; nguồn không giấy phép hoặc độc quyền tối đa là `idea`. Dòng mâu thuẫn với một quyết định đã có (D3, ba lượt từng mục trước) phải nêu và giải thích, không lặng lẽ đảo.
 4. Ghi vào `docs/specs/2026-09-18-item-inventory.md`, mỗi dòng mang **đường dẫn mục** để `check` đối được.
-5. *Check của đợt:* `inventory-items.cjs check` báo 0 mục thiếu cho mọi nguồn của đợt; mỗi dòng có quyết định + lý do; đếm lại số absorb/idea/drop bằng lệnh, không bằng tay.
+5. *Check của đợt:* `inventory-items.cjs check` báo 0 mục thiếu cho mọi nguồn của đợt; `inventory-items.cjs rows <file> <nhãn>` báo 0 lỗi (thêm `--text-allowed` khi giấy phép cho lấy chữ); `inventory-items.cjs totals <file>` báo bảng Tổng khớp các dòng. Hai lệnh sau vào repo ngày 2026-09-18; trước đó chúng là script tạm của phiên, phiên sau không chạy lại được.
 
 ## Các đợt
 
