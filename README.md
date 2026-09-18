@@ -6,7 +6,7 @@ A protocol and skill set that makes an AI coding agent work like a disciplined s
 
 | Host | Command |
 |---|---|
-| Claude Code | `/plugin marketplace add tuyenht/Bearingkit` then `/plugin install bearingkit@bearingkit`; development: `claude --plugin-dir <checkout>` |
+| Claude Code | `/plugin marketplace add tuyenht/Bearingkit` then `/plugin install bearingkit@bearingkit`; from a shell: `claude plugin marketplace add https://github.com/tuyenht/Bearingkit` then `claude plugin install bearingkit@bearingkit`; development: `claude --plugin-dir <checkout>` |
 | Antigravity 2.0 | `npx bearingkit antigravity install` |
 | Gemini CLI | `gemini extensions install https://github.com/tuyenht/Bearingkit` |
 | Cursor, Codex, Copilot CLI, Factory Droid | manifests are in place; listed as supported after their acceptance test |
