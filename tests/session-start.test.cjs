@@ -34,8 +34,12 @@ test('the bootstrap says the user message is the request wherever the host puts 
 // Spec §12 gives the injected protocol 2,300 tokens. On 2026-09-17 `/context` read 2.5k for a context of 7,424
 // characters and 2.6k for 7,547, a little under three characters a token; 6,500 characters keeps the block under the
 // allocation at the low end of that ratio. The reading, not this proxy, is what the budget is checked against.
+// The context names the kit root, so its length grew with the checkout's path: a worktree under _build/ read 19
+// characters over the budget on 2026-09-18 with the protocol unchanged. The proxy uses the path the readings are taken
+// in, so it measures the protocol, not where the kit happens to sit.
 test('the injected protocol stays within its budget', () => {
-  const length = buildContext().length;
+  const { PROTOCOL } = require('../hooks/session-start.cjs');
+  const length = buildContext(PROTOCOL, 'C:\\Projects\\Bearingkit').length;
   assert.ok(length <= 6500, `the bootstrap context is ${length} characters, budget 6,500 (about 2,300 tokens)`);
 });
 
