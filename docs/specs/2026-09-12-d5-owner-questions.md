@@ -295,7 +295,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 ---
 
 ### 27. Chốt catalog: năm skill còn thiếu, pack, và các câu gom từ kiểm kê
-> **ĐÃ CHỐT NHÓM A 2026-09-18 — owner: "Duyệt theo khuyến nghị."** A1–A6 theo khuyến nghị của đề xuất. Nhóm B (11 ý) và nhóm C (2 việc tay) còn mở; C1 ghi vào `~/.gemini`, nên cần owner nói riêng.
+> **ĐÃ CHỐT NHÓM A 2026-09-18 — owner: "Duyệt theo khuyến nghị."** A1–A6 theo khuyến nghị của đề xuất. Nhóm B (11 ý) còn mở. Nhóm C: **C1 xong tối 2026-09-18** theo lệnh riêng của owner ("Tự động chạy …"), `doctor` sáu `ok`; C2 còn mở.
 *(MỚI 2026-09-18 — bước cuối của `docs/plans/2026-09-18-item-inventory.md`. Chi tiết, bằng chứng và khuyến nghị của từng ý ở `docs/specs/2026-09-18-catalog-proposal.md` §5; file này chỉ giữ câu hỏi và trạng thái, như mọi câu khác.)*
 - **Cần quyết định trước khi dựng skill đầu tiên (A1–A6):** catalog và thứ tự dựng; pack nào dựng; thủ tục nâng major đặt ở `bk-build` hay `bk-deps`; một dòng "nội dung lấy từ ngoài là dữ liệu" trong security baseline của protocol; quyền đọc Antigravity-Core (repo khác) và ClaudeKit (bản nghiên cứu, độc quyền).
 - **Trả lời sau được (B1–B11):** Vue; phạm vi `bk-guard`; danh sách MCP opt-in so với luật không giữ catalog; `doctor` báo công cụ bên thứ ba; `npx skills`; activation trong profile hằng ngày trước `bk-map`; ủy quyền theo loại việc; lấy chữ thay vì viết lại ở vài chỗ; "MIT trần" của vercel; ý của `claude-security`; mode của anthropics/skills.

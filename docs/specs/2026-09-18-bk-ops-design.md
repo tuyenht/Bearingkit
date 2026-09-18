@@ -19,7 +19,7 @@ The protocol already classes "remote or production systems" as COUNCIL (`bk-prot
 - `references/change.md`: pre-flight in detail — naming the target, drift between the repository and the live system (field lesson L12), environment and CI parity (L2, L10), the variables-by-environment matrix, reading an infrastructure plan (what turns an update into a replace), infrastructure-as-code hygiene (pinned providers and modules, locked and encrypted state, one state per environment, state surgery as COUNCIL, import until the plan is empty), staged rollout and when it cannot work, secrets, cost traps, platform moves.
 - `references/incident.md`: triage from the alert, classifying the cause, the order to read a failing workload, evidence before remediation, alerting that pages on symptoms with a runbook, and the incident record.
 
-No text is vendored: every source that carries this material is ideas-only for the kit (no licence, a proprietary licence, or a `reference`/`ideas-only` mode in `upstream/sources.json`). The inventory rows are `docs/specs/2026-09-18-item-inventory.md`, target `bk-ops`, plus the notes (a) of cloudflare, vercel, jeffallan, addyosmani and Spartan.
+No text is vendored. Every source here is ideas-only for the kit (no licence, a proprietary licence, or a `reference`/`ideas-only` mode in `upstream/sources.json`), except the owner's own Antigravity-Core, whose text could have been adapted but carried nothing the kit lacked. The inventory rows are `docs/specs/2026-09-18-item-inventory.md`, target `bk-ops`, plus the notes (a) of cloudflare, vercel, jeffallan, addyosmani and Spartan.
 
 ## Routing
 

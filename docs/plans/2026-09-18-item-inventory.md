@@ -38,8 +38,8 @@ Hai ngoại lệ có chủ đích, ghi rõ để owner thấy: (1) `awesome-curs
 | Nhóm | Nguồn | Cách đọc |
 |---|---|---|
 | A · đã có trong `_build/upstream/` | claude-plugins-official, mattpocock, addyosmani, spec-kit, anthropics/skills, cloudflare, vercel agent-skills, agent-browser, pr-agent, awesome-cursorrules, karpathy | đọc tự do (ACT) |
-| B · công khai, chưa có bản sao | superpowers (tag 5.1.0), jeffallan/claude-skills (0.4.14), Antigravity-Core (5.0.1), c0x12c/ai-toolkit, playwright-mcp, modelcontextprotocol/servers, vercel-labs/skills, aider, biome, skillmark | clone nông vào `_build/upstream/` **đúng sha trong `sources.json`** (ACT — dữ liệu công khai vào thư mục build của repo, như D2). Không đọc bản cài trong `~/.claude`: đọc thư mục đó bằng đường khác là COUNCIL |
-| C · chỉ có bản sao ngoài repo | claudekit-engineer (repo private; bản sao nghiên cứu ở `C:\Projects\claudekit-research`) | **COUNCIL** — hỏi owner khi tới đợt 4; độc quyền, dù đọc được cũng chỉ lấy ý |
+| B · công khai, chưa có bản sao | superpowers (tag 5.1.0), jeffallan/claude-skills (0.4.14), Antigravity-Core (5.0.1; sha không có trên GitHub, nên đọc từ repo trên máy với phép của owner, câu 27 A5), c0x12c/ai-toolkit, playwright-mcp, modelcontextprotocol/servers, vercel-labs/skills, aider, biome, skillmark | clone nông vào `_build/upstream/` **đúng sha trong `sources.json`** (ACT — dữ liệu công khai vào thư mục build của repo, như D2). Không đọc bản cài trong `~/.claude`: đọc thư mục đó bằng đường khác là COUNCIL |
+| C · chỉ có bản sao ngoài repo | claudekit-engineer (repo private; bản sao nghiên cứu ở `C:\Projects\claudekit-research`) | **COUNCIL** — owner cho đọc 2026-09-18 (câu 27 A6), đọc tại chỗ; độc quyền, chỉ lấy ý |
 
 ## Cách làm một đợt
 
