@@ -330,13 +330,13 @@
       "repo": "https://github.com/vercel-labs/agent-skills",
       "tag": null,
       "sha": "063bee94c3f4df8453406c830b0a7df0f2860278",
-      "license": "none (no license file)",
+      "license": "none (no license file). Checked again 2026-09-18: README.md, skills/vercel-optimize/README.md, four SKILL.md frontmatters and two packages/*/package.json declare MIT, but no file in the tree carries a licence text or a copyright notice, so ideas only unless a licence file appears; whether a bare MIT declaration is a grant is the owner's call",
       "mode": "reference",
       "verified": "2026-09-11",
       "note": "row 9; the repo carries more skills than the matrix row names (composition-patterns, deploy-to-vercel, react-native-skills, react-view-transitions, vercel-cli-with-tokens, vercel-optimize, writing-guidelines, on top of the two the matrix cites). Read in full 2026-09-11: react-best-practices is a substantial, genuinely minable catalog (70 React/Next.js performance rules in 8 priority categories: waterfalls, bundle size, server performance, client fetching, re-renders, rendering, JS micro-optimizations, advanced patterns) — its natural home is the typescript-react stack file. web-design-guidelines is thin by comparison: it is a live-fetch wrapper (WebFetch against https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md at review time), not a static ruleset, and that live-fetch pattern doesn't fit the kit's own static, token-predictable design — worth citing as a pointer, not adopting as a pattern.",
       "tracked": [],
       "derived": {},
-      "read": "2026-09-11 — not yet placed: skills/bk-build/references/stacks/ doesn't exist yet (stack files are content-program step 3, not this pass); this entry's note carries the synthesis forward so the reading isn't lost"
+      "read": "2026-09-11 in full; placed 2026-09-15 (735f99c): skills/bk-build/references/stacks/typescript-react.md cites react-best-practices for its category order, no text taken; the bk-design pointer to web-design-guidelines is decided but not yet written; item-level rows 2026-09-18 in docs/specs/2026-09-18-item-inventory.md"
     },
     {
       "name": "Aider-AI/aider",
