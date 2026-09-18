@@ -8,6 +8,8 @@
 
 `EXPLAIN (ANALYZE, BUFFERS)` first, then the change, then the same plan again. A query "optimised" without both plans is an opinion. Read the plan for the row-count estimate against the actual: an estimate off by an order of magnitude is the finding, and the index is usually not the fix — stale statistics or a non-sargable predicate is.
 
+`ANALYZE` runs the statement it explains. For an `INSERT`, `UPDATE`, `DELETE` or `MERGE` the write really happens, so the plan of a write comes from plain `EXPLAIN`, or from `ANALYZE` inside `BEGIN; … ROLLBACK;` on a database that is not production: the rollback undoes the rows, not the locks the statement held meanwhile or the sequence values it drew.
+
 A predicate stops using an index the moment the column is wrapped in a function or coerced to another type. `WHERE lower(email) = $1` needs an index on `lower(email)`, or it scans.
 
 ## Schema

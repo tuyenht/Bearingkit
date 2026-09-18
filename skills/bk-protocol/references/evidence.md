@@ -4,7 +4,7 @@
 2. Numbers carry the method that produced them ("measured with `/context`", "estimated from file sizes") or the label "not measured".
 3. Before trusting a clean result, show the check can fail: run it once against a known-bad input, a deliberately broken test, or a file that must be rejected.
 4. Nothing untested goes into a commit message, a document, or a handoff as fact.
-5. Below a stated confidence on a technology, say so and consult the pinned documentation or bk-research first; never write syntax from memory for a major newer than the training data.
+5. Below a stated confidence on a technology, say so and consult the pinned documentation first; never write syntax from memory for a major newer than the training data.
 6. Sticky decisions: a decision marked `verified by file:line` or `verified by test <name>` is reversed only by new evidence, and the reversal names what the earlier verification missed. A decision the user confirmed is never reversed silently; it is surfaced with the original wording, the new reasoning, and the trade-off, and the user decides.
 
 ## Worked example

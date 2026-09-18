@@ -4,6 +4,13 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 
 ## Unreleased
 
+### Added (2026-09-18)
+- `scripts/inventory-items.cjs` lists the items of an upstream source — skill folders, command, agent and rule files, `hooks.json`, and plugin folders with none of those inside — and checks that an inventory file has a row for each, so "every item has a row" (spec §5.2) is a measurement rather than a claim; `tests/inventory-items.test.cjs`. The item-level inventory it checks is `docs/specs/2026-09-18-item-inventory.md`.
+
+### Fixed (2026-09-18)
+- `bk-build/references/stacks/sql.md` told the agent to run `EXPLAIN (ANALYZE, BUFFERS)` first without saying that `ANALYZE` executes the statement, so on an `INSERT`, `UPDATE`, `DELETE` or `MERGE` the write really happens. It now says so and gives the two safe forms: plain `EXPLAIN`, or `ANALYZE` inside `BEGIN; … ROLLBACK;` on a database that is not production, whose rollback does not undo the locks held meanwhile or the sequence values drawn (PostgreSQL 18 documentation, the `EXPLAIN` page and the sequence functions page, read 2026-09-18). Found by the item-level inventory.
+- `bk-protocol/references/evidence.md` rule 5 no longer sends the agent to `bk-research`, a skill that does not exist yet; the protocol dropped the same mention in the 2026-09-17 trim.
+
 ### Added (2026-09-17)
 - The evals runner writes the skills listing into every Claude Code result table: how many sessions saw which listing, the kit's share, the host version, and every listed skill that is not the kit's, read from each stream's `init` event. The isolated profile has carried the account's synced skills since 2026-09-17, and before this line only the raw streams showed it.
 - `bk-setup`, the eighteenth skill: makes a project ready for agents on every host the owner uses — one instruction source for all hosts, the facts an agent cannot infer (guardrails, hot paths, the do-not list) compared against the stack profile, conflicts with the protocol reported rather than rewritten, guardrails wired to after-edit events where a host has them, and documentation lookup only when the profile shows majors newer than the model knows. At most two recommendations per group, each with its evidence. Lines added to a project's own instruction files follow the protocol's gate; hook wiring at any level is proposed as an exact snippet and applied only on approval; nothing is installed and no catalog of servers or plugins is kept. Ideas from claude-code-setup, no text taken. Built after the owner delegated the pending decisions to the session's recommendations. First reading in the isolated profile: both positives routed to it and the neighbour prompt to `bk-build`, 0 false activations.
