@@ -186,7 +186,7 @@
       "license": "CC0-1.0",
       "mode": "reference",
       "verified": "2026-09-11",
-      "note": "row 14; framework rule sets for the language rules",
+      "note": "row 14; framework rule sets, read as starting points for the stack files (spec v2 §5.5; kotlin.md, sql.md and typescript-react.md cite them since 2026-09-15)",
       "tracked": [],
       "derived": {}
     },
@@ -358,8 +358,8 @@
       "license": "MIT",
       "mode": "reference",
       "verified": "2026-09-11",
-      "local": "Claude Code plugin cache, fullstack-dev-skills 0.4.14 (marketplace repo HEAD; the cache directory itself has no .git to re-derive from)",
-      "note": "coverage matrix row 8; 66 per-framework/per-role skills, deliberately not absorbed as skills — the kit carries 8 path-scoped language rules instead",
+      "local": "shallow clone at this sha under _build/upstream/jeffallan_claude-skills (gitignored), 2026-09-18, the copy the item-level inventory read; also the Claude Code plugin cache, fullstack-dev-skills 0.4.14 (marketplace repo HEAD; the cache directory itself has no .git to re-derive from), not read",
+      "note": "coverage matrix row 8; 66 per-framework/per-role skills, deliberately not absorbed as skills — the kit carries eight stack files instead (spec v2 §5.5, which replaced v1's path-scoped language rules); item-level rows 2026-09-18 in docs/specs/2026-09-18-item-inventory.md",
       "tracked": [],
       "derived": {}
     },
