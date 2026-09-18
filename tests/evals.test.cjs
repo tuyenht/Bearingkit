@@ -26,12 +26,12 @@ test('parseStream returns none without a Skill call', () => {
 const PHASE1 = ['question', 'small', 'feature', 'bug', 'review', 'ship'];
 // Spec §11 extends the set by "two positives and one negative per new skill"; each skill intent is named after its
 // skill, so `plan` holds the prompts that must reach bk-plan.
-const SKILL_INTENTS = ['plan', 'close', 'audit', 'next', 'test', 'design', 'setup'];
+const SKILL_INTENTS = ['plan', 'close', 'audit', 'next', 'test', 'design', 'setup', 'ops'];
 const promptSet = () => loadPrompts(path.join(__dirname, '..', 'evals', 'activation', 'phase-1.jsonl'));
 
 test('the set keeps Phase 1 at sixty and adds three per skill intent, with unique ids', () => {
   const prompts = promptSet();
-  assert.equal(prompts.length, 81);
+  assert.equal(prompts.length, 84);
   assert.equal(new Set(prompts.map((p) => p.id)).size, prompts.length, 'ids are unique');
 
   // Phase 1's sixty are the baseline every later run is compared against, so their shape may not drift.

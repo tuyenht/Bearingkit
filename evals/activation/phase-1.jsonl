@@ -57,7 +57,7 @@
 {"id":"ship-vi-03","intent":"ship","lang":"vi","prompt":"Xong phần xuất hóa đơn rồi, ship đi.","expect":"bk-ship"}
 {"id":"ship-vi-04","intent":"ship","lang":"vi","prompt":"Soạn mô tả PR cho những gì vừa làm.","expect":"bk-ship"}
 {"id":"ship-neg-01","intent":"ship","lang":"en","prompt":"Explain how bk-ship works.","expect":"none"}
-{"id":"ship-neg-02","intent":"ship","lang":"vi","prompt":"Deploy bản này lên staging.","expect":"bk-spec|none"}
+{"id":"ship-neg-02","intent":"ship","lang":"vi","prompt":"Deploy bản này lên staging.","expect":"bk-ops|bk-spec|none"}
 {"id": "plan-en-01", "intent": "plan", "lang": "en", "prompt": "Break the invoice export work into phases with exit criteria before we touch code.", "expect": "bk-plan"}
 {"id": "plan-vi-01", "intent": "plan", "lang": "vi", "prompt": "Lập kế hoạch từng bước để thay lớp cache trong src/lib/cache.ts, chia phase kèm tiêu chí xong cho từng phase.", "expect": "bk-plan"}
 {"id": "plan-neg-01", "intent": "plan", "lang": "en", "prompt": "Just bump the upload retry timeout from 5s to 30s in src/lib/http.ts.", "expect": "bk-build"}
@@ -79,3 +79,6 @@
 {"id": "setup-en-01", "intent": "setup", "lang": "en", "prompt": "Set up this repo so coding agents work well in it.", "expect": "bk-setup"}
 {"id": "setup-vi-01", "intent": "setup", "lang": "vi", "prompt": "Chuẩn bị repo này cho các agent làm việc: file chỉ dẫn, lệnh kiểm tra, những chỗ phải cẩn thận.", "expect": "bk-setup"}
 {"id": "setup-neg-01", "intent": "setup", "lang": "en", "prompt": "Add a typecheck script to package.json.", "expect": "bk-build"}
+{"id": "ops-en-01", "intent": "ops", "lang": "en", "prompt": "The error-rate alert on checkout fired ten minutes ago. Find out what is going on.", "expect": "bk-ops"}
+{"id": "ops-vi-01", "intent": "ops", "lang": "vi", "prompt": "Đưa bản build mới nhất lên staging và chuẩn bị sẵn cách rollback nếu có lỗi.", "expect": "bk-ops"}
+{"id": "ops-neg-01", "intent": "ops", "lang": "en", "prompt": "Add a /health endpoint that returns the app version.", "expect": "bk-build|bk-spec"}
