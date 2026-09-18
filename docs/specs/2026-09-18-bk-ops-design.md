@@ -1,6 +1,6 @@
 # bk-ops · design · 2026-09-18
 
-Status: BUILT 2026-09-18 under the owner's approval of the catalog (D5 question 27, group A: `bk-ops` is the first of the five skills still to build). Measured in the isolated profile before commit: 14 of 15 prompts around it routed as labelled, 0 false activations (the miss, `ship-en-04`, is the known fixture gap); acceptance passed on Claude Code; injected protocol 2,240 and 2,247 tokens. Antigravity acceptance waits for the copy to be reinstalled (question 27, C1). Catalog row: v1 §7.1 — intent "`--deploy` pre-flight with rollback (drift check v1.1); incident investigation from alert to code", gate "read-only first; any remote or production change is COUNCIL-class", sources "Owner's ops practice; Spartan deploy and incident (ideas)".
+Status: BUILT 2026-09-18 under the owner's approval of the catalog (D5 question 27, group A: `bk-ops` is the first of the five skills still to build). Measured in the isolated profile before commit: 14 of 15 prompts around it routed as labelled, 0 false activations (the miss, `ship-en-04`, is the known fixture gap); acceptance passed on Claude Code; injected protocol 2,240 and 2,247 tokens. The Antigravity copy was reinstalled the same evening (question 27, C1; `doctor` six `ok`); the run there writes a hook under `~/.gemini`, so it waits for the owner's approval of the measurement package. Catalog row: v1 §7.1 — intent "`--deploy` pre-flight with rollback (drift check v1.1); incident investigation from alert to code", gate "read-only first; any remote or production change is COUNCIL-class", sources "Owner's ops practice; Spartan deploy and incident (ideas)".
 
 ## What it is for
 
@@ -30,4 +30,4 @@ No text is vendored. Every source here is ideas-only for the kit (no licence, a 
 
 ## Done when (spec §5.3)
 
-Body ≤100 lines; every body line traces to an inventory row or a field lesson; three test prompts in `skills/bk-ops/tests/`; activation prompts in both languages; acceptance on Claude Code, and on Antigravity once the owner reinstalls the copy (question 27, C1).
+Body ≤100 lines; every body line traces to an inventory row or a field lesson; three test prompts in `skills/bk-ops/tests/`; activation prompts in both languages; acceptance on Claude Code, and on Antigravity once the owner approves the measurement package (the copy itself was reinstalled on 2026-09-18, question 27 C1).
