@@ -291,8 +291,8 @@
       "repo": "https://github.com/anthropics/skills",
       "tag": null,
       "sha": "34040c9c568585f6929bedeaad110ad08f079624",
-      "license": "none at top level; frontend-design and mcp-builder carry Apache-2.0 LICENSE.txt",
-      "mode": "adapt (those two skills only)",
+      "license": "none at top level; 14 of the 19 skill folders carry their own Apache-2.0 LICENSE.txt (docx, pdf, pptx and xlsx are proprietary, all rights reserved; doc-coauthoring has no licence file) — corrected 2026-09-18 by the item-level inventory, which read every folder; the earlier record named only frontend-design and mcp-builder",
+      "mode": "adapt (skill folders with their own Apache-2.0 licence only)",
       "verified": "2026-09-11",
       "note": "row 22",
       "tracked": [
