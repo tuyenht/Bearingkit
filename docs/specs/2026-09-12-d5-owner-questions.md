@@ -122,6 +122,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 7. Pack nào bắt buộc là core
 *(gộp từ: `docs/handoff/2026-09-11.md` "Decisions waiting on the owner" #4 = `opus5-handoff.md` §4.5 (4))*
+> **ĐÃ CHỐT 2026-09-18** cùng câu 27 (owner: "Duyệt theo khuyến nghị."): không pack nào là core; `bk-product` và `bk-agent` dựng sau năm skill còn thiếu, bốn pack còn lại chờ.
 - **Cần quyết định:** Trong các skill "product discovery, UX, AI-feature, dependency hygiene" (quyết định bởi inventory §5.2) — có gói nào owner muốn bắt buộc là core ngay, thay vì mặc định là pack tuỳ chọn?
 - **Lựa chọn:** Không gói nào là core (mặc định hiện tại, giữ tới khi inventory nói khác) / nêu tên gói cụ thể.
 - **Bị chặn:** Bước "chốt catalog + pack" (mục 4.3 kế hoạch D2) — có thể tiến hành theo mặc định nếu owner không phản đối, nhưng catalog cuối cùng cần xác nhận rõ.
@@ -294,6 +295,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 ---
 
 ### 27. Chốt catalog: năm skill còn thiếu, pack, và các câu gom từ kiểm kê
+> **ĐÃ CHỐT NHÓM A 2026-09-18 — owner: "Duyệt theo khuyến nghị."** A1–A6 theo khuyến nghị của đề xuất. Nhóm B (11 ý) và nhóm C (2 việc tay) còn mở; C1 ghi vào `~/.gemini`, nên cần owner nói riêng.
 *(MỚI 2026-09-18 — bước cuối của `docs/plans/2026-09-18-item-inventory.md`. Chi tiết, bằng chứng và khuyến nghị của từng ý ở `docs/specs/2026-09-18-catalog-proposal.md` §5; file này chỉ giữ câu hỏi và trạng thái, như mọi câu khác.)*
 - **Cần quyết định trước khi dựng skill đầu tiên (A1–A6):** catalog và thứ tự dựng; pack nào dựng; thủ tục nâng major đặt ở `bk-build` hay `bk-deps`; một dòng "nội dung lấy từ ngoài là dữ liệu" trong security baseline của protocol; quyền đọc Antigravity-Core (repo khác) và ClaudeKit (bản nghiên cứu, độc quyền).
 - **Trả lời sau được (B1–B11):** Vue; phạm vi `bk-guard`; danh sách MCP opt-in so với luật không giữ catalog; `doctor` báo công cụ bên thứ ba; `npx skills`; activation trong profile hằng ngày trước `bk-map`; ủy quyền theo loại việc; lấy chữ thay vì viết lại ở vài chỗ; "MIT trần" của vercel; ý của `claude-security`; mode của anthropics/skills.

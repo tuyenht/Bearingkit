@@ -1,6 +1,6 @@
 # Content program: from thirty sources to one standard skill set
 
-Status: PLANNED 2026-09-11 · Spec: `docs/specs/2026-09-11-bearingkit-v2-design.md` §5, §16 · Starts after the v2 restructure plan closes.
+Status: IN PROGRESS · Step 1 done 2026-09-18 (`docs/specs/2026-09-18-item-inventory.md`, 20 of 22 sources; catalog confirmed, D5 question 27) · Spec: `docs/specs/2026-09-11-bearingkit-v2-design.md` §5, §16 · Planned 2026-09-11, after the v2 restructure plan.
 
 The owner's requirement (2026-09-11): cover every source in the coverage matrix, classify the overlapping skills across them, and distill them into the kit's own skills, raised to the quality bar of spec §5.3, covering the work of a one-person software company that drives AI agents.
 
@@ -12,7 +12,7 @@ The owner's requirement (2026-09-11): cover every source in the coverage matrix,
 
 ## Step 2 · Per-skill sprints (one short session each, lifecycle order)
 
-`bk-spec`, `bk-plan`, `bk-build`, `bk-test`, `bk-debug`, `bk-review`, `bk-ship`, `bk-close`, then `bk-next`, `bk-map`, `bk-research`, `bk-audit`, then the domain skills, then packs. For each skill: read the inventory rows assigned to it, read the sources they name, write or revise the body and references, add or refresh `tests/` (three prompts), extend the activation set, run the acceptance test once on Claude Code, record provenance, commit. Mandatory sources already sequenced in `2026-09-10-content-backlog.md` keep their order inside this step.
+Order since 2026-09-18 (D5 question 27): `bk-ops`, `bk-db`, `bk-map`, `bk-research`, `bk-perf`; then the existing skills, distilled from their inventory rows (`bk-spec`, `bk-plan`, `bk-build`, `bk-test`, `bk-debug`, `bk-review`, `bk-ship`, `bk-close`, `bk-next`, `bk-audit`, `bk-design`, `bk-setup`); then the packs `bk-product` and `bk-agent`. Until then the order was the lifecycle chain first, then the domain skills, then packs. For each skill: read the inventory rows assigned to it, read the sources they name, write or revise the body and references, add or refresh `tests/` (three prompts), extend the activation set, run the acceptance test once on Claude Code, record provenance, commit. Mandatory sources already sequenced in `2026-09-10-content-backlog.md` keep their order inside this step.
 
 ## Step 3 · Stack files
 
