@@ -1,6 +1,6 @@
 # Đề xuất chốt catalog · 2026-09-18
 
-**Trạng thái: ĐỀ XUẤT, chờ owner.** Catalog là quyết định thiết kế (COUNCIL): spec §5.2 nói kiểm kê "fixes the final catalog", còn §1 đặt scope test. File này thực hiện bước cuối của `docs/plans/2026-09-18-item-inventory.md`, trả lời câu 7 và làm tiếp câu 25 của `docs/specs/2026-09-12-d5-owner-questions.md`. Không file nào của `skills/` hay của spec đổi theo đề xuất này trước khi owner duyệt.
+**Trạng thái: ĐỀ XUẤT, chờ owner.** Catalog là quyết định thiết kế (COUNCIL): spec §5.2 nói kiểm kê "fixes the final catalog", còn §1 đặt scope test. File này thực hiện bước cuối của `docs/plans/2026-09-18-item-inventory.md`, là câu 27, trả lời câu 7 và làm tiếp câu 25 của `docs/specs/2026-09-12-d5-owner-questions.md`. Không file nào của `skills/` hay của spec đổi theo đề xuất này trước khi owner duyệt.
 
 **Cơ sở.** `docs/specs/2026-09-18-item-inventory.md`: 20 trong 22 nguồn của `upstream/sources.json`, **937 mục — 46 absorb, 447 idea, 444 drop**, đếm bằng `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md`. Hai nguồn chưa đọc là Antigravity-Core và ClaudeKit, vì cần owner cho phép (câu A5, A6). Đề xuất này không chờ hai nguồn đó: mỗi skill dưới đây đã có ít nhất sáu dòng từ ít nhất hai nguồn. Hai nguồn đó sẽ thêm ý cho sprint của từng skill; v1 §7.1 đã ghi ClaudeKit là nguồn ý cho `bk-research`.
 

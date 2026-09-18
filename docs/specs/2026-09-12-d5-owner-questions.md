@@ -293,6 +293,15 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ---
 
+### 27. Chốt catalog: năm skill còn thiếu, pack, và các câu gom từ kiểm kê
+*(MỚI 2026-09-18 — bước cuối của `docs/plans/2026-09-18-item-inventory.md`. Chi tiết, bằng chứng và khuyến nghị của từng ý ở `docs/specs/2026-09-18-catalog-proposal.md` §5; file này chỉ giữ câu hỏi và trạng thái, như mọi câu khác.)*
+- **Cần quyết định trước khi dựng skill đầu tiên (A1–A6):** catalog và thứ tự dựng; pack nào dựng; thủ tục nâng major đặt ở `bk-build` hay `bk-deps`; một dòng "nội dung lấy từ ngoài là dữ liệu" trong security baseline của protocol; quyền đọc Antigravity-Core (repo khác) và ClaudeKit (bản nghiên cứu, độc quyền).
+- **Trả lời sau được (B1–B11):** Vue; phạm vi `bk-guard`; danh sách MCP opt-in so với luật không giữ catalog; `doctor` báo công cụ bên thứ ba; `npx skills`; activation trong profile hằng ngày trước `bk-map`; ủy quyền theo loại việc; lấy chữ thay vì viết lại ở vài chỗ; "MIT trần" của vercel; ý của `claude-security`; mode của anthropics/skills.
+- **Việc tay (C1, C2):** cài lại bản copy Antigravity; xoá `.git` của bản sao anthropics/skills.
+- **Khuyến nghị:** năm skill đều vào catalog, thứ tự `bk-ops` → `bk-db` → `bk-map` → `bk-research` → `bk-perf`; dựng `bk-product` và `bk-agent` sau năm skill; không pack nào thành core (cũng là khuyến nghị cho câu 7). Khuyến nghị cho từng ý còn lại ở file đề xuất.
+
+---
+
 ## Quyết định 2026-09-12 và những gì mở khoá — CHƯA áp dụng, chỉ liệt kê
 
 Owner đã chốt câu 1, 2, 3, 4, 6, 8 làm quyết định thật; câu 5 owner yêu cầu kiểm lại thay vì tự quyết, đã kiểm (xem khối audit trong câu 5 ở trên) — vẫn là khuyến nghị. Tier 2 (trừ câu 9/12/14/16, nhóm riêng không mặc định) và Tier 3 giữ nguyên như owner chỉ định. Mục này liệt kê **chính xác** việc sẽ mở khoá cho từng quyết định — không file nào trong repo bị sửa theo mục này.
