@@ -4,6 +4,8 @@
 
 **Cơ sở.** `docs/specs/2026-09-18-item-inventory.md`: 20 trong 22 nguồn của `upstream/sources.json`, **937 mục — 46 absorb, 447 idea, 444 drop**, đếm bằng `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md`. Hai nguồn chưa đọc là Antigravity-Core và ClaudeKit, vì cần owner cho phép (câu A5, A6). Đề xuất này không chờ hai nguồn đó: mỗi skill dưới đây đã có ít nhất sáu dòng từ ít nhất hai nguồn. Hai nguồn đó sẽ thêm ý cho sprint của từng skill; v1 §7.1 đã ghi ClaudeKit là nguồn ý cho `bk-research`.
 
+*(Cập nhật 2026-09-18 tối: kiểm kê nay đủ 22/22 nguồn, 1.295 mục. Hai nguồn đọc sau không đổi khuyến nghị nào ở đây; Antigravity-Core bổ sung một dữ kiện cho câu B2.)*
+
 **Cách đếm bằng chứng.** Số dòng absorb và idea có skill đó làm đích, theo nguồn. Mỗi mục chỉ có một đích, nên con số đếm thiếu: phần ghi chú (a) của mỗi nguồn còn nêu thêm nguyên liệu cho các skill này, và sprint sẽ đọc cả hai.
 
 ---

@@ -15,7 +15,7 @@ Cập nhật: **2026-09-18** (phiên bắt đầu 2026-09-17) · Nhánh `main` �
 
 ## 1. Đang ở đâu
 
-Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc, cài bằng lệnh của từng host, không installer). Hai host đã qua acceptance test. Phần **máy móc** gần như xong; phần **nội dung** — chắt lọc các nguồn thành bộ skill chuẩn — mới đi được 3 trong 11 nguồn cần nội dung. Đang ở giữa mốc **v0.2**. Ba điều kiện đo của cổng v0.2 (§5) **đều đã đạt trên bản v2** từ 2026-09-17 (activation trên cả hai host, acceptance chạy lại trên cả hai host, fixed context trên Claude Code); phần còn thiếu của v0.2 là hạng mục ở §4 (kiểm kê từng mục, chốt catalog, các nguồn còn lại). **2026-09-18:** kiểm kê từng mục xong 20/22 nguồn (937 mục; Antigravity-Core và ClaudeKit chờ owner cho đọc), và catalog đã chốt: owner duyệt nhóm A của `docs/specs/2026-09-18-catalog-proposal.md` (câu 27).
+Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc, cài bằng lệnh của từng host, không installer). Hai host đã qua acceptance test. Phần **máy móc** gần như xong; phần **nội dung** — chắt lọc các nguồn thành bộ skill chuẩn — mới đi được 3 trong 11 nguồn cần nội dung. Đang ở giữa mốc **v0.2**. Ba điều kiện đo của cổng v0.2 (§5) **đều đã đạt trên bản v2** từ 2026-09-17 (activation trên cả hai host, acceptance chạy lại trên cả hai host, fixed context trên Claude Code); phần còn thiếu của v0.2 là hạng mục ở §4 (kiểm kê từng mục, chốt catalog, các nguồn còn lại). **2026-09-18:** kiểm kê từng mục xong **22/22** nguồn (1.295 mục), và catalog đã chốt: owner duyệt nhóm A của `docs/specs/2026-09-18-catalog-proposal.md` (câu 27).
 
 | Đếm được hôm nay | Số | Lệnh / nguồn |
 |---|---|---|
@@ -27,7 +27,7 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | Mục trong `NOTICE` | **2** (obra/superpowers, anthropics/claude-plugins-official) | `grep '^##' NOTICE` |
 | Hàng nguồn trong ma trận | 39 (gồm host candidate, tool, và 8 mục owner loại) | `grep -c '^\| [0-9]'` |
 | Test | 93/93 xanh | `node --test tests/*.test.cjs` |
-| Mục đã kiểm kê từng mục (§5.2) | **937** mục của **20/22** nguồn: 46 absorb · 447 idea · 444 drop | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
+| Mục đã kiểm kê từng mục (§5.2) | **1.295** mục của **22/22** nguồn: 46 absorb · 610 idea · 639 drop | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
 | `skills/<name>/tests/` (§5.3 cần ≥3 prompt mỗi skill) | **11/13** — 33 case; `bk-audit` và `bk-next` thuộc v0.3 | `find skills -type d -name tests` |
 | `SKILL.md` có dòng provenance + license mode | 13/13 skill đang tồn tại, và `bk-protocol` | `grep -h '^Sources:' skills/*/SKILL.md`, có test canh |
 | File stack `bk-build/references/stacks/` (§5.5 cần 8) | **3/8** — `typescript-react`, `kotlin`, `sql`, cộng `index.md` ánh xạ profile → file | `ls skills/bk-build/references/stacks/` |
@@ -85,7 +85,7 @@ Phạm vi v0.2 theo §13 là **tám skill lifecycle** (`bk-spec`, `bk-plan`, `bk
 | 3 | Acceptance Antigravity 2.0 (2.12.2) | **xong** 2026-09-11, **chạy lại pass** 2026-09-17 | cùng bảng; lần đầu pass sau khi host note được trả lại (`3d7b4eb`); lần chạy lại trên Gemini 3.8 Flash (High) vì Opus đã hết limit. Bản sửa đường dẫn tham chiếu đổi rule của bản copy, nên sau lần `antigravity install` kế tiếp phải chạy lại một lần nữa (§11) |
 | 4 | Kiểm kê nguồn mức *registry* (17 nguồn: sha, giấy phép, vai trò) | **xong** | `docs/specs/2026-09-11-skill-inventory.md` |
 | 5 | D3 — một thứ tự ưu tiên hợp nhất, đã audit | **xong** | cùng file, phần `# D3` |
-| 6 | Kiểm kê §5.2 mức *từng mục* (absorb / idea / drop cho mọi item của mọi nguồn) | **20/22 nguồn** (2026-09-18) — 937 mục, `check` đủ cho mọi nguồn liệt kê được; Antigravity-Core và ClaudeKit chờ owner (đề xuất catalog, câu A5, A6). Plan: `docs/plans/2026-09-18-item-inventory.md`. Ghi chú cũ: | `skill-inventory.md` tự ghi là ngoài phạm vi ("registry-level only"). **Việc chặn lớn nhất của v0.2**; lần thử đầu (16 agent song song) chết vì rate limit, D2 sau đó chạy theo đợt ≤3 nguồn và thành công |
+| 6 | Kiểm kê §5.2 mức *từng mục* (absorb / idea / drop cho mọi item của mọi nguồn) | **xong 2026-09-18: 22/22 nguồn**, 1.295 mục, `check` đủ cho mọi nguồn liệt kê được; Antigravity-Core và ClaudeKit đọc sau khi owner cho phép (câu 27 A5, A6). Plan: `docs/plans/2026-09-18-item-inventory.md`. Ghi chú cũ: | `skill-inventory.md` tự ghi là ngoài phạm vi ("registry-level only"). **Việc chặn lớn nhất của v0.2**; lần thử đầu (16 agent song song) chết vì rate limit, D2 sau đó chạy theo đợt ≤3 nguồn và thành công |
 | 7 | Chốt catalog cuối (§5.2: kiểm kê "fixes the final catalog") | **xong 2026-09-18** — owner duyệt nhóm A của `docs/specs/2026-09-18-catalog-proposal.md` (câu 27): năm skill vào catalog, thứ tự `bk-ops` → `bk-db` → `bk-map` → `bk-research` → `bk-perf`; `bk-product` và `bk-agent` sau đó; spec §5.1, §13, §15 đã ghi. Ghi chú cũ: | phụ thuộc #6; cũng là điều kiện owner đặt cho `bk-design` (câu 12) |
 | 8 | Nguồn bắt buộc 1/4 — Superpowers 5.1.0 (MIT) | **xong** 2026-09-11 | 8 file `references/`, `NOTICE`, `derived` 15 file |
 | 9 | karpathy-skills (không giấy phép → chỉ lấy ý) | **xong** 2026-09-11 | 2 dòng paraphrase trong `skills/bk-build/SKILL.md`; không nợ `NOTICE` |
