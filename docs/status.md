@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-18** (phiên bắt đầu 2026-09-17) · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · số commit không ghi ở đây: nó tự cũ sau mỗi commit của chính phiên đang viết (đã vấp hai lần); đếm bằng `git log --oneline | wc -l` · **87/87** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-17 tối sau khi cắt nội dung theo câu 24)
+Cập nhật: **2026-09-18** (phiên bắt đầu 2026-09-17) · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · số commit không ghi ở đây: nó tự cũ sau mỗi commit của chính phiên đang viết (đã vấp hai lần); đếm bằng `git log --oneline | wc -l` · **92/92** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-18 chiều sau khi thêm `rows` và `totals` vào `scripts/inventory-items.cjs`)
 
 > **File này là BẢNG ĐIỀU KHIỂN, không phải nguồn sự thật.** Nó chỉ trỏ đường và ghi trạng thái; mọi nội dung thật nằm ở nơi khác:
 >
@@ -15,7 +15,7 @@ Cập nhật: **2026-09-18** (phiên bắt đầu 2026-09-17) · Nhánh `main` �
 
 ## 1. Đang ở đâu
 
-Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc, cài bằng lệnh của từng host, không installer). Hai host đã qua acceptance test. Phần **máy móc** gần như xong; phần **nội dung** — chắt lọc các nguồn thành bộ skill chuẩn — mới đi được 3 trong 11 nguồn cần nội dung. Đang ở giữa mốc **v0.2**. Ba điều kiện đo của cổng v0.2 (§5) **đều đã đạt trên bản v2** từ 2026-09-17 (activation trên cả hai host, acceptance chạy lại trên cả hai host, fixed context trên Claude Code); phần còn thiếu của v0.2 là hạng mục ở §4 (kiểm kê từng mục, chốt catalog, các nguồn còn lại).
+Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc, cài bằng lệnh của từng host, không installer). Hai host đã qua acceptance test. Phần **máy móc** gần như xong; phần **nội dung** — chắt lọc các nguồn thành bộ skill chuẩn — mới đi được 3 trong 11 nguồn cần nội dung. Đang ở giữa mốc **v0.2**. Ba điều kiện đo của cổng v0.2 (§5) **đều đã đạt trên bản v2** từ 2026-09-17 (activation trên cả hai host, acceptance chạy lại trên cả hai host, fixed context trên Claude Code); phần còn thiếu của v0.2 là hạng mục ở §4 (kiểm kê từng mục, chốt catalog, các nguồn còn lại). **2026-09-18:** kiểm kê từng mục xong 20/22 nguồn (937 mục; Antigravity-Core và ClaudeKit chờ owner cho đọc), và đề xuất chốt catalog đã soạn, chờ owner duyệt: `docs/specs/2026-09-18-catalog-proposal.md`.
 
 | Đếm được hôm nay | Số | Lệnh / nguồn |
 |---|---|---|
@@ -26,7 +26,8 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | — nguồn đã có `derived` (chữ thật đã port) | **3** nguồn, **19** file dẫn xuất | cùng lệnh |
 | Mục trong `NOTICE` | **2** (obra/superpowers, anthropics/claude-plugins-official) | `grep '^##' NOTICE` |
 | Hàng nguồn trong ma trận | 39 (gồm host candidate, tool, và 8 mục owner loại) | `grep -c '^\| [0-9]'` |
-| Test | 87/87 xanh | `node --test tests/*.test.cjs` |
+| Test | 92/92 xanh | `node --test tests/*.test.cjs` |
+| Mục đã kiểm kê từng mục (§5.2) | **937** mục của **20/22** nguồn: 46 absorb · 447 idea · 444 drop | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
 | `skills/<name>/tests/` (§5.3 cần ≥3 prompt mỗi skill) | **10/12** — 30 case; `bk-audit` và `bk-next` thuộc v0.3 | `find skills -type d -name tests` |
 | `SKILL.md` có dòng provenance + license mode | 12/12 skill đang tồn tại | `grep -h '^Sources:' skills/*/SKILL.md`, có test canh |
 | File stack `bk-build/references/stacks/` (§5.5 cần 8) | **3/8** — `typescript-react`, `kotlin`, `sql`, cộng `index.md` ánh xạ profile → file | `ls skills/bk-build/references/stacks/` |
@@ -84,8 +85,8 @@ Phạm vi v0.2 theo §13 là **tám skill lifecycle** (`bk-spec`, `bk-plan`, `bk
 | 3 | Acceptance Antigravity 2.0 (2.12.2) | **xong** 2026-09-11, **chạy lại pass** 2026-09-17 | cùng bảng; lần đầu pass sau khi host note được trả lại (`3d7b4eb`); lần chạy lại trên Gemini 3.8 Flash (High) vì Opus đã hết limit. Bản sửa đường dẫn tham chiếu đổi rule của bản copy, nên sau lần `antigravity install` kế tiếp phải chạy lại một lần nữa (§11) |
 | 4 | Kiểm kê nguồn mức *registry* (17 nguồn: sha, giấy phép, vai trò) | **xong** | `docs/specs/2026-09-11-skill-inventory.md` |
 | 5 | D3 — một thứ tự ưu tiên hợp nhất, đã audit | **xong** | cùng file, phần `# D3` |
-| 6 | Kiểm kê §5.2 mức *từng mục* (absorb / idea / drop cho mọi item của mọi nguồn) | **chưa** | `skill-inventory.md` tự ghi là ngoài phạm vi ("registry-level only"). **Việc chặn lớn nhất của v0.2**; lần thử đầu (16 agent song song) chết vì rate limit, D2 sau đó chạy theo đợt ≤3 nguồn và thành công |
-| 7 | Chốt catalog cuối (§5.2: kiểm kê "fixes the final catalog") | **chưa** | phụ thuộc #6; cũng là điều kiện owner đặt cho `bk-design` (câu 12) |
+| 6 | Kiểm kê §5.2 mức *từng mục* (absorb / idea / drop cho mọi item của mọi nguồn) | **20/22 nguồn** (2026-09-18) — 937 mục, `check` đủ cho mọi nguồn liệt kê được; Antigravity-Core và ClaudeKit chờ owner (đề xuất catalog, câu A5, A6). Plan: `docs/plans/2026-09-18-item-inventory.md`. Ghi chú cũ: | `skill-inventory.md` tự ghi là ngoài phạm vi ("registry-level only"). **Việc chặn lớn nhất của v0.2**; lần thử đầu (16 agent song song) chết vì rate limit, D2 sau đó chạy theo đợt ≤3 nguồn và thành công |
+| 7 | Chốt catalog cuối (§5.2: kiểm kê "fixes the final catalog") | **đề xuất đã soạn, chờ owner** (2026-09-18): `docs/specs/2026-09-18-catalog-proposal.md` — năm skill đều vào, thứ tự `bk-ops` → `bk-db` → `bk-map` → `bk-research` → `bk-perf`; `bk-product` và `bk-agent` có cơ sở. Ghi chú cũ: | phụ thuộc #6; cũng là điều kiện owner đặt cho `bk-design` (câu 12) |
 | 8 | Nguồn bắt buộc 1/4 — Superpowers 5.1.0 (MIT) | **xong** 2026-09-11 | 8 file `references/`, `NOTICE`, `derived` 15 file |
 | 9 | karpathy-skills (không giấy phép → chỉ lấy ý) | **xong** 2026-09-11 | 2 dòng paraphrase trong `skills/bk-build/SKILL.md`; không nợ `NOTICE` |
 | 10 | Nguồn bắt buộc 2–4 — `code-review`, `frontend-design`, `claude-code-setup` (+ `pr-review-toolkit`) từ `claude-plugins-official` (Apache-2.0) | **3/4 xong** | `frontend-design` → `bk-design` (2026-09-14); `code-review` + `pr-review-toolkit` → `bk-review`/`bk-test` (2026-09-15). Mỗi lần đủ ba việc: nguồn trong file dẫn xuất, mục `NOTICE`, `derived`. `claude-code-setup` đã kiểm kê 2026-09-15 và **kết luận không port được** (0 absorb / 5 drop / 3 idea) — một idea chuyển sang Task 7; owner cần quyết chấp nhận ideas-only hay muốn skill `bk-setup` mới |
@@ -96,7 +97,7 @@ Phạm vi v0.2 theo §13 là **tám skill lifecycle** (`bk-spec`, `bk-plan`, `bk
 | 15 | Phần A của câu 1 — đường CLI `claude plugin …` trong `docs/hosts.md` + `README.md` | **chưa** | `grep 'claude plugin ' docs/hosts.md README.md` không khớp; hiện chỉ có dạng slash-command `/plugin` |
 | 16 | Sửa rank spec-kit trong `skill-inventory.md` (câu 5) | **chưa** | đúng một chỗ: "không tính vào ô bắt buộc" → "cùng Superpowers thoả nhóm tối thiểu" |
 | 17 | Rà `v2 §1 Non-goals` xem B′ có cần nói gì thêm | **chưa** | khả năng cao không phải sửa (doctor chỉ đọc, không phải installer) |
-| 18 | `bearingkit doctor` (phần B′ của câu 1) | **xong** 2026-09-12 | `scripts/doctor.cjs` 80 dòng, `tests/doctor.test.cjs` 6 test, bất biến không-ghi đã kiểm ngược; commit `e049c58`. **Chưa chạy thật lần nào** — xem §7 (a) |
+| 18 | `bearingkit doctor` (phần B′ của câu 1) | **xong** 2026-09-12 | `scripts/doctor.cjs` 80 dòng, `tests/doctor.test.cjs` 6 test, bất biến không-ghi đã kiểm ngược; commit `e049c58`. Chạy thật nhiều lần từ 2026-09-13 (lịch sử ở §7 (l)); lần gần nhất 2026-09-18 báo `FAIL` ở `skills/` sau `e4e6797`, đúng như dự kiến |
 | 19 | `LICENSE` (câu 6) | **xong** 2026-09-12 | MIT, `Copyright (c) 2026 tuyenht`, commit `7cbf4be`; không còn nghĩa vụ Apache-2.0 nào treo |
 
 ---
@@ -116,7 +117,8 @@ Phạm vi v0.2 theo §13 là **tám skill lifecycle** (`bk-spec`, `bk-plan`, `bk
 Nguồn thật: `docs/specs/2026-09-12-d5-owner-questions.md`. Không copy nội dung ở đây, chỉ đếm và trỏ.
 
 - **17/26 câu đã chốt**: câu 1, 2, 3, 4, 5, 6, 8, 9, 12, 14, 16 (2026-09-12); **21** (2026-09-15: tách đọc/ghi trong `AGENTS.md`); **22** (2026-09-16: `claude-code-setup` → owner muốn skill `bk-setup`; thiết kế duyệt và dựng 2026-09-17 theo ủy quyền); **23** (2026-09-17: (a), `bug-en-03` là giới hạn đã biết, theo ủy quyền); **24, 25, 26** (2026-09-17 tối, owner chọn: cắt nội dung; kiểm kê trước năm skill; khung benchmark ở v0.3, đủ 12 task ở v1.0). *(Bản trước của dòng này vẫn ghi 11/21 và liệt câu 21 là còn treo sau khi nó đã chốt — sửa 2026-09-16.)*
-- **9 câu còn treo**: 7, 10, 11, 13, 15 (Tier 2 — đang giữ mặc định, không chặn việc nào); 17, 18, 19, 20 (Tier 3 — ghi nhận).
+- **9 câu còn treo**: 7, 10, 11, 13, 15 (Tier 2 — đang giữ mặc định, không chặn việc nào); 17, 18, 19, 20 (Tier 3 — ghi nhận). Câu 7 có khuyến nghị trong đề xuất catalog (không pack nào thành core).
+- **Đề xuất chốt catalog, 2026-09-18** (`docs/specs/2026-09-18-catalog-proposal.md` §5): sáu câu nhóm A cần trước khi dựng skill đầu tiên (catalog và thứ tự, pack, chỗ của thủ tục nâng major, dòng "nội dung lấy từ ngoài là dữ liệu", quyền đọc Antigravity-Core và ClaudeKit); mười một câu nhóm B trả lời sau được; hai việc tay (cài lại bản copy Antigravity, xoá `.git` của bản sao anthropics/skills). Mỗi câu kèm khuyến nghị.
 - ~~Gói đo trên Antigravity~~ — **xong 2026-09-18 00:12**: owner không biết mở app với cổng DevTools và nhờ phiên mở; app đã tự cập nhật lên 2.14.0 và chạy ẩn không có cổng, phiên dừng nó rồi mở lại với cờ. Kết quả ở mục (s).
 - **2 va chạm mới từ phiên doctor, cần owner đọc**: (a) mã `doctor` đã nằm trong cây trước v0.2 trong khi nhãn đã chốt là "v0.3" (câu 4); (b) `doctor` cố ý không gọi `claude plugin list`/`validate` như §6 mô tả, vì trần "không ghi một byte" là bất biến cứng (câu 1).
 - ~~Ngã ba lộ trình~~ — **owner chốt 2026-09-13: lộ trình B, daily driver trước**, kế hoạch ở `docs/plans/2026-09-13-daily-driver.md`. ~~Câu sinh ra từ đó về `frontend-design`/`bk-design`~~ — **owner chốt 2026-09-14: đường (ii)**, nới điều kiện câu 12 **chỉ cho riêng `bk-design`**; mọi skill khác vẫn chờ inventory. Ghi ở nguồn thật (`d5-owner-questions.md` câu 12) kèm lý do, và thành Task 6b của plan.
