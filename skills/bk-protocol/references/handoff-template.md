@@ -14,7 +14,7 @@ Read this first when resuming on any machine. Rewrite it before the last commit 
 - <fact, with how it was verified>
 
 ### Decisions taken
-- <decision, with the reason and where it is recorded>
+- <decision, with the reason and where it is recorded; one taken on the user's delegation quotes the words that delegated it>
 
 ### Rejected options (do not re-propose)
 - <option>: <why not>

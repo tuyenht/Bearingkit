@@ -66,7 +66,7 @@
 {"id": "close-neg-01", "intent": "close", "lang": "vi", "prompt": "Tóm tắt nhanh mấy thay đổi vừa rồi trong src/lib/cache.ts, tôi chưa kết phiên đâu.", "expect": "none"}
 {"id": "audit-en-01", "intent": "audit", "lang": "en", "prompt": "Should we move invoice PDF generation off the request path onto a queue? Lay out the options and recommend one.", "expect": "bk-audit"}
 {"id": "audit-vi-01", "intent": "audit", "lang": "vi", "prompt": "Có nên tách phần upload ra service riêng không? Đánh giá các phương án giúp tôi.", "expect": "bk-audit"}
-{"id": "audit-neg-01", "intent": "audit", "lang": "vi", "prompt": "Câu query Postgres cho trang invoices đang quét tuần tự 4 triệu dòng, tối ưu lại giúp tôi.", "expect": "bk-spec|bk-debug"}
+{"id": "audit-neg-01", "intent": "audit", "lang": "vi", "prompt": "Câu query Postgres cho trang invoices đang quét tuần tự 4 triệu dòng, tối ưu lại giúp tôi.", "expect": "bk-db|bk-spec|bk-debug"}
 {"id": "next-en-01", "intent": "next", "lang": "en", "prompt": "Where were we, and what should I pick up next?", "expect": "bk-next"}
 {"id": "next-vi-01", "intent": "next", "lang": "vi", "prompt": "Tiếp theo làm gì? Tôi đang dở việc gì trong repo này?", "expect": "bk-next"}
 {"id": "next-neg-01", "intent": "next", "lang": "en", "prompt": "Open the newest handoff file and show it to me.", "expect": "none"}
@@ -82,3 +82,6 @@
 {"id": "ops-en-01", "intent": "ops", "lang": "en", "prompt": "The error-rate alert on checkout fired ten minutes ago. Find out what is going on.", "expect": "bk-ops"}
 {"id": "ops-vi-01", "intent": "ops", "lang": "vi", "prompt": "Đưa bản build mới nhất lên staging và chuẩn bị sẵn cách rollback nếu có lỗi.", "expect": "bk-ops"}
 {"id": "ops-neg-01", "intent": "ops", "lang": "en", "prompt": "Add a /health endpoint that returns the app version.", "expect": "bk-build|bk-spec"}
+{"id": "db-en-01", "intent": "db", "lang": "en", "prompt": "Updates to invoices keep hanging for half a minute and the database shows sessions waiting on a lock. Find what is holding it.", "expect": "bk-db"}
+{"id": "db-vi-01", "intent": "db", "lang": "vi", "prompt": "Tại sao Postgres bỏ qua index trên cột status mà tôi mới thêm?", "expect": "bk-db"}
+{"id": "db-neg-01", "intent": "db", "lang": "en", "prompt": "Add an archived flag to invoices so users can hide old ones.", "expect": "bk-spec|bk-build"}

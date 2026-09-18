@@ -26,6 +26,8 @@ Roles: <role A>, <role B>, <role C>
 
 Nothing is executed until the verdict is accepted by the user.
 
+A user who tells you to proceed on your recommendations has accepted the verdicts of that kind for the rest of the session: apply the recommendation you stated, and record their words beside each decision it covers, so the decision can be reopened. "That kind" is the work they were deciding when they said it; a decision in another COUNCIL area (auth after an index question, payments after a schema one) is proposed as usual. It never covers a destructive step or a write outside the project; those wait for their own yes.
+
 ## Worked example
 
 Question: store tenant id on every table or resolve it through the owner relation?

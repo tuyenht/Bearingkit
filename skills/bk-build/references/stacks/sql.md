@@ -12,6 +12,8 @@
 
 A predicate stops using an index the moment the column is wrapped in a function or coerced to another type. `WHERE lower(email) = $1` needs an index on `lower(email)`, or it scans.
 
+The full diagnosis (the symptom tree, reading a plan, locks, vacuum, connections) is `bk-db/references/diagnose.md`; changing a table that holds live data (online index builds, constraints added `NOT VALID`, expand–contract, batched backfills) is `bk-db/references/change.md`.
+
 ## Schema
 
 - **Timestamps carry their zone.** `TIMESTAMPTZ`, always. `TIMESTAMP` without one silently stores whatever the session's timezone was, and the value cannot be repaired later because the offset it was written with is gone.

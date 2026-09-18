@@ -108,6 +108,27 @@ test('the eight lifecycle skills carry at least three test cases each, in a shap
   }
 });
 
+// The skills built after v0.2 (bk-design, bk-setup, bk-ops, bk-db) carry cases too, and nothing held them to the
+// shape above: a directory that exists is held to the same count and the same four sections.
+test('every skill that carries a tests/ directory holds at least three cases in the same shape', () => {
+  let skillsWithTests = 0;
+  for (const name of fs.readdirSync(dir)) {
+    const testDir = path.join(dir, name, 'tests');
+    if (!fs.existsSync(testDir)) continue;
+    skillsWithTests++;
+    const cases = fs.readdirSync(testDir).filter((f) => f.endsWith('.md'));
+    assert.ok(cases.length >= 3, `${name}: ${cases.length} test cases, spec 5.3 asks for at least three`);
+    for (const c of cases) {
+      const text = fs.readFileSync(path.join(testDir, c), 'utf8');
+      for (const section of ['**Prompt**', '**Setup**', '**Expected**', '**Fails if**']) {
+        assert.ok(text.includes(section), `${name}/tests/${c}: no ${section} section`);
+      }
+      assert.match(text, /^> \S.*/m, `${name}/tests/${c}: the quoted prompt line is empty`);
+    }
+  }
+  assert.ok(skillsWithTests > V02_SKILLS.length, 'the check means nothing unless skills beyond v0.2 carry cases');
+});
+
 // Spec §5.4 cites another skill's file as `bk-protocol/references/<file>`, relative to `skills/`. The protocol reaches
 // the model as injected context, not as a file it opened, so "relative" had no anchor but the kit root line: in the
 // 2026-09-16/17 gate, 8 of 78 Claude Code sessions and 25 of 84 Antigravity conversations asked for

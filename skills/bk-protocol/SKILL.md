@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Bearingkit
 
-Bearingkit is a protocol for AI-assisted software work. Answer in the language the user writes in. Before non-trivial work, read the project's instruction files and, for work that runs commands or touches code, the stack profile (Host notes); the project's facts win over this file.
+Answer in the language the user writes in. Before non-trivial work, read the project's instruction files and, for work that runs commands or touches code, the stack profile (Host notes); the project's facts win over this file.
 
 ## Autonomy Gate
 
@@ -33,7 +33,8 @@ Name the intent, then invoke the matching skill as your first action, before rea
 | design, UI, look and feel | bk-design |
 | set up a project for agents: instruction files, guardrails, hot paths | bk-setup |
 | deploy, infrastructure, incident | bk-ops |
-| data, research | bk-spec until their skills exist |
+| database performance, indexes, locks (questions too) | bk-db |
+| research | bk-spec until its skill exists |
 
 If there is a one-percent chance a skill applies, open it, and drop it if it does not fit. A request to add, change, rename, or fix something in the code is never answered by editing straight away; it goes through bk-build (small, ACT) or bk-spec (feature) first. Skills hand off in a chain (spec → plan → build → test → review → ship → close) that stops only at COUNCIL points.
 
@@ -48,7 +49,7 @@ If there is a one-percent chance a skill applies, open it, and drop it if it doe
 
 ## Council
 
-Only for COUNCIL work: two to four roles that bear on the question, one option each, the conflicts debated, one verdict, the rejected options with reasons; no roles for show. Tie-breaker: quality, then performance, then operability, then schedule. Nothing runs until the verdict is accepted.
+Only for COUNCIL work: two to four roles that bear on the question, one option each, the conflicts debated, one verdict, the rejected options with reasons; no roles for show. Tie-breaker: quality, then performance, then operability, then schedule. Nothing runs until the verdict is accepted. Told to follow your recommendations, apply them to that kind of decision this session; a destructive step or a write outside the project still needs its own yes.
 
 ## Definition of done
 
@@ -56,7 +57,7 @@ The detected guardrails ran and their output is pasted; UI changes are verified 
 
 ## Handoff chain and hot paths
 
-Hot paths (auth, sessions, roles, payments, data deletion, migrations, uploads, user-authored HTML or URLs, tenant scoping, external API contracts, and the project's own list) get an independent review before push, through bk-review by someone who did not write the change, ideally another model or host; a fix to a reviewed change too. Sessions end with bk-close writing `docs/handoff/<date>.md`: durable knowledge and the resume payload, checked against git.
+Hot paths (auth, sessions, roles, payments, data deletion, migrations, uploads, user-authored HTML or URLs, tenant scoping, external API contracts, and the project's own list) get an independent review before push, through bk-review by someone other than its author, ideally another model or host; a fix to a reviewed change too. Sessions end with bk-close writing `docs/handoff/<date>.md`, checked against git.
 
 ## Security baseline
 
@@ -79,6 +80,6 @@ Skills describe actions; `references/host-tools.md` maps them to each host's too
 
 ## References
 
-These are in `<kit>/skills/bk-protocol/references/`; a path written `bk-<skill>/references/<file>` is under `<kit>/skills/`, not the kit root. Skills read them there, never copy them: `references/gate-patterns.md` (gate patterns), `references/personas.md` (agent personas), `references/host-tools.md` (tool names per host), `references/evidence.md` and `references/council.md` (worked examples), `references/rba-lite.md` (reasoning before action), `references/correction-cues.md` (correction phrases), `references/handoff-template.md` (handoff skeleton), `references/meta-routing.md` (router lineage, skill authoring).
+These are in `<kit>/skills/bk-protocol/references/`; a path written `bk-<skill>/references/<file>` is under `<kit>/skills/`, not the kit root. Skills read them there, never copy them: `references/gate-patterns.md`, `references/personas.md`, `references/host-tools.md`, `references/evidence.md` and `references/council.md` (worked examples), `references/rba-lite.md` (reasoning before action), `references/correction-cues.md`, `references/handoff-template.md`, `references/meta-routing.md` (router lineage, skill authoring).
 
 Sources: obra/superpowers 5.1.0 (MIT) via references/meta-routing.md; the rest is kit-original; attribution in NOTICE.
