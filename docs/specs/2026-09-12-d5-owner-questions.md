@@ -1,6 +1,6 @@
 # D5 — Batch câu hỏi hợp nhất cho owner, 2026-09-12
 
-> **TRẠNG THÁI: MỘT PHẦN ĐÃ CHỐT (2026-09-12). CÒN LẠI CHỜ OWNER.**
+> **TRẠNG THÁI 2026-09-18: CẢ 27 CÂU ĐÃ CÓ QUYẾT ĐỊNH**, trừ hai phần của câu 27: B6 (cần chính lời owner, trước sprint `bk-map`) và C2 (việc tay của owner). Câu 10, 11, 13, 15, 17–20 và nhóm B của câu 27 chốt tối 2026-09-18 theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."). *(Trạng thái trước: một phần đã chốt 2026-09-12, còn lại chờ owner.)*
 >
 > Đây là D5 (`docs/handoff/2026-09-11-owner-directives.md`, mục "Thứ tự thực thi"): hợp nhất **tất cả** câu hỏi đang chờ owner, đang nằm rải rác ở nhiều file, thành một batch duy nhất. Tài liệu này **không tự trả lời, không tự quyết** thay owner — nó chỉ tập hợp, khử trùng lặp, sắp thứ tự, và (với vài câu) nhắc lại hoặc bổ sung khuyến nghị (ghi rõ là khuyến nghị, không phải quyết định). Không dòng mã, spec, ma trận hay `docs/hosts.md` nào bị sửa theo file này — kể cả sau khi có quyết định, việc áp dụng vẫn là một bước riêng, chưa làm.
 >
@@ -147,6 +147,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 10. Rank của security-guidance: theo tier hay theo bằng chứng
 *(gộp từ: `skill-inventory.md` #6)*
+> **ĐÃ CHỐT 2026-09-18, theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."):** giữ mặc định, hạng 8. Câu 27 đã thay câu hỏi thứ hạng: thứ tự làm việc theo catalog, và kiểm kê đưa `security-guidance` vào dòng bảo mật của `bk-protocol` và một lens của `bk-review`.
 - **Cần quyết định:** security-guidance (tier "trước khi ship" theo chỉ thị 4) đang bị D3 xếp hạng 8, dù nó "không bị chặn và rẻ" trong khi hạng 3, 6, 7 đang bị chặn. Nhảy hạng lên sớm hơn, hay giữ hạng 8 theo đúng tier owner đã cho?
 - **Lựa chọn:** giữ hạng 8 (mặc định hiện tại) / nhảy lên hạng cao hơn.
 - **Bị chặn:** Thứ tự sprint từng skill ở bước 2 (content program) — có thể tiến hành theo mặc định nếu owner không phản đối.
@@ -154,6 +155,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 11. Rank của plugin code-review chính thức
 *(gộp từ: `skill-inventory.md` #7)*
+> **ĐÃ CHỐT 2026-09-18, theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."):** giữ mặc định, hạng 2. Thứ tự làm việc nay theo câu 27, nên thứ hạng không còn chặn việc nào.
 - **Cần quyết định:** Plugin `code-review` chính thức (từng bắt buộc ở danh sách cũ, không có trong danh sách tối thiểu mới của chỉ thị 4, owner không hỏi riêng về nó) — giữ hạng 2 như cũ, hay việc owner không nhắc tới nó là cố ý bỏ?
 - **Lựa chọn:** giữ hạng 2 (mặc định hiện tại) / xác nhận cố ý loại, hạ hạng hoặc bỏ.
 - **Bị chặn:** Thứ tự sprint bước 2 (như câu 10).
@@ -171,6 +173,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 13. Marketplace-first: chủ trương nào thắng
 *(gộp từ: `skill-inventory.md` #14 = `install-council.md` §8.2 — cùng một câu, install-council chỉ trỏ tới đây, không thêm nội dung mới)*
+> **ĐÃ CHỐT 2026-09-18, theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."):** (a). Dòng "marketplace-first" ở handoff 2026-09-11 là tàn dư v1; spec v2 §1 và §3 thắng. Khi repo còn private, dạng chuẩn của lệnh cài vẫn là đường dẫn cục bộ (câu 16). Mở khoá #15 của `docs/status.md` §4.
 - **Cần quyết định:** `docs/handoff/2026-09-11.md:34` liệt kê "marketplace-first install" vào Rejected options; spec v2 §1:16 và §3 lại lấy marketplace làm đường cài chính. Chủ trương nào đúng?
 - **Lựa chọn:** (a) dòng ở handoff là mục kế thừa từ thời v1 bị chép tiếp, không áp dụng cho v2 — bằng chứng: phần còn lại của dòng `:34` toàn là mục v1 (25 skill, `/kn-`, path-string hooks, `docs/superpowers/`), và `bearingkit-v1-design.md:81` ghi rõ "the marketplace stays a secondary channel"; (b) handoff đó viết SAU khi v2 đã chốt nên có thể mang ý hẹp hơn (ví dụ chưa lấy marketplace làm đường chính khi repo còn private và chưa qua acceptance) — không loại trừ được chỉ bằng suy luận.
 - **Bị chặn:** Cách viết `docs/hosts.md`/README cho kênh cài chính (nội dung phương án A ở câu 1) — đoán sai thì đoán trúng vào kênh cài chính của kit.
@@ -186,6 +189,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 15. Công cụ browser: xác nhận agent-browser
 *(gộp từ: `skill-inventory.md` #4)*
+> **ĐÃ CHỐT 2026-09-18, theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."):** xác nhận `agent-browser` là công cụ browser của kit, `playwright-mcp` là dự phòng như tài liệu đang ghi. Khớp chỉ thị 2026-09-11 của owner, nơi "#15 agent-browser" nằm trong nhóm "Bắt buộc" (`docs/handoff/2026-09-11-owner-directives.md`).
 - **Cần quyết định:** Xác nhận `vercel-labs/agent-browser` là công cụ browser chính thức của kit, `playwright-mcp` là phương án dự phòng đã ghi (chưa clone/chưa xác minh) — hay muốn khác?
 - **Lựa chọn:** xác nhận agent-browser + playwright-mcp dự phòng (như tài liệu hiện ghi) / chọn khác.
 - **Bị chặn:** Việc build/tích hợp công cụ browser cho skill liên quan (`bk-ops` và tương tự) — chưa cấp bách vì chưa tới bước code.
@@ -205,6 +209,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 17. Hàng 38 gemini-skills
 *(gộp từ: `docs/handoff/2026-09-11.md` "Decisions waiting on the owner" #1 = `opus5-handoff.md` §4.5 (1))*
+> **ĐÃ CHỐT 2026-09-18, theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."):** theo đề xuất của bản ghi gốc: reference cho các host Gemini ở v0.4; bây giờ không làm gì.
 - **Cần quyết định:** Hàng 38 (`google-gemini/gemini-skills`) trong ma trận — giữ loại hẳn, hay đưa vào làm tài liệu tham khảo cho các host Gemini?
 - **Lựa chọn:** giữ loại / làm reference.
 - **Bị chặn:** Không gì cấp bách — D2 đã áp dụng review phân loại "không di chuyển gì owner đã quyết; hàng 38 giữ nguyên": việc đang chờ, không chặn bước nào khác.
@@ -212,6 +217,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 18. Các việc Phase 0 trên workstation
 *(gộp từ: `docs/handoff/2026-09-11.md` "Decisions waiting on the owner" #5 = `opus5-handoff.md` §4.5 (5))*
+> **ĐÃ CHỐT 2026-09-18, theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."):** giữ nguyên: mỗi việc Phase 0 xin phép riêng khi nó chạy, vì mọi việc ấy đều ghi trên máy của owner (COUNCIL).
 - **Cần quyết định:** Các việc Phase 0 (backup, hook dedup cũ đã lỗi thời, kiểm kê skill bị che khuất, sửa DB knowledge base) đã có cơ chế xin phép riêng ngay tại lượt nó chạy. Owner có muốn duyệt trước gì cho cả nhóm, hay giữ nguyên cách xin-từng-việc-khi-chạy?
 - **Lựa chọn:** giữ nguyên (xin phép từng việc khi chạy) / duyệt trước một số việc cụ thể ngay bây giờ.
 - **Bị chặn:** Không gì — thuộc `docs/plans/2026-09-10-owner-migration.md`, chưa ai chạy, không chặn nội dung kit.
@@ -219,6 +225,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 19. Hai dòng protocol verbatim + design dataset từ kit cũ
 *(gộp từ: `docs/handoff/2026-09-11.md` "Decisions waiting on the owner" #6 = `opus5-handoff.md` §4.5 (6))*
+> **ĐÃ CHỐT 2026-09-18, theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."):** để sau, xét trong đợt chắt lọc `bk-protocol` của content program. Mỗi dòng thêm vào phải trả bằng một chỗ cắt, vì protocol đang bơm 2.240–2.247 token trên trần 2.300.
 > **Nhãn cần sửa (phát hiện ở Phụ lục C, dòng 2–3):** "hai dòng protocol" không phải một con số đếm được ở v1 §18 — L20 ở đó kể một RỦI RO quá khứ ("hai dòng protocol" từng chỉ tồn tại dạng edit chưa commit), không định danh hai dòng cụ thể nào; đoạn văn ngay sau bảng liệt kê ~13 mục chữ owner viết được lấy verbatim (Autonomy Gate, Council Protocol, Definition of DONE...), phần lớn đã có trong `bk-protocol/SKILL.md` hiện tại. "Design dataset" cũng vậy — đó là một TODO ("nêu chính xác file chứa... design dataset", `opus5-handoff.md` §4.1 dòng 14), chưa ai định danh được file/nội dung thật. Câu hỏi vẫn còn giá trị (có thể còn sót gì đó chưa hấp thụ), nhưng khung "hai dòng" + "một dataset" như đang viết là số đã bị gán chắc hơn mức xác minh được — không đảo kết luận (vẫn ghi nhận, không chặn), chỉ sửa nhãn.
 - **Cần quyết định:** Còn sót phần nào của ~13 mục chữ owner viết (v1 §18, đoạn sau bảng) chưa vào `bk-protocol/SKILL.md`, và design dataset (nếu có, chưa định danh được) từ Antigravity-Core — có cần hấp thụ không?
 - **Lựa chọn:** hấp thụ ngay / để sau.
@@ -227,6 +234,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 20. Công cụ khoá-phiên-bản cho `_build/upstream/`
 *(gộp từ: `skill-inventory.md` #9)*
+> **ĐÃ CHỐT 2026-09-18, theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."):** không dựng công cụ khoá phiên bản; tái lập bằng clone tay theo sha ghi trong `upstream/sources.json`. Riêng Antigravity-Core, sha chỉ có trong repo trên máy của owner.
 - **Cần quyết định:** Có cần dựng một lệnh khoá-phiên-bản (ví dụ `bk-fetch --lock`, đọc `upstream/sources.json` rồi re-clone từng nguồn đúng sha đã ghi) để bằng chứng của lượt inventory này tái lập được về sau, hay chấp nhận việc tự `git clone` + checkout tay theo sha ghi lại là một chi phí chấp nhận được?
 - **Lựa chọn:** cần công cụ khoá-phiên-bản / chấp nhận clone tay là đủ.
 - **Bị chặn:** Không gì cấp bách — bằng chứng cho lượt inventory này đã thu thập xong; chỉ ảnh hưởng khả năng tái lập về sau (nếu `_build/` bị dọn, disk mới, máy khác).
@@ -295,7 +303,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 ---
 
 ### 27. Chốt catalog: năm skill còn thiếu, pack, và các câu gom từ kiểm kê
-> **ĐÃ CHỐT NHÓM A 2026-09-18 — owner: "Duyệt theo khuyến nghị."** A1–A6 theo khuyến nghị của đề xuất. Nhóm B (11 ý) còn mở. Nhóm C: **C1 xong tối 2026-09-18** theo lệnh riêng của owner ("Tự động chạy …"), `doctor` sáu `ok`; C2 còn mở.
+> **ĐÃ CHỐT NHÓM A 2026-09-18 — owner: "Duyệt theo khuyến nghị."** A1–A6 theo khuyến nghị của đề xuất. **Nhóm B chốt tối 2026-09-18, theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."):** B1–B5 và B8–B11 theo khuyến nghị; B7 theo khuyến nghị, làm cùng lần sửa protocol kế tiếp (hàng router của `bk-db`), vì A4 đã vào cùng `bk-ops`; B6 khuyến nghị là có, nhưng lượt đó chạy trong profile hằng ngày, nơi host ghi phiên vào `~/.claude`, nên cần chính lời owner, hỏi trước sprint `bk-map`. Nhóm C: **C1 xong tối 2026-09-18** theo lệnh riêng của owner ("Tự động chạy …"), `doctor` sáu `ok`; C2 còn mở, là việc tay của owner vì hook `scout-block` chặn phiên xoá `.git`.
 *(MỚI 2026-09-18 — bước cuối của `docs/plans/2026-09-18-item-inventory.md`. Chi tiết, bằng chứng và khuyến nghị của từng ý ở `docs/specs/2026-09-18-catalog-proposal.md` §5; file này chỉ giữ câu hỏi và trạng thái, như mọi câu khác.)*
 - **Cần quyết định trước khi dựng skill đầu tiên (A1–A6):** catalog và thứ tự dựng; pack nào dựng; thủ tục nâng major đặt ở `bk-build` hay `bk-deps`; một dòng "nội dung lấy từ ngoài là dữ liệu" trong security baseline của protocol; quyền đọc Antigravity-Core (repo khác) và ClaudeKit (bản nghiên cứu, độc quyền).
 - **Trả lời sau được (B1–B11):** Vue; phạm vi `bk-guard`; danh sách MCP opt-in so với luật không giữ catalog; `doctor` báo công cụ bên thứ ba; `npx skills`; activation trong profile hằng ngày trước `bk-map`; ủy quyền theo loại việc; lấy chữ thay vì viết lại ở vài chỗ; "MIT trần" của vercel; ý của `claude-security`; mode của anthropics/skills.
@@ -350,6 +358,8 @@ Owner đã chốt câu 1, 2, 3, 4, 6, 8 làm quyết định thật; câu 5 owne
 
 ### Tier 2 (trừ câu 8) — giữ mặc định/hướng đã nghiêng (KHÔNG phải quyết định mới)
 
+*(2026-09-18: câu 10, 11, 13, 15 nay đã chốt theo ủy quyền của owner, xem từng câu.)*
+
 - **Có mặc định rõ ghi trong file, giữ nguyên:** câu 7 (không pack nào core), câu 10 (security-guidance giữ hạng 8), câu 11 (code-review plugin giữ hạng 2).
 - **Có hướng đã nghiêng (gần như mặc định), giữ nguyên:** câu 13 (nghiêng đọc (a): dòng "marketplace-first" ở handoff là tàn dư v1), câu 15 (agent-browser + playwright-mcp dự phòng, như tài liệu hiện ghi).
 
@@ -373,7 +383,7 @@ Câu 9, 12, 14, 16 (từng tách riêng vì không có mặc định) nay đều
 
 ### Tier 3 (17–20)
 
-Giữ nguyên trạng đúng như owner chỉ định, không đổi gì, không có mặc định nào bị áp.
+Giữ nguyên trạng đúng như owner chỉ định, không đổi gì, không có mặc định nào bị áp. *(2026-09-18: nay đã chốt theo ủy quyền của owner, xem từng câu.)*
 
 ---
 
