@@ -1,0 +1,69 @@
+# Kiểm kê từng mục (§5.2) và chốt catalog
+
+Status: IN PROGRESS 2026-09-18 · Spec: `docs/specs/2026-09-11-bearingkit-v2-design.md` §5.1, §5.2, §5.3 · Quyết định của owner: D5 câu 25 (kiểm kê trước năm skill còn thiếu) · Trạng thái dự án: `docs/status.md` §4 hạng mục #6, #7 · Chương trình nội dung: `docs/plans/2026-09-11-content-program.md`, Step 1.
+
+**Mục tiêu:** mọi skill, command, agent, bộ rule và hook của **mọi nguồn** trong `upstream/sources.json` (22 nguồn) có đúng một dòng: mục nguồn · skill đích của kit · quyết định **absorb** / **idea** / **drop** · lý do · ghi chú giấy phép (§5.2). Từ đó chốt catalog cuối (§4 #7): skill nào trong năm skill còn thiếu (`bk-map`, `bk-research`, `bk-perf`, `bk-db`, `bk-ops`) qua được scope test §1, theo thứ tự nào, và pack nào có cơ sở.
+
+**Không nằm trong plan này:** port chữ. Một dòng `absorb` chỉ quyết định; việc chép và ghi nguồn (`NOTICE`, `derived`) là của sprint từng skill (content program Step 2).
+
+**Quy ước:** LF, không BOM, conventional commit, push sau mỗi đợt; mỗi đợt có `Check:` phải xanh trước khi sang đợt sau.
+
+---
+
+## Đã có trước plan này
+
+- Kiểm kê mức registry (sha, giấy phép, vai trò) cho 17 nguồn, và thứ tự ưu tiên D3: `docs/specs/2026-09-11-skill-inventory.md`.
+- Kiểm kê từng mục cho **một phần** của `anthropics/claude-plugins-official`: `frontend-design` (2026-09-14), `code-review` + `pr-review-toolkit` (2026-09-15), `claude-code-setup` (2026-09-15) — cùng file đó.
+- `multica-ai/andrej-karpathy-skills`: đóng 2026-09-11 (một `CLAUDE.md`, bốn ý, hai đã có, hai thành dòng của `bk-build`).
+- `obra/superpowers`: tám file `references/` đã port, nhưng chưa có bảng từng mục cho **mọi** skill của nó (D3 hạng 1 gọi đó là "gap-check").
+- Lần thử đầu (16 agent song song, 2026-09-11) chết vì `HTTP 429`; D2 chạy theo đợt ≤3 nguồn thì xong. Plan này giữ trần đó.
+
+## Một "mục" là gì
+
+Liệt kê bằng máy, không bằng trí nhớ: `scripts/inventory-items.cjs list <thư mục nguồn>` in mọi mục, và `check` báo mục nào chưa có dòng trong file kiểm kê.
+
+| Loại | Đếm là một mục | Không đếm riêng |
+|---|---|---|
+| skill | mỗi thư mục có `SKILL.md` | file bên trong thư mục skill (`references/`, script) — là một phần của skill đó |
+| command | mỗi `commands/**/*.md` | — |
+| agent | mỗi `agents/**/*.md` | — |
+| hooks | mỗi `hooks.json` | script mà hook gọi |
+| rule | mỗi `.cursorrules` / `*.mdc` | — |
+| plugin | mỗi `plugins/<tên>/` **không** chứa mục nào ở trên (plugin chỉ có cấu hình MCP, LSP, output style…) | plugin có mục bên trong — các mục đó đã có dòng |
+
+Hai ngoại lệ có chủ đích, ghi rõ để owner thấy: (1) `awesome-cursorrules` có 257 file rule, gộp **theo stack** (mỗi stack của §5.5 và một nhóm "khác"), đúng vai trò D3 đã giao ("đọc mở đầu cho từng stack, không vendor"), số file của mỗi nhóm ghi trong dòng; (2) nguồn là **công cụ chạy bên cạnh** (`agent-browser`, `pr-agent`, `skillmark`, `playwright-mcp`, `biome`, `aider`) có một dòng cho chính công cụ, vì thứ để quyết là dùng hay không, không phải chữ của nó.
+
+## Nguồn và quyền đọc
+
+| Nhóm | Nguồn | Cách đọc |
+|---|---|---|
+| A · đã có trong `_build/upstream/` | claude-plugins-official, mattpocock, addyosmani, spec-kit, anthropics/skills, cloudflare, vercel agent-skills, agent-browser, pr-agent, awesome-cursorrules, karpathy | đọc tự do (ACT) |
+| B · công khai, chưa có bản sao | superpowers (tag 5.1.0), jeffallan/claude-skills (0.4.14), Antigravity-Core (5.0.1), c0x12c/ai-toolkit, playwright-mcp, modelcontextprotocol/servers, vercel-labs/skills, aider, biome, skillmark | clone nông vào `_build/upstream/` **đúng sha trong `sources.json`** (ACT — dữ liệu công khai vào thư mục build của repo, như D2). Không đọc bản cài trong `~/.claude`: đọc thư mục đó bằng đường khác là COUNCIL |
+| C · chỉ có bản sao ngoài repo | claudekit-engineer (repo private; bản sao nghiên cứu ở `C:\Projects\claudekit-research`) | **COUNCIL** — hỏi owner khi tới đợt 4; độc quyền, dù đọc được cũng chỉ lấy ý |
+
+## Cách làm một đợt
+
+1. Liệt kê mục của mỗi nguồn trong đợt bằng script; số mục ghi vào đầu mục của nguồn đó.
+2. Đọc từng mục (một agent nghiên cứu cho mỗi nguồn, tối đa ba agent cùng lúc — §5.2 và bài học 429; agent nhận catalog §5.1, luật §5.2, quality bar §5.3 và định nghĩa mục ở trên, không nhận hội thoại).
+3. Agent của owner (phiên chính) duyệt từng dòng: một mục đúng một skill đích và một quyết định; `absorb` chỉ khi giấy phép cho phép lấy chữ; nguồn không giấy phép hoặc độc quyền tối đa là `idea`. Dòng mâu thuẫn với một quyết định đã có (D3, ba lượt từng mục trước) phải nêu và giải thích, không lặng lẽ đảo.
+4. Ghi vào `docs/specs/2026-09-18-item-inventory.md`, mỗi dòng mang **đường dẫn mục** để `check` đối được.
+5. *Check của đợt:* `inventory-items.cjs check` báo 0 mục thiếu cho mọi nguồn của đợt; mỗi dòng có quyết định + lý do; đếm lại số absorb/idea/drop bằng lệnh, không bằng tay.
+
+## Các đợt
+
+- [ ] **Đợt 1** — `claude-plugins-official` (trọn nguồn: 39 plugin; các mục đã kiểm kê trước được trỏ về quyết định cũ, không quyết lại), `obra/superpowers` (gap-check mọi skill), `mattpocock/skills`.
+- [ ] **Đợt 2** — `github/spec-kit`, `addyosmani/agent-skills`, `anthropics/skills`.
+- [ ] **Đợt 3** — `jeffallan/claude-skills` (66 skill), `vercel-labs/agent-skills`, `cloudflare/skills`.
+- [ ] **Đợt 4** — `tuyenht/Antigravity-Core` (chữ của chính owner), `c0x12c/ai-toolkit` (Spartan, chỉ lấy ý), `claudekit/claudekit-engineer` (COUNCIL, chỉ lấy ý).
+- [ ] **Đợt 5** — nguồn tham chiếu và công cụ: `awesome-cursorrules` (gộp theo stack), `modelcontextprotocol/servers`, `vercel-labs/skills`, `playwright-mcp`, `agent-browser`, `pr-agent`, `biome`, `aider`, `skillmark`.
+- [ ] **Chốt catalog** (§4 #7) — với toàn bộ dòng trong tay: năm skill còn thiếu qua scope test hay không và theo thứ tự nào; các khoảng trống mà audit 2026-09-11 nêu (product discovery, AI-feature engineering, dependency hygiene, hạ tầng và deploy, luồng UX nhẹ); pack nào có cơ sở. Kết quả là một đề xuất cho owner — catalog là quyết định thiết kế (COUNCIL).
+
+## Rủi ro
+
+| Rủi ro | Cách chặn |
+|---|---|
+| Rate limit như lần 16 agent | tối đa ba agent cùng lúc, mỗi agent một nguồn; đợt dừng được giữa chừng mà không mất gì vì mỗi nguồn ghi riêng |
+| "Đã kiểm kê hết" mà thật ra sót | `check` bằng máy trên đúng thư mục nguồn ở đúng sha |
+| Lấy chữ từ nguồn không được phép | giấy phép ghi ở đầu mỗi nguồn; dòng `absorb` của nguồn không giấy phép là lỗi |
+| Agent đọc lướt, quyết định cảm tính | mỗi dòng nêu mục đó làm gì trong một câu; phiên chính đọc lại mẫu và mọi dòng `absorb` |
+| Đảo ngầm một quyết định cũ | dòng trùng mục với lượt trước trỏ về quyết định cũ; muốn đổi thì nêu lý do mới |
