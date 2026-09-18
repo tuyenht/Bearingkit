@@ -22,6 +22,30 @@ function parseArgs(argv) {
   return out;
 }
 
+const USAGE = [
+  'usage: bearingkit evals --config-dir <isolated profile> [--plugin-dir <checkout>|none] [--model sonnet] [--intent <i>] [--id a,b]',
+  '         [--per-intent N] [--limit N] [--cwd <project>] [--tag <t>] [--equivalents <json>] [--raw] [--turns N] [--file <jsonl>]',
+  '       bearingkit evals --daily ...   (the same, in your daily profile, where the host keeps every session)',
+  '       bearingkit evals --host antigravity [--arm --id a,b --tag t | --drive <projectId> --count N | --score | --disarm]',
+].join('\n') + '\n';
+const OPTIONS = new Set(['allow-ancestor-memory', 'arm', 'config-dir', 'count', 'cwd', 'daily', 'disarm', 'drive', 'equivalents',
+  'eval-dir', 'file', 'help', 'host', 'id', 'intent', 'limit', 'max-seven-day', 'max-utilization', 'model', 'out', 'per-intent',
+  'plugin-dir', 'probe-glob', 'raw', 'score', 'stage-dir', 'stage-only', 'tag', 'trigger', 'turns']);
+
+// Everything that must stop a run before a session starts. A Claude run without --config-dir would use the daily
+// profile and leave its sessions there, so it has to be asked for by name (--daily); `--help` and a typo used to be
+// ignored and start the whole set (2026-09-18).
+function preflight(args) {
+  if (args.help) return { exit: 0, message: USAGE };
+  const unknown = Object.keys(args).filter((k) => k !== '_' && !OPTIONS.has(k));
+  if (unknown.length) return { exit: 2, message: `unknown option ${unknown.map((u) => '--' + u).join(', ')}\n` + USAGE };
+  if (args._.length) return { exit: 2, message: `unexpected argument ${args._.join(' ')}\n` + USAGE };
+  if ((args.host || 'claude') === 'claude' && !args['config-dir'] && !args.daily && !args['stage-only']) {
+    return { exit: 2, message: 'no --config-dir: this run would use your daily profile and leave its sessions there. Name an isolated profile with --config-dir, or pass --daily to mean the daily profile.\n' + USAGE };
+  }
+  return null;
+}
+
 function loadPrompts(file) {
   const lines = fs.readFileSync(file, 'utf8').split('\n').filter((l) => l.trim());
   const prompts = lines.map((l, i) => { try { return JSON.parse(l); } catch (e) { throw new Error(`line ${i + 1} is not JSON`); } });
@@ -274,6 +298,8 @@ function checklist(prompts) {
 
 async function run(argv) {
   const args = parseArgs(argv);
+  const stop = preflight(args);
+  if (stop) { process.stdout.write(stop.message); process.exitCode = stop.exit; return; }
   const host = args.host || 'claude';
   const file = path.resolve(args.file || path.join(ROOT, 'evals', 'activation', 'phase-1.jsonl'));
   let prompts = loadPrompts(file);
@@ -378,4 +404,4 @@ async function run(argv) {
   process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}, no-action ${summary.noAction}.${quotaNote}\n${listing}\nWritten: ${out}\n`);
 }
 
-module.exports = { run, parseStream, parseQuota, parseInit, listingNote, quotaStop, loadPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };
+module.exports = { run, preflight, parseStream, parseQuota, parseInit, listingNote, quotaStop, loadPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };

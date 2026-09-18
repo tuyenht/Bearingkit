@@ -26,12 +26,12 @@ test('parseStream returns none without a Skill call', () => {
 const PHASE1 = ['question', 'small', 'feature', 'bug', 'review', 'ship'];
 // Spec §11 extends the set by "two positives and one negative per new skill"; each skill intent is named after its
 // skill, so `plan` holds the prompts that must reach bk-plan.
-const SKILL_INTENTS = ['plan', 'close', 'audit', 'next', 'test', 'design', 'setup'];
+const SKILL_INTENTS = ['plan', 'close', 'audit', 'next', 'test', 'design', 'setup', 'ops'];
 const promptSet = () => loadPrompts(path.join(__dirname, '..', 'evals', 'activation', 'phase-1.jsonl'));
 
 test('the set keeps Phase 1 at sixty and adds three per skill intent, with unique ids', () => {
   const prompts = promptSet();
-  assert.equal(prompts.length, 81);
+  assert.equal(prompts.length, 84);
   assert.equal(new Set(prompts.map((p) => p.id)).size, prompts.length, 'ids are unique');
 
   // Phase 1's sixty are the baseline every later run is compared against, so their shape may not drift.
@@ -287,4 +287,26 @@ test('the fixture is staged outside the repository so the repository CLAUDE.md d
     assert.equal(fs.readFileSync(page, 'utf8'), original, 'tracked edit undone');
     assert.ok(!fs.existsSync(path.join(again.cwd, 'junk.txt')), 'untracked file removed');
   }
+});
+
+// On 2026-09-18 `bearingkit evals --help` ran the prompt set: there was no help flag, the unknown option was ignored,
+// and with no --config-dir the sessions ran in the owner's daily profile, where the host keeps their transcripts. The
+// same class of accident happened on 2026-09-17. The runner now stops before any session unless the profile is named.
+test('the runner stops before any session for --help, an unknown option, a stray argument, or no profile named', () => {
+  const { preflight } = require('../scripts/evals.cjs');
+  const help = preflight({ _: [], help: true });
+  assert.equal(help.exit, 0);
+  assert.match(help.message, /usage/i);
+  const unknown = preflight({ _: [], 'config-dir': 'x', bogus: true });
+  assert.equal(unknown.exit, 2);
+  assert.match(unknown.message, /--bogus/);
+  const stray = preflight({ _: ['help'], 'config-dir': 'x' });
+  assert.equal(stray.exit, 2);
+  assert.match(stray.message, /help/);
+  const daily = preflight({ _: [] });
+  assert.equal(daily.exit, 2);
+  assert.match(daily.message, /daily profile/);
+  assert.equal(preflight({ _: [], 'config-dir': 'x' }), null);
+  assert.equal(preflight({ _: [], daily: true }), null, 'the daily profile when it is named');
+  assert.equal(preflight({ _: [], host: 'antigravity', score: true }), null, 'an Antigravity run needs no Claude profile');
 });
