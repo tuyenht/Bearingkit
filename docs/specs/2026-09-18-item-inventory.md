@@ -14,7 +14,7 @@ Plan: `docs/plans/2026-09-18-item-inventory.md`. Kiểm kê mức registry, th�
 | mattpocock/skills | `mattpocock` | 37 | 10 | 11 | 16 | 37/37 |
 | anthropics/claude-plugins-official | `claude-plugins-official` | 121 | 19 | 12 | 90 | 121/121 |
 | github/spec-kit | `spec-kit` | 38 | 0 | 14 | 24 | 38/38 |
-| addyosmani/agent-skills | `addyosmani` | 39 | 0 | 25 | 14 | 39/39 |
+| addyosmani/agent-skills | `addyosmani` | 40 | 0 | 25 | 15 | 40/40 |
 | anthropics/skills | `anthropics-skills` | 20 | 2 | 2 | 16 | 20/20 lúc kiểm kê; nay 16/16 trên bản sao, vì bốn thư mục độc quyền đã xoá sau khi quyết |
 
 ---
@@ -383,9 +383,9 @@ Plan: `docs/plans/2026-09-18-item-inventory.md`. Kiểm kê mức registry, th�
 
 ## addyosmani/agent-skills · đợt 2
 
-`https://github.com/addyosmani/agent-skills` commit `6ca0cd7db39b`, MIT, mode **`ideas-only`** (quyết định trước: lấy ý; chỉ cân nhắc chữ khi một checklist hơn hẳn thứ kit tự viết). Bản sao: `_build/upstream/addyosmani_agent-skills` (sha khớp `upstream/sources.json`). 39 mục: 25 skill, 9 command, 4 agent, 1 hooks.
+`https://github.com/addyosmani/agent-skills` commit `6ca0cd7db39b`, MIT, mode **`ideas-only`** (quyết định trước: lấy ý; chỉ cân nhắc chữ khi một checklist hơn hẳn thứ kit tự viết). Bản sao: `_build/upstream/addyosmani_agent-skills` (sha khớp `upstream/sources.json`). 40 mục: 25 skill, 9 command, 4 agent, 1 hooks, 1 rule (dòng 40 thêm sau, khi script liệt kê học đếm file rule markdown).
 
-**Duyệt của phiên chính.** Bảng do một agent nghiên cứu lập (đọc cả 39 mục và các file đi kèm); phiên chính đọc lại mọi dòng idea và kiểm bằng máy rằng không dòng nào absorb. Giữ nguyên: 0 absorb, 25 idea, 14 drop. Nguồn này trùng nhiều với những gì kit đã có hoặc vừa quyết ở mattpocock, và agent đã nêu từng chỗ trùng trong lý do.
+**Duyệt của phiên chính.** Bảng do một agent nghiên cứu lập (đọc cả 39 mục và các file đi kèm); phiên chính đọc lại mọi dòng idea và kiểm bằng máy rằng không dòng nào absorb. Giữ nguyên: 0 absorb, 25 idea, 14 drop; cộng dòng 40 do phiên chính thêm (drop) — 15 drop. Nguồn này trùng nhiều với những gì kit đã có hoặc vừa quyết ở mattpocock, và agent đã nêu từng chỗ trùng trong lý do.
 
 - **Tín hiệu cho catalog:** `bk-perf` (`performance-optimization`, `web-performance-auditor` — cây triệu chứng → phép đo đầu tiên, dấu hiệu cạn pool kết nối, thiết kế cache), `bk-ops` (`ci-cd-and-automation`, `observability-and-instrumentation`, `shipping-and-launch` — một reference `bk-ops` giữ được cả ba), `bk-research` (`source-driven-development` — thứ tự thẩm quyền của nguồn, trích dẫn có anchor, nhãn UNVERIFIED), `bk-map` (`context-engineering`), `bk-product` (`idea-refine`), và nguyên liệu cho `bk-db`, `bk-deps`, `bk-agent` nằm trong ghi chú của agent.
 - **Một lỗ hổng của kit, đã xác minh:** `skills/bk-review/SKILL.md:21` có cờ `--security` "ép dùng lens bảo mật", nhưng `bk-review/references/review-lenses.md` không định nghĩa lens bảo mật nào. Port `security-guidance` (quyết định D3, dòng của `claude-plugins-official` ở trên) là thứ lấp chỗ này; ghi ở `docs/status.md`.
@@ -433,6 +433,7 @@ Plan: `docs/plans/2026-09-18-item-inventory.md`. Kiểm kê mức registry, th�
 | 37 | `addyosmani:skills/spec-driven-development` | skill | 245 | Writes a gated spec before code (objective, commands, structure, style, testing, boundaries), first decomposing multi-capability requests into a module map with a build order. | bk-spec | idea | bk-spec already restates, pins criteria and splits scope first. Carry: a capability map with stable module ids and build order; spec updated before code. |
 | 38 | `addyosmani:skills/test-driven-development` | skill | 398 | Runs red-green-refactor with the repository's own test commands, a failing test per bug, pyramid and resource-sized tests, DAMP state-based tests and a test-double preference order. | bk-test | idea | Cycle and mocks are already tdd.md's. Carry: DAMP over DRY, tests sized by resources used, reproduction test written blind to the fix. |
 | 39 | `addyosmani:skills/using-agent-skills` | skill | 192 | Injects a meta-skill at session start: a discovery tree over the source's own catalog, six core behaviors, failure modes and the lifecycle order. | bk-protocol | drop | Router over another catalog; bk-protocol's router and gate already hold its behaviors (assumptions, scope discipline, verification). Session injection is decided on the hooks row. |
+| 40 | `addyosmani:.claude/rules/skills-contributing.md` | rule | 15 | Contributor rule for the source's own catalog: extend an existing skill over adding a near-duplicate, keep SKILL.md to the anatomy, reference rather than repeat. | — | drop | Added 2026-09-18 by the main session after the enumerator learned markdown rule files. The kit's authoring convention (`meta-routing.md`) and the §5.2 dedup rule already say this. |
 
 **Ghi chú của agent nghiên cứu** (tiếng Anh, giữ nguyên):
 

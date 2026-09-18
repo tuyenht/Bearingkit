@@ -28,7 +28,7 @@ Liệt kê bằng máy, không bằng trí nhớ: `scripts/inventory-items.cjs l
 | command | mỗi `commands/**/*.md` | — |
 | agent | mỗi `agents/**/*.md` | — |
 | hooks | mỗi `hooks.json` | script mà hook gọi |
-| rule | mỗi `.cursorrules` / `*.mdc` | — |
+| rule | mỗi `.cursorrules` / `*.mdc`, và mỗi `*.md` trong một thư mục `rules/` (thêm 2026-09-18, khi Spartan lộ ra 29 bộ rule markdown mà bản đầu của script không đếm) | `README.md` |
 | plugin | mỗi `plugins/<tên>/` **không** chứa mục nào ở trên (plugin chỉ có cấu hình MCP, LSP, output style…) | plugin có mục bên trong — các mục đó đã có dòng |
 
 Hai ngoại lệ có chủ đích, ghi rõ để owner thấy: (1) `awesome-cursorrules` có 257 file rule, gộp **theo stack** (mỗi stack của §5.5 và một nhóm "khác"), đúng vai trò D3 đã giao ("đọc mở đầu cho từng stack, không vendor"), số file của mỗi nhóm ghi trong dòng; (2) nguồn là **công cụ chạy bên cạnh** (`agent-browser`, `pr-agent`, `skillmark`, `playwright-mcp`, `biome`, `aider`) có một dòng cho chính công cụ, vì thứ để quyết là dùng hay không, không phải chữ của nó.
@@ -52,7 +52,7 @@ Hai ngoại lệ có chủ đích, ghi rõ để owner thấy: (1) `awesome-curs
 ## Các đợt
 
 - [x] **Đợt 1** — `claude-plugins-official` (trọn nguồn: 39 plugin; các mục đã kiểm kê trước được trỏ về quyết định cũ, không quyết lại), `obra/superpowers` (gap-check mọi skill), `mattpocock/skills`. *(xong 2026-09-18: 173 mục, 44 absorb · 23 idea · 106 drop; `check` 121/121, 37/37, 15/15. Phát hiện: `plugins/claude-security` mang giấy phép độc quyền riêng; `code-modernization` là nguồn đầu tiên cho `bk-map`.)*
-- [x] **Đợt 2** — `github/spec-kit`, `addyosmani/agent-skills`, `anthropics/skills`. *(xong 2026-09-18: 97 mục, 2 absorb · 41 idea · 54 drop; `check` 38/38, 39/39, 20/20. Phát hiện: registry ghi sai giấy phép của `anthropics/skills` (14 thư mục Apache-2.0, không phải 2 — đã sửa); `bk-review --security` gọi một lens không tồn tại; chính sách "nội dung lấy từ ngoài là dữ liệu" lặp ở ba nguồn — câu gộp cho owner khi chốt catalog.)*
+- [x] **Đợt 2** — `github/spec-kit`, `addyosmani/agent-skills`, `anthropics/skills`. *(xong 2026-09-18: 98 mục, 2 absorb · 41 idea · 55 drop; `check` 38/38, 40/40, 20/20 — mục thứ 40 của addyosmani là một file rule markdown mà bản đầu của script chưa đếm, thêm sau khi sửa script. Phát hiện: registry ghi sai giấy phép của `anthropics/skills` (14 thư mục Apache-2.0, không phải 2 — đã sửa); `bk-review --security` gọi một lens không tồn tại; chính sách "nội dung lấy từ ngoài là dữ liệu" lặp ở ba nguồn — câu gộp cho owner khi chốt catalog.)*
 - [ ] **Đợt 3** — `jeffallan/claude-skills` (66 skill), `vercel-labs/agent-skills`, `cloudflare/skills`.
 - [ ] **Đợt 4** — `tuyenht/Antigravity-Core` (chữ của chính owner), `c0x12c/ai-toolkit` (Spartan, chỉ lấy ý), `claudekit/claudekit-engineer` (COUNCIL, chỉ lấy ý). **Hỏi owner khi tới đợt này:** sha của Antigravity-Core trong registry (`1774280e`, VERSION 5.0.1, ghi 2026-09-11 từ bản trên máy) không có trên GitHub — remote chỉ có `main` ở `1c744167` (2026-03-16, cũng VERSION 5.0.1), tức bản trên máy có commit chưa push. Ba đường: owner push rồi phiên clone; owner cho đọc `C:\Projects\Antigravity-Core` (repo khác, COUNCIL); hoặc kiểm kê bản remote và ghi rõ nó cũ hơn.
 - [ ] **Đợt 5** — nguồn tham chiếu và công cụ: `awesome-cursorrules` (gộp theo stack), `modelcontextprotocol/servers`, `vercel-labs/skills`, `playwright-mcp`, `agent-browser`, `pr-agent`, `biome`, `aider`, `skillmark`.

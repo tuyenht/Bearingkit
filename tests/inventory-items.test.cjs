@@ -32,6 +32,8 @@ const source = {
   'plugins/full/hooks/hooks.json': '{}\n',
   'rules/react/.cursorrules': 'r\n',
   'rules/vue/vue.mdc': 'v\n',
+  'toolkit/rules/core/NAMING.md': 'a markdown rule set\n',
+  'toolkit/rules/README.md': 'not an item\n',
   'node_modules/pkg/SKILL.md': 'vendored dependency, not an item\n',
   '.git/SKILL.md': 'not an item\n',
 };
@@ -50,6 +52,7 @@ test('list finds every item kind once, and nothing inside a skill or a dependenc
     'rule rules/react/.cursorrules',
     'rule rules/vue/vue.mdc',
     'skill skills/alpha',
+    'rule toolkit/rules/core/NAMING.md',
   ]);
   assert.equal(items.find((i) => i.id === 'skills/alpha').lines, 3, 'a skill is sized by its SKILL.md');
 });
@@ -73,5 +76,6 @@ test('check reports every item the inventory does not name, qualified by the sou
     'plugins/lsp-only',
     'rules/react/.cursorrules',
     'rules/vue/vue.mdc',
+    'toolkit/rules/core/NAMING.md',
   ]);
 });

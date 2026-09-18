@@ -3,7 +3,8 @@
 // Lists the items of an upstream source for the item-level inventory of spec §5.2, and checks an inventory file
 // against them, so "every item has a row" is a measurement rather than a claim
 // (docs/plans/2026-09-18-item-inventory.md). An item is a folder with a SKILL.md (its whole subtree belongs to it),
-// a commands/ or agents/ markdown file, a hooks.json, a Cursor rule file, or a plugin folder holding none of those.
+// a commands/, agents/ or rules/ markdown file, a hooks.json, a Cursor rule file, or a plugin folder holding none of
+// those.
 //
 //   node scripts/inventory-items.cjs list <source dir>
 //   node scripts/inventory-items.cjs check <inventory.md> <source dir> <label>
@@ -31,6 +32,8 @@ function list(root) {
       let kind = null;
       if (e.name === 'hooks.json') kind = 'hooks';
       else if (e.name === '.cursorrules' || e.name.endsWith('.mdc')) kind = 'rule';
+      // A markdown file under rules/ is a rule set too: the Spartan toolkit ships 29 of them, and addyosmani one.
+      else if (md && segments.includes('rules')) kind = 'rule';
       else if (md && segments.includes('commands')) kind = 'command';
       else if (md && segments.includes('agents')) kind = 'agent';
       if (kind) items.push({ kind, id: rel(p), lines: lines(p) });
