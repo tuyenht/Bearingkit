@@ -17,7 +17,7 @@ Name the path first. A slow statement, a lock, bloat or a load problem takes the
 **Diagnose**
 1. Name the database: engine and major version, environment, and whether the connection reaches production. Use only the connection the project already exposes, with a read-only role; credentials never appear in a command or in output.
 2. Check that the database is the slow part: the time requests spend in queries and waiting for a connection, against their total. High latency with little database time is not a database problem.
-3. Classify the symptom with the tree in `references/diagnose.md`, then take its first measurement: statement statistics ranked by total time, then the plan. `EXPLAIN ANALYZE` runs the statement, so a write's plan comes from plain `EXPLAIN` or from a rolled-back transaction away from production.
+3. Classify the symptom with the tree in `references/diagnose.md` and take the first measurement it names: the plan of one slow statement, statement statistics ranked by total time when many are slow, the lock waits when requests hang. `EXPLAIN ANALYZE` runs the statement, so a write's plan comes from plain `EXPLAIN` or from a rolled-back transaction away from production.
 4. Read the plan: estimated against actual rows, logical reads (buffers), the node that dominates, loops. Name the cause with the evidence for it and against it.
 5. On a host with subagents the measuring can run as the query-optimizer persona (`bk-protocol/references/personas.md`, `bk-protocol/references/host-tools.md`); its report comes back with the same labels.
 

@@ -35,6 +35,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 ### 1. Cách cài chung cho mọi host
 *(gộp từ: `skill-inventory.md` #10)*
 > **ĐÃ CHỐT 2026-09-12 — quyết định của owner: A + B′.** Xem mục "Quyết định 2026-09-12 và những gì mở khoá" để biết chính xác việc sẽ mở khoá.
+> **THỰC HIỆN XONG 2026-09-19:** phần A (tài liệu) vào `docs/hosts.md` và `README.md` ở `2971d02`: dạng lệnh shell của Claude Code (`claude plugin marketplace add`, `claude plugin install`, `claude plugin uninstall`) lấy từ tài liệu plugins reference của Claude Code, chưa chạy trên máy này.
 > **THỰC HIỆN MỘT PHẦN 2026-09-12: phần B′ (mã) XONG, phần A (tài liệu) CHƯA.** `scripts/doctor.cjs` + `tests/doctor.test.cjs` đã có, `bin/bearingkit.cjs doctor` không còn là placeholder v0.3. Còn nợ: đường CLI Claude Code ở `docs/hosts.md`/README. Một mục của §6 KHÔNG hiện thực hoá — xem ghi chú lệch ở mục "Từ câu 1" bên dưới.
 - **Cần quyết định:** Chọn một trong bốn phương án cài đặt đã khảo sát ở `docs/specs/2026-09-12-install-council.md` §6–7.
 - **Lựa chọn:**
@@ -82,7 +83,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 5. Nghĩa của "hoặc" giữa Superpowers và spec-kit
 *(gộp từ: `skill-inventory.md` #2 + #8 — hai câu hỏi cùng một quyết định, viết ở hai chỗ khác nhau trong cùng file)*
-> **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** rank = **bao hàm** (spec-kit tính vào nhóm tối thiểu cùng Superpowers); mode = **giữ nguyên ideas-only**.
+> **ĐÃ CHỐT 2026-09-12 — quyết định của owner:** rank = **bao hàm** (spec-kit tính vào nhóm tối thiểu cùng Superpowers); mode = **giữ nguyên ideas-only**. *(Áp dụng vào `docs/specs/2026-09-11-skill-inventory.md` ngày 2026-09-19, `2971d02`: ghi chú đặt trên đoạn "Below the line" cũ.)*
 - **Cần quyết định:** Chỉ thị 4 viết "#3 superpowers hoặc #4 spec-kit". "Hoặc" ở đây là **bao hàm** (cả hai cùng thoả một chỗ bắt buộc, lấy cả hai không sai) hay **loại trừ** (chỉ một trong hai được tính, cái kia rớt khỏi nhóm bắt buộc)?
 - **Lựa chọn:**
   - (a) Bao hàm — bằng chứng: "hoặc" tiếng Việt thường không mang nghĩa loại trừ kiểu "hoặc...hoặc"/XOR; owner liệt kê "#3 hoặc #4" thành một gạch đầu dòng duy nhất bên cạnh các mục liệt kê rõ ràng khác (#1, #19, #21, #15).
