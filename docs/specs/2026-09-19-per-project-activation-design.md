@@ -13,11 +13,26 @@ Today: on Claude Code the kit is not installed in the daily profile (evals load 
 - **Claude Code** switches a plugin on per project natively: `enabledPlugins` holds one Boolean per `plugin@marketplace` in any settings file, a project or local entry beats the user entry, and a plugin with no entry anywhere follows its `defaultEnabled` (C3–C5). The payload is cached once per user (C2). A plugin that is off does not load (C7, inferred).
 - **Antigravity** has no per-project switch: everything under `~/.gemini/config/plugins/` is discovered for every workspace, a discovered plugin loads whole, and its skill names and descriptions go into every conversation even when its rules do not load (A1–A4). The one documented per-project handle is a workspace `.agents/plugins.json` that registers a plugin kept outside the discovered roots, by absolute or `~` path, ranked above global discovery (A5, A6).
 
+## Owner's proposal for Antigravity (2026-09-19, about 23:50)
+
+Verbatim: "Thiết kế giải pháp tối ưu cho Antigravity IDE và Antigravity 2.0 tránh bị load mặc định toàn bộ các project: Central Store + `.agents/plugins.json` (Khuyên dùng ⭐) Thay vì sao chép toàn bộ source code vào từng project, giải pháp "chuẩn công nghiệp" và gọn gàng nhất là: 1. Lưu 1 bản build duy nhất tại `~/.gemini/shared-plugins/bearingkit` (Central Store). 2. Kích hoạt cho project nào thì chỉ ghi 1 file `.agents/plugins.json` tại project đó. 3. Khi cập nhật Bearingkit, chỉ cần update tại Central Store một lần, tất cả project trên cả Antigravity 2.0 và IDE đều tự động nhận bản mới ngay lập tức, không tốn dung lượng ổ đĩa."
+
+It is the Antigravity half below: one copy outside every discovered root, one `.agents/plugins.json` entry per activated project, an update applied once for every project (in new conversations; a conversation already open keeps what it loaded, unverified). Whether a workspace `plugins.json` reaches a folder outside the workspace, on 2.0 and on the IDE, is still what probes AG-1, AG-2 and AG-4 establish. One difference is open, **the store's location**:
+
+| | `~/.gemini/shared-plugins/bearingkit` (owner's text) | `~/.bearingkit/antigravity/plugins/bearingkit` (this spec) |
+|---|---|---|
+| Found by Antigravity on its own | no documented root there today; a future auto-updated version could scan more of `~/.gemini` | outside every Antigravity folder |
+| Each install or update by a session | a write under `~/.gemini`: needs the owner's yes every time (AGENTS.md) | the kit's own folder, like its state and eval queue: no approval per update |
+| One place for everything Antigravity | yes | no, the payload sits apart from `~/.gemini` |
+| Room for other shared plugins | yes, if the entry names the folder of plugins (probe AG-2); then every plugin in it loads in every activated project | only the kit |
+
+Recommendation: the kit's own folder, for the approval flow and to stay clear of whatever Antigravity scans next; the owner's location works under the same mechanism if the owner prefers one place.
+
 ## Proposal
 
 **Claude Code.** (1) The manifest gains `"defaultEnabled": false`, so a user-scope install (the CLI's default scope) switches nothing on anywhere. (2) Install for the machine as `docs/hosts.md` says today (`claude plugin marketplace add …`, `claude plugin install bearingkit@bearingkit`). (3) Activate a project with an entry `"bearingkit@bearingkit": true` in that project's `.claude/settings.local.json`, written by the host's own command (which one, `install --scope local` or `enable`, is probe CC-1); the host keeps that file out of git (C6). A team project that wants the kit for everyone uses `--scope project` instead, the owner's call per project. Deactivate: `false`, or remove the entry.
 
-**Antigravity.** (1) `bearingkit antigravity install` writes the copy to `~/.bearingkit/antigravity/plugins/bearingkit/`, outside every discovered root, so installing no longer writes under `~/.gemini` and reaches no workspace. (2) `bearingkit antigravity activate [<project>]` adds one entry for that folder to the project's `.agents/plugins.json` (creating or merging the file); `deactivate` removes the entry and the file if it becomes empty. The kit touches nothing else in the project and nothing in its git settings: the owner commits the file or not. (3) The rule inside the plugin stays `always_on`; it now applies only where the plugin is declared. (4) `install` removes a copy left under `~/.gemini/config/plugins/bearingkit` when it carries the kit's marker, so the old global install cannot linger beside the new one.
+**Antigravity.** (1) `bearingkit antigravity install` writes the copy to `~/.bearingkit/antigravity/plugins/bearingkit/`, outside every discovered root, so installing adds nothing under `~/.gemini` (its one touch there is step 4, removing the old global copy once) and reaches no workspace. (2) `bearingkit antigravity activate [<project>]` adds one entry for that folder to the project's `.agents/plugins.json` (creating or merging the file); `deactivate` removes the entry and the file if it becomes empty. The kit touches nothing else in the project and nothing in its git settings: the owner commits the file or not. (3) The rule inside the plugin stays `always_on`; it now applies only where the plugin is declared. (4) `install` removes a copy left under `~/.gemini/config/plugins/bearingkit` when it carries the kit's marker, so the old global install cannot linger beside the new one.
 
 **Both.** `doctor` stays read-only and reports, for the current directory, whether each host has the kit installed and whether this project is activated; when the Antigravity copy is absent it no longer prints `antigravity install` as the one fix (status §7, open thread of 2026-09-19). The eval harness: Claude Code runs keep `--plugin-dir` (probe CC-3); the Antigravity stage commits its `.agents/plugins.json` in the stage's first commit, so every reset keeps it activated.
 
@@ -54,6 +69,6 @@ A failing AG-1 sends the Antigravity half back to the owner before any code: the
 
 ## Decisions for the owner
 
-1. Direction as proposed: host-native activation, `defaultEnabled: false` on Claude Code, the Antigravity payload outside `~/.gemini`, and the v2 §9 exception.
+1. Direction as proposed: host-native activation, `defaultEnabled: false` on Claude Code, and the v2 §9 exception. For Antigravity the owner's proposal of 2026-09-19 night already chose the central store and `.agents/plugins.json`; left open is the store's location (table above).
 2. The Antigravity file `.agents/plugins.json`: the kit writes it and leaves git alone (proposed), or the kit also adds it to the project's `.git/info/exclude`.
 3. Approval for the probe run on Antigravity (AG-1–AG-4), which writes one `.agents/plugins.json` into the eval stage and one scratch folder, and a copy under `~/.bearingkit/antigravity/`.
