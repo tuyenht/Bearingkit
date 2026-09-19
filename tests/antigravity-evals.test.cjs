@@ -20,7 +20,7 @@ test('activation is read from the first SKILL.md tool call; the harness note is 
     line({ type: 'PLANNER_RESPONSE', content: 'Reading the skill', tool_calls: [{ name: 'view_file', args: { AbsolutePath: '"C:\\\\Users\\\\x\\\\.gemini\\\\config\\\\plugins\\\\bearingkit\\\\skills\\\\bk-spec\\\\SKILL.md"' } }] }),
     line({ type: 'PLANNER_RESPONSE', content: 'then', tool_calls: [{ name: 'view_file', args: { AbsolutePath: 'C:/x/skills/bk-plan/SKILL.md' } }] }),
   ].join('\n');
-  assert.deepEqual(activationFromTranscript(t), { got: 'bk-spec', injected: true, promptSeen: false });
+  assert.deepEqual(activationFromTranscript(t), { got: 'bk-spec', injected: true, promptSeen: false, readHarness: false });
   // The model's reaction to the trigger line (before the injected prompt) is not scored.
   const withTrigger = [
     line({ type: 'USER_INPUT', content: '<USER_REQUEST>\nReply with OK and wait for my next message.\n</USER_REQUEST>' }),
@@ -29,12 +29,44 @@ test('activation is read from the first SKILL.md tool call; the harness note is 
     line({ type: 'USER_INPUT', content: '<USER_REQUEST>\nWhat does the retry decorator do?\n</USER_REQUEST>' }),
     line({ type: 'PLANNER_RESPONSE', content: 'The file does not exist.', tool_calls: [{ name: 'view_file', args: { AbsolutePath: 'C:/p/src/http/retry.ts' } }] }),
   ].join('\n');
-  assert.deepEqual(activationFromTranscript(withTrigger, { prompt: 'What does the retry decorator do?', expect: 'none' }), { got: 'none', injected: true, promptSeen: true });
-  assert.deepEqual(activationFromTranscript('not json\n' + line({ type: 'PLANNER_RESPONSE', content: 'answered directly' })), { got: 'none', injected: false, promptSeen: false });
+  assert.deepEqual(activationFromTranscript(withTrigger, { prompt: 'What does the retry decorator do?', expect: 'none' }), { got: 'none', injected: true, promptSeen: true, readHarness: false });
+  assert.deepEqual(activationFromTranscript('not json\n' + line({ type: 'PLANNER_RESPONSE', content: 'answered directly' })), { got: 'none', injected: false, promptSeen: false, readHarness: false });
   const v1Only = line({ type: 'EPHEMERAL_MESSAGE', content: '[bearingkit] stack: typescript\n[/bearingkit]' });
   assert.equal(activationFromTranscript(v1Only).injected, false, 'the v1 stack block is not the harness note');
   assert.equal(activationFromTranscript(line({ type: 'PLANNER_RESPONSE', content: 'GLOB-PROBE-OK' }), { kind: 'text', expect: 'GLOB-PROBE-OK' }).got, 'GLOB-PROBE-OK');
   assert.equal(activationFromTranscript(line({ type: 'PLANNER_RESPONSE', content: 'no idea' }), { kind: 'text', expect: 'GLOB-PROBE-OK' }).got, 'none');
+});
+
+// A model that cannot find its answer in the fixture widens its search, and one folder up sits the kit's checkout
+// (prompt files with their expected labels, the scorer) beside the eval queue. Seen on 2026-09-19: conversations
+// opened the queue and the prompt files, then answered. A decision taken after that is not evidence of routing.
+test('a conversation that reads the eval harness before its routing decision is marked readHarness', () => {
+  const roots = { harnessRoots: ['C:\\Projects\\Bearingkit', 'C:\\Users\\x\\.bearingkit\\antigravity-eval'] };
+  const prompt = 'Walk me through the invoices page.';
+  const t = (...steps) => [line({ type: 'USER_INPUT', content: `<USER_REQUEST>\n${prompt}\n</USER_REQUEST>` }), ...steps.map(line)].join('\n');
+  const call = (name, args) => ({ type: 'PLANNER_RESPONSE', content: '', tool_calls: [{ name, args }] });
+  const skill = call('view_file', { AbsolutePath: 'C:\\Users\\x\\.gemini\\config\\plugins\\bearingkit\\skills\\bk-map\\SKILL.md' });
+  const item = { prompt, expect: 'none' };
+
+  // Opened a prompt file of the checkout, answered with no skill: the "none" is not clean.
+  const read = activationFromTranscript(t(call('view_file', { AbsolutePath: 'c:\\Projects\\Bearingkit\\evals\\activation\\phase-1.jsonl' }), { type: 'PLANNER_RESPONSE', content: 'The page fetches /api/invoices.' }), item, roots);
+  assert.deepEqual([read.got, read.readHarness], ['none', true]);
+  // The queue, found through a search whose results name it.
+  const queue = activationFromTranscript(t(call('grep_search', { SearchPath: 'C:\\Users\\x', Query: 'invoices' }), { type: 'GENERIC', content: 'C:\\Users\\x\\.bearingkit\\antigravity-eval\\queue.json:3: "expect": "none"' }), item, roots);
+  assert.equal(queue.readHarness, true, 'a search result that names the queue');
+  // find_by_name answers with paths relative to the folder it searched.
+  const relative = activationFromTranscript(t(call('find_by_name', { SearchDirectory: 'c:\\Projects', Pattern: '*eval*' }), { type: 'GENERIC', content: 'Found 2 results\nBearingkit\\evals\\activation\\acceptance.jsonl\n.bearingkit-evals\\sample-app' }), item, roots);
+  assert.equal(relative.readHarness, true, 'a relative result resolved against the searched folder');
+  // The skill was opened first: routing was decided before the harness was read.
+  const after = activationFromTranscript(t(skill, call('view_file', { AbsolutePath: 'C:\\Projects\\Bearingkit\\evals\\activation\\phase-1.jsonl' })), { prompt, expect: 'bk-map' }, roots);
+  assert.deepEqual([after.got, after.readHarness], ['bk-map', false]);
+  // The fixture, the plugin copy and a folder listing that only names the checkout are not the harness.
+  const clean = activationFromTranscript(t(
+    call('view_file', { AbsolutePath: 'c:\\Projects\\.bearingkit-evals\\sample-app\\src\\app\\invoices\\page.tsx' }),
+    call('list_dir', { DirectoryPath: 'c:\\Projects' }), { type: 'GENERIC', content: 'Bearingkit/ (14 items)\n.bearingkit-evals/ (3 items)' },
+    call('grep_search', { SearchPath: 'C:\\Users\\x\\.gemini\\config\\plugins\\bearingkit', Query: 'invoices' }), { type: 'GENERIC', content: 'skills\\bk-map\\SKILL.md:3: invoices' },
+  ), item, roots);
+  assert.deepEqual([clean.got, clean.readHarness], ['none', false]);
 });
 
 test('driver decides only on the first invocation of a conversation that starts with the trigger', () => {
