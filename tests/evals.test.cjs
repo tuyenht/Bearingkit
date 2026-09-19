@@ -248,6 +248,20 @@ test('the run stops on either window, not only the five-hour one', () => {
   assert.equal(quotaStop({ fiveHour: 0.4, sevenDay: 0.95 }, limits).window, 'seven-day', 'the ceiling is inclusive');
 });
 
+// One run may need prompts from several files (the acceptance pair, a Phase 1 negative, the boundary set), in the
+// order that puts the important ones first; an id asked for and found in no file stops the run.
+test('--file takes several files, and --id sets which prompts run and in what order', () => {
+  const { selectPrompts } = require('../scripts/evals.cjs');
+  const dir = path.join(__dirname, '..', 'evals', 'activation');
+  const files = ['acceptance.jsonl', 'phase-1.jsonl', 'boundaries.jsonl'].map((f) => path.join(dir, f)).join(',');
+  const picked = selectPrompts({ file: files, id: 'acc-01,map-neg-01,acc-02,bnd-vi-01' });
+  assert.deepEqual(picked.map((p) => p.id), ['acc-01', 'map-neg-01', 'acc-02', 'bnd-vi-01']);
+  assert.throws(() => selectPrompts({ file: files, id: 'acc-01,no-such-id' }), /no-such-id/);
+  assert.throws(() => selectPrompts({ file: [files, path.join(dir, 'acceptance.jsonl')].join(',') }), /duplicate id acc-01/);
+  assert.equal(selectPrompts({}).length, promptSet().length, 'no --file means Phase 1, as before');
+  assert.deepEqual(selectPrompts({ intent: 'map' }).map((p) => p.id), promptSet().filter((p) => p.intent === 'map').map((p) => p.id));
+});
+
 test('--per-intent takes a spread: English positive, Vietnamese positive, negative, then round again', () => {
   const { sample } = require('../scripts/evals.cjs');
   const prompts = loadPrompts(path.join(__dirname, '..', 'evals', 'activation', 'phase-1.jsonl'));

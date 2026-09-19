@@ -24,9 +24,9 @@ function parseArgs(argv) {
 
 const USAGE = [
   'usage: bearingkit evals --config-dir <isolated profile> [--plugin-dir <checkout>|none] [--model sonnet] [--intent <i>] [--id a,b]',
-  '         [--per-intent N] [--limit N] [--cwd <project>] [--tag <t>] [--equivalents <json>] [--raw] [--turns N] [--file <jsonl>]',
+  '         [--per-intent N] [--limit N] [--cwd <project>] [--tag <t>] [--equivalents <json>] [--raw] [--turns N] [--file <jsonl>[,<jsonl>...]]',
   '       bearingkit evals --daily ...   (the same, in your daily profile, where the host keeps every session)',
-  '       bearingkit evals --host antigravity [--arm --id a,b --tag t | --drive <projectId> --count N | --score | --disarm]',
+  '       bearingkit evals --host antigravity [--stage-only [--stage-dir <dir>] | --arm --id a,b | --drive <projectId> --count N | --score --tag t | --disarm]',
 ].join('\n') + '\n';
 const OPTIONS = new Set(['allow-ancestor-memory', 'arm', 'config-dir', 'count', 'cwd', 'daily', 'disarm', 'drive', 'equivalents',
   'eval-dir', 'file', 'help', 'host', 'id', 'intent', 'limit', 'max-seven-day', 'max-utilization', 'model', 'out', 'per-intent',
@@ -55,6 +55,32 @@ function loadPrompts(file) {
     if (ids.has(p.id)) throw new Error(`duplicate id ${p.id}`);
     ids.add(p.id);
   }
+  return prompts;
+}
+
+// --file takes one file or several, comma-separated (ids must stay unique across them); --id picks prompts in the
+// order given, so the important ones run first, and an id found in no file stops the run.
+function selectPrompts(args) {
+  const files = String(args.file || path.join(ROOT, 'evals', 'activation', 'phase-1.jsonl')).split(',').map((f) => path.resolve(f.trim()));
+  let prompts = [];
+  const ids = new Set();
+  for (const f of files) {
+    for (const p of loadPrompts(f)) {
+      if (ids.has(p.id)) throw new Error(`duplicate id ${p.id} across ${files.join(', ')}`);
+      ids.add(p.id);
+      prompts.push(p);
+    }
+  }
+  if (args.intent) prompts = prompts.filter((p) => p.intent === args.intent);
+  if (args.id) {
+    const byId = new Map(prompts.map((p) => [p.id, p]));
+    const wanted = String(args.id).split(',').map((s) => s.trim()).filter(Boolean);
+    const missing = wanted.filter((id) => !byId.has(id));
+    if (missing.length) throw new Error(`no prompt with id ${missing.join(', ')} in ${files.join(', ')}`);
+    prompts = wanted.map((id) => byId.get(id));
+  }
+  if (args['per-intent']) prompts = sample(prompts, Number(args['per-intent']));
+  if (args.limit) prompts = prompts.slice(0, Number(args.limit));
   return prompts;
 }
 
@@ -301,24 +327,26 @@ async function run(argv) {
   const stop = preflight(args);
   if (stop) { process.stdout.write(stop.message); process.exitCode = stop.exit; return; }
   const host = args.host || 'claude';
-  const file = path.resolve(args.file || path.join(ROOT, 'evals', 'activation', 'phase-1.jsonl'));
-  let prompts = loadPrompts(file);
-  if (args.intent) prompts = prompts.filter((p) => p.intent === args.intent);
-  if (args.id) { const ids = new Set(String(args.id).split(',').map((s) => s.trim())); prompts = prompts.filter((p) => ids.has(p.id)); }
-  if (args['per-intent']) prompts = sample(prompts, Number(args['per-intent']));
-  if (args.limit) prompts = prompts.slice(0, Number(args.limit));
+  const prompts = selectPrompts(args);
   const outDir = path.resolve(args.out || path.join(ROOT, 'evals', 'results'));
   fs.mkdirSync(outDir, { recursive: true });
   const date = new Date().toISOString().slice(0, 10);
 
   if (host === 'antigravity') {
     const ag = require('./antigravity-evals.cjs');
-    const agOpts = { pluginDir: args['plugin-dir'] ? path.resolve(args['plugin-dir']) : undefined, evalDir: args['eval-dir'] ? path.resolve(args['eval-dir']) : undefined, trigger: args.trigger, tag: args.tag };
+    const agOpts = { pluginDir: args['plugin-dir'] ? path.resolve(args['plugin-dir']) : undefined, evalDir: args['eval-dir'] ? path.resolve(args['eval-dir']) : undefined, trigger: args.trigger };
+    if (args['stage-only']) {
+      // Antigravity's own copy of the fixture, away from the checkout (see stage() in antigravity-evals.cjs).
+      const st = ag.stage({ dir: args['stage-dir'] ? path.resolve(args['stage-dir']) : undefined });
+      process.stdout.write(`staged at ${st.cwd}, commit ${st.sha.slice(0, 12)}${st.reused ? ' (held open: emptied and staged in place)' : ''}\nthe Antigravity project for it is a file under ~/.gemini/config/projects/ with gitFolder.folderUri ${st.folderUri}\n`);
+      return;
+    }
     if (args.arm) {
       const items = prompts.slice();
-      if (args['probe-glob']) items.push({ id: 'probe-glob', intent: 'compat', lang: 'en', prompt: 'Read the file src/app/login/page.tsx, then answer with exactly one word: probe status', expect: 'GLOB-PROBE-OK', kind: 'text' });
+      if (args['probe-glob']) items.push(ag.PROBE_GLOB);
       const a = ag.arm(items, agOpts);
-      process.stdout.write(`armed ${a.count} prompts behind ${a.hooksFile}; trigger phrase: "${a.trigger}"; queue: ${a.queueFile}\n`);
+      // The queue holds neutral ids only; this line is the one place that pairs them with the prompt ids.
+      process.stdout.write(`armed ${a.count} prompts behind ${a.hooksFile}; opening phrase: "${a.trigger}"; queue: ${a.queueFile}\n${a.ids.join(' ')}\n`);
       return;
     }
     if (args.disarm) { const d = ag.disarm(agOpts); process.stdout.write(`disarmed: ${d.hooksFile}\n`); return; }
@@ -337,11 +365,14 @@ async function run(argv) {
       const equivalents = args.equivalents ? JSON.parse(fs.readFileSync(path.resolve(args.equivalents), 'utf8')) : null;
       const summary = summarize(s.results, equivalents);
       const readIds = s.results.filter((r) => r.readHarness).map((r) => r.id);
-      const meta = `Host: antigravity · scored from conversation transcripts · prompts done: ${s.results.length}, still queued: ${s.pending} · harness note seen in ${s.results.filter((r) => r.injected).length} conversations · read the eval harness before deciding: ${readIds.join(', ') || 'none'} · models: ${[...new Set(s.results.map((r) => r.modelName))].join(', ') || 'unknown'}`;
-      const tag = s.tag ? '-' + String(s.tag).replace(/[^a-z0-9-]/gi, '') : '';
+      const unknown = s.results.filter((r) => r.unknown).map((r) => r.id);
+      const meta = `Host: antigravity · scored from conversation transcripts · prompts done: ${s.results.length}, still queued: ${s.pending} · harness note seen in ${s.results.filter((r) => r.injected).length} conversations · read the eval harness before deciding: ${readIds.join(', ') || 'none'}${unknown.length ? ` · prompts found in no prompt file: ${unknown.join(', ')}` : ''} · models: ${[...new Set(s.results.map((r) => r.modelName))].join(', ') || 'unknown'}`;
+      // The queue carries no tag since 2026-09-19 evening; a saved queue of an earlier run still names its own.
+      const tagText = args.tag || s.tag;
+      const tag = tagText ? '-' + String(tagText).replace(/[^a-z0-9-]/gi, '') : '';
       const out = path.join(outDir, `${date}-antigravity${tag}.md`);
       fs.writeFileSync(out, table(s.results, summary, 'antigravity', meta, equivalents));
-      for (const r of s.results) process.stdout.write(`${String(r.id).padEnd(12)} expect=${String(r.expect).padEnd(16)} got=${String(r.got).padEnd(14)} ${passes(r, equivalents) ? 'ok' : 'MISS'}${r.injected ? '' : '  (no harness note: read this transcript)'}${r.readHarness ? '  (read the eval harness before deciding: not evidence, rerun)' : ''}\n`);
+      for (const r of s.results) process.stdout.write(`${String(r.id).padEnd(12)} expect=${String(r.expect).padEnd(16)} got=${String(r.got).padEnd(14)} ${passes(r, equivalents) ? 'ok' : 'MISS'}${r.injected ? '' : '  (no harness note: read this transcript)'}${r.readHarness ? '  (read the eval harness before deciding: not evidence, rerun)' : ''}${r.unknown ? '  (prompt found in no prompt file)' : ''}\n`);
       process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}; ${readIds.length} read the eval harness before deciding${readIds.length ? ` (${readIds.join(', ')}): rerun them` : ''}; ${s.pending} still queued. Written: ${out}\n`);
       return;
     }
@@ -405,4 +436,4 @@ async function run(argv) {
   process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}, no-action ${summary.noAction}.${quotaNote}\n${listing}\nWritten: ${out}\n`);
 }
 
-module.exports = { run, preflight, parseStream, parseQuota, parseInit, listingNote, quotaStop, loadPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };
+module.exports = { run, preflight, parseStream, parseQuota, parseInit, listingNote, quotaStop, loadPrompts, selectPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };

@@ -1,0 +1,17 @@
+lockfileVersion: '9.0'
+
+packages:
+  next@15.1.0:
+    resolution: {integrity: sha512-imckxdw8dBAYlO4+x9V8aamK6GC/eQy5QWpRiUUM7bP64xJ9PIA7lM9/mKR/GsXm1MT4LiACmjXfIKEetg+WmA==}
+  react@19.0.0:
+    resolution: {integrity: sha512-w5rR078SJsYepdbnvr/p7+caRVwVexiCwCuNWNThE6PplQkhQggxu8MIsHoqpPu1Y89Sw0FEH//ZS0IzMzOkgQ==}
+  react-dom@19.0.0:
+    resolution: {integrity: sha512-6GEAZp6Gj1XLQmnnpJklPJTLukwnEULsbhSqtVWNiNZpqXnXhIY5L0D0M3RfEaojF9a0dW6tO67uR+kLissjeg==}
+  prisma@7.0.0:
+    resolution: {integrity: sha512-GdvnjUWxq7gGAgRwlajRHNLA5CEweWsv0R59EN7FfeNVvFyUDQyG8OkyNyqwmGtILIqHIjCm+xXQGZZJWlFb5Q==}
+  '@prisma/client@7.0.0':
+    resolution: {integrity: sha512-EisU/XdpztW656sw+tEp+Xg5yrYoblTwDEExrgteTWTmbXrQSHTkAq7M7Tib7hjc9XQnC5YhLRsq34uLctTQFg==}
+  typescript@5.6.0:
+    resolution: {integrity: sha512-UtBLjOkQ5CE6FafjkpOL1xihyj8gxyDvYjh3dmDw+oq9MLoQCEB8FUULrbxXoaoeesxQoR+fnptwHhpJlQbSwQ==}
+  vitest@2.0.0:
+    resolution: {integrity: sha512-8wLlm4v+1B8G17obPIMIZyzwjcgxVL7+YR5CfrjL4MQd2wxfcv+CH53sw5upf+cTJEpZeWvpnxl6BRW8/yoz3A==}

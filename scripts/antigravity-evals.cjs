@@ -1,16 +1,21 @@
 'use strict';
-// Antigravity side of the activation evals: arm a queue of prompts behind the eval driver hook, score the
-// conversations from their transcripts, disarm. The owner's only manual step is opening a fresh conversation on the
-// staged fixture and typing the trigger phrase once per prompt.
+// Antigravity side of the activation evals: stage a copy of the fixture, arm a queue of prompts behind the eval
+// driver hook, score the conversations from their transcripts, disarm. The only manual step is opening a fresh
+// conversation on the stage and typing the opening phrase once per prompt (scripts/antigravity/drive.cjs does it).
 
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { spawnSync } = require('node:child_process');
+const { STAGE_MARKER } = require('./antigravity/eval-driver.cjs');
 
+const ROOT = path.resolve(__dirname, '..');
 const DEFAULT_PLUGIN_DIR = path.join(os.homedir(), '.gemini', 'config', 'plugins', 'bearingkit');
 const DEFAULT_EVAL_DIR = process.env.BEARINGKIT_EVAL_DIR || path.join(os.homedir(), '.bearingkit', 'antigravity-eval');
 const HOOK_NAME = 'bearingkit-eval';
 const DRIVER_SRC = path.join(__dirname, 'antigravity', 'eval-driver.cjs');
+const PROMPT_DIR = path.join(ROOT, 'evals', 'activation');
+const PROBE_GLOB = { id: 'probe-glob', intent: 'compat', lang: 'en', prompt: 'Read the file src/app/login/page.tsx, then answer with exactly one word: probe status', expect: 'GLOB-PROBE-OK', kind: 'text' };
 
 function readJson(file, fallback) { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return fallback; } }
 
@@ -19,7 +24,7 @@ function readJson(file, fallback) { try { return JSON.parse(fs.readFileSync(file
 // answered. Reading them before the routing decision (the first skill opened, or the whole conversation when none
 // is) leaves the decision no evidence, so the result carries readHarness. Paths compare lower-cased with forward
 // slashes; a search tool's relative results are resolved against the folder it searched.
-const HARNESS_ROOTS = [path.resolve(__dirname, '..'), DEFAULT_EVAL_DIR];
+const HARNESS_ROOTS = [ROOT, DEFAULT_EVAL_DIR];
 const slash = (s) => String(s).replace(/%3a/gi, ':').replace(/\\+/g, '/').replace(/\/+/g, '/').toLowerCase();
 const strings = (v, out = []) => {
   if (typeof v === 'string') out.push(v);
@@ -59,9 +64,10 @@ function activationFromTranscript(text, item, opts = {}) {
   for (const line of allLines) {
     let o;
     try { o = JSON.parse(line); } catch { continue; }
-    // The eval driver's own note: proof that the harness, not the owner, put the prompt in. (v1 looked for the kit's
+    // The eval driver's own note: proof that the harness, not the owner, put the prompt in. [relay] from the neutral
+    // harness of 2026-09-19 evening, [bearingkit-eval] before, so saved queues still score. (v1 looked for the kit's
     // [bearingkit] block; v2 loads the protocol as an always-on rule, which a transcript never records.)
-    if (o && o.type === 'EPHEMERAL_MESSAGE' && /\[bearingkit-eval\]/.test(typeof o.content === 'string' ? o.content : JSON.stringify(o.content || ''))) injected = true;
+    if (o && o.type === 'EPHEMERAL_MESSAGE' && /\[relay\]|\[bearingkit-eval\]/.test(typeof o.content === 'string' ? o.content : JSON.stringify(o.content || ''))) injected = true;
   }
   let pos = 0;
   let skillAt = null;
@@ -115,9 +121,11 @@ function arm(prompts, opts = {}) {
   fs.writeFileSync(hooksFile, JSON.stringify(hooks, null, 2) + '\n');
   fs.rmSync(path.join(pluginDir, 'probe'), { recursive: true, force: true });
   fs.mkdirSync(evalDir, { recursive: true });
-  const queue = { armedAt: new Date().toISOString(), trigger: opts.trigger || DEFAULT_TRIGGER, tag: opts.tag || '', pending: prompts.map((p) => ({ id: p.id, intent: p.intent, lang: p.lang, prompt: p.prompt, expect: p.expect, kind: p.kind || 'skill' })), done: [] };
+  // A search that reaches the queue must find no answer to copy: an item is a neutral id and its prompt, nothing
+  // else (no prompt id, label or tag); score() takes the labels back from the prompt files.
+  const queue = { armedAt: new Date().toISOString(), trigger: opts.trigger || DEFAULT_TRIGGER, pending: prompts.map((p, i) => ({ id: `p${String(i + 1).padStart(2, '0')}`, prompt: p.prompt })), done: [] };
   fs.writeFileSync(path.join(evalDir, 'queue.json'), JSON.stringify(queue, null, 2));
-  return { hooksFile, queueFile: path.join(evalDir, 'queue.json'), count: prompts.length, trigger: queue.trigger };
+  return { hooksFile, queueFile: path.join(evalDir, 'queue.json'), count: prompts.length, trigger: queue.trigger, ids: queue.pending.map((q, i) => `${q.id}=${prompts[i].id}`) };
 }
 
 function disarm(opts = {}) {
@@ -129,14 +137,28 @@ function disarm(opts = {}) {
   return { hooksFile };
 }
 
+// Labels by prompt text, from the prompt files (every prompt is unique across them; a test keeps it so) and the probe.
+function labels(files) {
+  const byPrompt = new Map([[PROBE_GLOB.prompt, PROBE_GLOB]]);
+  for (const f of files) {
+    for (const l of fs.readFileSync(f, 'utf8').split('\n').filter((x) => x.trim())) { const p = JSON.parse(l); byPrompt.set(p.prompt, p); }
+  }
+  return byPrompt;
+}
+
 function score(opts = {}) {
   const evalDir = opts.evalDir || DEFAULT_EVAL_DIR;
   const queue = readJson(path.join(evalDir, 'queue.json'), null);
   if (!queue) throw new Error(`no queue at ${evalDir}; arm first`);
+  const known = labels(opts.promptFiles || fs.readdirSync(PROMPT_DIR).filter((n) => n.endsWith('.jsonl')).map((n) => path.join(PROMPT_DIR, n)));
   const results = [];
-  const harnessRoots = opts.harnessRoots || [path.resolve(__dirname, '..'), evalDir];
+  const harnessRoots = opts.harnessRoots || [ROOT, evalDir];
   for (const entry of queue.done || []) {
-    const item = entry;
+    // A ledger entry written before the neutral queue (2026-09-19 evening) carries its own labels; a newer one only a neutral id and the prompt.
+    const found = known.get(entry.prompt);
+    const item = entry.expect !== undefined ? entry
+      : found ? { ...found, queueId: entry.id }
+        : { id: entry.id, intent: '?', lang: '?', prompt: entry.prompt, expect: '?', unknown: true };
     let text = '';
     try { text = fs.readFileSync(String(entry.transcriptPath || ''), 'utf8'); } catch { text = ''; }
     const a = activationFromTranscript(text, item, { harnessRoots });
@@ -145,4 +167,54 @@ function score(opts = {}) {
   return { results, pending: (queue.pending || []).length, trigger: queue.trigger, tag: queue.tag };
 }
 
-module.exports = { activationFromTranscript, arm, disarm, score, DEFAULT_PLUGIN_DIR, DEFAULT_EVAL_DIR, DEFAULT_TRIGGER, HOOK_NAME };
+// The stage Antigravity works in. On 2026-09-19 conversations that expected no skill searched the folders above the
+// shared fixture (C:\Projects\.bearingkit-evals\sample-app), reached the kit's checkout and the queue, and read the
+// expected labels before answering. So Antigravity gets its own copy: away from the kit's parent folder and the
+// home folder (which holds the queue), below no AGENTS.md or GEMINI.md, with a README that does not call it a
+// fixture, a lockfile without the word, a plain git history, and the marker hidden in .git. The copy Claude Code
+// runs in, and its README, are unchanged.
+const DEFAULT_STAGE = path.join(path.parse(ROOT).root, 'work', 'apps', 'sample-app');
+const ANCESTOR_MEMORY = ['AGENTS.md', 'GEMINI.md'];
+
+const folderUri = (dir) => 'file:///' + path.resolve(dir).replace(/\\/g, '/').replace(/^([A-Za-z]):/, (m, d) => `${d.toLowerCase()}%3A`);
+
+function stage(opts = {}) {
+  const root = opts.root || ROOT;
+  const dir = path.resolve(opts.dir || DEFAULT_STAGE);
+  const forbidden = opts.forbidden || [path.dirname(root), os.homedir()];
+  for (const f of forbidden) {
+    const rel = path.relative(path.resolve(f), dir);
+    if (rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel))) throw new Error(`refusing to stage at ${dir}: it is under ${f}; keep the stage away from the folder beside the kit's checkout and from the home folder, where a widened search reaches the prompt files or the queue`);
+  }
+  for (let cur = path.dirname(dir); ; cur = path.dirname(cur)) {
+    for (const m of ANCESTOR_MEMORY) if (fs.existsSync(path.join(cur, m))) throw new Error(`refusing to stage at ${dir}: ${path.join(cur, m)} above it would load into every conversation`);
+    if (path.dirname(cur) === cur) break;
+  }
+  // Staging replaces the folder, so it has to be empty or a stage this command made: a mistyped --stage-dir that
+  // points at real work is refused before anything is removed.
+  if (fs.existsSync(dir) && fs.readdirSync(dir).length && !fs.existsSync(path.join(dir, STAGE_MARKER))) throw new Error(`refusing to replace ${dir}: it is not empty and not a stage this command made (no ${STAGE_MARKER})`);
+  // A conversation may hold the folder open (Windows cannot delete a process's working directory); then its
+  // contents, history included, are emptied instead, so the stage always has exactly one commit.
+  let reused = false;
+  try { fs.rmSync(dir, { recursive: true, force: true }); } catch { reused = true; }
+  if (reused) for (const e of fs.readdirSync(dir)) fs.rmSync(path.join(dir, e), { recursive: true, force: true });
+  fs.mkdirSync(dir, { recursive: true });
+  fs.cpSync(path.join(root, 'evals', 'fixtures', 'sample-app'), dir, { recursive: true });
+  const overlay = path.join(root, 'evals', 'fixtures', 'antigravity-stage');
+  if (fs.existsSync(overlay)) fs.cpSync(overlay, dir, { recursive: true, force: true });
+  const git = (args) => {
+    const r = spawnSync('git', ['-c', 'user.name=Developer', '-c', 'user.email=developer@example.com', ...args], { cwd: dir, encoding: 'utf8' });
+    if (r.status !== 0) throw new Error(`git ${args.join(' ')} failed in ${dir}: ${String(r.stderr || r.error || '').trim()}`);
+    return String(r.stdout || '').trim();
+  };
+  git(['init', '-q']);
+  // A reset must restore the bytes that were copied, not a line-ending conversion of them.
+  git(['config', 'core.autocrlf', 'false']);
+  git(['add', '-A']);
+  git(['commit', '-q', '-m', 'Initial commit']);
+  const sha = git(['rev-parse', 'HEAD']);
+  fs.writeFileSync(path.join(dir, STAGE_MARKER), sha + '\n');
+  return { cwd: dir, sha, reused, folderUri: folderUri(dir) };
+}
+
+module.exports = { activationFromTranscript, arm, disarm, score, stage, folderUri, DEFAULT_PLUGIN_DIR, DEFAULT_EVAL_DIR, DEFAULT_STAGE, DEFAULT_TRIGGER, HOOK_NAME, PROBE_GLOB };
