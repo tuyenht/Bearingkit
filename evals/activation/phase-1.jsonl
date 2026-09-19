@@ -85,3 +85,6 @@
 {"id": "db-en-01", "intent": "db", "lang": "en", "prompt": "Updates to invoices keep hanging for half a minute and the database shows sessions waiting on a lock. Find what is holding it.", "expect": "bk-db"}
 {"id": "db-vi-01", "intent": "db", "lang": "vi", "prompt": "Tại sao Postgres bỏ qua index trên cột status mà tôi mới thêm?", "expect": "bk-db"}
 {"id": "db-neg-01", "intent": "db", "lang": "en", "prompt": "Add an archived flag to invoices so users can hide old ones.", "expect": "bk-spec|bk-build"}
+{"id": "map-en-01", "intent": "map", "lang": "en", "prompt": "I'm taking over this project from another team next week. Before I touch anything, map out how the codebase is put together.", "expect": "bk-map"}
+{"id": "map-vi-01", "intent": "map", "lang": "vi", "prompt": "Mình vừa được giao codebase này mà không ai bàn giao gì. Vẽ giúp mình bản đồ kiến trúc: các phần chính, dữ liệu đi qua đâu, chỗ nào sửa dễ vỡ.", "expect": "bk-map"}
+{"id": "map-neg-01", "intent": "map", "lang": "en", "prompt": "Walk me through how the invoices page gets its data, from the page down to the API route.", "expect": "none"}

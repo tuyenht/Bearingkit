@@ -25,6 +25,7 @@ Name the intent, then invoke the matching skill as your first action, before rea
 | Intent | Do |
 |---|---|
 | question or explanation | answer directly; never convene a council |
+| map a whole codebase, architecture map | bk-map |
 | small change (ACT, ≤3 files) | bk-build, with tests through bk-test |
 | feature | bk-spec |
 | bug or failure | bk-debug |
@@ -80,6 +81,6 @@ Skills describe actions; `references/host-tools.md` maps them to each host's too
 
 ## References
 
-These are in `<kit>/skills/bk-protocol/references/`; a path written `bk-<skill>/references/<file>` is under `<kit>/skills/`, not the kit root. Skills read them there, never copy them: `references/gate-patterns.md`, `references/personas.md`, `references/host-tools.md`, `references/evidence.md` and `references/council.md` (worked examples), `references/rba-lite.md` (reasoning before action), `references/correction-cues.md`, `references/handoff-template.md`, `references/meta-routing.md` (router lineage, skill authoring).
+These are in `<kit>/skills/bk-protocol/references/`; a path written `bk-<skill>/references/<file>` is under `<kit>/skills/`, not the kit root. Skills read them there, never copy them: `references/gate-patterns.md`, `references/personas.md`, `references/host-tools.md`, `references/evidence.md`, `references/council.md`, `references/rba-lite.md` (reasoning before action), `references/correction-cues.md`, `references/handoff-template.md`, `references/meta-routing.md`.
 
 Sources: obra/superpowers 5.1.0 (MIT) via references/meta-routing.md; the rest is kit-original; attribution in NOTICE.

@@ -16,7 +16,7 @@ Install separately for each host you use. Details, uninstall and the acceptance 
 ## What you get
 
 - **The protocol** (`skills/bk-protocol/SKILL.md`), loaded at session start: the autonomy gate (ACT acts and reports; COUNCIL proposes and waits), a router from intent to skill, evidence rules, the council format, the definition of done, hot-path review, a security baseline.
-- **Skills**, invoked by the router from plain language in English or Vietnamese: `bk-spec`, `bk-plan`, `bk-build`, `bk-test`, `bk-debug`, `bk-review`, `bk-ship`, `bk-close`, `bk-audit`, `bk-next`, `bk-design`, `bk-setup`, `bk-ops`, `bk-db`; the remaining core skills arrive with v0.3, in the order `bk-map`, `bk-research`, `bk-perf`. Each skill is a short body with gates and the evidence it must paste, plus references read on demand.
+- **Skills**, invoked by the router from plain language in English or Vietnamese: `bk-spec`, `bk-plan`, `bk-build`, `bk-test`, `bk-debug`, `bk-review`, `bk-ship`, `bk-close`, `bk-audit`, `bk-next`, `bk-design`, `bk-setup`, `bk-ops`, `bk-db`, `bk-map`; the remaining core skills arrive with v0.3, in the order `bk-research`, `bk-perf`. Each skill is a short body with gates and the evidence it must paste, plus references read on demand.
 - **Agents** for hosts that define them: an independent reviewer, a researcher, a query optimizer, a design critic.
 - **Provenance**: every adapted source is named in `NOTICE` and `upstream/sources.json`.
 

@@ -23,6 +23,8 @@ Mỗi sprint một phiên mới: phiên dài tiêu hạn mức nhiều hơn các
 
 ## Sprint 1 · `bk-map`
 
+**BUILT and committed 2026-09-19; the Antigravity package follows the commit**: design and measurements in `docs/specs/2026-09-19-bk-map-design.md`, including `beh-map-01` measured again after the last edit to step 7 and `first-contact.md` (pass); tool claims and the harness rule of status §7 (dd) in `docs/compat/2026-09-19-bk-map-tool-claims.md`; the boundary prompts of §7 (ee) became D5 question 28, decided (a) the same day. What the sprint taught is in the handoff of that day, Lessons.
+
 - Ô v1 §7.1: hiểu một codebase lạ, viết hoặc làm mới `docs/architecture-map.md` có anchor `file:line` (ACT); đề xuất sửa file chỉ dẫn dưới dạng diff (COUNCIL). Nguồn: feature-dev code-explorer (Apache).
 - Kiểm kê: **5 absorb** của `claude-plugins-official:plugins/code-modernization` (Apache-2.0: `agents/business-rules-extractor.md`, `agents/legacy-analyst.md`, `commands/modernize-extract-rules.md`, `commands/modernize-map.md`, `commands/modernize-preflight.md`) và **10 idea**. Absorb là lấy chữ: `references/` có dòng "Adapted from …" trỏ `NOTICE`, mục `NOTICE` cho nguồn, `derived` trong `upstream/sources.json`; `tests/skills.test.cjs` canh cả ba.
 - **Rủi ro định tuyến lớn nhất: hàng câu hỏi.** Prompt `q-en-02` ("Where is the tenant id resolved in the request pipeline?") và `q-vi-02` (giải thích cách hàng đợi job retry) là câu hỏi về code, phải trả lời thẳng; một hàng "understand a codebase" dễ nuốt chúng. Mô tả của `bk-map` phải nói rõ nó dành cho việc lập bản đồ cả codebase, không cho câu hỏi về một đoạn code ("Not for:"), prompt âm `map-neg-01` là một câu hỏi như vậy, và phép đo định tuyến gồm đủ mười prompt `q-*`.

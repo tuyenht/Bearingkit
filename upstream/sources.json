@@ -138,7 +138,12 @@
         "plugins/claude-code-setup/skills/claude-automation-recommender/references/plugins-reference.md",
         "plugins/claude-code-setup/skills/claude-automation-recommender/references/skills-reference.md",
         "plugins/claude-code-setup/skills/claude-automation-recommender/references/subagent-templates.md",
-        "plugins/security-guidance/hooks/patterns.py"
+        "plugins/security-guidance/hooks/patterns.py",
+        "plugins/code-modernization/agents/legacy-analyst.md",
+        "plugins/code-modernization/commands/modernize-map.md",
+        "plugins/code-modernization/commands/modernize-preflight.md",
+        "plugins/code-modernization/agents/business-rules-extractor.md",
+        "plugins/code-modernization/commands/modernize-extract-rules.md"
       ],
       "derived": {
         "skills/bk-design/references/distinctive-ui.md": [
@@ -154,9 +159,20 @@
         ],
         "skills/bk-test/references/coverage-lens.md": [
           "plugins/pr-review-toolkit/agents/pr-test-analyzer.md"
+        ],
+        "skills/bk-map/references/codebase-map.md": [
+          "plugins/code-modernization/agents/legacy-analyst.md",
+          "plugins/code-modernization/commands/modernize-map.md"
+        ],
+        "skills/bk-map/references/first-contact.md": [
+          "plugins/code-modernization/commands/modernize-preflight.md"
+        ],
+        "skills/bk-map/references/business-rules.md": [
+          "plugins/code-modernization/agents/business-rules-extractor.md",
+          "plugins/code-modernization/commands/modernize-extract-rules.md"
         ]
       },
-      "absorbed": "2026-09-14 - frontend-design only. The kit file keeps the generic-default clusters, the typographic tells, the motion and hero rules, the two-pass plan-then-review process, the restraint rule and the writing rules, rewritten in the kit's form; it drops the studio-persona framing and the client-relationship prose. The same text ships byte-identical in anthropics/skills (SHA-256 b8009ae690dfa69edc7f08bb8715f32db8817112cfa4388741dbaf876c237df8, checked 2026-09-11 and 2026-09-14); this repository is recorded as the provenance per question 14 of the D5 batch. 2026-09-15 - code-review and pr-review-toolkit ported into skills/bk-review/references/review-lenses.md (the passes, the 0-100 confidence rubric with its anchors, the not-a-finding list, and the silent-failure, type-design, comment and simplification lenses) and skills/bk-test/references/coverage-lens.md (behavioural coverage, the gap list, the test-quality checks, the criticality scale). Dropped: the GitHub comment format and link rules, the model-and-agent orchestration, the pull-request eligibility check, and one project's own style rules. 2026-09-17 - claude-code-setup, ideas only, into skills/bk-setup: recommend from codebase indicators (read by detect-stack), stay read-only until the owner approves, at most two recommendations per group. No text taken, so no derived key; its MCP, plugin and skill catalogs and its subagent templates were dropped (docs/specs/2026-09-16-bk-setup-design.md, section 8)."
+      "absorbed": "2026-09-14 - frontend-design only. The kit file keeps the generic-default clusters, the typographic tells, the motion and hero rules, the two-pass plan-then-review process, the restraint rule and the writing rules, rewritten in the kit's form; it drops the studio-persona framing and the client-relationship prose. The same text ships byte-identical in anthropics/skills (SHA-256 b8009ae690dfa69edc7f08bb8715f32db8817112cfa4388741dbaf876c237df8, checked 2026-09-11 and 2026-09-14); this repository is recorded as the provenance per question 14 of the D5 batch. 2026-09-15 - code-review and pr-review-toolkit ported into skills/bk-review/references/review-lenses.md (the passes, the 0-100 confidence rubric with its anchors, the not-a-finding list, and the silent-failure, type-design, comment and simplification lenses) and skills/bk-test/references/coverage-lens.md (behavioural coverage, the gap list, the test-quality checks, the criticality scale). Dropped: the GitHub comment format and link rules, the model-and-agent orchestration, the pull-request eligibility check, and one project's own style rules. 2026-09-17 - claude-code-setup, ideas only, into skills/bk-setup: recommend from codebase indicators (read by detect-stack), stay read-only until the owner approves, at most two recommendations per group. No text taken, so no derived key; its MCP, plugin and skill catalogs and its subagent templates were dropped (docs/specs/2026-09-16-bk-setup-design.md, section 8). 2026-09-19 - code-modernization (plugins/code-modernization/LICENSE is byte-identical to the Apache-2.0 LICENSE at the repository root, no NOTICE file) ported into skills/bk-map: references/codebase-map.md from legacy-analyst and modernize-map (the reading discipline, the three rules of an honest dependency map, the dead-end suppression, end-to-end flows, the secret and untrusted-content rules), references/first-contact.md from modernize-preflight (the owner questions asked without blocking and recorded verbatim, the build definition as ground truth, missing sources, the scope boundary in both directions), references/business-rules.md from business-rules-extractor and modernize-extract-rules (what counts, the three lenses, verification before writing, the rule card and its priority heuristic). Dropped: the mainframe vocabulary, the extraction script, its JSON schema and the interactive viewer, the workflow orchestration and its referee agents, the analysis-tool table, the readiness verdicts, and the build smoke test as a default step. Ideas only, no text: feature-dev code-explorer and modernize-assess."
     },
     {
       "name": "multica-ai/andrej-karpathy-skills",
