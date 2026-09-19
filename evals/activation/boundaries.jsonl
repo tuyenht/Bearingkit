@@ -1,0 +1,2 @@
+{"id": "bnd-en-01", "intent": "boundary", "lang": "en", "prompt": "The database CPU alert has been at 100% for ten minutes and checkout requests are timing out. Find out what is going on.", "expect": "bk-db|bk-ops"}
+{"id": "bnd-vi-01", "intent": "boundary", "lang": "vi", "prompt": "Cảnh báo replication lag của Postgres vừa bắn, staging đang đọc dữ liệu cũ. Kiểm tra giúp mình.", "expect": "bk-db|bk-ops"}

@@ -104,6 +104,27 @@ test('every skill a prompt expects exists in skills/', () => {
   }
 });
 
+// A prompt on the seam between two skills accepts either route, so it cannot join a skill's intent without breaking
+// the three-per-intent shape every earlier comparison of the 90-prompt set depends on (D5 question 28). It lives in
+// its own file, run with --file; "none" is not a label there, since the request belongs to one of the two skills.
+test('boundary prompts have ids of their own and name at least two skills, each of which exists', () => {
+  const fs = require('node:fs');
+  const dir = path.join(__dirname, '..', 'evals', 'activation');
+  const prompts = loadPrompts(path.join(dir, 'boundaries.jsonl'));
+  assert.ok(prompts.length >= 2, `${prompts.length} boundary prompts`);
+  const ids = prompts.map((p) => p.id);
+  assert.equal(new Set(ids).size, ids.length, 'ids are unique in the file');
+  const elsewhere = new Set([...promptSet(), ...loadPrompts(path.join(dir, 'acceptance.jsonl'))].map((p) => p.id));
+  for (const id of ids) assert.ok(!elsewhere.has(id), `${id} is already an id in another prompt file`);
+  for (const p of prompts) {
+    const alts = p.expect.split('|');
+    assert.ok(new Set(alts).size >= 2, `${p.id} names ${new Set(alts).size} skill(s); a boundary names two`);
+    for (const alt of alts) {
+      assert.ok(fs.existsSync(path.join(__dirname, '..', 'skills', alt, 'SKILL.md')), `${p.id} expects ${alt}, which has no skills/${alt}/SKILL.md`);
+    }
+  }
+});
+
 test('expect alternatives: either route passes, and a "none" alternative counts a false activation only when both miss', () => {
   const { passes } = require('../scripts/evals.cjs');
   assert.equal(passes({ expect: 'bk-spec|none', got: 'none' }), true);
