@@ -1,6 +1,6 @@
 # D5 — Batch câu hỏi hợp nhất cho owner, 2026-09-12
 
-> **TRẠNG THÁI 2026-09-19: CẢ 27 CÂU ĐÃ CÓ QUYẾT ĐỊNH**; B6 của câu 27 chốt 2026-09-19 (owner chọn chạy sau 05:00). C2 xong tối 2026-09-18 (owner đã xoá `.git` của bản sao; phiên kiểm bằng cách liệt kê thư mục cha). Câu 10, 11, 13, 15, 17–20 và nhóm B của câu 27 chốt tối 2026-09-18 theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."). *(Trạng thái trước: một phần đã chốt 2026-09-12, còn lại chờ owner.)*
+> **TRẠNG THÁI 2026-09-19: CẢ 28 CÂU ĐÃ CÓ QUYẾT ĐỊNH; câu 28 (prompt ranh giới `bk-db` / `bk-ops`) chốt 2026-09-19: (a)**; B6 của câu 27 chốt 2026-09-19 (owner chọn chạy sau 05:00). C2 xong tối 2026-09-18 (owner đã xoá `.git` của bản sao; phiên kiểm bằng cách liệt kê thư mục cha). Câu 10, 11, 13, 15, 17–20 và nhóm B của câu 27 chốt tối 2026-09-18 theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."). *(Trạng thái trước: một phần đã chốt 2026-09-12, còn lại chờ owner.)*
 >
 > Đây là D5 (`docs/handoff/2026-09-11-owner-directives.md`, mục "Thứ tự thực thi"): hợp nhất **tất cả** câu hỏi đang chờ owner, đang nằm rải rác ở nhiều file, thành một batch duy nhất. Tài liệu này **không tự trả lời, không tự quyết** thay owner — nó chỉ tập hợp, khử trùng lặp, sắp thứ tự, và (với vài câu) nhắc lại hoặc bổ sung khuyến nghị (ghi rõ là khuyến nghị, không phải quyết định). Không dòng mã, spec, ma trận hay `docs/hosts.md` nào bị sửa theo file này — kể cả sau khi có quyết định, việc áp dụng vẫn là một bước riêng, chưa làm.
 >
@@ -310,6 +310,13 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 - **Trả lời sau được (B1–B11):** Vue; phạm vi `bk-guard`; danh sách MCP opt-in so với luật không giữ catalog; `doctor` báo công cụ bên thứ ba; `npx skills`; activation trong profile hằng ngày trước `bk-map`; ủy quyền theo loại việc; lấy chữ thay vì viết lại ở vài chỗ; "MIT trần" của vercel; ý của `claude-security`; mode của anthropics/skills.
 - **Việc tay (C1, C2):** cài lại bản copy Antigravity; xoá `.git` của bản sao anthropics/skills.
 - **Khuyến nghị:** năm skill đều vào catalog, thứ tự `bk-ops` → `bk-db` → `bk-map` → `bk-research` → `bk-perf`; dựng `bk-product` và `bk-agent` sau năm skill; không pack nào thành core (cũng là khuyến nghị cho câu 7). Khuyến nghị cho từng ý còn lại ở file đề xuất.
+
+### 28. Prompt ranh giới `bk-db` / `bk-ops`: thêm ở đâu
+> **ĐÃ CHỐT 2026-09-19 — owner: "Câu 28: tôi chọn (a), file `evals/activation/boundaries.jsonl` với hai prompt khuyến nghị; làm sau gói đo Antigravity nếu phiên còn dưới 60% ngữ cảnh, không thì ghi quyết định và để sprint `bk-research`."** Hai ranh giới mà reviewer của sprint `bk-map` nêu (trace một feature với một câu hỏi về nó; `bk-map` với `bk-setup` quanh chữ "onboard") là ứng viên cho cùng file, chưa được duyệt.
+*(MỚI 2026-09-19, từ `docs/status.md` §7 (ee); `docs/plans/2026-09-19-v03-remaining-skills.md`, mục "Việc đi kèm", giao sprint `bk-map` đề xuất, "thêm khi owner đồng ý".)*
+- **Vấn đề:** chưa prompt activation nào nằm trên ranh giới hai skill: một cảnh báo của chính database ("CPU của DB 100%, alert vừa bắn"). Reviewer độc lập của sprint `bk-db` nêu. `tests/evals.test.cjs` giữ đúng ba prompt cho mỗi intent của skill, nên không thêm được prompt thứ tư vào `db` hay `ops`.
+- **Lựa chọn:** (a) một file riêng `evals/activation/boundaries.jsonl`, mỗi prompt nhận nhãn của cả hai skill (`bk-db|bk-ops`), có test riêng (id không trùng, mọi nhãn là skill đang có, mỗi prompt nêu ít nhất hai skill), chạy bằng `--file`; bộ 90 prompt và mọi số so sánh cũ giữ nguyên. (b) nới test để mỗi intent có thêm một prompt ranh giới: đụng bất biến đang được canh và đổi tổng số của mọi lượt so sánh. (c) không thêm, ghi là giới hạn đã biết.
+- **Khuyến nghị:** (a), với hai prompt đầu: "The database CPU alert has been at 100% for ten minutes and checkout requests are timing out. Find out what is going on." và "Cảnh báo replication lag của Postgres vừa bắn, staging đang đọc dữ liệu cũ. Kiểm tra giúp mình." Cả hai nhãn `bk-db|bk-ops`. Sau này các ranh giới khác (`bk-map` / `bk-audit`, `bk-perf` / `bk-db`) vào cùng file.
 
 ---
 
