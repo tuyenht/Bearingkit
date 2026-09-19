@@ -1,6 +1,6 @@
 # D5 — Batch câu hỏi hợp nhất cho owner, 2026-09-12
 
-> **TRẠNG THÁI 2026-09-19: CẢ 28 CÂU ĐÃ CÓ QUYẾT ĐỊNH; câu 28 (prompt ranh giới `bk-db` / `bk-ops`) chốt 2026-09-19: (a)**; B6 của câu 27 chốt 2026-09-19 (owner chọn chạy sau 05:00). C2 xong tối 2026-09-18 (owner đã xoá `.git` của bản sao; phiên kiểm bằng cách liệt kê thư mục cha). Câu 10, 11, 13, 15, 17–20 và nhóm B của câu 27 chốt tối 2026-09-18 theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."). *(Trạng thái trước: một phần đã chốt 2026-09-12, còn lại chờ owner.)*
+> **TRẠNG THÁI 2026-09-19: CẢ 29 CÂU ĐÃ CÓ QUYẾT ĐỊNH (câu 29 chốt hướng, cơ chế còn thiết kế); câu 28 (prompt ranh giới `bk-db` / `bk-ops`) chốt 2026-09-19: (a)**; B6 của câu 27 chốt 2026-09-19 (owner chọn chạy sau 05:00). C2 xong tối 2026-09-18 (owner đã xoá `.git` của bản sao; phiên kiểm bằng cách liệt kê thư mục cha). Câu 10, 11, 13, 15, 17–20 và nhóm B của câu 27 chốt tối 2026-09-18 theo ủy quyền của owner ("Các đề xuất nên lựa chọn các đề xuất tốt nhất có thể cho tôi."). *(Trạng thái trước: một phần đã chốt 2026-09-12, còn lại chờ owner.)*
 >
 > Đây là D5 (`docs/handoff/2026-09-11-owner-directives.md`, mục "Thứ tự thực thi"): hợp nhất **tất cả** câu hỏi đang chờ owner, đang nằm rải rác ở nhiều file, thành một batch duy nhất. Tài liệu này **không tự trả lời, không tự quyết** thay owner — nó chỉ tập hợp, khử trùng lặp, sắp thứ tự, và (với vài câu) nhắc lại hoặc bổ sung khuyến nghị (ghi rõ là khuyến nghị, không phải quyết định). Không dòng mã, spec, ma trận hay `docs/hosts.md` nào bị sửa theo file này — kể cả sau khi có quyết định, việc áp dụng vẫn là một bước riêng, chưa làm.
 >
@@ -317,6 +317,11 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 - **Vấn đề:** chưa prompt activation nào nằm trên ranh giới hai skill: một cảnh báo của chính database ("CPU của DB 100%, alert vừa bắn"). Reviewer độc lập của sprint `bk-db` nêu. `tests/evals.test.cjs` giữ đúng ba prompt cho mỗi intent của skill, nên không thêm được prompt thứ tư vào `db` hay `ops`.
 - **Lựa chọn:** (a) một file riêng `evals/activation/boundaries.jsonl`, mỗi prompt nhận nhãn của cả hai skill (`bk-db|bk-ops`), có test riêng (id không trùng, mọi nhãn là skill đang có, mỗi prompt nêu ít nhất hai skill), chạy bằng `--file`; bộ 90 prompt và mọi số so sánh cũ giữ nguyên. (b) nới test để mỗi intent có thêm một prompt ranh giới: đụng bất biến đang được canh và đổi tổng số của mọi lượt so sánh. (c) không thêm, ghi là giới hạn đã biết.
 - **Khuyến nghị:** (a), với hai prompt đầu: "The database CPU alert has been at 100% for ten minutes and checkout requests are timing out. Find out what is going on." và "Cảnh báo replication lag của Postgres vừa bắn, staging đang đọc dữ liệu cũ. Kiểm tra giúp mình." Cả hai nhãn `bk-db|bk-ops`. Sau này các ranh giới khác (`bk-map` / `bk-audit`, `bk-perf` / `bk-db`) vào cùng file.
+
+### 29. Kit cài toàn cục có áp cho mọi dự án không
+> **ĐÃ CHỐT HƯỚNG 2026-09-19 — owner: "Theo tôi cài global nhưng sẽ cần phải kích hoạt riêng cho từng dự án, dự án nào được kích hoạt thì mới dùng chứ không phải dự án nào cũng dùng."** Cơ chế cho từng host **chưa thiết kế**: việc của phiên sau (đọc tài liệu Antigravity về rule của workspace và `trigger`, `--scope project` của Claude Code, ghi vào `docs/compat/`; viết spec; trình owner trước khi dựng).
+*(MỚI 2026-09-19, từ lời 5 của phiên commit `bk-map`: owner thấy `bk-debug` chạy trong một dự án của mình trên Antigravity IDE.)*
+- **Vấn đề:** `antigravity install` chép kit vào `~/.gemini/config/plugins/bearingkit` với rule `trigger: always_on`, nên Antigravity nạp nó cho mọi workspace, cả IDE; bản copy nằm đó từ 2026-09-11 trong khi `owner-migration.md` còn `PLANNED`. Đã gỡ 2026-09-19 theo owner; từ nay chỉ cài khi đo.
 
 ---
 
