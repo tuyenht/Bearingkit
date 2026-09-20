@@ -43,6 +43,17 @@ function preflight(args) {
   if ((args.host || 'claude') === 'claude' && !args['config-dir'] && !args.daily && !args['stage-only']) {
     return { exit: 2, message: 'no --config-dir: this run would use your daily profile and leave its sessions there. Name an isolated profile with --config-dir, or pass --daily to mean the daily profile.\n' + USAGE };
   }
+  // The manifest ships the plugin disabled, so a profile that does not enable the inline one loads none of the kit
+  // and the run would score an empty kit as a routing result (measured 2026-09-20: 0 kit skills without the entry,
+  // 15 with it). The daily profile is the owner's to edit, so this only guards a named profile.
+  if ((args.host || 'claude') === 'claude' && args['config-dir'] && !args['stage-only'] && args['plugin-dir'] !== 'none') {
+    const settings = path.join(path.resolve(String(args['config-dir'])), 'settings.json');
+    let enabled = null;
+    try { enabled = JSON.parse(fs.readFileSync(settings, 'utf8')).enabledPlugins; } catch { enabled = null; }
+    if (!enabled || enabled['bearingkit@inline'] !== true) {
+      return { exit: 2, message: `${settings} does not enable the inline plugin, so the kit would not load and the run would measure an empty kit. Add "enabledPlugins": { "bearingkit@inline": true } to it (the manifest ships the plugin disabled: it is switched on per project).\n` };
+    }
+  }
   return null;
 }
 

@@ -19,6 +19,14 @@ test('every host manifest carries the package name and version', () => {
   assert.ok(market.plugins.some((p) => p.name === pkg.name), 'marketplace.json lists the plugin');
 });
 
+// Installed once for the machine, used only where the owner says (D5 question 29): the manifest ships the plugin
+// switched off, so an install at the CLI's default scope enables it nowhere, and `bearingkit activate` is what
+// turns it on for one project. "Set `defaultEnabled: false` in `plugin.json` to ship a plugin that installs
+// disabled" — Claude Code plugins reference, quoted in docs/compat/2026-09-19-per-project-activation.md (C5).
+test('the Claude Code manifest ships the plugin disabled, so activation is per project', () => {
+  assert.equal(read('.claude-plugin/plugin.json').defaultEnabled, false);
+});
+
 test('every path a manifest or hook names exists in the checkout', () => {
   for (const file of ['.codex-plugin/plugin.json', '.cursor-plugin/plugin.json']) {
     const m = read(file);

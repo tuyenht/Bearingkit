@@ -6,5 +6,6 @@
   "homepage": "https://github.com/tuyenht/Bearingkit",
   "repository": "https://github.com/tuyenht/Bearingkit",
   "license": "MIT",
+  "defaultEnabled": false,
   "keywords": ["skills", "protocol", "tdd", "debugging", "code-review", "workflow"]
 }

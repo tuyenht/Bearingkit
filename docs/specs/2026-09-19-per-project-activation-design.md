@@ -50,13 +50,14 @@ Recommendation: the kit's own folder, for the approval flow and to stay clear of
 
 | # | Question | Where | Passes when |
 |---|---|---|---|
-| CC-1 | Which command writes `true` into `.claude/settings.local.json` for a `defaultEnabled: false` plugin, and does `install --scope user` write any entry | isolated profile under `_build/`, a scratch project outside any git repository (so no global git exclude is written) | an activated scratch project lists the kit's skills and gets the bootstrap; a second one lists none |
-| CC-2 | Does a disabled plugin leave its SessionStart hook, skills and agents out | same | the second project's first-turn input carries no protocol and no `bk-*` skill |
-| CC-3 | Does `--plugin-dir` load the kit although `defaultEnabled` is false | same | an eval run lists the kit's skills |
+| CC-1 | Which command writes `true` into `.claude/settings.local.json` for a `defaultEnabled: false` plugin, and does `install --scope user` write any entry | isolated profile under `_build/`, a scratch project outside any git repository (so no global git exclude is written) | **done 2026-09-20**: install at user scope writes `false`, the plugin is switched on nowhere; `bearingkit activate` writes the project's `true` |
+| CC-2 | Does a disabled plugin leave its SessionStart hook, skills and agents out | same | **done**: activated project 33 skills, 15 the kit's, bootstrap present; the other 18 and 0; after `deactivate`, 18 and 0 |
+| CC-3 | Does `--plugin-dir` load the kit although `defaultEnabled` is false | same | **done, and it did not**: 0 kit skills until the profile enables `bearingkit@inline`; the runner now stops rather than measure an empty kit |
 | AG-1 | Does `.agents/plugins.json` in one workspace load a plugin kept under `~/.bearingkit/antigravity/`, and a workspace without it not | the app with port 1405 (owner's approval), the eval stage and a second scratch folder outside `C:\Projects` | the first lists `bk-*` skills and applies the rule; the second shows neither |
 | AG-2 | Does the entry name the plugin folder or a folder of plugins; does `~` expand on Windows | same | the form that loads is recorded in `docs/compat/` |
 | AG-3 | Does a declared plugin's `hooks.json` run | same, with the eval driver armed | the driver injects a queued prompt |
 | AG-4 | Does the IDE honour the workspace file as 2.0 does | the IDE, one scratch folder | same result as AG-1 |
+| AG-5 | May the declared path be the checkout itself, or a junction to it, so that `git pull` alone updates every activated project | same as AG-1, with an entry naming the checkout | the kit's skills load from the checkout; if they do, `update` needs no copy step for that install |
 
 A failing AG-1 sends the Antigravity half back to the owner before any code: the remaining choices are a per-project copy (rejected above) or accepting global skill listing.
 

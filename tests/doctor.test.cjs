@@ -135,6 +135,20 @@ test('a copy made from another checkout is reported instead of silently compared
   assert.ok(r.checks.some((c) => c.ok === false && /marker|kit/i.test(c.name)));
 });
 
+// Since per-project activation the copy Antigravity loads may be the store a project declares, not the global copy
+// under ~/.gemini. doctor reads whichever is on disk, store first, so it and `bearingkit status` say the same thing.
+test('doctor reads the store when it is there, and the global copy when it is not', () => {
+  const home = fakeHome();
+  const store = path.join(home, '.bearingkit', 'antigravity', 'plugins', 'bearingkit');
+  install({ root: ROOT, dest: store });
+  const r = runDoctor(ROOT, home);
+  assert.match(r.out, /antigravity copy present \(store\)/);
+  assert.equal(r.ok, true);
+  const onlyGlobal = fakeHome();
+  install({ root: ROOT, dest: destIn(onlyGlobal) });
+  assert.match(runDoctor(ROOT, onlyGlobal).out, /antigravity copy present \(global copy\)/);
+});
+
 test('doctor never reports ok for the host listing it cannot read without the host', () => {
   const { root, home } = stagedCopy();
   const r = runDoctor(root, home);

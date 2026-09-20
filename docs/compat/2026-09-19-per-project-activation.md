@@ -21,6 +21,16 @@ Method. Two research agents (Sonnet) read the docs; the session then re-read eve
 | C10 | `extraKnownMarketplaces` maps a marketplace name to a `source` object "and an optional `autoUpdate` Boolean"; "Set `"autoUpdate": true` alongside `source` to make Claude Code refresh that marketplace and update its installed plugins in the background after startup." Scope: any settings file, but a repository's own settings are honoured only after the folder is trusted | settings-reference, `### extraKnownMarketplaces` | yes (raw markdown, 2026-09-20) |
 | C11 | The machine itself: `node` v25.3.0 and `pnpm` 11.1.2 are on PATH; `npm`, `npx` and `corepack` are not, in the shells and in PowerShell | `command -v` / `Get-Command`, 2026-09-20 | yes (run) |
 
+### Measured on this machine, 2026-09-20 (probes CC-1 to CC-3)
+
+Isolated profile `_build/profile/claude` (`CLAUDE_CONFIG_DIR`), Claude Code 2.1.274, two scratch projects outside `C:\Projects` and outside any git repository, sessions run as `claude -p --model sonnet --max-turns 1` and read from the init event's skills listing.
+
+| # | Question | What happened |
+|---|---|---|
+| CC-1 | What does an install at the default scope do when the manifest ships `"defaultEnabled": false` | `claude plugin marketplace add C:\Projects\Bearingkit` then `claude plugin install bearingkit@bearingkit` → "Successfully installed plugin: bearingkit@bearingkit (scope: user). This plugin is disabled by default — enable it with: `claude plugin enable bearingkit@bearingkit`", and the profile's `settings.json` gains `"enabledPlugins": { "bearingkit@bearingkit": false }`. Installed for the machine, switched on nowhere |
+| CC-2 | Does a project's own `enabledPlugins` entry switch it on there and nowhere else | after `bearingkit activate --host claude` in one scratch project: that session listed **33 skills, 15 of them the kit's**, and its transcript carries the bootstrap (`<bearingkit-protocol>`), so the SessionStart hook ran; the other scratch project listed **18 skills, 0 of the kit's**; after `bearingkit deactivate` the first listed **18 and 0** again. The project file was honoured in a `-p` run with no trust dialog |
+| CC-3 | Does `--plugin-dir`, which every eval run uses, still load the kit | **no**: with the manifest disabled by default, `claude -p --plugin-dir <checkout>` listed **0 kit skills**. Adding `"enabledPlugins": { "bearingkit@inline": true }` to the profile restored **33 skills, 15 of the kit's**. The runner now refuses to start a Claude run whose named profile lacks that entry, instead of measuring an empty kit |
+
 Open, to probe in the isolated profile before building: what `install --scope local` writes for a plugin with `defaultEnabled: false` (an entry `true`, or nothing), and which file `claude plugin enable` writes when run inside a project.
 
 ## Antigravity 2.x

@@ -248,6 +248,28 @@ test('the run stops on either window, not only the five-hour one', () => {
   assert.equal(quotaStop({ fiveHour: 0.4, sevenDay: 0.95 }, limits).window, 'seven-day', 'the ceiling is inclusive');
 });
 
+// Since the manifest ships the plugin disabled (D5 question 29: on only where the owner says), a profile that does
+// not enable the inline plugin loads none of the kit, and the run would measure an empty kit and call it a routing
+// result. Measured on 2026-09-20: `--plugin-dir` with no `bearingkit@inline` entry listed 0 kit skills, and 15 with
+// it. So the runner stops before any session, as it does for a missing --config-dir.
+test('a profile that does not enable the inline plugin stops the run before any session', () => {
+  const { preflight } = require('../scripts/evals.cjs');
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bk-prof-'));
+  const root = path.join(__dirname, '..');
+  const stop = preflight({ _: [], 'config-dir': dir, 'plugin-dir': root });
+  assert.equal(stop.exit, 2);
+  assert.match(stop.message, /bearingkit@inline/);
+  assert.match(stop.message, /enabledPlugins/);
+  fs.writeFileSync(path.join(dir, 'settings.json'), JSON.stringify({ enabledPlugins: { 'bearingkit@inline': true } }));
+  assert.equal(preflight({ _: [], 'config-dir': dir, 'plugin-dir': root }), null, 'with the entry the run goes ahead');
+  // A run of the bare host measures the host, so it needs no plugin entry; and the daily profile is the owner's.
+  fs.writeFileSync(path.join(dir, 'settings.json'), '{}');
+  assert.equal(preflight({ _: [], 'config-dir': dir, 'plugin-dir': 'none' }), null);
+  assert.equal(preflight({ _: [], host: 'antigravity' }), null);
+});
+
 // One run may need prompts from several files (the acceptance pair, a Phase 1 negative, the boundary set), in the
 // order that puts the important ones first; an id asked for and found in no file stops the run.
 test('--file takes several files, and --id sets which prompts run and in what order', () => {
@@ -341,7 +363,8 @@ test('the runner stops before any session for --help, an unknown option, a stray
   const daily = preflight({ _: [] });
   assert.equal(daily.exit, 2);
   assert.match(daily.message, /daily profile/);
-  assert.equal(preflight({ _: [], 'config-dir': 'x' }), null);
+  // A named profile is enough to start; that it must also enable the inline plugin is the test above.
+  assert.equal(preflight({ _: [], 'config-dir': 'x', 'plugin-dir': 'none' }), null);
   assert.equal(preflight({ _: [], daily: true }), null, 'the daily profile when it is named');
   assert.equal(preflight({ _: [], host: 'antigravity', score: true }), null, 'an Antigravity run needs no Claude profile');
 });

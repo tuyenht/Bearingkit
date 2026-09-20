@@ -44,12 +44,17 @@ function sameTree(a, b) {
 // the repair line doctor prints would install a second copy at the default location instead of refreshing the one
 // the host actually loads.
 function run({ root = ROOT, home = os.homedir(), dest: destOpt, log = () => {} } = {}) {
-  const dest = destOpt ? path.resolve(destOpt) : path.join(home, '.gemini', 'config', 'plugins', 'bearingkit');
-  const refresh = `node ${path.join(root, 'bin', 'bearingkit.cjs')} antigravity install${destOpt ? ` --dest ${dest}` : ''}`;
+  // Two copies can exist: the store a project declares for itself (the way since D5 question 29) and the older
+  // global copy under ~/.gemini, which Antigravity loads in every workspace. Without --dest, doctor reads whichever
+  // is on disk, store first, so it never reports the copy the host is not loading.
+  const store = path.join(home, '.bearingkit', 'antigravity', 'plugins', 'bearingkit');
+  const global = path.join(home, '.gemini', 'config', 'plugins', 'bearingkit');
+  const dest = destOpt ? path.resolve(destOpt) : (fs.existsSync(path.join(store, MARKER)) ? store : global);
+  const refresh = destOpt || dest === global ? `node ${path.join(root, 'bin', 'bearingkit.cjs')} antigravity install${dest === global && !destOpt ? '' : ` --dest ${dest}`}` : `node ${path.join(root, 'bin', 'bearingkit.cjs')} install --host antigravity`;
   const checks = [];
   const add = (name, ok, fix) => { checks.push({ name, ok, fix }); return ok; };
 
-  if (add('antigravity copy present', fs.existsSync(path.join(dest, MARKER)), refresh)) {
+  if (add(`antigravity copy present (${destOpt ? 'named by --dest' : dest === store ? 'store' : 'global copy'})`, fs.existsSync(path.join(dest, MARKER)), refresh)) {
     add('antigravity copy marker names this kit', read(path.join(dest, MARKER)).trim() === root, refresh);
     // The rule is generated from the protocol, the host note and the kit root, so the only honest comparison is with
     // the text the installer would write now; checking for a few markers passed a note whose wording had changed.
