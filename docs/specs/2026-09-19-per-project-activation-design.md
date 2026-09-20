@@ -67,7 +67,11 @@ A failing AG-1 sends the Antigravity half back to the owner before any code: the
 3. Code, then `docs/hosts.md`, `README.md`, the migration plan (`docs/plans/2026-09-10-owner-migration.md`, phase 2 activates projects one by one), and the eval stage.
 4. Acceptance on both hosts in an activated project, plus one conversation in a non-activated project showing no kit.
 
-## Decisions for the owner
+## Decided 2026-09-20 under the owner's delegation
+
+The owner's words: "Xử lý làm sao để cài đặt cấu hình/ kích hoạt trên Antigravity, Claude đơn giản để dùng; cấu trúc cài đặt đẹp, chuẩn tốt nhất cho tôi nhé. Giúp tôi xử lý các vấn đề còn lại trước "bk-research" tự động, tốt ưu và tốt nhất có thể." The three questions below are answered in `docs/plans/2026-09-20-activation-build.md`: the store lives in the kit's own home (`--dest` for the owner's `~/.gemini/shared-plugins/bearingkit`), the v2 §9 exception is taken, `activate` also adds the two paths to `.git/info/exclude` unless told not to, and the probes stay a precondition to shipping — the Antigravity ones still need an approved run of the app. Any of these reopens with one word.
+
+## Decisions for the owner (as written before the delegation)
 
 1. Direction as proposed: host-native activation, `defaultEnabled: false` on Claude Code, and the v2 §9 exception. For Antigravity the owner's proposal of 2026-09-19 night already chose the central store and `.agents/plugins.json`; left open is the store's location (table above).
 2. The Antigravity file `.agents/plugins.json`: the kit writes it and leaves git alone (proposed), or the kit also adds it to the project's `.git/info/exclude`.
