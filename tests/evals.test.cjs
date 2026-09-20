@@ -364,6 +364,42 @@ test('a session that failed to authenticate is reported as such and stops the ru
   assert.equal(authStop(''), null);
 });
 
+// \"no-action\" was one marker for two different things: a prompt that never reached the model, and an answer
+// given in one turn with no tool call — which is exactly what acceptance prompt 1 must do. A session that answered
+// in words is scored \"none\"; only a session with nothing to show stays no-action.
+test('a one-turn answer with no tool call scores none; an empty session stays no-action', () => {
+  const { classify } = require('../scripts/evals.cjs');
+  const line = (o) => JSON.stringify(o);
+  const answered = [
+    line({ type: 'system', subtype: 'init' }),
+    line({ type: 'assistant', message: { content: [{ type: 'text', text: 'ACT acts and reports; COUNCIL proposes and waits.' }] } }),
+    line({ type: 'result', subtype: 'success', is_error: false, num_turns: 1, result: 'ACT acts and reports; COUNCIL proposes and waits.' }),
+  ].join('\n');
+  assert.equal(classify(answered), 'none', 'the model answered, it simply opened no skill');
+  const empty = [line({ type: 'system', subtype: 'init' }), line({ type: 'result', subtype: 'success', is_error: false, num_turns: 1, result: '' })].join('\n');
+  assert.equal(classify(empty), 'no-action', 'nothing came back: read the stream');
+  const errored = [line({ type: 'result', subtype: 'success', is_error: true, num_turns: 1, result: 'Failed to authenticate: OAuth session expired' })].join('\n');
+  assert.equal(classify(errored), 'no-action', 'an error is not an answer');
+});
+
+// A prompt file is named relative to the working directory, which is fine inside the checkout and a trap outside
+// it: on 2026-09-20 the owner ran the documented command from another folder and got a bare ENOENT for
+// evals/activation/boundaries.jsonl. A path that is not there is looked for in the checkout before the run stops,
+// and the message names both places.
+test('--file finds a prompt file of the checkout from any working directory, and says both places when it cannot', () => {
+  const { selectPrompts } = require('../scripts/evals.cjs');
+  const here = process.cwd();
+  let prompts;
+  try {
+    process.chdir(require('node:os').tmpdir());
+    prompts = selectPrompts({ file: 'evals/activation/boundaries.jsonl', id: 'bnd-en-02' });
+  } finally { process.chdir(here); }
+  assert.equal(prompts.length, 1);
+  assert.equal(prompts[0].expect, 'bk-map|bk-setup');
+  assert.throws(() => selectPrompts({ file: 'evals/activation/nope.jsonl' }), /nope.jsonl/);
+  assert.throws(() => selectPrompts({ file: 'evals/activation/nope.jsonl' }), /Bearingkit/);
+});
+
 // The Antigravity stage is reached through the CLI, so what the CLI hands stage() is part of the contract: one
 // manual run on the host is not a regression test.
 test('--stage-only forwards --activate and --dest to the stage, and says where the store was declared', async () => {

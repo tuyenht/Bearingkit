@@ -71,8 +71,19 @@ function loadPrompts(file) {
 
 // --file takes one file or several, comma-separated (ids must stay unique across them); --id picks prompts in the
 // order given, so the important ones run first, and an id found in no file stops the run.
+// A prompt file is named relative to the working directory, which is right inside the checkout and a trap outside
+// it: the documented command, run from another folder, died on a bare ENOENT (2026-09-20). A relative path that is
+// not there is looked for in the checkout, and a path in neither place names both.
+function promptFile(name) {
+  const here = path.resolve(name);
+  if (fs.existsSync(here) || path.isAbsolute(name)) return here;
+  const inKit = path.resolve(ROOT, name);
+  if (fs.existsSync(inKit)) return inKit;
+  throw new Error(`no prompt file ${name}: neither ${here} nor ${inKit}`);
+}
+
 function selectPrompts(args) {
-  const files = String(args.file || path.join(ROOT, 'evals', 'activation', 'phase-1.jsonl')).split(',').map((f) => path.resolve(f.trim()));
+  const files = String(args.file || path.join(ROOT, 'evals', 'activation', 'phase-1.jsonl')).split(',').map((f) => promptFile(f.trim()));
   let prompts = [];
   const ids = new Set();
   for (const f of files) {
@@ -296,11 +307,24 @@ function runClaudePrompt(prompt, opts) {
       : spawnSync('claude', args, spawnOpts);
   } finally { fs.closeSync(fd); fs.rmSync(promptFile, { force: true }); }
   const raw = r.stdout || '';
-  // One turn, no tool call, no user event: the model did not act on the prompt (it was not delivered, or it was
-  // read as part of the injected context, both seen on 2026-09-10). Marked "no-action" rather than scored as
-  // "none" so it stands out in the table; read the raw stream, then rerun.
-  const acted = /"type":"user"/.test(raw) || /"type":"tool_use"/.test(raw) || !/"num_turns":1\b/.test(raw);
-  return { got: acted ? parseStream(raw) : 'no-action', raw, stderr: r.stderr || '', status: r.status, quota: parseQuota(raw), init: parseInit(raw) };
+  return { got: classify(raw), raw, stderr: r.stderr || '', status: r.status, quota: parseQuota(raw), init: parseInit(raw) };
+}
+
+// What the session did. One turn with no tool call and no user event used to be "no-action" whatever came back,
+// which put two different things under one word: a prompt that never reached the model (not delivered, or read as
+// part of the injected context, both seen on 2026-09-10; an expired login on 2026-09-20), and an answer given
+// straight in words, which is exactly what acceptance prompt 1 must do. A session that said something is scored
+// "none"; only one with an error or nothing to show stays no-action, and that word still means "read the stream".
+function classify(raw) {
+  const text = String(raw || '');
+  const acted = /"type":"user"/.test(text) || /"type":"tool_use"/.test(text) || !/"num_turns":1\b/.test(text);
+  if (acted) return parseStream(text);
+  for (const line of text.split('\n')) {
+    let o;
+    try { o = JSON.parse(line); } catch { continue; }
+    if (o && o.type === 'result' && !o.is_error && typeof o.result === 'string' && o.result.trim()) return 'none';
+  }
+  return 'no-action';
 }
 
 // A result passes when the skill invoked is the expected one, or, for a baseline run against another setup,
@@ -472,4 +496,4 @@ async function run(argv) {
   process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}, no-action ${summary.noAction}.${quotaNote}\n${listing}\nWritten: ${out}\n`);
 }
 
-module.exports = { run, preflight, parseStream, parseQuota, parseInit, listingNote, quotaStop, authStop, loadPrompts, selectPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };
+module.exports = { run, preflight, parseStream, parseQuota, parseInit, listingNote, quotaStop, authStop, classify, loadPrompts, selectPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };
