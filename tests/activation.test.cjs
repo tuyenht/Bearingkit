@@ -202,6 +202,38 @@ test('status finds the global copy when there is no store, and follows --dest', 
   assert.equal(status({ project, home, root, dest: elsewhere }).store.path, elsewhere);
 });
 
+// Switching one host off must not un-ignore the other host's file, which is still in use: the ignore block holds
+// one line per host and only the line of the host being switched goes.
+test('deactivating one host leaves the other host ignored', () => {
+  const project = tmp('proj12');
+  const home = tmp('home12');
+  git(project, ['init', '-q']);
+  const ignored = (rel) => git(project, ['check-ignore', '-q', rel]).status === 0;
+  activate({ project, home });
+  deactivate({ project, home, host: 'claude' });
+  assert.ok(ignored('.agents/plugins.json'), 'the host still switched on keeps its file ignored');
+  assert.equal(git(project, ['status', '--porcelain']).stdout, '', 'and nothing new shows up in git status');
+  deactivate({ project, home, host: 'antigravity' });
+  assert.doesNotMatch(fs.readFileSync(path.join(project, '.git', 'info', 'exclude'), 'utf8'), /bearingkit/i, 'the last one out removes the block');
+});
+
+// A store installed somewhere else (--dest) has to be the path a project then names; otherwise activate writes an
+// entry pointing at a store that is not there.
+test('--dest is the store activate names and status reads', () => {
+  const project = tmp('proj13');
+  const home = tmp('home13');
+  const root = path.join(__dirname, '..');
+  const dest = path.join(tmp('customstore'), 'kit');
+  require('../scripts/antigravity.cjs').install({ root, dest });
+  activate({ project, home, dest, host: 'antigravity' });
+  const entry = JSON.parse(fs.readFileSync(path.join(project, ...AGENTS_FILE), 'utf8')).entries[0].path;
+  assert.equal(entry, dest.replace(/\\/g, '/'));
+  const s = status({ project, home, root, dest });
+  assert.deepEqual([s.store.present, s.hosts.antigravity.activated], [true, true]);
+  deactivate({ project, home, dest, host: 'antigravity' });
+  assert.ok(!fs.existsSync(path.join(project, ...AGENTS_FILE)), 'and it is the entry that goes');
+});
+
 test('status answers three things: is the store there, is it current, is this project on', () => {
   const project = tmp('proj7');
   const home = tmp('home7');

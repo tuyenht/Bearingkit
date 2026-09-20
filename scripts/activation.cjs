@@ -54,11 +54,12 @@ function writeOrRemove(file, value) {
   writeJson(file, value);
 }
 
-function antigravityPlan(project, home, on) {
+function antigravityPlan(project, home, on, dest) {
   const file = path.join(project, ...AGENTS_FILE);
   const value = readHostFile(file);
   const entries = Array.isArray(value.entries) ? value.entries : [];
-  const wanted = storeEntry(home);
+  // The entry names the store this machine actually has: the default one, or the one --dest installed.
+  const wanted = dest ? path.resolve(dest).replace(/\\/g, '/') : storeEntry(home);
   const has = entries.some((e) => e && typeof e.path === 'string' && e.path.replace(/\\/g, '/') === wanted);
   if (on === has) return { host: 'antigravity', kind: '=', file, text: on ? `${file} already names the store` : `${file} does not name the store` };
   const next = { ...value, entries: on ? [...entries, { path: wanted }] : entries.filter((e) => !(e && typeof e.path === 'string' && e.path.replace(/\\/g, '/') === wanted)) };
@@ -86,29 +87,39 @@ const excludeFile = (project) => {
   return dir ? path.join(dir, 'info', 'exclude') : null;
 };
 
-// The two paths are ignored only for this clone, and only when the repository does not ignore them already: a
-// project that has its own rule for `.claude/` keeps it, and nothing is ever written into .gitignore.
-function excludePlan(project, on) {
+// The paths are ignored only for this clone, and only when the repository does not ignore them already: a project
+// that has its own rule for `.claude/` keeps it, and nothing is ever written into .gitignore. One line per host, so
+// switching one host off leaves the other host's file ignored while it is still in use.
+const HOST_FILE = { antigravity: AGENTS_FILE, claude: CLAUDE_FILE };
+
+function excludePlan(project, on, hosts) {
   if (!isRepo(project)) return null;
   const file = excludeFile(project);
   if (!file) return null;
-  const rels = [AGENTS_FILE, CLAUDE_FILE].map((p) => '/' + p.join('/'));
+  const rels = hosts.map((h) => '/' + HOST_FILE[h].join('/'));
   const text = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
   const lines = text.split('\n');
   const start = lines.indexOf(EXCLUDE_HEAD);
+  // The block's own lines, whatever host wrote them, so a second host adds to the block instead of a second block.
+  const all = [AGENTS_FILE, CLAUDE_FILE].map((p) => '/' + p.join('/'));
+  let end = start === -1 ? -1 : start + 1;
+  while (end !== -1 && end < lines.length && all.includes(lines[end])) end++;
+  const block = start === -1 ? [] : lines.slice(start + 1, end);
   if (on) {
-    if (start !== -1) return { host: 'git', kind: '=', file, text: `${file} already ignores them` };
-    const missing = rels.filter((rel) => git(project, ['check-ignore', '-q', rel.slice(1)]).status !== 0);
-    if (!missing.length) return null;
-    const next = (text.endsWith('\n') || text === '' ? text : text + '\n') + [EXCLUDE_HEAD, ...missing, ''].join('\n');
+    const missing = rels.filter((rel) => !block.includes(rel) && git(project, ['check-ignore', '-q', rel.slice(1)]).status !== 0);
+    if (!missing.length) return start === -1 ? null : { host: 'git', kind: '=', file, text: `${file} already ignores them` };
+    const rest = start === -1 ? (text.endsWith('\n') || text === '' ? text : text + '\n') : lines.slice(0, start).concat(lines.slice(end)).join('\n');
+    const next = (rest.endsWith('\n') || rest === '' ? rest : rest + '\n') + [EXCLUDE_HEAD, ...block, ...missing, ''].join('\n');
     return { host: 'git', kind: '+', file, text: `${missing.join(', ')} ignored in this clone (${file})`, apply: () => { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, next); } };
   }
   if (start === -1) return null;
-  // Only the kit's own two lines go, not whatever someone wrote under them.
-  let end = start + 1;
-  while (end < lines.length && rels.includes(lines[end])) end++;
-  const next = lines.slice(0, start).concat(lines.slice(end)).join('\n');
-  return { host: 'git', kind: '-', file, text: `the ignore block out of ${file}`, apply: () => fs.writeFileSync(file, next) };
+  // Only the lines of the hosts being switched off go; the block stays while another host still uses it.
+  const keep = block.filter((l) => !rels.includes(l));
+  if (keep.length === block.length) return null;
+  const head = lines.slice(0, start);
+  const tail = lines.slice(end);
+  const next = (keep.length ? head.concat([EXCLUDE_HEAD, ...keep], tail) : head.concat(tail)).join('\n');
+  return { host: 'git', kind: '-', file, text: `${rels.join(', ')} out of ${file}`, apply: () => fs.writeFileSync(file, next) };
 }
 
 function plan(opts, on) {
@@ -118,9 +129,9 @@ function plan(opts, on) {
   if (host !== 'all' && !HOSTS.includes(host)) throw new Error(`unknown host ${host}; use ${HOSTS.join(', ')} or all`);
   const wanted = host === 'all' ? HOSTS : [host];
   const steps = [];
-  if (wanted.includes('antigravity')) steps.push(antigravityPlan(project, home, on));
+  if (wanted.includes('antigravity')) steps.push(antigravityPlan(project, home, on, opts.dest));
   if (wanted.includes('claude')) steps.push(claudePlan(project, home, on));
-  if (opts.gitExclude !== false) { const e = excludePlan(project, on); if (e) steps.push(e); }
+  if (opts.gitExclude !== false) { const e = excludePlan(project, on, wanted); if (e) steps.push(e); }
   return { project, home, steps };
 }
 
@@ -158,12 +169,13 @@ function status(opts = {}) {
   const tryRead = (file) => { try { return { value: readJson(file) }; } catch (e) { return { value: null, unreadable: e.message }; } };
   const ag = tryRead(path.join(project, ...AGENTS_FILE));
   const cc = tryRead(path.join(project, ...CLAUDE_FILE));
-  const wanted = storeEntry(home);
+  // The project counts as switched on when it names the store this command is reading, or the default one.
+  const wanted = new Set([store, storePath(home)].map((p) => p.replace(/\\/g, '/')));
   return {
     project,
     store: { path: store, present, current, which },
     hosts: {
-      antigravity: { activated: Boolean(ag.value && Array.isArray(ag.value.entries) && ag.value.entries.some((e) => e && typeof e.path === 'string' && e.path.replace(/\\/g, '/') === wanted)), unreadable: ag.unreadable, file: path.join(project, ...AGENTS_FILE) },
+      antigravity: { activated: Boolean(ag.value && Array.isArray(ag.value.entries) && ag.value.entries.some((e) => e && typeof e.path === 'string' && wanted.has(e.path.replace(/\\/g, '/')))), unreadable: ag.unreadable, file: path.join(project, ...AGENTS_FILE) },
       claude: { activated: Boolean(cc.value && cc.value.enabledPlugins && cc.value.enabledPlugins[PLUGIN_ID] === true), unreadable: cc.unreadable, file: path.join(project, ...CLAUDE_FILE) },
     },
   };
@@ -216,7 +228,7 @@ function cli(cmd, argv = []) {
   const antigravity = require('./antigravity.cjs');
 
   if (cmd === 'activate' || cmd === 'deactivate') {
-    const r = (cmd === 'activate' ? activate : deactivate)({ project, home, host, dryRun, gitExclude: args['git-exclude'] !== false && !args['no-git-exclude'], log: out });
+    const r = (cmd === 'activate' ? activate : deactivate)({ project, home, host, dryRun, dest: args.dest ? dest : undefined, gitExclude: args['git-exclude'] !== false && !args['no-git-exclude'], log: out });
     const wrote = r.actions.filter((a) => a.kind !== '=').length;
     out(`${dryRun ? 'dry run: ' : ''}${project}: ${wrote ? `${wrote} change${wrote === 1 ? '' : 's'}` : 'nothing to change'}`);
     if (cmd === 'activate' && wants('antigravity') && !fs.existsSync(path.join(dest, '.bearingkit-copy'))) out(`! the store is not installed yet: run  bearingkit install`);
