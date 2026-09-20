@@ -13,7 +13,11 @@ const os = require('node:os');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 
-const EVAL_DIR = process.env.BEARINGKIT_EVAL_DIR || path.join(os.homedir(), '.bearingkit', 'antigravity-eval');
+// The queue sits outside the kit's own home on purpose. While it lived at ~/.bearingkit/antigravity-eval it was a
+// sibling of the store a project declares, and on 2026-09-20 a conversation that had opened a skill there walked up
+// one level, found the queue, the log beside it and then the checkout. Its routing decision was already made, so it
+// scored honestly, but the prompts of a measurement should not be one listing away from a path the model holds.
+const EVAL_DIR = process.env.BEARINGKIT_EVAL_DIR || path.join(os.homedir(), '.bk-relay');
 // The marker sits inside .git, where a directory listing does not show it, and holds the commit to reset to, so the
 // stage needs no tag either. Only the stage command writes it: a workspace without it is never reset.
 const STAGE_MARKER = path.join('.git', 'bearingkit-stage');

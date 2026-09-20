@@ -229,6 +229,36 @@ test('arm and disarm aim at the store when it is installed, and at the global co
   fs.mkdirSync(store, { recursive: true });
   assert.throws(() => arm(item, { home, evalDir }), /install --host antigravity/);
   assert.equal(arm(item, { pluginDir: store, evalDir }).hooksFile, path.join(store, 'hooks.json'), 'named by hand, it is armed');
+  // And disarming leaves the copy as the installer wrote it: no empty hooks.json, no empty hooks folder,
+  // so the next doctor comparison is about the kit and not about leftovers of a measurement.
+  disarm({ pluginDir: store });
+  assert.equal(fs.existsSync(path.join(store, 'hooks.json')), false, 'an emptied hooks.json goes');
+  assert.equal(fs.existsSync(path.join(store, 'hooks')), false, 'and the folder made for the driver');
+  // An already emptied hooks.json (a disarm that ran twice, or one aimed elsewhere first) is a leftover too.
+  fs.writeFileSync(path.join(store, 'hooks.json'), '{}\n');
+  disarm({ pluginDir: store });
+  assert.equal(fs.existsSync(path.join(store, 'hooks.json')), false, 'a hooks.json holding nothing goes as well');
+});
+
+// On 2026-09-20 a conversation that had already routed correctly walked from the store it had opened a skill in
+// (`~/.bearingkit/antigravity/plugins/bearingkit`) up to `~/.bearingkit` and found the eval queue beside it, then the
+// driver log, another conversation's transcript and the kit checkout. The decision was already made, so the scorer
+// did not flag it, but the queue must not be a sibling of the store at all: it moves out of the kit's home, and the
+// three places that name it — the scorer, the driver copied into the store, and the drive script — must agree.
+test('the eval queue lives outside the kit home, and every part of the harness agrees where', () => {
+  const home = 'C:\\Users\\somebody';
+  const evals = require('../scripts/antigravity-evals.cjs');
+  const driver = require('../scripts/antigravity/eval-driver.cjs');
+  const drive = fs.readFileSync(path.join(REPO, 'scripts', 'antigravity', 'drive.cjs'), 'utf8');
+  const kitHome = path.join(os.homedir(), '.bearingkit');
+  for (const [what, dir] of [['scorer', evals.DEFAULT_EVAL_DIR], ['driver', driver.EVAL_DIR]]) {
+    const rel = path.relative(kitHome, dir);
+    assert.ok(rel.startsWith('..') || path.isAbsolute(rel), `${what} keeps the queue inside ${kitHome}, one listing away from the store`);
+  }
+  assert.equal(evals.DEFAULT_EVAL_DIR, driver.EVAL_DIR, 'the scorer and the driver read the same queue');
+  assert.match(drive, /EVAL_DIR|evalDir|relayDir/, 'the drive script takes the queue path from the same place, not its own literal');
+  assert.doesNotMatch(drive, /'\.bearingkit', 'antigravity-eval'/, 'no second literal of the old location');
+  assert.equal(home.length > 0, true);
 });
 
 // The driver resets the stage with `git reset --hard` and `git clean -fdx` before every prompt, so a declaration

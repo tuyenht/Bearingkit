@@ -19,7 +19,7 @@ function defaultPluginDir(home = os.homedir()) {
   const global = path.join(home, '.gemini', 'config', 'plugins', 'bearingkit');
   return fs.existsSync(path.join(store, MARKER)) ? store : fs.existsSync(path.join(global, MARKER)) ? global : store;
 }
-const DEFAULT_EVAL_DIR = process.env.BEARINGKIT_EVAL_DIR || path.join(os.homedir(), '.bearingkit', 'antigravity-eval');
+const { EVAL_DIR: DEFAULT_EVAL_DIR } = require('./antigravity/eval-driver.cjs');
 const HOOK_NAME = 'bearingkit-eval';
 const DRIVER_SRC = path.join(__dirname, 'antigravity', 'eval-driver.cjs');
 const PROMPT_DIR = path.join(ROOT, 'evals', 'activation');
@@ -143,8 +143,17 @@ function disarm(opts = {}) {
   const pluginDir = opts.pluginDir || defaultPluginDir(opts.home);
   const hooksFile = path.join(pluginDir, 'hooks.json');
   const hooks = readJson(hooksFile, null);
-  if (hooks && hooks[HOOK_NAME]) { delete hooks[HOOK_NAME]; fs.writeFileSync(hooksFile, JSON.stringify(hooks, null, 2) + '\n'); }
-  fs.rmSync(path.join(pluginDir, 'hooks', 'eval-driver.cjs'), { force: true });
+  // What arm added goes, and so does anything arm created that is now empty: a copy left carrying an empty
+  // hooks.json and an empty hooks/ no longer matches what the installer writes, and the next doctor comparison
+  // would be about the leftovers of a measurement instead of about the kit.
+  if (hooks) {
+    delete hooks[HOOK_NAME];
+    if (Object.keys(hooks).length) fs.writeFileSync(hooksFile, JSON.stringify(hooks, null, 2) + '\n');
+    else fs.rmSync(hooksFile, { force: true });
+  }
+  const hookDir = path.join(pluginDir, 'hooks');
+  fs.rmSync(path.join(hookDir, 'eval-driver.cjs'), { force: true });
+  try { if (fs.readdirSync(hookDir).length === 0) fs.rmdirSync(hookDir); } catch { /* the host's own, or already gone */ }
   return { hooksFile };
 }
 

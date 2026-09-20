@@ -346,6 +346,24 @@ test('the fixture is staged outside the repository so the repository CLAUDE.md d
   }
 });
 
+// On 2026-09-20 thirteen prompts came back \"no-action\" because the measurement profile's login had expired: the
+// table said nothing about why, and the run spent every prompt on it. A session that did not authenticate is not a
+// measurement, so it is named and it stops the run.
+test('a session that failed to authenticate is reported as such and stops the run', () => {
+  const { authStop } = require('../scripts/evals.cjs');
+  const line = (o) => JSON.stringify(o);
+  const expired = [
+    line({ type: 'system', subtype: 'init' }),
+    line({ type: 'assistant', message: { content: [{ type: 'text', text: 'Failed to authenticate: OAuth session expired and could not be refreshed' }] } }),
+    line({ type: 'result', subtype: 'success', is_error: true, num_turns: 1, result: 'Failed to authenticate: OAuth session expired and could not be refreshed' }),
+  ].join('\n');
+  const stop = authStop(expired);
+  assert.ok(stop, 'the stream says the session never reached the model');
+  assert.match(stop.message, /authenticate|login/i);
+  assert.equal(authStop(line({ type: 'result', subtype: 'success', is_error: false, num_turns: 3, result: 'done' })), null, 'an ordinary session is not stopped');
+  assert.equal(authStop(''), null);
+});
+
 // The Antigravity stage is reached through the CLI, so what the CLI hands stage() is part of the contract: one
 // manual run on the host is not a regression test.
 test('--stage-only forwards --activate and --dest to the stage, and says where the store was declared', async () => {

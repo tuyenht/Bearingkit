@@ -9,7 +9,8 @@ const os = require('node:os');
 const path = require('node:path');
 const { connect } = require('./cdp.cjs');
 
-const QUEUE = path.join(os.homedir(), '.bearingkit', 'antigravity-eval', 'queue.json');
+const { EVAL_DIR } = require('./eval-driver.cjs');
+const QUEUE = path.join(EVAL_DIR, 'queue.json');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const readQueue = () => JSON.parse(fs.readFileSync(QUEUE, 'utf8'));
 

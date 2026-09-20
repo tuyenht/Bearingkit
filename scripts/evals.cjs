@@ -167,6 +167,25 @@ function listingNote(inits) {
 }
 
 // A run stops itself before it exhausts the account. Returns the window that is at or over its ceiling, or null.
+// A session that never reached the model is not a result. The host answers an expired login with one assistant
+// message and an error result, which the table would otherwise record as "no-action" thirteen times over
+// (2026-09-20). Recognised from the stream, it stops the run and names the fix.
+function authStop(raw) {
+  const text = String(raw || '');
+  if (!/authenticat|oauth|api key|invalid.{0,12}credential/i.test(text)) return null;
+  for (const line of text.split('\n')) {
+    let o;
+    try { o = JSON.parse(line); } catch { continue; }
+    // What the host said, in its own words: the result text, or the assistant message's text parts.
+    const parts = o && o.message && Array.isArray(o.message.content) ? o.message.content.filter((c) => c && c.type === 'text').map((c) => c.text) : [];
+    const body = [typeof o?.result === 'string' ? o.result : '', ...parts].join(' ');
+    if (o && (o.is_error || o.type === 'assistant') && /failed to authenticate|oauth|invalid api key|credential/i.test(body)) {
+      return { message: body.replace(/\s+/g, ' ').trim().slice(0, 200) };
+    }
+  }
+  return null;
+}
+
 function quotaStop(quota, limits) {
   if (!quota) return null;
   if (quota.fiveHour != null && quota.fiveHour >= limits.fiveHour) return { window: 'five-hour', used: quota.fiveHour, limit: limits.fiveHour, resetsAt: quota.resetsAt };
@@ -428,6 +447,12 @@ async function run(argv) {
     quota = r.quota || quota;
     process.stdout.write(`${p.id.padEnd(12)} expect=${p.expect.padEnd(10)} got=${r.got.padEnd(10)} ${passes(row, equivalents) ? 'ok' : 'MISS'}\n`);
     if (args.raw) fs.writeFileSync(path.join(outDir, `${date}-${p.id}${tag}.raw.jsonl`), r.raw);
+    const auth = authStop(r.raw);
+    if (auth) {
+      stopped = { window: 'login' };
+      process.stdout.write(`stopping: the session did not authenticate — "${auth.message}". Log in to the profile this run uses (${opts.configDir || 'the daily one'}): set CLAUDE_CONFIG_DIR to it, run claude, then /login; after that run this again.\n`);
+      break;
+    }
     const stop = quotaStop(quota, limits);
     if (stop) {
       stopped = stop;
@@ -447,4 +472,4 @@ async function run(argv) {
   process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}, no-action ${summary.noAction}.${quotaNote}\n${listing}\nWritten: ${out}\n`);
 }
 
-module.exports = { run, preflight, parseStream, parseQuota, parseInit, listingNote, quotaStop, loadPrompts, selectPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };
+module.exports = { run, preflight, parseStream, parseQuota, parseInit, listingNote, quotaStop, authStop, loadPrompts, selectPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };
