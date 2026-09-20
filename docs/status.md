@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-19** (phiên tối: harness Antigravity trung tính, thiết kế kích hoạt theo dự án) · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · số commit không ghi ở đây: nó tự cũ sau mỗi commit của chính phiên đang viết (đã vấp hai lần); đếm bằng `git log --oneline | wc -l` · **111/111** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-20, sau bộ lệnh kích hoạt theo dự án và chốt chặn của runner)
+Cập nhật: **2026-09-19** (phiên tối: harness Antigravity trung tính, thiết kế kích hoạt theo dự án) · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · số commit không ghi ở đây: nó tự cũ sau mỗi commit của chính phiên đang viết (đã vấp hai lần); đếm bằng `git log --oneline | wc -l` · **115/115** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-20, sau bộ lệnh kích hoạt theo dự án và chốt chặn của runner)
 
 > **File này là BẢNG ĐIỀU KHIỂN, không phải nguồn sự thật.** Nó chỉ trỏ đường và ghi trạng thái; mọi nội dung thật nằm ở nơi khác:
 >
@@ -26,7 +26,7 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | — nguồn đã có `derived` (chữ thật đã port) | **3** nguồn, **22** file dẫn xuất (ba reference của `bk-map` từ 2026-09-19) | cùng lệnh |
 | Mục trong `NOTICE` | **2** (obra/superpowers, anthropics/claude-plugins-official) | `grep '^##' NOTICE` |
 | Hàng nguồn trong ma trận | 39 (gồm host candidate, tool, và 8 mục owner loại) | `grep -c '^\| [0-9]'` |
-| Test | 111/111 xanh | `node --test tests/*.test.cjs` |
+| Test | 115/115 xanh | `node --test tests/*.test.cjs` |
 | Prompt activation | 90 (Phase 1 60, cộng ba mỗi skill intent: plan, close, audit, next, test, design, setup, ops, db, map); cộng **2** prompt ranh giới `bk-db` / `bk-ops` ở file riêng (câu 28) | `evals/activation/phase-1.jsonl`, `evals/activation/boundaries.jsonl` |
 | Mục đã kiểm kê từng mục (§5.2) | **1.295** mục của **22/22** nguồn: 46 absorb · 610 idea · 639 drop | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
 | `skills/<name>/tests/` (§5.3 cần ≥3 prompt mỗi skill) | **13/15** — 39 case, mọi thư mục có test đều bị canh hình dạng từ 2026-09-19; `bk-audit` và `bk-next` thuộc v0.3 | `find skills -type d -name tests` |
