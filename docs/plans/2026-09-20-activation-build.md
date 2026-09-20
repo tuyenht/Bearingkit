@@ -5,13 +5,17 @@ Status: PLANNED, decisions taken under the owner's delegation of 2026-09-20 (ver
 ## What the owner types, in full
 
 ```
-npx bearingkit install                 # once per machine, and after every kit update
-cd <project> && npx bearingkit activate    # this project uses the kit
-cd <project> && npx bearingkit deactivate  # it stops
-npx bearingkit status                  # what is installed, and whether this project is on
+bearingkit install                  # once per machine: the store, and the two claude commands to run
+bearingkit update                   # pull the repository, refresh the store; status says what moved
+cd <project> && bearingkit activate    # this project uses the kit
+cd <project> && bearingkit deactivate  # it stops
+bearingkit status                   # what is installed, what this project has on, what is out of date
+bearingkit uninstall                # the store goes; every project it was activated in is listed
 ```
 
-`install` refreshes one central store and touches no project. `activate` writes one line of host configuration per host it finds, in the host's own file, and nothing else. Every command takes `--dry-run` and prints exactly what it changed.
+One verb set, the same on every host: `install`, `update`, `activate`, `deactivate`, `status`, `uninstall`. Each takes `--host all|claude|antigravity` (default `all`, and it skips a host it does not find), an optional project path (default the working directory), `--dry-run`, and prints the same three shapes: `+ wrote`, `- removed`, `= unchanged`. The host-first spellings of today (`bearingkit antigravity install`) stay one release as aliases that print the new form. `doctor` stays what it is, the deeper read-only check, and `status` is its short form for one project.
+
+**How the command is spelled on this machine** (checked 2026-09-20): `node` v25.3.0 and `pnpm` 11.1.2 are on PATH; **`npm`, `npx` and `corepack` are not**. So `npx bearingkit …`, which README and `docs/hosts.md` print today, does not run here. The build fixes those pages to lead with what works: from a checkout `node C:\Projects\Bearingkit\bin\bearingkit.cjs <command>`; once published, `pnpm add -g bearingkit` and then plain `bearingkit <command>`, with `pnpm dlx bearingkit <command>` for a one-off. A `bearingkit.cmd`/`bearingkit` shim written by `install` into a folder already on PATH is the step that makes the plain spelling work before publication: decide it in step 2 with the owner, since it writes outside the repository.
 
 ## Layout
 
@@ -30,6 +34,12 @@ npx bearingkit status                  # what is installed, and whether this pro
 4. **Claude Code**: the manifest gains `"defaultEnabled": false`, so an install at user scope switches the kit on nowhere; `activate` writes the `enabledPlugins` entry itself and the kit never runs `claude plugin …` (those write under `~/.claude`, which is the owner's to run). `install` prints the two commands for the first time on a machine.
 5. **Antigravity** keeps the always-on rule inside the store: it now reaches only the projects that declare it.
 6. **Probes gate the release**, not the design: AG-1, AG-2, AG-4 (2.0 and the IDE) and CC-1, CC-2, CC-3 of the spec run before `activate` is documented as working; they need one approved Antigravity run.
+
+## Staying up to date when the repository moves
+
+- **Claude Code does it by itself.** `extraKnownMarketplaces` maps a marketplace name to a `source` object "and an optional `autoUpdate` Boolean"; the reference says: "Set `"autoUpdate": true` alongside `source` to make Claude Code refresh that marketplace and update its installed plugins in the background after startup." (settings-reference, `### extraKnownMarketplaces`, read 2026-09-20; scope: any settings file, honoured in a repository's own settings only after the folder is trusted.) So one entry in `~/.claude/settings.json` — the marketplace being the kit's repository — and every new commit reaches every activated project after the next start, with no command. `install` prints that entry; the owner pastes it, because it lives under `~/.claude`.
+- **Antigravity has no such mechanism** (nothing in its embedded or public docs offers one): the store is a copy, so a new commit reaches projects when the store is refreshed. `bearingkit update` is that refresh, and it is one command for both hosts: pull the checkout it was installed from, rewrite the store, report the version before and after. Whether a declared plugin path may be the checkout itself, or a junction to it, so that `git pull` alone suffices, is added to the probes (AG-5): the 2026-09-11 finding that the global scanner does not follow junctions says nothing about a path named in `plugins.json`.
+- **`status` says what is stale**: store versus checkout (the `doctor` comparison), and for Claude Code the plugin version in the cache versus the repository's head, so "am I on the new one" is answerable without guessing.
 
 ## Steps
 

@@ -18,6 +18,9 @@ Method. Two research agents (Sonnet) read the docs; the session then re-read eve
 | C8 | Hook input carries `cwd`; `CLAUDE_PROJECT_DIR` is the project root where the session started | hooks | agent only |
 | C9 | `claude plugin enable` / `disable` take no `--scope`, and the docs do not say which file they write | plugins-reference options tables | **open**: the page was truncated for the session; the agent read the tables |
 
+| C10 | `extraKnownMarketplaces` maps a marketplace name to a `source` object "and an optional `autoUpdate` Boolean"; "Set `"autoUpdate": true` alongside `source` to make Claude Code refresh that marketplace and update its installed plugins in the background after startup." Scope: any settings file, but a repository's own settings are honoured only after the folder is trusted | settings-reference, `### extraKnownMarketplaces` | yes (raw markdown, 2026-09-20) |
+| C11 | The machine itself: `node` v25.3.0 and `pnpm` 11.1.2 are on PATH; `npm`, `npx` and `corepack` are not, in the shells and in PowerShell | `command -v` / `Get-Command`, 2026-09-20 | yes (run) |
+
 Open, to probe in the isolated profile before building: what `install --scope local` writes for a plugin with `defaultEnabled: false` (an entry `true`, or nothing), and which file `claude plugin enable` writes when run inside a project.
 
 ## Antigravity 2.x
