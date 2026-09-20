@@ -53,13 +53,15 @@ Recommendation: the kit's own folder, for the approval flow and to stay clear of
 | CC-1 | Which command writes `true` into `.claude/settings.local.json` for a `defaultEnabled: false` plugin, and does `install --scope user` write any entry | isolated profile under `_build/`, a scratch project outside any git repository (so no global git exclude is written) | **done 2026-09-20**: install at user scope writes `false`, the plugin is switched on nowhere; `bearingkit activate` writes the project's `true` |
 | CC-2 | Does a disabled plugin leave its SessionStart hook, skills and agents out | same | **done**: activated project 33 skills, 15 the kit's, bootstrap present; the other 18 and 0; after `deactivate`, 18 and 0 |
 | CC-3 | Does `--plugin-dir` load the kit although `defaultEnabled` is false | same | **done, and it did not**: 0 kit skills until the profile enables `bearingkit@inline`; the runner now stops rather than measure an empty kit |
-| AG-1 | Does `.agents/plugins.json` in one workspace load a plugin kept under `~/.bearingkit/antigravity/`, and a workspace without it not | the app with port 1405 (owner's approval), the eval stage and a second scratch folder outside `C:\Projects` | the first lists `bk-*` skills and applies the rule; the second shows neither |
-| AG-2 | Does the entry name the plugin folder or a folder of plugins; does `~` expand on Windows | same | the form that loads is recorded in `docs/compat/` |
-| AG-3 | Does a declared plugin's `hooks.json` run | same, with the eval driver armed | the driver injects a queued prompt |
-| AG-4 | Does the IDE honour the workspace file as 2.0 does | the IDE, one scratch folder | same result as AG-1 |
-| AG-5 | May the declared path be the checkout itself, or a junction to it, so that `git pull` alone updates every activated project | same as AG-1, with an entry naming the checkout | the kit's skills load from the checkout; if they do, `update` needs no copy step for that install |
+| AG-1 | Does `.agents/plugins.json` in one workspace load a plugin kept under `~/.bearingkit/antigravity/`, and a workspace without it not | the app with port 1405 (owner's approval), the eval stage | **done 2026-09-20, both ways**: with the entry, fifteen `bk-*` skills listed; with the file removed from the same workspace, none. No copy existed under `~/.gemini/config/plugins/` during the run |
+| AG-2 | Does the entry name the plugin folder or a folder of plugins; does `~` expand on Windows | same | **done**: the plugin folder and its parent both load; `~` does **not** expand on Windows, so `activate` resolves the path before writing it |
+| AG-3 | Does a declared plugin's `hooks.json` run | same, with the eval driver armed | **done**: seven conversations took their prompt through `PreInvocation` from the store the project declared |
+| AG-4 | Does the IDE honour the workspace file as 2.0 does | the IDE, one scratch folder | **open**: the owner types the question in the IDE themselves rather than have its window stopped; `C:\work\apps\web-shop` is activated and waiting |
+| AG-5 | May the declared path be the checkout itself, or a junction to it, so that `git pull` alone updates every activated project | same as AG-1, with an entry naming the checkout | **done, and it may not**: no kit skill loaded (the checkout root is not plugin-shaped), and 39 unrelated skills from vendored copies inside it did. `update` keeps the copy step, and only a purpose-built store is ever declared |
 
 A failing AG-1 sends the Antigravity half back to the owner before any code: the remaining choices are a per-project copy (rejected above) or accepting global skill listing.
+
+**AG-1 passed on 2026-09-20**, so that branch is closed; the measurements are in `docs/compat/2026-09-19-per-project-activation.md`.
 
 ## Build order, after approval
 
@@ -70,10 +72,10 @@ A failing AG-1 sends the Antigravity half back to the owner before any code: the
 
 ## Decided 2026-09-20 under the owner's delegation
 
-The owner's words: "Xử lý làm sao để cài đặt cấu hình/ kích hoạt trên Antigravity, Claude đơn giản để dùng; cấu trúc cài đặt đẹp, chuẩn tốt nhất cho tôi nhé. Giúp tôi xử lý các vấn đề còn lại trước "bk-research" tự động, tốt ưu và tốt nhất có thể." The three questions below are answered in `docs/plans/2026-09-20-activation-build.md`: the store lives in the kit's own home (`--dest` for the owner's `~/.gemini/shared-plugins/bearingkit`), the v2 §9 exception is taken, `activate` also adds the two paths to `.git/info/exclude` unless told not to, and the probes stay a precondition to shipping — the Antigravity ones still need an approved run of the app. Any of these reopens with one word.
+The owner's words: "Xử lý làm sao để cài đặt cấu hình/ kích hoạt trên Antigravity, Claude đơn giản để dùng; cấu trúc cài đặt đẹp, chuẩn tốt nhất cho tôi nhé. Giúp tôi xử lý các vấn đề còn lại trước "bk-research" tự động, tốt ưu và tốt nhất có thể." The three questions below are answered in `docs/plans/2026-09-20-activation-build.md`: the store lives in the kit's own home (`--dest` for the owner's `~/.gemini/shared-plugins/bearingkit`), the v2 §9 exception is taken, `activate` also adds the two paths to `.git/info/exclude` unless told not to, and the probes stay a precondition to shipping — the Antigravity ones ran on 2026-09-20 in the run the owner approved, all but AG-4. Any of these reopens with one word.
 
 ## Decisions for the owner (as written before the delegation)
 
 1. Direction as proposed: host-native activation, `defaultEnabled: false` on Claude Code, and the v2 §9 exception. For Antigravity the owner's proposal of 2026-09-19 night already chose the central store and `.agents/plugins.json`; left open is the store's location (table above).
 2. The Antigravity file `.agents/plugins.json`: the kit writes it and leaves git alone (proposed), or the kit also adds it to the project's `.git/info/exclude`.
-3. Approval for the probe run on Antigravity (AG-1–AG-4), which writes one `.agents/plugins.json` into the eval stage and one scratch folder, and a copy under `~/.bearingkit/antigravity/`.
+3. Approval for the probe run on Antigravity (AG-1–AG-4), which writes one `.agents/plugins.json` into the eval stage and one scratch folder, and a copy under `~/.bearingkit/antigravity/`. **Given and run on 2026-09-20**; AG-4 alone is left, and the owner runs it by hand in the IDE.

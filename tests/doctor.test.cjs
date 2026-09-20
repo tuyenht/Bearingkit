@@ -57,7 +57,7 @@ test('doctor creates nothing in a profile where the kit was never installed', ()
   const r = runDoctorCli(home);
   assert.notEqual(r.status, 0, 'an absent copy is reported, not passed over');
   assert.deepEqual(fs.readdirSync(home), [], 'no .gemini, no .claude, nothing: doctor does not prepare the ground it checks');
-  assert.match(r.stdout + r.stderr, /antigravity install/, 'it prints the command the owner types instead of running it');
+  assert.match(r.stdout + r.stderr, /install --host antigravity/, 'it prints the command the owner types instead of running it');
 });
 
 // The in-process entry takes the kit and the home to read, so a drift can be staged on a throwaway pair.
@@ -147,6 +147,12 @@ test('doctor reads the store when it is there, and the global copy when it is no
   const onlyGlobal = fakeHome();
   install({ root: ROOT, dest: destIn(onlyGlobal) });
   assert.match(runDoctor(ROOT, onlyGlobal).out, /antigravity copy present \(global copy\)/);
+  // With neither on disk the answer is "the store is missing", and the repair line is the command that installs
+  // the store — not the older one that would put a copy in every workspace.
+  const empty = runDoctor(ROOT, fakeHome());
+  assert.match(empty.out, /antigravity copy present \(store\)/);
+  assert.match(empty.out, /bearingkit\.cjs install --host antigravity/);
+  assert.doesNotMatch(empty.out, /bearingkit\.cjs antigravity install/);
 });
 
 test('doctor never reports ok for the host listing it cannot read without the host', () => {

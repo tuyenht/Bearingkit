@@ -49,7 +49,11 @@ function run({ root = ROOT, home = os.homedir(), dest: destOpt, log = () => {} }
   // is on disk, store first, so it never reports the copy the host is not loading.
   const store = path.join(home, '.bearingkit', 'antigravity', 'plugins', 'bearingkit');
   const global = path.join(home, '.gemini', 'config', 'plugins', 'bearingkit');
-  const dest = destOpt ? path.resolve(destOpt) : (fs.existsSync(path.join(store, MARKER)) ? store : global);
+  // With neither on disk the store is the one to report missing: it is what `bearingkit install` makes now, and the
+  // repair line has to be that command rather than the older one, which installs a copy every workspace would load.
+  const dest = destOpt ? path.resolve(destOpt)
+    : fs.existsSync(path.join(store, MARKER)) ? store
+      : fs.existsSync(path.join(global, MARKER)) ? global : store;
   const refresh = destOpt || dest === global ? `node ${path.join(root, 'bin', 'bearingkit.cjs')} antigravity install${dest === global && !destOpt ? '' : ` --dest ${dest}`}` : `node ${path.join(root, 'bin', 'bearingkit.cjs')} install --host antigravity`;
   const checks = [];
   const add = (name, ok, fix) => { checks.push({ name, ok, fix }); return ok; };

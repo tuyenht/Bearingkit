@@ -10,7 +10,15 @@ const { spawnSync } = require('node:child_process');
 const { STAGE_MARKER } = require('./antigravity/eval-driver.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
-const DEFAULT_PLUGIN_DIR = path.join(os.homedir(), '.gemini', 'config', 'plugins', 'bearingkit');
+// Which copy the host loads, in the order doctor and status read them: the store a project declares for itself,
+// then the older global copy. Arming the other one puts the driver hook where nothing runs it, and the run then
+// measures conversations the driver never fed (2026-09-20: a disarm aimed at the absent global copy).
+function defaultPluginDir(home = os.homedir()) {
+  const { MARKER } = require('./antigravity.cjs');
+  const store = path.join(home, '.bearingkit', 'antigravity', 'plugins', 'bearingkit');
+  const global = path.join(home, '.gemini', 'config', 'plugins', 'bearingkit');
+  return fs.existsSync(path.join(store, MARKER)) ? store : fs.existsSync(path.join(global, MARKER)) ? global : store;
+}
 const DEFAULT_EVAL_DIR = process.env.BEARINGKIT_EVAL_DIR || path.join(os.homedir(), '.bearingkit', 'antigravity-eval');
 const HOOK_NAME = 'bearingkit-eval';
 const DRIVER_SRC = path.join(__dirname, 'antigravity', 'eval-driver.cjs');
@@ -109,10 +117,13 @@ function activationFromTranscript(text, item, opts = {}) {
 const DEFAULT_TRIGGER = 'Reply with OK and wait for my next message.';
 
 function arm(prompts, opts = {}) {
-  const pluginDir = opts.pluginDir || DEFAULT_PLUGIN_DIR;
+  const pluginDir = opts.pluginDir || defaultPluginDir(opts.home);
   const evalDir = opts.evalDir || DEFAULT_EVAL_DIR;
   const hooksFile = path.join(pluginDir, 'hooks.json');
-  if (!fs.existsSync(pluginDir)) throw new Error(`no plugin directory at ${pluginDir}; run \`bearingkit antigravity install\` first`);
+  // A directory the kit did not make is not a copy the host loads, and a hook written into it would simply never
+  // run. Only the resolved default is held to the marker: an explicit pluginDir is the operator's own word.
+  const kitCopy = opts.pluginDir || fs.existsSync(path.join(pluginDir, require('./antigravity.cjs').MARKER));
+  if (!fs.existsSync(pluginDir) || !kitCopy) throw new Error(`no bearingkit copy at ${pluginDir}; run \`bearingkit install --host antigravity\` first`);
   fs.mkdirSync(path.join(pluginDir, 'hooks'), { recursive: true });
   fs.copyFileSync(DRIVER_SRC, path.join(pluginDir, 'hooks', 'eval-driver.cjs'));
   const hooks = readJson(hooksFile, {});
@@ -129,7 +140,7 @@ function arm(prompts, opts = {}) {
 }
 
 function disarm(opts = {}) {
-  const pluginDir = opts.pluginDir || DEFAULT_PLUGIN_DIR;
+  const pluginDir = opts.pluginDir || defaultPluginDir(opts.home);
   const hooksFile = path.join(pluginDir, 'hooks.json');
   const hooks = readJson(hooksFile, null);
   if (hooks && hooks[HOOK_NAME]) { delete hooks[HOOK_NAME]; fs.writeFileSync(hooksFile, JSON.stringify(hooks, null, 2) + '\n'); }
@@ -202,6 +213,24 @@ function stage(opts = {}) {
   fs.cpSync(path.join(root, 'evals', 'fixtures', 'sample-app'), dir, { recursive: true });
   const overlay = path.join(root, 'evals', 'fixtures', 'antigravity-stage');
   if (fs.existsSync(overlay)) fs.cpSync(overlay, dir, { recursive: true, force: true });
+  // Measuring a per-project activation means the stage has to be an activated project. The declaration goes in
+  // before the first commit: the driver resets with `git reset --hard` and `git clean -fdx` before every prompt, so
+  // an untracked one would be gone after the first prompt and the rest of the run would measure an unactivated
+  // project. It is written by `activate` itself, so the file is the one the owner's projects get.
+  // The declared store has to be installed, and the caller is told when it is not: with an old global copy on the
+  // machine the kit would load anyway, and a probe meant to show that the declaration alone loads it would pass
+  // while proving nothing.
+  let activated = null;
+  let declares = null;
+  let storeMissing = false;
+  if (opts.activate) {
+    const { activate, AGENTS_FILE, storePath } = require('./activation.cjs');
+    const { MARKER } = require('./antigravity.cjs');
+    activate({ project: dir, home: opts.home, host: 'antigravity', dest: opts.dest, gitExclude: false });
+    activated = path.join(dir, ...AGENTS_FILE);
+    declares = opts.dest ? path.resolve(opts.dest) : storePath(opts.home || os.homedir());
+    storeMissing = !fs.existsSync(path.join(declares, MARKER));
+  }
   const git = (args) => {
     const r = spawnSync('git', ['-c', 'user.name=Developer', '-c', 'user.email=developer@example.com', ...args], { cwd: dir, encoding: 'utf8' });
     if (r.status !== 0) throw new Error(`git ${args.join(' ')} failed in ${dir}: ${String(r.stderr || r.error || '').trim()}`);
@@ -214,7 +243,7 @@ function stage(opts = {}) {
   git(['commit', '-q', '-m', 'Initial commit']);
   const sha = git(['rev-parse', 'HEAD']);
   fs.writeFileSync(path.join(dir, STAGE_MARKER), sha + '\n');
-  return { cwd: dir, sha, reused, folderUri: folderUri(dir) };
+  return { cwd: dir, sha, reused, activated, declares, storeMissing, folderUri: folderUri(dir) };
 }
 
-module.exports = { activationFromTranscript, arm, disarm, score, stage, folderUri, DEFAULT_PLUGIN_DIR, DEFAULT_EVAL_DIR, DEFAULT_STAGE, DEFAULT_TRIGGER, HOOK_NAME, PROBE_GLOB };
+module.exports = { activationFromTranscript, arm, disarm, score, stage, folderUri, defaultPluginDir, DEFAULT_EVAL_DIR, DEFAULT_STAGE, DEFAULT_TRIGGER, HOOK_NAME, PROBE_GLOB };

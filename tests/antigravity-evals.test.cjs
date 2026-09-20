@@ -205,6 +205,70 @@ test('the Antigravity stage sits apart from the kit and its files say nothing ab
   assert.equal(git(['status', '--porcelain']).stdout, '');
 });
 
+// Since per-project activation the copy the host loads is the store, not the global copy under ~/.gemini. Arming
+// the wrong one leaves the driver hook where nothing reads it and the run silently measures no injection, so the
+// default follows the same order as doctor and status: store, then global copy.
+test('arm and disarm aim at the store when it is installed, and at the global copy when it is not', () => {
+  const home = tmp('aghome-arm');
+  const store = path.join(home, '.bearingkit', 'antigravity', 'plugins', 'bearingkit');
+  const global = path.join(home, '.gemini', 'config', 'plugins', 'bearingkit');
+  const evalDir = tmp('agqueue');
+  const item = [{ id: 'x', prompt: 'a question of no consequence' }];
+  // Neither installed: the error names the store and the command that installs it.
+  assert.throws(() => arm(item, { home, evalDir }), /\.bearingkit[\\/]antigravity/);
+  assert.throws(() => arm(item, { home, evalDir }), /install --host antigravity/);
+  for (const dir of [global, store]) { fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, '.bearingkit-copy'), 'x'); }
+  assert.equal(arm(item, { home, evalDir }).hooksFile, path.join(store, 'hooks.json'), 'the store wins while it is there');
+  assert.equal(disarm({ home }).hooksFile, path.join(store, 'hooks.json'));
+  fs.rmSync(store, { recursive: true, force: true });
+  assert.equal(arm(item, { home, evalDir }).hooksFile, path.join(global, 'hooks.json'), 'without a store, the global copy');
+  assert.equal(disarm({ home }).hooksFile, path.join(global, 'hooks.json'));
+  // A directory at the store path that the kit did not make is not a kit copy: arming it would hide the hook
+  // where the host never reads it. An explicit --plugin-dir stays the operator's word and is not second-guessed.
+  fs.rmSync(global, { recursive: true, force: true });
+  fs.mkdirSync(store, { recursive: true });
+  assert.throws(() => arm(item, { home, evalDir }), /install --host antigravity/);
+  assert.equal(arm(item, { pluginDir: store, evalDir }).hooksFile, path.join(store, 'hooks.json'), 'named by hand, it is armed');
+});
+
+// The driver resets the stage with `git reset --hard` and `git clean -fdx` before every prompt, so a declaration
+// written into the project afterwards would be gone after the first one. An activated stage therefore carries the
+// host's own file in the stage's first commit; the kit itself still puts nothing of its own in the project.
+test('an activated stage carries the declaration in its own commit, so the driver reset keeps it', () => {
+  const home = tmp('aghome');
+  const dir = path.join(tmp('agact'), 'apps', 'sample-app');
+  const st = stage({ root: REPO, dir, forbidden: [], activate: true, home });
+  const file = path.join(dir, '.agents', 'plugins.json');
+  assert.equal(st.activated, file, 'the stage reports the file it declared the store in');
+  const store = path.join(home, '.bearingkit', 'antigravity', 'plugins', 'bearingkit').replace(/\\/g, '/');
+  assert.deepEqual(JSON.parse(fs.readFileSync(file, 'utf8')).entries, [{ path: store }]);
+  const git = (args) => spawnSync('git', args, { cwd: dir, encoding: 'utf8' });
+  assert.equal(git(['status', '--porcelain']).stdout, '', 'the declaration is committed, not left untracked');
+  assert.match(git(['ls-files', '.agents/plugins.json']).stdout, /plugins\.json/);
+  // What the driver does before every prompt: the declaration comes back, a conversation's leftovers do not.
+  fs.rmSync(file);
+  fs.writeFileSync(path.join(dir, 'stray.txt'), 'stray');
+  assert.equal(driver.resetFixture(dir), true);
+  assert.ok(fs.existsSync(file), 'the declaration survives the reset');
+  assert.ok(!fs.existsSync(path.join(dir, 'stray.txt')));
+  // Only the host's own file names the kit (the v2 §9 exception); every other file still says nothing.
+  const files = [];
+  const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { if (e.name === '.git') continue; const p = path.join(d, e.name); if (e.isDirectory()) walk(p); else files.push(p); } };
+  walk(dir);
+  for (const f of files.filter((x) => x !== file)) assert.doesNotMatch(fs.readFileSync(f, 'utf8'), TELLS, `${path.relative(dir, f)} tells the model it is measured`);
+  // The declaration names a store that has to exist: a stage pointed at a store nobody installed would still
+  // load the kit if the old global copy were lying around, and the probe would prove nothing. The stage reports it.
+  assert.equal(st.declares, path.join(home, ".bearingkit", "antigravity", "plugins", "bearingkit"), "the store it declared, as a path");
+  assert.equal(st.storeMissing, true, 'no store was installed under this home');
+  fs.mkdirSync(path.join(home, '.bearingkit', 'antigravity', 'plugins', 'bearingkit'), { recursive: true });
+  fs.writeFileSync(path.join(home, '.bearingkit', 'antigravity', 'plugins', 'bearingkit', '.bearingkit-copy'), 'x');
+  assert.equal(stage({ root: REPO, dir, forbidden: [], activate: true, home }).storeMissing, false, 'with the store installed there is nothing to warn about');
+  // Without the option the stage declares nothing at all.
+  const plain = path.join(tmp('agplain'), 'apps', 'sample-app');
+  stage({ root: REPO, dir: plain, forbidden: [] });
+  assert.ok(!fs.existsSync(path.join(plain, '.agents', 'plugins.json')));
+});
+
 test('the Antigravity stage refuses a folder near the kit, under the home folder, below a memory file, or holding other work', () => {
   const nearKit = path.join(path.dirname(REPO), `bk-refused-${process.pid}`);
   assert.throws(() => stage({ root: REPO, dir: path.join(nearKit, 'sample-app') }), /beside the kit|under/);

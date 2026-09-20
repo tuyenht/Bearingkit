@@ -346,6 +346,28 @@ test('the fixture is staged outside the repository so the repository CLAUDE.md d
   }
 });
 
+// The Antigravity stage is reached through the CLI, so what the CLI hands stage() is part of the contract: one
+// manual run on the host is not a regression test.
+test('--stage-only forwards --activate and --dest to the stage, and says where the store was declared', async () => {
+  const evals = require('../scripts/evals.cjs');
+  const ag = require('../scripts/antigravity-evals.cjs');
+  const realStage = ag.stage;
+  const out = [];
+  const write = process.stdout.write.bind(process.stdout);
+  let seen = null;
+  ag.stage = (opts) => { seen = opts; return { cwd: 'C:\\work\\apps\\sample-app', sha: 'abcdef0123456789', reused: false, activated: 'C:\\work\\apps\\sample-app\\.agents\\plugins.json', declares: 'C:/store', storeMissing: true, folderUri: 'file:///c%3A/work/apps/sample-app' }; };
+  process.stdout.write = (s) => { out.push(String(s)); return true; };
+  try {
+    await evals.run(['--host', 'antigravity', '--stage-only', '--activate', '--dest', 'C:\\store', '--stage-dir', 'C:\\work\\apps\\sample-app']);
+  } finally { process.stdout.write = write; ag.stage = realStage; }
+  assert.equal(seen.activate, true, 'the flag reaches stage()');
+  assert.equal(seen.dest, path.resolve('C:\\store'));
+  assert.equal(seen.dir, path.resolve('C:\\work\\apps\\sample-app'));
+  const text = out.join('');
+  assert.match(text, /plugins\.json/, 'the run says which file carries the declaration');
+  assert.match(text, /not installed|bearingkit install/, 'and warns that the declared store is not there');
+});
+
 // On 2026-09-18 `bearingkit evals --help` ran the prompt set: there was no help flag, the unknown option was ignored,
 // and with no --config-dir the sessions ran in the owner's daily profile, where the host keeps their transcripts. The
 // same class of accident happened on 2026-09-17. The runner now stops before any session unless the profile is named.
@@ -367,4 +389,5 @@ test('the runner stops before any session for --help, an unknown option, a stray
   assert.equal(preflight({ _: [], 'config-dir': 'x', 'plugin-dir': 'none' }), null);
   assert.equal(preflight({ _: [], daily: true }), null, 'the daily profile when it is named');
   assert.equal(preflight({ _: [], host: 'antigravity', score: true }), null, 'an Antigravity run needs no Claude profile');
+  assert.equal(preflight({ _: [], host: 'antigravity', 'stage-only': true, activate: true }), null, 'a stage may be asked to carry its activation');
 });

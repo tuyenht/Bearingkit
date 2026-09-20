@@ -26,9 +26,9 @@ const USAGE = [
   'usage: bearingkit evals --config-dir <isolated profile> [--plugin-dir <checkout>|none] [--model sonnet] [--intent <i>] [--id a,b]',
   '         [--per-intent N] [--limit N] [--cwd <project>] [--tag <t>] [--equivalents <json>] [--raw] [--turns N] [--file <jsonl>[,<jsonl>...]]',
   '       bearingkit evals --daily ...   (the same, in your daily profile, where the host keeps every session)',
-  '       bearingkit evals --host antigravity [--stage-only [--stage-dir <dir>] | --arm --id a,b | --drive <projectId> --count N | --score --tag t | --disarm]',
+  '       bearingkit evals --host antigravity [--stage-only [--stage-dir <dir>] [--activate [--dest <store>]] | --arm --id a,b | --drive <projectId> --count N | --score --tag t | --disarm]',
 ].join('\n') + '\n';
-const OPTIONS = new Set(['allow-ancestor-memory', 'arm', 'config-dir', 'count', 'cwd', 'daily', 'disarm', 'drive', 'equivalents',
+const OPTIONS = new Set(['activate', 'allow-ancestor-memory', 'arm', 'config-dir', 'count', 'cwd', 'daily', 'dest', 'disarm', 'drive', 'equivalents',
   'eval-dir', 'file', 'help', 'host', 'id', 'intent', 'limit', 'max-seven-day', 'max-utilization', 'model', 'out', 'per-intent',
   'plugin-dir', 'probe-glob', 'raw', 'score', 'stage-dir', 'stage-only', 'tag', 'trigger', 'turns']);
 
@@ -348,8 +348,8 @@ async function run(argv) {
     const agOpts = { pluginDir: args['plugin-dir'] ? path.resolve(args['plugin-dir']) : undefined, evalDir: args['eval-dir'] ? path.resolve(args['eval-dir']) : undefined, trigger: args.trigger };
     if (args['stage-only']) {
       // Antigravity's own copy of the fixture, away from the checkout (see stage() in antigravity-evals.cjs).
-      const st = ag.stage({ dir: args['stage-dir'] ? path.resolve(args['stage-dir']) : undefined });
-      process.stdout.write(`staged at ${st.cwd}, commit ${st.sha.slice(0, 12)}${st.reused ? ' (held open: emptied and staged in place)' : ''}\nthe Antigravity project for it is a file under ~/.gemini/config/projects/ with gitFolder.folderUri ${st.folderUri}\n`);
+      const st = ag.stage({ dir: args['stage-dir'] ? path.resolve(args['stage-dir']) : undefined, activate: Boolean(args.activate), dest: args.dest ? path.resolve(String(args.dest)) : undefined });
+      process.stdout.write(`staged at ${st.cwd}, commit ${st.sha.slice(0, 12)}${st.reused ? ' (held open: emptied and staged in place)' : ''}\n${st.activated ? `the store is declared in ${st.activated}, in that commit, so the driver's reset keeps it\n` : ''}${st.storeMissing ? `! nothing is installed at ${st.declares}: run  bearingkit install --host antigravity  before measuring, or the run proves nothing about the declaration\n` : ''}the Antigravity project for it is a file under ~/.gemini/config/projects/ with gitFolder.folderUri ${st.folderUri}\n`);
       return;
     }
     if (args.arm) {
