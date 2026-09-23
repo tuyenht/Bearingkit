@@ -30,7 +30,10 @@ function transcriptSettled(file) {
   const lines = text.split('\n').filter(Boolean);
   let last = null;
   for (const l of lines) { try { last = JSON.parse(l); } catch { /* ignore */ } }
-  const done = last && (last.type === 'PLANNER_RESPONSE' || last.type === 'CHECKPOINT') && String(last.status || '').toUpperCase() === 'DONE';
+  // A DONE planner step that called a tool is waiting for the tool's result, not ending the reply; a page fetch can
+  // outlast the quiet window, and moving on then left the conversation unfinished (2026-09-23).
+  const pendingTool = last && last.type === 'PLANNER_RESPONSE' && Array.isArray(last.tool_calls) && last.tool_calls.length > 0;
+  const done = last && (last.type === 'PLANNER_RESPONSE' || last.type === 'CHECKPOINT') && String(last.status || '').toUpperCase() === 'DONE' && !pendingTool;
   return { settled: Boolean(done), lines: lines.length, lastType: last && last.type, lastStatus: last && last.status };
 }
 
@@ -88,7 +91,10 @@ async function runOne(c, projectId, trigger) {
   return { id: entry.id, conversationId: entry.conversationId, status: settled ? `settled after ${settled.lines} steps` : 'timeout while waiting for the reply', model: entry.modelName };
 }
 
-(async () => {
+module.exports = { transcriptSettled };
+
+// Run only as a script: a test that requires this file for transcriptSettled must not connect to the app.
+if (require.main === module) (async () => {
   const [projectId, maxArg] = process.argv.slice(2);
   if (!projectId) throw new Error('usage: node drive.cjs <projectId> [maxPrompts]');
   const max = Number(maxArg || 1);

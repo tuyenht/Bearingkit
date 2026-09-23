@@ -385,3 +385,25 @@ test('arm installs the driver hook beside the kit hook, score reads transcripts,
   assert.ok(after.bearingkit && !after['bearingkit-eval']);
   assert.ok(!fs.existsSync(path.join(plugin, 'hooks', 'eval-driver.cjs')));
 });
+
+// On 2026-09-23 the driver moved on from two research conversations while each waited for a read_url_content result:
+// the last step was a DONE planner step carrying the tool call, and a page fetch takes longer than the 12 s quiet
+// window. The conversation it left behind never finished; the one after it, last in the queue, did.
+test('the driver does not call a reply settled while a planner step that called a tool waits for its result', () => {
+  const { transcriptSettled } = require('../scripts/antigravity/drive.cjs');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bk-settle-'));
+  const file = path.join(dir, 'transcript.jsonl');
+  const step = (o) => JSON.stringify(o);
+  fs.writeFileSync(file, [
+    step({ type: 'USER_INPUT', status: 'DONE' }),
+    step({ type: 'PLANNER_RESPONSE', status: 'DONE', tool_calls: [{ name: 'read_url_content', args: { Url: 'https://example.org' } }] }),
+  ].join('\n'));
+  assert.equal(transcriptSettled(file).settled, false, 'a pending tool call is not the end of the reply');
+  fs.appendFileSync(file, '\n' + [
+    step({ type: 'GENERIC', status: 'DONE' }),
+    step({ type: 'PLANNER_RESPONSE', status: 'DONE', tool_calls: [] }),
+  ].join('\n'));
+  assert.equal(transcriptSettled(file).settled, true, 'a final planner step with no tool call is');
+  fs.appendFileSync(file, '\n' + step({ type: 'PLANNER_RESPONSE', status: 'DONE' }));
+  assert.equal(transcriptSettled(file).settled, true, 'a planner step without the field is a reply too');
+});
