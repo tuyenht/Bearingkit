@@ -33,6 +33,8 @@ Mỗi sprint một phiên mới: phiên dài tiêu hạn mức nhiều hơn các
 
 ## Sprint 2 · `bk-research`
 
+**BUILT 2026-09-23, measured on Claude Code before commit**: 22 of 23 routing prompts on the first reading, the ten `q-*` among them, 0 false activations (the miss, `acc-02`, went right four more times); acceptance passed; protocol 2,257 and 2,254 tokens, 6,489 characters. Design and measurements in `docs/specs/2026-09-23-bk-research-design.md`; tool claims in `docs/compat/2026-09-23-bk-research-tool-claims.md`. Antigravity: in the package the owner approved for after the commit.
+
 - Ô v1 §7.1: trả lời có nguồn và nhãn độ tin; query plan, nguồn độc lập, nhãn claim. Nguồn: deep-research dựng sẵn của host; ClaudeKit research (chỉ lấy ý, clean-room).
 - Kiểm kê: 0 absorb, **8 idea**. Agent `bk-researcher` đã có; dòng A4 (nội dung lấy từ ngoài là dữ liệu) đã có trong protocol.
 - Hàng router: "research → bk-research" thay hàng dự phòng hiện có.

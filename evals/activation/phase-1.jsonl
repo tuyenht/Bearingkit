@@ -88,3 +88,6 @@
 {"id": "map-en-01", "intent": "map", "lang": "en", "prompt": "I'm taking over this project from another team next week. Before I touch anything, map out how the codebase is put together.", "expect": "bk-map"}
 {"id": "map-vi-01", "intent": "map", "lang": "vi", "prompt": "Mình vừa được giao codebase này mà không ai bàn giao gì. Vẽ giúp mình bản đồ kiến trúc: các phần chính, dữ liệu đi qua đâu, chỗ nào sửa dễ vỡ.", "expect": "bk-map"}
 {"id": "map-neg-01", "intent": "map", "lang": "en", "prompt": "Walk me through how the invoices page gets its data, from the page down to the API route.", "expect": "none"}
+{"id": "research-en-01", "intent": "research", "lang": "en", "prompt": "Before we pick a date library, compare date-fns, Day.js and the Temporal API for this app: what each supports on our React and TypeScript versions, how actively each is maintained, and which one you would back.", "expect": "bk-research"}
+{"id": "research-vi-01", "intent": "research", "lang": "vi", "prompt": "Prisma 7 đã chạy được trên edge runtime của Next 15 chưa, hay vẫn phải đi qua Accelerate? Mình cần biết chắc trước khi chốt kiến trúc.", "expect": "bk-research"}
+{"id": "research-neg-01", "intent": "research", "lang": "en", "prompt": "Quick one: in JavaScript, what is the difference between == and ===?", "expect": "none"}

@@ -26,6 +26,7 @@ Name the intent, then invoke the matching skill as your first action, before rea
 |---|---|
 | question or explanation | answer directly; never convene a council |
 | map a whole codebase, architecture map | bk-map |
+| research beyond this code: docs, versions, tool choice | bk-research |
 | small change (ACT, ≤3 files) | bk-build, with tests through bk-test |
 | feature | bk-spec |
 | bug or failure | bk-debug |
@@ -35,7 +36,6 @@ Name the intent, then invoke the matching skill as your first action, before rea
 | set up a project for agents: instruction files, guardrails, hot paths | bk-setup |
 | deploy, infrastructure, incident | bk-ops |
 | database performance, indexes, locks (questions too) | bk-db |
-| research | bk-spec until its skill exists |
 
 If there is a one-percent chance a skill applies, open it, and drop it if it does not fit. A request to add, change, rename, or fix something in the code is never answered by editing straight away; it goes through bk-build (small, ACT) or bk-spec (feature) first. Skills hand off in a chain (spec → plan → build → test → review → ship → close) that stops only at COUNCIL points.
 
@@ -81,6 +81,6 @@ Skills describe actions; `references/host-tools.md` maps them to each host's too
 
 ## References
 
-These are in `<kit>/skills/bk-protocol/references/`; a path written `bk-<skill>/references/<file>` is under `<kit>/skills/`, not the kit root. Skills read them there, never copy them: `references/gate-patterns.md`, `references/personas.md`, `references/host-tools.md`, `references/evidence.md`, `references/council.md`, `references/rba-lite.md` (reasoning before action), `references/correction-cues.md`, `references/handoff-template.md`, `references/meta-routing.md`.
+These are in `<kit>/skills/bk-protocol/references/`; a path written `bk-<skill>/references/<file>` is under `<kit>/skills/`, not the kit root. Skills read them there, never copy them: `references/gate-patterns.md`, `references/personas.md`, `references/host-tools.md`, `references/evidence.md`, `references/council.md`, `references/rba-lite.md`, `references/correction-cues.md`, `references/handoff-template.md`, `references/meta-routing.md`.
 
 Sources: obra/superpowers 5.1.0 (MIT) via references/meta-routing.md; the rest is kit-original; attribution in NOTICE.
