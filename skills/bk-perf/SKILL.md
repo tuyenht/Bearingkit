@@ -20,6 +20,8 @@ Name the symptom first, as the user feels it: slow first load, sluggish interact
 5. Change one thing, then measure exactly as the baseline. Keep it only when it beats the noise and the tests pass; within noise, worse, or a test red: revert. Every attempt, reverted ones too, goes in the ledger of `references/method.md`.
 6. Guard what was won when the project wants it: a budget checked in CI, or thresholds inside the load script that fail the run; the number is the project's.
 
+A cause is named only when this code or a measurement shows it; one known only from experience is a question to check, labelled so. A size, a time or a count appears only beside the measurement it came from.
+
 ## Gates
 - No number without its method (tool, conditions, runs) or the label "not measured"; lab, field and trace numbers are labelled by source and never swapped.
 - Thresholds come from the metric's owner, cited with its page and date (web.dev for Core Web Vitals), or from the project's budget; never from memory.
