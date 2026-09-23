@@ -15,7 +15,7 @@ One person doing what a performance engineer does before and during an optimizat
 
 ## What goes where
 
-- `SKILL.md`, 36 lines: Read first, Steps (the symptom, six steps), Gates, Evidence to paste, Next step.
+- `SKILL.md`, 38 lines (36 at `7711ab2`; the question-31 line after step 6 added two): Read first, Steps (the symptom, six steps, the line on causes and numbers), Gates, Evidence to paste, Next step.
 - `references/method.md`: the symptom tree, the baseline, thresholds and budgets (who owns a threshold), the keep-or-revert table, the ledger, tail latency (p99 against p50), load-test kinds.
 - `references/levers.md`: the order to look in, page load (LCP by phase, what ships), interaction, memory, server and data (N+1, repeated fetch, untracked background work; the database part to `bk-db`), caching, what is not slow.
 - `bk-protocol/references/host-tools.md` gains two rows: trace a page load, take and compare heap snapshots. Every tool statement was read from the vendor's repository at a pinned sha, or from Antigravity's language server: `docs/compat/2026-09-23-bk-perf-tool-claims.md`.
@@ -89,4 +89,4 @@ The owner approved the recommendations on 2026-09-23 late night ("Audit kỹ cá
 
 ## Done when (spec §5.3)
 
-Body ≤100 lines; every body line traces to an idea row, a field lesson or a vendor document; three test prompts in `skills/bk-perf/tests/`; activation prompts in both languages; acceptance on Claude Code, and on Antigravity in the measurement package the owner approved for after this sprint's commit. **Met on Claude Code, 2026-09-23:** body 36 lines; three cases; `perf-en-01`, `perf-vi-01`, `perf-neg-01`; acceptance passed (`acc-01` none with ACT and COUNCIL, `acc-02` → `bk-spec`). **On Antigravity after the commit, 2026-09-23:** acceptance passed (`acc-01` with no tool, `acc-02` → `bk-spec`); `perf-en-01`, `perf-vi-01`, `perf-neg-01` as labelled, each with a clean run; the prose gap above is open.
+Body ≤100 lines; every body line traces to an idea row, a field lesson or a vendor document; three test prompts in `skills/bk-perf/tests/`; activation prompts in both languages; acceptance on Claude Code, and on Antigravity in the measurement package the owner approved for after this sprint's commit. **Met on Claude Code, 2026-09-23:** body 36 lines; three cases; `perf-en-01`, `perf-vi-01`, `perf-neg-01`; acceptance passed (`acc-01` none with ACT and COUNCIL, `acc-02` → `bk-spec`). **On Antigravity after the commit, 2026-09-23:** acceptance passed (`acc-01` with no tool, `acc-02` → `bk-spec`); `perf-en-01`, `perf-vi-01`, `perf-neg-01` as labelled, each with a clean run; the prose gap found there was fixed the same night (`ed8aaeb`, section "Gap fix and its Antigravity run"): causes closed, one figure from general knowledge left to watch.
