@@ -33,8 +33,9 @@ Name the intent, then invoke the matching skill as your first action, before rea
 | review | bk-review |
 | ship, commit, push, PR | bk-ship |
 | design, UI, look and feel | bk-design |
-| set up a project for agents: instruction files, guardrails, hot paths | bk-setup |
+| set up a repo for agents | bk-setup |
 | deploy, infrastructure, incident | bk-ops |
+| page or API speed, memory, bundle size | bk-perf |
 | database performance, indexes, locks (questions too) | bk-db |
 
 If there is a one-percent chance a skill applies, open it, and drop it if it does not fit. A request to add, change, rename, or fix something in the code is never answered by editing straight away; it goes through bk-build (small, ACT) or bk-spec (feature) first. Skills hand off in a chain (spec → plan → build → test → review → ship → close) that stops only at COUNCIL points.
@@ -45,7 +46,7 @@ If there is a one-percent chance a skill applies, open it, and drop it if it doe
 - Numbers carry the method that produced them or the label "not measured".
 - Before trusting a clean result, show that the check can fail (a negative control).
 - Nothing untested goes into a commit message or a document as fact.
-- Unsure about a technology: say so, then check the documentation of the pinned version.
+- Unsure about a technology: say so, then check the pinned version's docs.
 - A decision marked `verified by file:line` changes only on new evidence; one the user confirmed is never reversed silently, only surfaced with the trade-off.
 
 ## Council

@@ -91,3 +91,6 @@
 {"id": "research-en-01", "intent": "research", "lang": "en", "prompt": "Before we pick a date library, compare date-fns, Day.js and the Temporal API for this app: what each supports on our React and TypeScript versions, how actively each is maintained, and which one you would back.", "expect": "bk-research"}
 {"id": "research-vi-01", "intent": "research", "lang": "vi", "prompt": "Prisma 7 đã chạy được trên edge runtime của Next 15 chưa, hay vẫn phải đi qua Accelerate? Mình cần biết chắc trước khi chốt kiến trúc.", "expect": "bk-research"}
 {"id": "research-neg-01", "intent": "research", "lang": "en", "prompt": "Quick one: in JavaScript, what is the difference between == and ===?", "expect": "none"}
+{"id": "perf-en-01", "intent": "perf", "lang": "en", "prompt": "The invoices page takes several seconds to show anything on a mid-range phone. Figure out where the time goes before we touch it.", "expect": "bk-perf"}
+{"id": "perf-vi-01", "intent": "perf", "lang": "vi", "prompt": "Để tab trang hoá đơn mở cả buổi là trình duyệt phình lên mấy GB RAM, tìm giúp mình nguyên nhân.", "expect": "bk-perf"}
+{"id": "perf-neg-01", "intent": "perf", "lang": "en", "prompt": "The invoices API is slow, and EXPLAIN on its main query shows a sequential scan over two million rows. Make that query fast.", "expect": "bk-db"}

@@ -430,6 +430,19 @@
       "note": "an agent-skill benchmarking CLI and public leaderboard, not a skill-content source — a tool to run alongside the kit; coverage matrix row 7 (skills/<skill>/tests/*.md format idea)",
       "tracked": [],
       "derived": {}
+    },
+    {
+      "name": "ChromeDevTools/chrome-devtools-mcp",
+      "repo": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+      "tag": null,
+      "sha": "e33ee4868d6b5381c493036f1eb922b2b4920d7a",
+      "license": "Apache-2.0 (LICENSE at the repository root, read 2026-09-23; no LICENSE or NOTICE file inside skills/ or at the root besides it; package.json 1.10.1 at this sha)",
+      "mode": "reference",
+      "verified": "2026-09-23",
+      "local": "shallow clone at this sha under _build/upstream/ChromeDevTools_chrome-devtools-mcp (gitignored), 2026-09-23; the copy installed in the owner's daily profile was not read",
+      "note": "the vendor's Chrome DevTools MCP server and its skills (debug-optimize-lcp, memory-leak-debugging, a11y-debugging, chrome-devtools, chrome-devtools-cli, cookie-debugging, troubleshooting); bk-perf yields page-load traces and heap-snapshot work to them (official first, v2 principle 4) and names the actions through bk-protocol/references/host-tools.md; no text taken (docs/specs/2026-09-23-bk-perf-design.md)",
+      "tracked": [],
+      "derived": {}
     }
   ]
 }
