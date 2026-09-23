@@ -106,8 +106,10 @@ test('every skill a prompt expects exists in skills/', () => {
 
 // A prompt on the seam between two skills accepts either route, so it cannot join a skill's intent without breaking
 // the three-per-intent shape every earlier comparison of the 90-prompt set depends on (D5 question 28). It lives in
-// its own file, run with --file; "none" is not a label there, since the request belongs to one of the two skills.
-test('boundary prompts have ids of their own and name at least two skills, each of which exists', () => {
+// its own file, run with --file. "none" may be one of the routes, for the seam between answering directly and a
+// skill (a question about a feature about to change: an answer, or bk-map's single-feature trace); at least one
+// route is a skill (two distinct routes guarantee it), or the prompt is a question and belongs with the q-* prompts.
+test('boundary prompts have ids of their own and name at least two routes, one a skill, each of which exists', () => {
   const fs = require('node:fs');
   const dir = path.join(__dirname, '..', 'evals', 'activation');
   const prompts = loadPrompts(path.join(dir, 'boundaries.jsonl'));
@@ -118,8 +120,9 @@ test('boundary prompts have ids of their own and name at least two skills, each 
   for (const id of ids) assert.ok(!elsewhere.has(id), `${id} is already an id in another prompt file`);
   for (const p of prompts) {
     const alts = p.expect.split('|');
-    assert.ok(new Set(alts).size >= 2, `${p.id} names ${new Set(alts).size} skill(s); a boundary names two`);
+    assert.ok(new Set(alts).size >= 2, `${p.id} names ${new Set(alts).size} route(s); a boundary names two`);
     for (const alt of alts) {
+      if (alt === 'none') continue;
       assert.ok(fs.existsSync(path.join(__dirname, '..', 'skills', alt, 'SKILL.md')), `${p.id} expects ${alt}, which has no skills/${alt}/SKILL.md`);
     }
   }

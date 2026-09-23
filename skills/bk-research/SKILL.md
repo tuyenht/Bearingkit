@@ -15,10 +15,10 @@ Name the question first. One that this codebase or settled knowledge answers is 
 
 1. Sharpen the ask into one question a source can settle, or three to five sub-questions for a broad one, and name the decision it serves. If the repository already records the answer, cite it and stop, unless the ask is to revisit it.
 2. Write the query plan before searching: for each sub-question, its claim type, where to look (the authority order of `references/method.md`), what would settle it, and what would count against the leading answer.
-3. Gather from the page that owns the fact, deep-linked, for the pinned version; search results are leads, and a claim rests only on a page opened. Where a tool summarises pages, a quoted line or "the page does not say" is read from the raw page (`references/method.md`, Gathering).
+3. Gather from the page that owns the fact, deep-linked, for the pinned version; search results, and a search tool's own written summary, are leads: a claim rests only on a page opened, and cites that page, never a search or redirect link. Where a tool summarises pages, a quoted line or "the page does not say" is read from the raw page (`references/method.md`, Gathering).
 4. Cross-check every load-bearing claim against its owning source or a second independent one; show conflicts with both sides, look for evidence against the leading answer, and date every source.
 5. Label each claim with its link, the version or date it describes, a confidence, and whether it is a sourced fact, an inference or a recommendation. Nothing reliable found: say "not found" in the UNVERIFIED form of `references/answer.md`, never a guess.
-6. Answer in the shape of `references/answer.md`: the answer first, a position when the evidence supports one, open questions last. A choice of tool or library runs its adoption checklist.
+6. Answer in the shape of `references/answer.md`: the answer first, a position when the evidence supports one, open questions last. Whatever format the user's own rules ask for, every claim keeps its link and confidence. A choice of tool or library runs its adoption checklist.
 7. Keep the answer in the chat; write a file only when the user asks or a spec will cite it, at the location `references/answer.md` gives, and say where.
 
 No web tool available or granted: say so first, then give the question as sharpened, the query plan and what the repository confirms, and ask whether to go on from memory, every such claim marked UNVERIFIED.

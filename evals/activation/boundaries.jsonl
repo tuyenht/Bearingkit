@@ -1,3 +1,5 @@
 {"id": "bnd-en-01", "intent": "boundary", "lang": "en", "prompt": "The database CPU alert has been at 100% for ten minutes and checkout requests are timing out. Find out what is going on.", "expect": "bk-db|bk-ops"}
 {"id": "bnd-vi-01", "intent": "boundary", "lang": "vi", "prompt": "Cảnh báo replication lag của Postgres vừa bắn, staging đang đọc dữ liệu cũ. Kiểm tra giúp mình.", "expect": "bk-db|bk-ops"}
 {"id": "bnd-en-02", "intent": "boundary", "lang": "en", "prompt": "I just inherited this repo, get it ready for agents to work in", "expect": "bk-map|bk-setup"}
+{"id": "bnd-en-03", "intent": "boundary", "lang": "en", "prompt": "Should we use Zod or Valibot for request validation in this app?", "expect": "bk-research|bk-audit"}
+{"id": "bnd-en-04", "intent": "boundary", "lang": "en", "prompt": "I'm about to touch the invoices page. Before I do, walk me through how it gets its data.", "expect": "bk-map|none"}
