@@ -1,0 +1,63 @@
+# Checklist owner-migration phase 0 và phase 2 · đếm lại trên máy ngày 2026-09-24
+
+Nguồn: `docs/plans/2026-09-10-owner-migration.md` (bảng viết 2026-09-10, đoạn đối chiếu 2026-09-23). File này chỉ đếm lại theo máy hôm nay và xếp thứ tự; mỗi bước ghi dưới `~/.claude` hay `~/.gemini`, sửa repo khác, xoá hay lưu trữ đều cần một câu "có" của owner ngay lượt chạy. Không có tên máy, IP, tên project riêng hay giá trị bí mật nào ở đây.
+
+Cách đếm: ba lượt đọc bằng script node (liệt kê thư mục, đọc file cấu hình; không mở file có tên dạng credentials, `env` chỉ in tên khoá, chuỗi giống bí mật bị che), theo lời cho phép đọc của owner trong tin mở phiên 2026-09-24. Nguồn gốc từng mục: manifest ClaudeKit `~/.claude/metadata.json` (ClaudeKit Engineer v2.19.0, cài 2026-05-19) và kiểm kê Spartan trong `docs/specs/2026-09-18-item-inventory.md` (nguồn `c0x12c/ai-toolkit`; `~/.claude/.spartan-version` 1.26.0).
+
+## Plan ghi gì, máy hôm nay có gì
+
+| Plan (10/09) | Hôm nay (24/09) |
+|---|---|
+| `.shadowed` 108 thư mục, khoảng 25 không thuộc ClaudeKit | 108 thư mục + `.dedup-manifest.json`: **79** ClaudeKit, **28** Spartan, **1** không khớp nguồn nào (`four-layer-context-check`, 284 dòng, sửa lần cuối 2026-05-15) |
+| tắt hook `skill-dedup.cjs` | **không còn đăng ký** ở đâu: `settings.json` chỉ có bốn hook; tên nó chỉ còn trong `metadata.json` và file của chính nó. Không cần ghi |
+| bốn hook ClaudeKit còn chạy | đúng: `simplify-gate` (UserPromptSubmit), `descriptive-name` (PreToolUse Write), `scout-block`, `privacy-block` |
+| gói 66 skill bên thứ ba | đúng: `fullstack-dev-skills` 0.4.14, 66 `SKILL.md` |
+| plugin Superpowers | 5.1.0, 14 skill, đang bật |
+| `skillListingBudgetFraction` | 0.037; thêm `skillListingMaxDescChars` 512 (plan không nêu) |
+| kit chưa cài vào profile hằng ngày | đúng: `installed_plugins.json` chỉ có hai plugin trên; store Antigravity đã cài và current (`bearingkit status` và `doctor` đầu phiên) |
+| `CLAUDE.md` toàn cục có chỉ dẫn riêng của owner | thân là Spartan, 493 dòng, 21.927 ký tự, nạp mỗi phiên; phần riêng của owner: mục Medical Council, và vài nguyên tắc chung mà protocol của kit đã có |
+
+## Phase 0
+
+1. **Sao lưu có checksum** (ghi ra `~/bearingkit-migration/backup-2026-09-24/`, ngoài hai thư mục host). Nguồn: `~/.claude` (686 MB, 20.478 file; gồm `skills/.venv` 259 MB và `projects/` 357 MB), `~/.gemini/config` (2,8 MB, 31 file), `~/.gemini/GEMINI.md` và bản `.bak` của nó. Đĩa còn 71,9 GB. `~/.claude.json` nằm ngoài phạm vi đọc; host đã tự giữ năm bản của nó trong `~/.claude/backups/` (bản mới nhất 2026-09-23), nên bản sao lưu của `~/.claude` mang theo nó mà phiên không mở. Đề xuất bỏ `.credentials.json` và `.env` ra khỏi bản sao (đăng nhập lại tạo lại được; chép bí mật sang chỗ thứ hai là nới phạm vi lộ). Cách kiểm: băm SHA-256 nguồn và bản sao, file nào đổi trong lúc chạy (transcript của chính phiên này) ghi là "đang sống"; đạt khi mọi file còn lại khớp, và một lượt kiểm thứ hai đọc manifest băm lại bản sao. **Chưa sang bước khác trước khi bước này đạt.**
+2. `skill-dedup.cjs`: đã đạt, không ghi gì (xem bảng).
+3. `.shadowed`: owner nói `four-layer-context-check` có phải của mình không và giữ hay lưu trữ; rồi chuyển cả thư mục sang `~/bearingkit-migration/archive-2026-09-24/`.
+4. Repo KB: lỗi mã hoá stdout và hai đường dẫn tài liệu chết. Cần owner cho đọc repo đó và chạy một lần tìm kiếm qua pipe để tái hiện; sửa là một câu "có" khác. Đạt khi tìm kiếm chạy được qua pipe.
+
+### Kết quả phase 0 (2026-09-24)
+
+- **(1) đạt.** Owner duyệt "Có, bỏ 2 file bí mật". Script `verify-backup.cjs` nằm cùng bản sao. 20.503 file, 722.716.377 byte, 2.981 thư mục; bản sao lệch so với byte đã đọc 0; nguồn khác mà cùng kích thước và mtime 0; lỗi đọc 0; 2 file đổi trong lúc chạy (transcript và file phiên của chính phiên này). Không chép 8 file dạng credentials: hai file owner duyệt và sáu khoá runtime của host (`daemon/*.key`, `sessions/*.key`, host tự sinh lại). Lượt kiểm thứ hai (`verify`): 20.503/20.503 khớp, 0 sai, 0 file ngoài manifest.
+- **(2) đạt**, không ghi gì.
+- **(3)** `four-layer-context-check`: không khớp nguồn nào đã kiểm kê. Nội dung viết cho máy này: ví dụ tiếng Việt, "đi tiếp", trỏ `/spartan:spec` và chế độ auto-on của `CLAUDE.md` Spartan, frontmatter `allowed_tools` cùng mục Gotchas theo luật viết skill của Spartan; sửa lần cuối 2026-05-15, giữa lúc cài Spartan (2026-05-11) và ClaudeKit (2026-05-19). Rất có thể do owner (hoặc một phiên cho owner) viết; không còn transcript nào để chứng minh (transcript cũ nhất nhắc tên nó là phiên kiểm kê 2026-09-17 của kit). Đã ẩn khỏi host từ 2026-05-19. Nó xung đột với kit: bắt chờ "OK" trước mọi việc không nhỏ, kể cả sửa bug và khi auto-on, trái với dòng ACT của `bk-protocol` ("never asks for permission"); description của nó kích hoạt với mọi yêu cầu code không nhỏ nên sẽ tranh với router. Phần trùng: bk-debug bước 1 (tái hiện), bk-spec bước 1–3 (nhắc lại, giả định). Hai ý kit chưa có: hỏi mọi chỗ thiếu trong một câu gộp, và lớp "đã thử gì, hỏng thế nào". Khuyến nghị: lưu trữ cùng `.shadowed`, ghi hai ý đó làm ý tưởng owner-authored cho lần sửa `bk-spec`/`bk-debug` sau (phải đo trước khi đổi văn bản model đọc).
+  - **(3) đạt.** Owner duyệt "Có, cả thư mục". `.shadowed` chuyển sang `~/bearingkit-migration/archive-2026-09-24/claude/skills/.shadowed` bằng rename cùng ổ; 1.206/1.206 file khớp manifest sao lưu, 0 lệch, 0 thiếu, 0 thừa; nguồn không còn. Nhật ký chuyển ở `ARCHIVE-LOG.txt` trong archive.
+- **(4)** Tái hiện được: `epp search "query chậm" | head` chết với `UnicodeEncodeError` (cp1252) ở `tooling/src/epp/cli.py:51` (`_print`, mọi output của CLI đi qua đây); lần chạy ghi một log vào `.cache/logs/` của repo KB, thư mục bị `.gitignore` bỏ qua. Hai đường dẫn chết: `docs/answer-protocol.md:52` (`kb/01-database-core/indexing/covering-index.md`) và `:83` (`…/optimizer-bo-qua-index.md`); cả hai chưa từng có trong lịch sử git, bài thật duy nhất trong thư mục đó là `optimizer-skips-index.md`. Plan 10/09 không nêu tên hai đường dẫn nó nói tới, nên việc chúng là cùng hai đường dẫn này **chưa kiểm được**. Hook `scout-block` chặn lệnh có `.venv` tương đối (`ls .venv/Scripts`), nhưng không chặn lệnh tìm kiếm có đường dẫn tuyệt đối mà `database-playbook` dùng.
+  - **Sửa** (owner duyệt "Sửa + commit, không push"; ngoại lệ luật node chỉ cho pytest và `epp check` của repo KB; dòng 83 theo lựa chọn "Đánh dấu là minh hoạ", vì câu trả lời mẫu trích một claim mà bài thật không có): `cli.py` đổi stdout và stderr sang UTF-8 ở đầu `main()` và giữ error handler của từng stream; hai test mới trong `test_search.py`, đỏ trước (UnicodeEncodeError; rồi `('utf-8', 'strict')` khi chưa giữ handler); dòng 52 trỏ `optimizer-skips-index.md`, dòng 83 thành chỗ giữ chỗ ghi rõ minh hoạ. Suite 403 passed, ruff sạch, `epp check` PASS, tìm kiếm qua pipe thoát 0 với tiếng Việt nguyên vẹn. `epp check` ghi lại dấu thời gian `generated_at` trong `kb/index.json`; đã đưa file đó về HEAD, vì lịch sử repo KB tách việc làm mới index thành commit riêng.
+  - **(4) đạt.** Commit `a0cda92` trên `main` của repo KB, rà soát độc lập (Sonnet) trước commit, hai vòng, không điểm chặn; chưa push (theo lựa chọn của owner). Kiểm lại trên HEAD sạch: `epp search "câu lệnh SQL chậm" | head` thoát 0.
+
+## Phase 2 (theo thứ tự phụ thuộc)
+
+1. Cài kit vào profile Claude Code hằng ngày: `claude plugin marketplace add <checkout>`, `claude plugin install bearingkit@bearingkit`. Lần chạy đầu trên máy này. Manifest có `"defaultEnabled": false`; sau khi cài phải đọc lại `enabledPlugins` và `claude plugin list` để chắc cài không bật kit ở mọi dự án.
+2. Bật kit từng dự án hằng ngày bằng `bearingkit activate` (ghi vào file host của dự án đó). Owner nêu danh sách; repo SaaS production không nằm trong đó.
+3. Dòng KB trong hai file chỉ dẫn toàn cục (`CLAUDE.md` và `GEMINI.md`), bản nháp ở plan; kiểm đường dẫn lệnh tìm kiếm có thật trước khi ghi.
+4. Một câu DB thật, `bk-db` trả lời từ KB trong một dự án đã bật.
+5. Chỉ sau (4): gỡ `database-playbook` (chuyển vào archive).
+6. **Deny list gốc** (đề xuất, chưa đối chiếu, chờ owner): `privacy-block` hôm nay chặn `.env`, `.env.*` (trừ `.example`, `.sample`, `.template`), đường dẫn chứa `credentials`, `secrets.y(a)ml`, `*.pem`, `*.key`, `id_rsa`; deny gốc hiện có 54 dòng, trong đó chỉ `.env` đúng tên, `~/.ssh`, `~/.gnupg`, `~/.aws`, gcloud. Đề xuất thêm `Read` deny cho các biến thể `.env.*` liệt kê theo tên (deny thắng allow nên không chừa `.env.example` được nếu dùng `.env.*`), `*.pem`, `*.key`, `id_rsa*`, `secrets.yaml`/`.yml`, `*credentials*`; giữ nguyên 54 dòng cũ; cú pháp đối chiếu tài liệu permissions trước khi ghi. `scout-block` không có thay thế (v1 §10: đọc thư viện đã cài là cách kit tránh bịa API). Antigravity: không ghi (cú pháp deny cho file chưa kiểm từ phase-1 gate). Còn hở: `cat .env` qua Bash không bị deny gốc chặn; `privacy-block` hôm nay cũng chỉ cảnh báo với Bash.
+7. Tắt bốn hook ClaudeKit (sau 6).
+8. Statusline ClaudeKit: cần `hooks/node-hook-runner.sh`, tám file trong `hooks/lib/` và `.ck.json`. Giữ (không lưu trữ các file đó), bỏ, hay thay: owner chọn.
+9. Tắt gói 66 skill; Superpowers: plan ghi gỡ, đề xuất tắt trước và gỡ sau tuần dùng thử (owner chọn).
+10. Bỏ `skillListingBudgetFraction` (về mặc định của host) sau (9); `skillListingMaxDescChars` cũng vậy nếu owner đồng ý (plan không nêu).
+11. `CLAUDE.md` toàn cục: lưu trữ bản Spartan, viết bản ngắn gồm phần riêng của owner và dòng KB. Mục Medical Council: skill cá nhân hay một mục trong `CLAUDE.md` (owner chọn).
+12. Lưu trữ phần còn lại của ClaudeKit: `metadata.json`, `.ck.json` (trừ khi giữ statusline), `.ckignore`, `.env`, `.env.example`, `.gitignore`, `.mcp.json.example`, `rules/` 8, `agents/` 13, `output-styles/` 6, `scripts/` 14, `schemas/` 2, `command-archive/`, `hooks/`, hai `hooks.bak-*`, năm `settings.json.bak*`, và các file repo ClaudeKit ở gốc `skills/` (`README.md`, `INSTALLATION.md`, `THIRD_PARTY_NOTICES.md`, `agent_skills_spec.md`, `install.ps1`, `install.sh`, `.install-state.json`, `_shared/`, `common/`, `document-skills/`, `.venv/`). Của Spartan: `commands/` (71), `agents/` 9, `rules/` 7 thư mục, `.spartan-packs`, `.spartan-version`, `codex/`. Không tìm thấy rule hay agent nào do owner tự viết (`review-audit-self-decision.md` có trong nguồn ClaudeKit, kiểm kê dòng 1669). Giữ: sáu skill Chrome DevTools, `ssh`, `synced/` (host quản), mọi thư mục của host.
+13. Bản clone toàn cục của kit cũ và alias trong PowerShell profile: nằm ngoài phạm vi đọc được cho phép; cần owner cho đọc `$PROFILE` và nơi đặt bản clone.
+14. Plugin LSP và context7: context7 chờ status §7 (x) (đọc tài liệu Context7 trước); LSP chọn theo stack owner dùng.
+15. Kiểm thoát: `doctor` xanh; không đường dẫn chết trong settings và hai file chỉ dẫn; mỗi dự án hằng ngày bật có chủ ý.
+
+Không còn áp dụng (đoạn đối chiếu 2026-09-23): 8 language rules, 3 hook còn lại. Đã xong: 4 agent, và cả catalog 18/18, gồm sáu core skill mà phase 2 của plan nêu tên.
+
+## Thấy khi đọc, ngoài plan (không đề xuất làm gì khi owner chưa hỏi)
+
+- `~/.gemini/antigravity-backup` 6,9 GB, từ 2026-05-20.
+- Mười một knowledge item tên `antigravity-*` trong `~/.gemini/antigravity/knowledge/`, có vẻ sinh từ Antigravity-Core; có thể cạnh tranh với kit trên Antigravity.
+- `autoMode.environment` ở cấp user mô tả một dự án cụ thể làm "trusted repo", nên áp cho mọi dự án.
+- `permissions.allow` còn vài dòng dùng một lần từ các dự án khác.
+- Trong phiên này, `get_usage` đọc mục "Memory files" là 59.540 token. Theo byte, `CLAUDE.md` toàn cục (22.399) và 30 file `.md` dưới `rules/` (196.694) chiếm khoảng 219 nghìn trên khoảng 223 nghìn byte của các file bộ nhớ nạp sẵn (cộng `AGENTS.md` của repo 3.170 và `MEMORY.md` 1.255); cả hai chủ yếu là nội dung của hai kit sẽ lưu trữ ở (11) và (12).
