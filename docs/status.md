@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-23** (sprint `bk-research`: dựng, đo trên Claude Code trước commit, đo trên Antigravity sau commit) · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · số commit không ghi ở đây: nó tự cũ sau mỗi commit của chính phiên đang viết (đã vấp hai lần); đếm bằng `git log --oneline | wc -l` · **122/122** test xanh (`node --test tests/*.test.cjs`, chạy 2026-09-23 trước commit `bk-research`)
+Cập nhật: **2026-09-23** (sprint `bk-research`: dựng, đo trên Claude Code trước commit, đo trên Antigravity sau commit) · Nhánh `main` · `package.json` 0.1.0 · tag duy nhất `0.1.0-phase1` · số commit không ghi ở đây: nó tự cũ sau mỗi commit của chính phiên đang viết (đã vấp hai lần); đếm bằng `git log --oneline | wc -l` · **123/123** test xanh (`node --test tests/*.test.cjs`, chạy tối 2026-09-23 sau bản sửa driver `2c4d2e8`)
 
 > **File này là BẢNG ĐIỀU KHIỂN, không phải nguồn sự thật.** Nó chỉ trỏ đường và ghi trạng thái; mọi nội dung thật nằm ở nơi khác:
 >
@@ -26,7 +26,7 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | — nguồn đã có `derived` (chữ thật đã port) | **3** nguồn, **22** file dẫn xuất (ba reference của `bk-map` từ 2026-09-19) | cùng lệnh |
 | Mục trong `NOTICE` | **2** (obra/superpowers, anthropics/claude-plugins-official) | `grep '^##' NOTICE` |
 | Hàng nguồn trong ma trận | 39 (gồm host candidate, tool, và 8 mục owner loại) | `grep -c '^\| [0-9]'` |
-| Test | 122/122 xanh | `node --test tests/*.test.cjs` |
+| Test | 123/123 xanh | `node --test tests/*.test.cjs` |
 | Prompt activation | 93 (Phase 1 60, cộng ba mỗi skill intent: plan, close, audit, next, test, design, setup, ops, db, map, research); cộng **5** prompt ranh giới ở file riêng (câu 28): hai `bk-db|bk-ops`, một `bk-map|bk-setup` (`bnd-en-02`, thêm 2026-09-20), `bnd-en-03` `bk-research|bk-audit` và `bnd-en-04` `bk-map|none` (2026-09-23; từ đó `none` được làm một trong hai nhãn) | `evals/activation/phase-1.jsonl`, `evals/activation/boundaries.jsonl` |
 | Mục đã kiểm kê từng mục (§5.2) | **1.295** mục của **22/22** nguồn: 46 absorb · 610 idea · 639 drop | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
 | `skills/<name>/tests/` (§5.3 cần ≥3 prompt mỗi skill) | **14/16** — 42 case, mọi thư mục có test đều bị canh hình dạng từ 2026-09-19; `bk-audit` và `bk-next` thuộc v0.3 | `find skills -type d -name tests` |
