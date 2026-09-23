@@ -26,7 +26,7 @@ After publication: `pnpm add -g bearingkit` (or `npm i -g bearingkit`) and then 
 
 | Host | State |
 |---|---|
-| Claude Code | acceptance passed; install with `claude plugin marketplace add <repo or checkout>` then `claude plugin install bearingkit@bearingkit`, activate per project as above; development: `claude --plugin-dir <checkout>` |
+| Claude Code | acceptance passed; install with `claude plugin marketplace add <repository URL>` (not a development checkout: the install copies untracked files too, `docs/hosts.md`) then `claude plugin install bearingkit@bearingkit`, activate per project as above; development: `claude --plugin-dir <checkout>` |
 | Antigravity 2.0 | acceptance passed; `bearingkit install` writes the store, `bearingkit activate` declares it in a project. Measured on the app 2026-09-20: an activated project lists the kit's skills and runs its hooks, a project without the entry lists none of them ([docs/compat/2026-09-19-per-project-activation.md](docs/compat/2026-09-19-per-project-activation.md)) |
 | Antigravity IDE | acceptance passed; it honours a project's `.agents/plugins.json` exactly as 2.0 does (measured 2026-09-20: the activated folder lists the kit's skills, and a running IDE picks the declaration up when the folder is opened) |
 | Gemini CLI | `gemini extensions install https://github.com/tuyenht/Bearingkit`; acceptance pending |
