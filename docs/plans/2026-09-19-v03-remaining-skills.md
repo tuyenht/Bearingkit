@@ -41,7 +41,7 @@ Mỗi sprint một phiên mới: phiên dài tiêu hạn mức nhiều hơn các
 
 ## Sprint 3 · `bk-perf`
 
-**BUILT 2026-09-23, measured on Claude Code before commit**: 32 of 32 routing prompts, the ten `q-*`, the three `setup-*` of the shortened row and the five boundary prompts among them, 0 false activations; hook 2,267 and 2,257 tokens; protocol 6,485 characters, paid for by the `bk-setup` row and one Evidence sentence. The vendor skills are yielded to, not copied (`ChromeDevTools/chrome-devtools-mcp` at `e33ee48` in `upstream/sources.json`). Design and measurements in `docs/specs/2026-09-23-bk-perf-design.md`; tool claims in `docs/compat/2026-09-23-bk-perf-tool-claims.md`. Catalog 18/18.
+**BUILT 2026-09-23, measured on Claude Code before commit**: 32 of 32 routing prompts, the ten `q-*`, the three `setup-*` of the shortened row and the five boundary prompts among them, 0 false activations; hook 2,267 and 2,257 tokens; protocol 6,485 characters, paid for by the `bk-setup` row and one Evidence sentence. The vendor skills are yielded to, not copied (`ChromeDevTools/chrome-devtools-mcp` at `e33ee48` in `upstream/sources.json`). Design and measurements in `docs/specs/2026-09-23-bk-perf-design.md`; tool claims in `docs/compat/2026-09-23-bk-perf-tool-claims.md`. Catalog 18/18. Antigravity 2.15.0 after the commit: 16 of 16 as labelled, the three `perf-*` each with a clean run; open there: causes and sizes stated without a measurement (fix proposed in the design doc).
 
 - Ô v1 §7.1: đo rồi mới tối ưu (web vitals, bộ nhớ, ngân sách asset), phần DB giao cho `bk-db`; số kèm cách đo hoặc "not measured". Nguồn chính ghi là "Owner's LCP and memory-leak practice".
 - Kiểm kê: 0 absorb, **16 idea** (addyosmani, jeffallan, vercel, cloudflare, Spartan, Antigravity-Core).
