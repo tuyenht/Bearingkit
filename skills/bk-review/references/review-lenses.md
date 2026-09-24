@@ -85,7 +85,7 @@ A fixed baseline of Fowler's code smells (*Refactoring*, chapter 3), checked on 
 
 ## Lens: a weakened bar
 
-A change can pass every check by lowering the check. Look for a threshold or budget moved; a test skipped, deleted or stripped of assertions; a checker silenced by a new suppression (type, lint, coverage or secret-scan ignores); work left unfinished (a stub that throws, an empty catch, a note standing where a branch should be); an exception to a project rule that the change does not discuss. Each is reported with the rule it relaxes. One the change explains in its own text is a decision, not a finding (see "Not a finding").
+A change can pass every check by lowering the check. Look for a threshold or budget moved; a test skipped, deleted or stripped of assertions; a checker silenced by a new suppression (type, lint, coverage or secret-scan ignores); work left unfinished (a stub that throws, an empty catch, a note standing where a branch should be); an exception to a project rule that the change does not discuss. Each is reported with the rule it relaxes. The finding is the relaxation this change makes, never the issue a suppression hides: that issue stays out of the report under "Not a finding". A relaxation the change explains (a comment beside it, the commit or the pull-request text) is a decision, not a finding.
 
 ## Lens: simplification
 

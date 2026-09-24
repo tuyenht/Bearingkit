@@ -317,6 +317,12 @@ function runClaudePrompt(prompt, opts) {
   return { got: classify(raw), raw, stderr: r.stderr || '', status: r.status, timedOut, quota: parseQuota(raw), init: parseInit(raw) };
 }
 
+// Sessions killed at the ceiling, for the results file: the output line that flags them does not outlive the terminal.
+function cutNote(rows, seconds) {
+  const cut = rows.filter((r) => r.cut).map((r) => r.id);
+  return cut.length ? ` · cut at the ${seconds}s ceiling, no final answer (routing still scored): ${cut.join(', ')}` : '';
+}
+
 // What the session did. One turn with no tool call and no user event used to be "no-action" whatever came back,
 // which put two different things under one word: a prompt that never reached the model (not delivered, or read as
 // part of the injected context, both seen on 2026-09-10; an expired login on 2026-09-20), and an answer given
@@ -472,7 +478,7 @@ async function run(argv) {
   for (const p of prompts) {
     if (resetFixture && !resetFixture()) process.stdout.write('warning: fixture reset failed before ' + p.id + '\n');
     const r = runClaudePrompt(p.prompt, opts);
-    const row = { ...p, got: r.got };
+    const row = { ...p, got: r.got, cut: r.timedOut };
     results.push(row);
     inits.push(r.init);
     quota = r.quota || quota;
@@ -496,11 +502,11 @@ async function run(argv) {
   if (resetFixture) resetFixture();
   const summary = summarize(results, equivalents);
   const quotaNote = quota ? ` · quota after run: five-hour ${Math.round((quota.fiveHour || 0) * 100)}%, seven-day ${Math.round((quota.sevenDay || 0) * 100)}%` : '';
-  const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · plugin: ${opts.pluginDir || 'none'} · cwd: ${opts.cwd} · prompts: ${results.length} of ${prompts.length}${equivalents ? ' · equivalents: ' + path.basename(args.equivalents) : ''}${quotaNote}${stopped ? ` · **stopped early on the ${stopped.window} ceiling**, ${prompts.length - results.length} prompt(s) not run` : ''}`;
+  const meta = `Model: ${opts.model} · profile: ${opts.configDir || 'daily'} · plugin: ${opts.pluginDir || 'none'} · cwd: ${opts.cwd} · prompts: ${results.length} of ${prompts.length}${equivalents ? ' · equivalents: ' + path.basename(args.equivalents) : ''}${quotaNote}${cutNote(results, opts.timeoutMs / 1000)}${stopped ? ` · **stopped early on the ${stopped.window} ceiling**, ${prompts.length - results.length} prompt(s) not run` : ''}`;
   const out = path.join(outDir, `${date}-claude${args.intent ? '-' + args.intent : ''}${tag}.md`);
   const listing = listingNote(inits);
   fs.writeFileSync(out, table(results, summary, 'claude', meta + '\n\n' + listing, equivalents));
   process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}, no-action ${summary.noAction}.${quotaNote}\n${listing}\nWritten: ${out}\n`);
 }
 
-module.exports = { run, preflight, parseStream, parseQuota, parseInit, listingNote, quotaStop, authStop, classify, loadPrompts, selectPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };
+module.exports = { run, preflight, parseStream, parseQuota, parseInit, listingNote, quotaStop, authStop, cutNote, classify, loadPrompts, selectPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };

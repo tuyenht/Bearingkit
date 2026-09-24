@@ -462,6 +462,10 @@ test('the runner stops before any session for --help, an unknown option, a stray
   // 2026-09-24: a review that forks a context and dispatches an independent reviewer ran past the fixed 180 seconds
   // and was cut mid-stream; the table still said "ok". A longer ceiling is asked for in seconds, and must be one.
   assert.equal(preflight({ _: [], daily: true, timeout: '600' }), null, 'a longer ceiling in seconds');
+  // The output line is gone once the terminal closes; the results file is the record, so it names the cut sessions.
+  const { cutNote } = require('../scripts/evals.cjs');
+  assert.equal(cutNote([{ id: 'a', cut: false }], 180), '', 'nothing cut, nothing said');
+  assert.match(cutNote([{ id: 'a', cut: true }, { id: 'b' }, { id: 'c', cut: true }], 180), /180s.*a, c/);
   for (const bad of ['0', '-5', 'ten', true]) {
     const r = preflight({ _: [], daily: true, timeout: bad });
     assert.equal(r && r.exit, 2, `--timeout ${bad} is refused`);
