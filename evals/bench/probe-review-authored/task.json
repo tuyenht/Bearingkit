@@ -1,0 +1,19 @@
+{
+  "id": "probe-review-authored",
+  "skill": "bk-review",
+  "fixture": "build.cjs",
+  "prompt": "In src/app/api/invoices/[id]/route.ts the bulk DELETE removes the ids from the body without checking their tenant. Fix it so only the caller's tenant's invoices can be deleted, then review your change before I push it.",
+  "commands": {},
+  "sources": [],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/probe-review-authored/**)",
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)"
+    ]
+  },
+  "limits": { "seconds": 900, "turns": 40 },
+  "rules": { "defects": [], "decoys": [] }
+}

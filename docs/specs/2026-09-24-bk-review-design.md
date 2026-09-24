@@ -69,6 +69,22 @@ On the owner's approval of the recommendations (the same message as the audit ab
 - **Not counted, run again**: `rev-vi-01` left the stage in its first run (after routing at step 1, it listed `C:\work\apps`, the projects folder and the kit checkout); the second run stayed in the stage and the store, → `bk-review`.
 - **The lens on this host**: both `rev-en-01` and the counted `rev-vi-01` opened `references/security-lens.md` with the other references; `rev-neg-01`'s explanation described it (source to sink).
 
+## The independent reviewer only when it is needed (owner, 2026-09-24)
+
+On `review-01` the kit cost 2 to 3 times its sources for the same outcome, and the reviewer pinned to Opus was 50 to 66% of that cost (`docs/specs/2026-09-24-benchmark-kit-vs-sources-design.md`, "Where the kit's tokens go"). The owner chose (label verbatim) "Reviewer chỉ khi diff lớn (Recommended)". Step 3 now dispatches the independent reviewer when this conversation wrote the change, when the diff is large (over 400 changed lines or 15 files, a starting threshold, not measured), or when a hot-path candidate still scores 50–79; otherwise the review in hand is the independent one and says so. The protocol's hot-path rule (a reviewer who did not write the change) is kept: a session reviewing someone else's branch already is that reviewer. New test case `tests/05-someone-elses-small-diff-is-reviewed-here.md`; case 02 (the authoring session must not review itself) is unchanged.
+
+Measured before commit, Claude Code, isolated profile, Sonnet 5, 31 tools in every init event:
+
+| Probe | Sessions | Outcome | Reviewer dispatched | Tokens, median (min–max) | Cost USD, median |
+|---|---|---|---|---|---|
+| `review-01` natural, before (K rows of "Measured · `review-01`") | 3 | 3 of 3 passed | yes (Opus) | 795,055 (708,466–836,053) | 0.77 |
+| `review-01` natural, after | 3 | 3 of 3 passed, D1 D2 D3, no decoy | none, no Opus tokens | 415,700 (384,107–672,778) | 0.28 |
+| `review-01` command, before | 3 | 3 of 3 passed | yes (Opus) | 577,098 (536,923–842,828) | 0.58 |
+| `review-01` command, after | 3 | 3 of 3 passed | none, no Opus tokens | 330,998 (253,287–358,775) | 0.21 |
+| authored change, after (`evals/bench/probe-review-authored/`: the session fixes the bulk delete itself, then asks for the review) | 2 | fix made, review given | yes: `bearingkit:bk-reviewer` in both, Opus 324,030 and 468,128 tokens | 714,502 and 891,904 | – |
+
+Commands: `bearingkit bench --task review-01 --config-dir _build/profile/claude --branches K --variants natural,command --runs 3` (`evals/results/2026-09-24-bench-review-01-natural+command/`) and `bearingkit bench --task probe-review-authored --config-dir _build/profile/claude --branches K --runs 2` (`…-probe-review-authored-natural/`). Against the sources' medians of the same day (0.27 natural, 0.15 command), the kit now costs about the same on the natural prompt and 1.4 times on the command prompt, where it was 2.9 and 3.9 times. Each after-answer was read for who reviewed: the three command answers say this review is the independent one because this conversation did not write the change; of the natural answers, one calls the review independent because it ran in a forked session (a different reason), one says a fix would need an independent review (right: the fix would be this conversation's), one says nothing about it. Test case 05, expectation 1 (the report says who reviewed), is met in 3 of 6 strictly, 4 of 6 if the forked-session reason counts; the natural prompt relays the fork's report through the main session, which drops the line. Open, to watch: whether "who reviewed" belongs in "Evidence to paste". `record-guardrail.cjs` was blocked by the sandbox of the measured sessions, as before (compat B12). The description is unchanged, so routing was not measured again.
+
 ## Done when (spec §5.3)
 
 Body 33 lines; four test cases; activation prompts unchanged (`rev-*`); acceptance on Claude Code passed on the working tree, and on Antigravity after the commit (`acc-01` none, `acc-02` → `bk-spec`, section above). #2 (every body line traced to a source) holds for the lines this sprint wrote; the older lines of the body are the same as before.
