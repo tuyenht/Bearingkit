@@ -261,7 +261,7 @@ function cli(cmd, argv = []) {
     if (wants('claude')) {
       out('for Claude Code, run these yourself (they write under ~/.claude):');
       // An activated project also gets a local-scope record of the host's own, which a user-scope update leaves behind.
-      for (const l of cmd === 'install' ? CLAUDE_STEPS(root) : ['  claude plugin update bearingkit@bearingkit', '  then, from each project you activated:  claude plugin update bearingkit@bearingkit --scope local', '  or let it follow the repository by itself with "autoUpdate": true on the marketplace (see  bearingkit install)']) out(l);
+      for (const l of cmd === 'install' ? CLAUDE_STEPS(root) : ['  claude plugin marketplace update bearingkit', '  claude plugin update bearingkit@bearingkit --scope user', '  then, from each project you activated:  claude plugin update bearingkit@bearingkit --scope local', '  (autoUpdate on the marketplace is meant to do this by itself; it has not been seen to, docs/compat/2026-09-24-benchmark-tool-claims.md B15)']) out(l);
     }
     if (wants('antigravity') && cmd === 'install') out('then, in each project that should use the kit:  bearingkit activate');
     return;

@@ -148,6 +148,10 @@ test('the six commands run from bin, with the same flags and the same three line
   // The host keeps its own local-scope record for an activated project, and a user-scope update leaves it behind
   // (seen 2026-09-24: user at the new commit, local still at the old one until updated from that project).
   assert.match(updClaude.stdout, /claude plugin update bearingkit@bearingkit --scope local/);
+  // Run from an activated project, the bare command updated the local record and left the user one behind (seen
+  // 2026-09-25), so the user-scope line names its scope; the marketplace is refreshed first, since autoUpdate has not.
+  assert.match(updClaude.stdout, /claude plugin update bearingkit@bearingkit --scope user/);
+  assert.match(updClaude.stdout, /claude plugin marketplace update bearingkit/);
   assert.doesNotMatch(updClaude.stdout, /marketplace add/);
 });
 
