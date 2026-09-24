@@ -509,4 +509,4 @@ async function run(argv) {
   process.stdout.write(`\nOverall ${summary.pass}/${summary.total}, false activations ${summary.falseActivations}, no-action ${summary.noAction}.${quotaNote}\n${listing}\nWritten: ${out}\n`);
 }
 
-module.exports = { run, preflight, parseStream, parseQuota, parseInit, listingNote, quotaStop, authStop, cutNote, classify, loadPrompts, selectPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };
+module.exports = { run, preflight, parseArgs, parseStream, parseQuota, parseInit, listingNote, quotaStop, authStop, cutNote, classify, loadPrompts, selectPrompts, summarize, table, checklist, passes, sample, stageFixture, ancestorMemoryFiles, chooseStageBase };

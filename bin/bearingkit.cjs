@@ -17,13 +17,14 @@ const commands = {
   uninstall: () => activation().cli('uninstall', args),
   antigravity: () => require('../scripts/antigravity.cjs').cli(args),
   evals: () => require('../scripts/evals.cjs').run(args),
+  bench: () => require('../scripts/bench.cjs').run(args),
   doctor: () => require('../scripts/doctor.cjs').cli(args),
 };
 
 // Object.hasOwn, not a truthiness test: `commands[cmd]` also resolves `constructor`, `toString` and the rest of
 // Object.prototype, and those were dispatched as commands that did nothing and exited 0.
 if (!Object.hasOwn(commands, String(cmd))) {
-  console.error('usage: bearingkit <install|update|activate|deactivate|status|uninstall|doctor|evals|antigravity> [options]');
+  console.error('usage: bearingkit <install|update|activate|deactivate|status|uninstall|doctor|evals|bench|antigravity> [options]');
   process.exit(2);
 }
 

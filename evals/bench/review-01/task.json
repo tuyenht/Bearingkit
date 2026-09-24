@@ -1,0 +1,121 @@
+{
+  "id": "review-01",
+  "skill": "bk-review",
+  "fixture": "build.cjs",
+  "prompt": "Review the changes on branch feature/invoice-export against main before I merge it. List the problems you find, most severe first, each with its file and line.",
+  "commands": {
+    "K": "/bearingkit:bk-review",
+    "S": "/pr-review-toolkit:review-pr"
+  },
+  "sources": [
+    {
+      "plugin": "superpowers",
+      "dir": "_build/upstream/obra_superpowers",
+      "source": "obra/superpowers"
+    },
+    {
+      "plugin": "code-review",
+      "dir": "_build/upstream/claude-plugins-official/plugins/code-review",
+      "source": "anthropics/claude-plugins-official"
+    },
+    {
+      "plugin": "pr-review-toolkit",
+      "dir": "_build/upstream/claude-plugins-official/plugins/pr-review-toolkit",
+      "source": "anthropics/claude-plugins-official"
+    },
+    {
+      "plugin": "mattpocock-skills",
+      "dir": "_build/upstream/mattpocock_skills",
+      "source": "mattpocock/skills"
+    }
+  ],
+  "limits": {
+    "seconds": 900,
+    "turns": 40
+  },
+  "rules": {
+    "defects": [
+      {
+        "id": "D1",
+        "what": "bulk DELETE deletes body ids with no tenant scope",
+        "all": [
+          [
+            "deleteMany",
+            "body\\.ids",
+            "\\bids\\b",
+            "bulk"
+          ],
+          [
+            "tenant",
+            "organi[sz]ation",
+            "cross-(tenant|account|org)",
+            "another (user|customer|company|account)",
+            "other (tenants|customers|companies|accounts)",
+            "\\bIDOR\\b"
+          ]
+        ]
+      },
+      {
+        "id": "D2",
+        "what": "logo URL checked by a bare startsWith, then fetched server-side",
+        "all": [
+          [
+            "logo",
+            "startsWith",
+            "fetch"
+          ],
+          [
+            "ssrf",
+            "server[- ]side request",
+            "prefix",
+            "userinfo",
+            "bypass",
+            "attacker[- ]controlled",
+            "internal (network|service|host)",
+            "metadata"
+          ]
+        ]
+      },
+      {
+        "id": "D3",
+        "what": "the new status void reaches the unchanged payment-reminder job",
+        "all": [
+          [
+            "remind",
+            "payment-reminders",
+            "sendPaymentReminders",
+            "dunning"
+          ],
+          [
+            "\\bvoid"
+          ]
+        ]
+      }
+    ],
+    "decoys": [
+      {
+        "id": "X1",
+        "what": "tagged-template $queryRaw is a prepared statement",
+        "all": [
+          [
+            "queryRaw"
+          ],
+          [
+            "injection"
+          ]
+        ],
+        "unless": [
+          "safe",
+          "parameteri",
+          "prepared statement",
+          "sanitiz",
+          "auto-escap",
+          "binds? the value",
+          "not (vulnerable|an? )?\\s*(real\\s+)?(issue|injection|problem|risk)",
+          "no (sql )?injection",
+          "false positive"
+        ]
+      }
+    ]
+  }
+}
