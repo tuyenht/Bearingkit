@@ -132,7 +132,9 @@ function scoreRow(p, raw, cut, task, base, check = null) {
   return { ...p, ...u, cost: u.cost === null ? null : Math.round(u.cost * 1000) / 1000, cut: lost, foundIds, missed, decoyIds: sc.decoys, blocked: sc.blocked, found: foundIds.length, decoys: sc.decoys.length, passed, check, invoked: invocations(raw), answerFile: `${base}.answer.md` };
 }
 
-const fmt = (s) => (s.median === null ? '–' : `${s.median} (${s.min}–${s.max})`);
+// The median of an even count is a mean of two values, which prints with float noise unless rounded.
+const round3 = (x) => (Number.isInteger(x) ? x : Math.round(x * 1000 + Number.EPSILON) / 1000);
+const fmt = (s) => (s.median === null ? '–' : `${round3(s.median)} (${s.min}–${s.max})`);
 
 function report(task, rows, meta) {
   const lines = [`# Benchmark ${task.id} · ${meta.date}`, '', `Model ${meta.model || '?'} · profile ${meta.configDir || '?'} · fixture ${meta.fixture || '?'} · limits ${meta.seconds || '?'}s, ${meta.turns || '?'} turns · ${rows.length} sessions${meta.stopped ? ` · stopped early: ${meta.stopped}` : ''}${meta.note ? ` · ${meta.note}` : ''}`, '', '## Per branch (median, min–max)', '', '| Variant | Branch | Sessions | Passed | Defects found | Decoys flagged | Blocked | Tokens total | Tokens fresh | Cost USD | Turns | Seconds |', '|---|---|---|---|---|---|---|---|---|---|---|---|'];

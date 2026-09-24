@@ -310,6 +310,13 @@ test('review-03 is a clean branch whose own code passes its checks, and its rule
   assert.deepEqual(scoreAnswer(careless, rules), { found: [], missed: [], decoys: ['X1', 'X2', 'X3', 'X4'], blocked: true, passed: false });
 });
 
+test('a median of an even number of sessions is printed rounded, not with float noise', () => {
+  const { report } = require('../scripts/bench.cjs');
+  const row = (n, cost) => ({ n, variant: 'natural', branch: 'F', run: n, foundIds: [], missed: [], decoyIds: [], blocked: null, found: 0, decoys: 0, passed: false, total: 1, fresh: 1, cost, turns: 1, seconds: 1, tools: 31, results: 1, invoked: [], answerFile: 'a' });
+  const md = report({ id: 't', rules: { defects: [], decoys: [] } }, [row(1, 0.1), row(2, 0.117)], { date: 'd' });
+  assert.ok(md.includes('| 0.109 (0.1–0.117) |'), md);
+});
+
 test('the report counts sessions that blocked the merge', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-rescore-'));
   const init = { type: 'system', subtype: 'init', tools: new Array(31).fill('t') };
