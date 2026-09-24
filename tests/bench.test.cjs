@@ -195,7 +195,10 @@ test('a results folder is scored again from its raw streams with the rules as th
   fs.writeFileSync(path.join(dir, '02-natural-F1.raw.jsonl'), stream([{ type: 'system', subtype: 'init', tools: new Array(31).fill('t') }, { ...resultEvent, result: 'looks fine' }]));
   const rows = rescore(dir, loadTask('review-01', ROOT));
   assert.deepEqual(rows.map((r) => [r.branch, r.run, r.variant, r.passed]), [['K', 1, 'natural', true], ['F', 1, 'natural', false]]);
-  assert.ok(fs.readFileSync(path.join(dir, 'results.md'), 'utf8').includes('| natural | K | 1 | 1 |'));
+  const md = fs.readFileSync(path.join(dir, 'results.md'), 'utf8');
+  assert.ok(md.includes('| natural | K | 1 | 1 |'));
+  assert.ok(md.includes('- natural K: D1 1/1 · D2 1/1 · D3 1/1 · X1 0/1'), 'the per-defect section counts each branch');
+  assert.ok(md.includes('- natural F: D1 0/1 · D2 0/1 · D3 0/1 · X1 0/1'));
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
