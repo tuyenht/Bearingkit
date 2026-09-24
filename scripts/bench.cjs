@@ -34,10 +34,12 @@ function loadTask(id, root = ROOT) {
 
 // The branch is fixed on the command line: its plugin directories, and an inline --settings that switches on exactly
 // those plugins, whatever the profile's own enabledPlugins says.
+// A task that edits and runs code names the permissions it needs; every branch gets the same ones.
 function branchSetup(task, branch, root = ROOT) {
-  if (branch === 'K') return { pluginDirs: [root], settings: { enabledPlugins: { 'bearingkit@inline': true } } };
-  if (branch === 'S') return { pluginDirs: task.sources.map((s) => path.join(root, s.dir)), settings: { enabledPlugins: Object.fromEntries(task.sources.map((s) => [`${s.plugin}@inline`, true])) } };
-  if (branch === 'F') return { pluginDirs: [], settings: { enabledPlugins: {} } };
+  const extra = task.permissions ? { permissions: task.permissions } : {};
+  if (branch === 'K') return { pluginDirs: [root], settings: { enabledPlugins: { 'bearingkit@inline': true }, ...extra } };
+  if (branch === 'S') return { pluginDirs: task.sources.map((s) => path.join(root, s.dir)), settings: { enabledPlugins: Object.fromEntries(task.sources.map((s) => [`${s.plugin}@inline`, true])), ...extra } };
+  if (branch === 'F') return { pluginDirs: [], settings: { enabledPlugins: {}, ...extra } };
   throw new Error(`unknown branch ${branch}; use K, S or F`);
 }
 
@@ -114,11 +116,20 @@ function runSession(prompt, setup, opts) {
   });
 }
 
-function scoreRow(p, raw, cut, task, base) {
+// Defects with `check` take their result from the fixture check the runner made after the session (kept beside the
+// stream as <base>.check.json, so a rescore reads the same result); with no check, they are missed. An `optional`
+// defect is reported but does not decide the pass.
+function scoreRow(p, raw, cut, task, base, check = null) {
   const u = usageFrom(raw);
   const sc = scoreAnswer(u.answer || '', task.rules);
+  const byCheck = new Set(task.rules.defects.filter((d) => d.check && check && check[d.check] === true).map((d) => d.id));
+  const order = task.rules.defects.map((d) => d.id);
+  const foundIds = order.filter((id) => sc.found.includes(id) || byCheck.has(id));
+  const missed = order.filter((id) => !foundIds.includes(id));
+  const required = new Set(task.rules.defects.filter((d) => !d.optional).map((d) => d.id));
   const lost = cut || u.results === 0;
-  return { ...p, ...u, cost: u.cost === null ? null : Math.round(u.cost * 1000) / 1000, cut: lost, foundIds: sc.found, missed: sc.missed, decoyIds: sc.decoys, blocked: sc.blocked, found: sc.found.length, decoys: sc.decoys.length, passed: sc.passed && !lost, invoked: invocations(raw), answerFile: `${base}.answer.md` };
+  const passed = !lost && missed.every((id) => !required.has(id)) && sc.decoys.length === 0 && sc.blocked !== true;
+  return { ...p, ...u, cost: u.cost === null ? null : Math.round(u.cost * 1000) / 1000, cut: lost, foundIds, missed, decoyIds: sc.decoys, blocked: sc.blocked, found: foundIds.length, decoys: sc.decoys.length, passed, check, invoked: invocations(raw), answerFile: `${base}.answer.md` };
 }
 
 const fmt = (s) => (s.median === null ? '–' : `${s.median} (${s.min}–${s.max})`);
@@ -152,7 +163,9 @@ function rescore(dir, task) {
     const m = f.match(/^(\d+)-(\w+)-([KSF])(\d+)\.raw\.jsonl$/);
     if (!m) continue;
     const base = f.replace(/\.raw\.jsonl$/, '');
-    rows.push(scoreRow({ n: Number(m[1]), variant: m[2], branch: m[3], run: Number(m[4]) }, fs.readFileSync(path.join(dir, f), 'utf8'), false, task, base));
+    const checkFile = path.join(dir, `${base}.check.json`);
+    const check = fs.existsSync(checkFile) ? JSON.parse(fs.readFileSync(checkFile, 'utf8')) : null;
+    rows.push(scoreRow({ n: Number(m[1]), variant: m[2], branch: m[3], run: Number(m[4]) }, fs.readFileSync(path.join(dir, f), 'utf8'), false, task, base, check));
   }
   fs.writeFileSync(path.join(dir, 'results.md'), report(task, rows, { date: path.basename(dir).slice(0, 10), note: `rescored ${new Date().toISOString().slice(0, 16)}Z from the raw streams with the rules of evals/bench/${task.id}/task.json` }));
   return rows;
@@ -191,7 +204,11 @@ async function run(argv) {
     const s = await runSession(promptFor(task, p.variant, p.branch), branchSetup(task, p.branch), { ...opts, cwd: builder.DST });
     const base = `${String(i + 1).padStart(2, '0')}-${p.variant}-${p.branch}${p.run}`;
     fs.writeFileSync(path.join(outDir, `${base}.raw.jsonl`), s.raw);
-    const row = scoreRow({ n: i + 1, ...p }, s.raw, s.cut, task, base);
+    // A check that throws (a file held open on Windows) costs that session its checks, not the run.
+    let check = null;
+    if (builder.check) try { check = builder.check(builder.DST); } catch (e) { check = { error: String(e && e.message || e) }; }
+    if (check) fs.writeFileSync(path.join(outDir, `${base}.check.json`), JSON.stringify(check) + '\n');
+    const row = scoreRow({ n: i + 1, ...p }, s.raw, s.cut, task, base, check);
     fs.writeFileSync(path.join(outDir, `${base}.answer.md`), row.answer || '(no final answer)\n');
     rows.push(row);
     process.stdout.write(`${base}: found ${row.foundIds.join(' ') || '-'} · decoys ${row.decoyIds.join(' ') || '-'} · ${row.total ?? '?'} tokens · ${row.seconds ?? '?'}s${row.cut ? ' · CUT' : ''}\n`);

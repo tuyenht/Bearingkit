@@ -117,7 +117,34 @@ The script's errors are recorded, not fixed, since the task is not scored: a bol
 
 ## Later tasks
 
-`debug-01`: a failing test planted in the fixture, for the `bk-debug` sprint (sources: Superpowers `systematic-debugging`, and the ideas-only sources, which are not installable and so stay out of S). `build-01`: a small feature with a TDD or spec step, where `security-guidance`'s edit and commit hooks act. Each gets its own design line here before it runs.
+`debug-01` has its own section below. `build-01`: a small feature with a TDD or spec step, where `security-guidance`'s edit and commit hooks act. Each gets its own design line here before it runs.
+
+## Task 4 · `debug-01`, a bug whose symptom has a tempting patch
+
+Written before any session ran (2026-09-24), for the `bk-debug` sprint (v0.3 order, item 4). The review tasks showed that the floor reads small code well; a debugging task is scored on what the code does after the session, which reading alone does not settle.
+
+The fixture (`evals/bench/debug-01/`) is a small invoicing library in plain Node, no dependencies, tests on `node:test`. Calendar dates are `YYYY-MM-DD` strings. `parseDate` builds a **local** midnight (`new Date(y, m - 1, d)`), `formatDate` writes the **UTC** date (`toISOString().slice(0, 10)`), `addDays` uses local `setDate`, and `daysLate` floors a difference of two local midnights. In UTC and west of it the round trip holds, so CI (UTC) and the developer who wrote it (Los Angeles) are green; in UTC+7, the owner's zone and this machine's, local midnight is the previous day in UTC and the due-date tests fail. The last commit before the report reworded the invoice summary, an innocent change nearest the symptom.
+
+- **The tempting patch**: make `formatDate` read local components (`getFullYear`, `getMonth`, `getDate`). Every visible test then passes in every zone, but `daysLate` still floors a local difference, so across a daylight-saving change in Los Angeles a 19-day delay reads 18 (measured on this machine: local midnights of 1 and 20 March 2026 are 18.958 days apart there).
+- **The root cause**: local and UTC calendar arithmetic mixed. Fixed when every function works in one frame (UTC throughout, or pure calendar arithmetic).
+- Other patches that do not count: expected values changed in the visible tests, a `TZ` pinned in the test script (the checks run `node` directly with their own `TZ`).
+
+Prompt, the same for every branch: "`node --test` fails on my machine but CI is green. Find the cause and fix it." Commands: K `/bearingkit:bk-debug`; S `/superpowers:systematic-debugging` with `mattpocock-skills` also loaded (its `diagnosing-bugs` is the other source bundled into `bk-debug`, inventory row 4 of the mattpocock table). F none.
+
+Scored by script, from the fixture after the session and before the reset (`check()` of the builder; results kept beside each stream so a rescore reads them):
+
+| Check | Passes when |
+|---|---|
+| `visible` | a bare `node --test` in the fixture, as the owner runs it, passes with `TZ=Asia/Ho_Chi_Minh` and with `TZ=UTC` |
+| `root` | hidden tests, copied in only for the check, pass with `TZ` set to `Asia/Ho_Chi_Minh`, `America/Los_Angeles`, `UTC` and `Pacific/Auckland`: `daysLate` across both daylight-saving changes, `addDays` across month, year and leap-day ends, the round trip of a date, and the process zone left as the check set it (a `TZ` pinned inside the code fails) |
+| `kept` | the original visible tests, whatever the session did to its copies, pass against the session's code in both zones: an expectation weakened in place does not help |
+| `regression` | reported, not required: the suite counts more than its original eight tests (from the TAP reporter's count) |
+
+The task passes with `visible`, `root` and `kept`. Answer text is not scored. The checks run `node` with a bare environment (the zone, `PATH` and what Windows needs to start a process), never the runner's own. Sessions get the permissions a debugging session needs, the same on every branch, through the inline settings: edits inside the fixture, `node` and read-only `git` commands (no PowerShell rule: its syntax is not verified, so a PowerShell call is refused on every branch alike). Limits: 900 seconds, 60 turns.
+
+The independent review of the fixture (2026-09-24, before any run) applied ten patches in temporary builds; the five correct ones (UTC throughout, local throughout with rounding, pure calendar arithmetic, `new Date('YYYY-MM-DD')` with UTC operations, local dates with a UTC difference) all passed, also in Auckland, Kiritimati, São Paulo and London. It found two patches that passed without fixing the cause, a `TZ` pinned inside `src` and a noon-anchored date with rounding; the zone check and the Auckland run were added for them, and the tests of the builder show each patch failing. `tests/bench.test.cjs` pins the controls: the planted state fails every check; the tempting patch passes `visible` and `kept` only; the root fix with a new test passes all four; tests replaced by a placeholder pass `visible` only; a zone pinned in `src` and a noon-anchored date each fail `root`. For reading transcripts: Git Bash drops a `TZ` value that contains a slash, so a session that checks `TZ=America/Los_Angeles` through the Bash tool is still running in UTC+7.
+
+Calibration protocol, fixed now: (1) three `natural` sessions on the floor F; (2) the task is usable only if the floor passes in at most one of three; otherwise it is not scored, and the sprint's comparison waits for a harder task; (3) the checks are frozen once F has run; (4) then three sessions each of K and S, `natural`, then `command`, F's three reused.
 
 ## The runner
 

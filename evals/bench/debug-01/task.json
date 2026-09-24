@@ -1,0 +1,36 @@
+{
+  "id": "debug-01",
+  "skill": "bk-debug",
+  "fixture": "build.cjs",
+  "prompt": "`node --test` fails on my machine but CI is green. Find the cause and fix it.",
+  "commands": {
+    "K": "/bearingkit:bk-debug",
+    "S": "/superpowers:systematic-debugging"
+  },
+  "sources": [
+    { "plugin": "superpowers", "dir": "_build/upstream/obra_superpowers", "source": "obra/superpowers" },
+    { "plugin": "mattpocock-skills", "dir": "_build/upstream/mattpocock_skills", "source": "mattpocock/skills" }
+  ],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/debug-01/**)",
+      "Bash(node:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)",
+      "Bash(git blame:*)",
+      "Bash(git bisect:*)"
+    ]
+  },
+  "limits": { "seconds": 900, "turns": 60 },
+  "rules": {
+    "defects": [
+      { "id": "visible", "what": "node --test passes in UTC+7 and in UTC", "check": "visible" },
+      { "id": "root", "what": "hidden tests pass in UTC+7, Los Angeles and UTC", "check": "root" },
+      { "id": "kept", "what": "every original visible test block is intact", "check": "kept" },
+      { "id": "regression", "what": "the session added a test (reported, not required)", "check": "regression", "optional": true }
+    ],
+    "decoys": []
+  }
+}

@@ -406,3 +406,69 @@ test('review-03 third pass: hedged clears, the plugins\' praise heading, and cla
   assert.equal(blocked('Ready to merge: With fixes (see Important)'), true);
   assert.equal(blocked('Nice-to-have; fine to address after merge rather than before merging.'), false);
 });
+
+// debug-01 is scored on the fixture after the session, not on the answer: its builder's check() runs the tests.
+test('a defect scored by a fixture check is found when the check passed, and an optional one does not decide the pass', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-rescore-'));
+  const init = { type: 'system', subtype: 'init', tools: new Array(31).fill('t') };
+  fs.writeFileSync(path.join(dir, '01-natural-F1.raw.jsonl'), stream([init, { ...resultEvent, result: 'Fixed.' }]));
+  fs.writeFileSync(path.join(dir, '01-natural-F1.check.json'), JSON.stringify({ visible: true, root: true, kept: true, regression: false }));
+  fs.writeFileSync(path.join(dir, '02-natural-F2.raw.jsonl'), stream([init, { ...resultEvent, result: 'Fixed.' }]));
+  fs.writeFileSync(path.join(dir, '02-natural-F2.check.json'), JSON.stringify({ visible: true, root: false, kept: true, regression: true }));
+  fs.writeFileSync(path.join(dir, '03-natural-F3.raw.jsonl'), stream([init, { ...resultEvent, result: 'Fixed.' }]));
+  const rows = rescore(dir, loadTask('debug-01', ROOT));
+  assert.deepEqual(rows.map((r) => [r.foundIds, r.missed, r.passed]), [
+    [['visible', 'root', 'kept'], ['regression'], true],
+    [['visible', 'kept', 'regression'], ['root'], false],
+    [[], ['visible', 'root', 'kept', 'regression'], false],
+  ], 'a session with no check file found nothing');
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('a task that needs tools gets the same permissions on every branch', () => {
+  const task = loadTask('debug-01', ROOT);
+  for (const b of ['K', 'S', 'F']) assert.deepEqual(branchSetup(task, b, ROOT).settings.permissions, task.permissions, b);
+  assert.ok(task.permissions.allow.some((r) => /^Edit\(\/\/c\/Projects\/\.bearingkit-evals\/bench\/debug-01\/\*\*\)$/.test(r)));
+  assert.equal(branchSetup(loadTask('review-01', ROOT), 'F', ROOT).settings.permissions, undefined, 'a review task gets none');
+});
+
+test('debug-01: the planted bug fails only east of UTC, and the checks tell the tempting patch from the root fix', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dst = path.join(dir, 'debug-01');
+  const build = require('../evals/bench/debug-01/build.cjs');
+  build.build({ dst });
+  const { spawnSync } = require('node:child_process');
+  const git = (...a) => spawnSync('git', a, { cwd: dst, encoding: 'utf8' }).stdout.trim();
+  assert.equal(git('log', '--format=%s').split('\n').length, 2, 'two commits: the dates, then the reworded summary');
+  const suite = (tz) => {
+    const env = { ...process.env, TZ: tz };
+    delete env.NODE_TEST_CONTEXT;
+    return spawnSync(process.execPath, ['--test', 'tests/invoice.test.js', 'tests/dates.test.js'], { cwd: dst, env, encoding: 'utf8' }).status;
+  };
+  assert.notEqual(suite('Asia/Ho_Chi_Minh'), 0, 'red in UTC+7');
+  assert.equal(suite('UTC'), 0, 'green in CI');
+  assert.equal(suite('America/Los_Angeles'), 0, 'green where it was written');
+  assert.deepEqual(build.check(dst), { visible: false, root: false, kept: false, regression: false }, 'the planted state fails, the original tests included');
+  const edit = (rel, from, to) => { const f = path.join(dst, rel); const s = fs.readFileSync(f, 'utf8'); assert.ok(s.includes(from), `${rel}: ${from}`); fs.writeFileSync(f, s.replace(from, to)); };
+  edit('src/dates.js', 'return date.toISOString().slice(0, 10);', "return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');");
+  assert.deepEqual(build.check(dst), { visible: true, root: false, kept: true, regression: false }, 'the tempting patch passes what is visible only');
+  build.reset({ dst });
+  edit('src/dates.js', 'return new Date(year, month - 1, day);', 'return new Date(Date.UTC(year, month - 1, day));');
+  edit('src/dates.js', 'date.setDate(date.getDate() + days);', 'date.setUTCDate(date.getUTCDate() + days);');
+  fs.appendFileSync(path.join(dst, 'tests/dates.test.js'), "\ntest('a date east of UTC keeps its day', () => {\n  assert.equal(formatDate(parseDate('2026-01-31')), '2026-01-31');\n});\n");
+  assert.deepEqual(build.check(dst), { visible: true, root: true, kept: true, regression: true }, 'the root fix, with a regression test');
+  assert.equal(fs.readdirSync(dst).some((n) => n.startsWith('.bench-check-')), false, 'the check copies are gone after the check');
+  build.reset({ dst });
+  for (const f of ['tests/invoice.test.js', 'tests/dates.test.js']) fs.writeFileSync(path.join(dst, f), "'use strict';\nrequire('node:test')('placeholder', () => {});\n");
+  assert.deepEqual(build.check(dst), { visible: true, root: false, kept: false, regression: false }, 'weakened tests pass what is visible only');
+  build.reset({ dst });
+  edit('src/dates.js', "'use strict';\n", "'use strict';\nprocess.env.TZ = 'UTC';\n");
+  assert.deepEqual(build.check(dst), { visible: true, root: false, kept: true, regression: false }, 'a zone pinned inside the code is caught');
+  build.reset({ dst });
+  edit('src/dates.js', 'return new Date(year, month - 1, day);', 'return new Date(year, month - 1, day, 12);');
+  edit('src/dates.js', 'return Math.floor((parseDate(to) - parseDate(from)) / DAY_MS);', 'return Math.round((parseDate(to) - parseDate(from)) / DAY_MS);');
+  assert.deepEqual(build.check(dst), { visible: true, root: false, kept: true, regression: false }, 'a noon-anchored date fails east of UTC+12');
+  build.reset({ dst });
+  assert.equal(git('status', '--porcelain'), '');
+  fs.rmSync(dir, { recursive: true, force: true });
+});

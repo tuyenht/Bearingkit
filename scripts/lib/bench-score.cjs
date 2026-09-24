@@ -54,7 +54,8 @@ function scoreAnswer(answer, rules) {
   const text = String(answer || '').replace(/[‘’]/g, "'");
   const items = splitItems(text);
   const found = []; const missed = []; const decoys = [];
-  for (const d of rules.defects) (items.some((i) => matches(i, d)) ? found : missed).push(d.id);
+  // A defect with `check` instead of `all` is scored on the fixture after the session (the runner's scoreRow).
+  for (const d of rules.defects.filter((r) => r.all)) (items.some((i) => matches(i, d)) ? found : missed).push(d.id);
   const findings = findingItems(items, rules.clearSections);
   for (const x of rules.decoys || []) if (findings.some((i) => matches(i, x) && !any(withoutFixes(i), [...(rules.clear || []), ...(x.unless || [])]))) decoys.push(x.id);
   const blocked = rules.blocks ? any(text, rules.blocks) : null;
