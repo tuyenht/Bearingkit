@@ -472,3 +472,22 @@ test('debug-01: the planted bug fails only east of UTC, and the checks tell the 
   assert.equal(git('status', '--porcelain'), '');
   fs.rmSync(dir, { recursive: true, force: true });
 });
+
+// A run never writes into a folder that already holds a run: the model is in the name unless it is the default, and a
+// second run of the same day gets a numbered folder of its own.
+test('each run gets a results folder of its own, named for its model', () => {
+  const { resultsDir } = require('../scripts/bench.cjs');
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-dirs-'));
+  const first = resultsDir(root, '2026-09-24', 'review-01', ['natural'], 'sonnet');
+  assert.equal(path.basename(first), '2026-09-24-bench-review-01-natural');
+  assert.equal(path.basename(resultsDir(root, '2026-09-24', 'review-01', ['natural'], 'haiku')), '2026-09-24-bench-review-01-natural-haiku');
+  fs.mkdirSync(first, { recursive: true });
+  assert.equal(resultsDir(root, '2026-09-24', 'review-01', ['natural'], 'sonnet'), first, 'an empty folder is reused');
+  fs.writeFileSync(path.join(first, 'results.md'), 'x');
+  assert.equal(path.basename(resultsDir(root, '2026-09-24', 'review-01', ['natural'], 'sonnet')), '2026-09-24-bench-review-01-natural-2');
+  fs.mkdirSync(`${first}-2`);
+  fs.writeFileSync(path.join(`${first}-2`, 'results.md'), 'x');
+  assert.equal(path.basename(resultsDir(root, '2026-09-24', 'review-01', ['natural', 'command'], 'sonnet')), '2026-09-24-bench-review-01-natural+command');
+  assert.equal(path.basename(resultsDir(root, '2026-09-24', 'review-01', ['natural'], 'sonnet')), '2026-09-24-bench-review-01-natural-3');
+  fs.rmSync(root, { recursive: true, force: true });
+});

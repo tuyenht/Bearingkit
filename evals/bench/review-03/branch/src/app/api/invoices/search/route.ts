@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 import { getSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { likePattern, parseSearchParams, SORTS } from '@/lib/search-params';
+import { likePattern, MAX_OFFSET, parseSearchParams, SORTS } from '@/lib/search-params';
 
 type Row = { id: string; number: string; customerName: string; amountCents: number; currency: string; status: string; dueAt: Date; paidAt: Date | null };
 
@@ -29,6 +29,7 @@ export async function GET(request: Request) {
     ORDER BY ${Prisma.raw(SORTS[sort])}, id
     LIMIT ${limit + 1} OFFSET ${offset}`;
 
-  const hasMore = rows.length > limit;
-  return NextResponse.json({ items: rows.slice(0, limit), nextOffset: hasMore ? offset + limit : null });
+  // No next page past the offset cap: a client following nextOffset would otherwise get the capped page again.
+  const next = offset + limit;
+  return NextResponse.json({ items: rows.slice(0, limit), nextOffset: rows.length > limit && next <= MAX_OFFSET ? next : null });
 }

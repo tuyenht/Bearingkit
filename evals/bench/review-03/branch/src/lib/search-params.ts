@@ -6,6 +6,7 @@ export const SORTS = {
 } as const;
 
 export const STATUSES = ['draft', 'open', 'paid', 'void'] as const;
+export const MAX_OFFSET = 10_000;
 
 export type Sort = keyof typeof SORTS;
 export type Status = (typeof STATUSES)[number];
@@ -23,7 +24,7 @@ export function parseSearchParams(sp: URLSearchParams): { ok: true; value: Searc
   if (!isSort(sort)) return { ok: false, error: 'unknown sort' };
   return {
     ok: true,
-    value: { q: q || null, status, sort, limit: intParam(sp.get('limit'), 20, 1, 50), offset: intParam(sp.get('offset'), 0, 0, 10_000) },
+    value: { q: q || null, status, sort, limit: intParam(sp.get('limit'), 20, 1, 50), offset: intParam(sp.get('offset'), 0, 0, MAX_OFFSET) },
   };
 }
 

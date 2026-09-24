@@ -171,6 +171,16 @@ function rescore(dir, task) {
   return rows;
 }
 
+// A run never writes into a folder that already holds one: the model is in the name unless it is the default, and a
+// second run on the same day gets a numbered folder, so a calibration's streams are never overwritten by the next run.
+function resultsDir(root, date, id, variants, model) {
+  const base = path.join(root, 'evals', 'results', `${date}-bench-${id}-${variants.join('+')}${model && model !== 'sonnet' ? `-${model}` : ''}`);
+  const used = (d) => fs.existsSync(d) && fs.readdirSync(d).length > 0;
+  let dir = base;
+  for (let n = 2; used(dir); n++) dir = `${base}-${n}`;
+  return dir;
+}
+
 async function run(argv) {
   const args = parseArgs(argv);
   const bad = preflight(args);
@@ -194,7 +204,7 @@ async function run(argv) {
   if (args['dry-run']) return;
   builder.build();
   const date = new Date().toISOString().slice(0, 10);
-  const outDir = path.join(ROOT, 'evals', 'results', `${date}-bench-${task.id}-${variants.join('+')}`);
+  const outDir = resultsDir(ROOT, date, task.id, variants, opts.model);
   fs.mkdirSync(outDir, { recursive: true });
   const meta = { date, ...opts, fixture: builder.DST };
   const rows = [];
@@ -223,4 +233,4 @@ async function run(argv) {
   process.stdout.write(`${stopped ? `stopped: ${stopped}\n` : ''}results: ${path.join(outDir, 'results.md')}\n`);
 }
 
-module.exports = { preflight, loadTask, branchSetup, promptFor, schedule, checkSources, report, rescore, run };
+module.exports = { preflight, loadTask, branchSetup, promptFor, schedule, checkSources, report, rescore, resultsDir, run };

@@ -109,7 +109,7 @@ Rules committed in `6e58937` before the run. `bearingkit bench --task review-03 
 
 Confirmed by both, as the protocol counts: one session of three (F3, a block). The task is **not usable**, and K and S were not run. A reading-only count would reach two of three (F2 and F3 both ask to fix the unmatched-payment case before merging), but both blocks stand on an item this section lists as arguable, and all three sessions raised it first.
 
-**The diff was not clean.** F3 found a real defect that the author and the independent review both missed: the offset is clamped to 10,000 while `nextOffset` stays `offset + limit` (`search-params.ts:26`, `search/route.ts:33`), so a client that follows `nextOffset` past 10,000 receives the same page forever. By the rule above this alone disqualifies the fixture.
+**The diff was not clean.** F3 found a real defect that the author and the independent review both missed: the offset is clamped to 10,000 while `nextOffset` stays `offset + limit` (`search-params.ts:26`, `search/route.ts:33` at `6e58937`), so a client that follows `nextOffset` past 10,000 receives the same page forever. By the rule above this alone disqualifies the fixture. Fixed after the calibration (no `nextOffset` past `MAX_OFFSET`); any later use calibrates again.
 
 What it says: on this small diff, Sonnet 5 with no plugin flagged no decoy outright in any session (the one hedged X3 asks the owner to confirm), cleared most of them in so many words, and spent its findings on the arguable design choices of the webhook and on one real defect. A skill cannot show fewer false findings where the floor makes almost none. With `review-01` and `review-02`, three small-branch tasks now fail to separate the branches, from the recall side and from the precision side. A rebuild with stronger decoys (the protocol's next step) is not taken yet: the floor came near only one of the decoys it has, and only to ask, so decoy strength is not what is missing. The remaining shapes are the realistic size (20 to 40 changed files) and defects only a run shows (section "Task 2"); which one, or none, is the owner's call (`docs/handoff/`).
 
@@ -153,6 +153,21 @@ Checks committed in `8a8c8d5` before the run. `bearingkit bench --task debug-01 
 Permissions held: every PowerShell call (six: one, three and two in F1, F2, F3) and one Bash call that began with `python3` (F3, a file edit with a `node -e` fallback) were refused by the host before running; the sessions went on with Bash and `node`.
 
 With the three review tasks, four small tasks now show the same thing: Sonnet 5 with no plugin already does what the task measures (finds planted defects, including one outside the diff; stays off decoys; fixes a root cause over a tempting patch, in about thirty seconds). On such tasks a skill can only add cost, which `review-01` measured at 2 to 3 times the tokens. What is left to separate the branches is the owner's call (`docs/handoff/`): a realistic-size task, defects that only a run shows, a weaker model for the whole frame, or what the process asks for beyond the outcome (a regression test before the fix, a reproduction before the change, which none of the floor sessions made) scored as outcomes of their own.
+
+## The frame on Haiku 4.5 (owner, 2026-09-24)
+
+The owner's answer after four small tasks failed to separate the branches on Sonnet 5 (labels verbatim): benchmark direction "Thử Haiku, dừng task nhỏ (Recommended)"; `bk-review` cost "Reviewer chỉ khi diff lớn (Recommended)". This replaces answer 3 ("3 lượt, Sonnet") for this part of the frame only; the Sonnet results above stand. No new small task is built; the four fixtures are calibrated again on a floor of Haiku 4.5 (`--model haiku`; the model id each session ran is read from its stream's per-model usage and recorded).
+
+Written before any Haiku session ran. Three `natural` floor sessions per task, rules and checks as frozen for each task (the `review-03` fixture had its offset defect fixed after its Sonnet calibration, rules unchanged). A task is usable on Haiku when:
+
+| Task | Usable when |
+|---|---|
+| `review-01` | the floor passes (all three defects, no decoy) in at most one of three |
+| `review-02` | at least one candidate stays: the floor found it in at most one of three |
+| `review-03` | at least two of three floor sessions have a false outcome the script scored and the reading confirms |
+| `debug-01` | the floor passes (`visible`, `root`, `kept`) in at most one of three |
+
+For each usable task, three `natural` sessions each of K and S on Haiku follow, F's three reused; the `command` variant only if the quota allows. The kit is measured as it ships at that commit: its `bk-reviewer` agent is pinned to Opus whatever the session's model (compat B13), so a K session on Haiku is a Haiku session with an Opus reviewer. Results go to their own folders (`…-haiku`; the runner never writes into a folder that already holds a run).
 
 ## The runner
 
