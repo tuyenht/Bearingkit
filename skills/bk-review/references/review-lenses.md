@@ -1,6 +1,6 @@
 # Review lenses, the confidence rubric, and what is not a finding
 
-Adapted from anthropics/claude-plugins-official (Apache-2.0): `plugins/code-review/commands/code-review.md` and `plugins/pr-review-toolkit/agents/{code-reviewer,silent-failure-hunter,type-design-analyzer,code-simplifier,comment-analyzer}.md`, commit `3b60051`; attribution in `NOTICE`. Kept: the independent passes, the confidence rubric and its anchors, the false-positive list, and the per-lens checklists. Not kept: the GitHub comment format and its link rules, the model-and-agent orchestration (which host a lens runs on is `bk-protocol/references/host-tools.md`'s business), the pull-request eligibility check, and one project's own style rules, which belong to that project's instruction files rather than to the kit.
+Adapted from anthropics/claude-plugins-official (Apache-2.0): `plugins/code-review/commands/code-review.md` and `plugins/pr-review-toolkit/agents/{code-reviewer,silent-failure-hunter,type-design-analyzer,code-simplifier,comment-analyzer}.md`, commit `3b60051`; attribution in `NOTICE`. Kept: the independent passes, the confidence rubric and its anchors, the false-positive list, and the per-lens checklists. Not kept: the GitHub comment format and its link rules, the model-and-agent orchestration (which host a lens runs on is `bk-protocol/references/host-tools.md`'s business), the pull-request eligibility check, and one project's own style rules, which belong to that project's instruction files rather than to the kit. The smells lens is adapted from mattpocock/skills (MIT): `skills/engineering/code-review/SKILL.md`, commit `3cca18b`, its smell baseline and the two rules that bind it; its parallel sub-agents and its spec axis are not carried (the spec check is `bk-build`'s). The weakened-bar lens carries an idea of addyosmani/agent-skills (MIT), in the kit's words.
 
 ## Passes
 
@@ -65,6 +65,27 @@ A wrong comment is worse than no comment, because it is trusted. For every comme
 - Check each claim against the code: signatures, described behaviour, referenced symbols, edge cases said to be handled.
 - Prefer the comment that says why. A comment restating what the line does is removed, not improved.
 - Flag comments that describe a temporary state, or that will rot at the next likely change.
+
+## Lens: smells
+
+A fixed baseline of Fowler's code smells (*Refactoring*, chapter 3), checked on the lines the change touched; it applies even when the project documents no standard. Two rules bind it. The project's documented standard wins: a smell it endorses is not raised. And a smell is a judgement call, named as one ("possible Feature Envy"), never a violation; what tooling already enforces is skipped. Each is scored with the rubric like any finding, so most stay below 80; one reaches the report when it will cost this change, such as logic duplicated in two places the change just wrote. Name the move with the smell:
+
+- **Mysterious name**: a name that does not say what the thing does or holds. Rename it; when no honest name comes, the design is unclear.
+- **Duplicated code**: the same shape in two hunks or files of the change. Extract it once and call it from both.
+- **Feature envy**: a function that works on another object's data more than on its own. Move it to that data.
+- **Data clumps**: the same few fields or parameters travelling together. Give them one type.
+- **Primitive obsession**: a string or number standing for a domain concept. Give the concept a small type.
+- **Repeated switches**: the same branching on the same type in several places. One map both sites share, or polymorphism.
+- **Shotgun surgery**: one logical change scattered across many files. Gather what changes together into one module.
+- **Divergent change**: one module edited for unrelated reasons. Split it so each part changes for one reason.
+- **Speculative generality**: parameters, hooks or layers no requirement asks for. Remove them until a need appears.
+- **Message chains**: `a.b().c().d()` navigation the caller should not depend on. Hide the walk behind one method.
+- **Middle man**: a class or function that mostly forwards. Call the real target.
+- **Refused bequest**: a subclass that ignores most of what it inherits. Use composition instead.
+
+## Lens: a weakened bar
+
+A change can pass every check by lowering the check. Look for a threshold or budget moved; a test skipped, deleted or stripped of assertions; a checker silenced by a new suppression (type, lint, coverage or secret-scan ignores); work left unfinished (a stub that throws, an empty catch, a note standing where a branch should be); an exception to a project rule that the change does not discuss. Each is reported with the rule it relaxes. One the change explains in its own text is a decision, not a finding (see "Not a finding").
 
 ## Lens: simplification
 
