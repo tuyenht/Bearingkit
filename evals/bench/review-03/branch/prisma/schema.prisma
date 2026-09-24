@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum InvoiceStatus {
+  draft
+  open
+  paid
+  void
+}
+
+model Invoice {
+  id            String         @id @default(cuid())
+  tenantId      String         @map("tenant_id")
+  number        String
+  customerName  String         @map("customer_name")
+  amountCents   Int            @map("amount_cents")
+  currency      String         @db.Char(3)
+  status        InvoiceStatus  @default(draft)
+  dueAt         DateTime       @map("due_at")
+  paidAt        DateTime?      @map("paid_at")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  paymentEvents PaymentEvent[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId, createdAt])
+  @@map("invoices")
+}
+
+// One row per event the payment provider delivered; the provider's event id makes a redelivery a no-op.
+model PaymentEvent {
+  id              String   @id @default(cuid())
+  providerEventId String   @unique @map("provider_event_id")
+  invoiceId       String   @map("invoice_id")
+  invoice         Invoice  @relation(fields: [invoiceId], references: [id])
+  amountCents     Int      @map("amount_cents")
+  currency        String   @db.Char(3)
+  receivedAt      DateTime @default(now()) @map("received_at")
+
+  @@index([invoiceId, receivedAt])
+  @@map("payment_events")
+}

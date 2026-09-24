@@ -3,9 +3,11 @@
 // session found, what it cost, and the median and spread per branch. Pure functions over a stream-json transcript,
 // so every number can be recomputed from the raw file the runner keeps.
 
-// A finding is a heading or a top-level list item with everything under it, a table row, or the text before the
-// first of these. Blank lines do not cut: a review writes a heading, the location, then a paragraph, and the three
-// are one finding.
+// A finding is a heading (or a line that is all bold, which reviews use as one) or a top-level list item with
+// everything under it, a table row, or the text before the first of these. Blank lines do not cut: a review writes a
+// heading, the location, then a paragraph, and the three are one finding.
+const BOLD_LINE = /^\*\*[^*\n]+\*\*\s*:?\s*$/;
+
 function splitItems(text) {
   const items = [];
   let cur = [];
@@ -13,7 +15,7 @@ function splitItems(text) {
   const flush = () => { const t = cur.join('\n').trim(); if (t) items.push(t); cur = []; };
   for (const line of String(text || '').split('\n')) {
     if (/^\s*(```|~~~)/.test(line)) fence = !fence;
-    const starts = !fence && (/^#{1,6}\s/.test(line) || /^([-*+]|\d+[.)])\s/.test(line) || /^\|/.test(line));
+    const starts = !fence && (/^#{1,6}\s/.test(line) || BOLD_LINE.test(line) || /^([-*+]|\d+[.)])\s/.test(line) || /^\|/.test(line));
     if (starts) flush();
     cur.push(line);
   }
@@ -24,12 +26,39 @@ function splitItems(text) {
 const any = (item, terms) => terms.some((t) => new RegExp(t, 'i').test(item));
 const matches = (item, rule) => rule.all.every((group) => any(item, group));
 
-function scoreAnswer(text, rules) {
+// Items under a heading the task names as praise ("Strengths", "What's good") are not findings, so they are left out
+// when decoys are counted. The praise ends at the next heading or bold line of any level, or after an item that
+// carries a plain line of text below its first line (an "Issues:" line that opens the next part).
+function findingItems(items, sections) {
+  if (!sections || !sections.length) return items;
+  const out = [];
+  let skip = false;
+  for (const item of items) {
+    const lines = item.split('\n');
+    const h = lines[0].match(/^#{1,6}\s+(.*)$/) || (BOLD_LINE.test(lines[0]) ? [lines[0], lines[0]] : null);
+    if (h) { skip = any(h[1], sections); if (skip) continue; }
+    if (!skip) { out.push(item); continue; }
+    if (lines.slice(1).some((l) => /^\S/.test(l) && !/^([-*+]|\d+[.)])\s/.test(l))) skip = false;
+  }
+  return out;
+}
+
+// What a finding recommends is not what it concludes: "Fix: add tenantId to prevent cross-tenant writes" does not
+// clear the claim before it. Sentences that open with a fix are left out when clearing words are looked for.
+const FIX_SENTENCE = /^[\s>*_`-]*(\*\*)?(fix|suggest(ed|ion)?|recommend(ed|ation)?|consider (adding|using|switching|replacing|moving|validating|checking)|remediation|mitigation|solution|instead|to fix|should (use|add|bind|check|validate|escape|scope|filter|be (changed|fixed|replaced|scoped|filtered|validated)))\b/i;
+const withoutFixes = (item) => item.split(/(?<=[.!?])\s+|\n/).filter((s) => !FIX_SENTENCE.test(s)).join('\n');
+
+// On a task with a `blocks` rule (a clean diff), telling the owner not to merge is itself a false outcome; it is read on
+// the whole answer, since the verdict often stands apart from any finding. Curly apostrophes are read as straight ones.
+function scoreAnswer(answer, rules) {
+  const text = String(answer || '').replace(/[‘’]/g, "'");
   const items = splitItems(text);
   const found = []; const missed = []; const decoys = [];
   for (const d of rules.defects) (items.some((i) => matches(i, d)) ? found : missed).push(d.id);
-  for (const x of rules.decoys || []) if (items.some((i) => matches(i, x) && !any(i, x.unless || []))) decoys.push(x.id);
-  return { found, missed, decoys, passed: missed.length === 0 && decoys.length === 0 };
+  const findings = findingItems(items, rules.clearSections);
+  for (const x of rules.decoys || []) if (findings.some((i) => matches(i, x) && !any(withoutFixes(i), [...(rules.clear || []), ...(x.unless || [])]))) decoys.push(x.id);
+  const blocked = rules.blocks ? any(text, rules.blocks) : null;
+  return { found, missed, decoys, blocked, passed: missed.length === 0 && decoys.length === 0 && blocked !== true };
 }
 
 function events(raw) {
@@ -95,7 +124,7 @@ const spread = (xs) => {
 };
 
 function summarize(rows) {
-  const out = { sessions: rows.length, passes: rows.filter((r) => r.passed).length };
+  const out = { sessions: rows.length, passes: rows.filter((r) => r.passed).length, blocked: rows.some((r) => typeof r.blocked === 'boolean') ? rows.filter((r) => r.blocked === true).length : null };
   for (const k of ['found', 'decoys', 'total', 'fresh', 'cost', 'turns', 'seconds']) out[k] = spread(rows.map((r) => r[k]));
   return out;
 }
@@ -107,6 +136,7 @@ function perDefect(rows, rules) {
   const out = {};
   for (const d of rules.defects) out[d.id] = rows.filter((r) => (r.foundIds || []).includes(d.id)).length;
   for (const x of rules.decoys || []) out[x.id] = rows.filter((r) => (r.decoyIds || []).includes(x.id)).length;
+  if (rules.blocks) out.blocked = rows.filter((r) => r.blocked === true).length;
   return out;
 }
 

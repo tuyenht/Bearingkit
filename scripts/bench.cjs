@@ -118,19 +118,19 @@ function scoreRow(p, raw, cut, task, base) {
   const u = usageFrom(raw);
   const sc = scoreAnswer(u.answer || '', task.rules);
   const lost = cut || u.results === 0;
-  return { ...p, ...u, cost: u.cost === null ? null : Math.round(u.cost * 1000) / 1000, cut: lost, foundIds: sc.found, missed: sc.missed, decoyIds: sc.decoys, found: sc.found.length, decoys: sc.decoys.length, passed: sc.passed && !lost, invoked: invocations(raw), answerFile: `${base}.answer.md` };
+  return { ...p, ...u, cost: u.cost === null ? null : Math.round(u.cost * 1000) / 1000, cut: lost, foundIds: sc.found, missed: sc.missed, decoyIds: sc.decoys, blocked: sc.blocked, found: sc.found.length, decoys: sc.decoys.length, passed: sc.passed && !lost, invoked: invocations(raw), answerFile: `${base}.answer.md` };
 }
 
 const fmt = (s) => (s.median === null ? '–' : `${s.median} (${s.min}–${s.max})`);
 
 function report(task, rows, meta) {
-  const lines = [`# Benchmark ${task.id} · ${meta.date}`, '', `Model ${meta.model || '?'} · profile ${meta.configDir || '?'} · fixture ${meta.fixture || '?'} · limits ${meta.seconds || '?'}s, ${meta.turns || '?'} turns · ${rows.length} sessions${meta.stopped ? ` · stopped early: ${meta.stopped}` : ''}${meta.note ? ` · ${meta.note}` : ''}`, '', '## Per branch (median, min–max)', '', '| Variant | Branch | Sessions | Passed | Defects found | Decoys flagged | Tokens total | Tokens fresh | Cost USD | Turns | Seconds |', '|---|---|---|---|---|---|---|---|---|---|---|'];
+  const lines = [`# Benchmark ${task.id} · ${meta.date}`, '', `Model ${meta.model || '?'} · profile ${meta.configDir || '?'} · fixture ${meta.fixture || '?'} · limits ${meta.seconds || '?'}s, ${meta.turns || '?'} turns · ${rows.length} sessions${meta.stopped ? ` · stopped early: ${meta.stopped}` : ''}${meta.note ? ` · ${meta.note}` : ''}`, '', '## Per branch (median, min–max)', '', '| Variant | Branch | Sessions | Passed | Defects found | Decoys flagged | Blocked | Tokens total | Tokens fresh | Cost USD | Turns | Seconds |', '|---|---|---|---|---|---|---|---|---|---|---|---|'];
   for (const variant of [...new Set(rows.map((r) => r.variant))]) {
     for (const branch of [...new Set(rows.map((r) => r.branch))]) {
       const sel = rows.filter((r) => r.variant === variant && r.branch === branch);
       if (!sel.length) continue;
       const s = summarize(sel);
-      lines.push(`| ${variant} | ${branch} | ${s.sessions} | ${s.passes} | ${fmt(s.found)} | ${fmt(s.decoys)} | ${fmt(s.total)} | ${fmt(s.fresh)} | ${fmt(s.cost)} | ${fmt(s.turns)} | ${fmt(s.seconds)} |`);
+      lines.push(`| ${variant} | ${branch} | ${s.sessions} | ${s.passes} | ${fmt(s.found)} | ${fmt(s.decoys)} | ${s.blocked === null ? '–' : s.blocked} | ${fmt(s.total)} | ${fmt(s.fresh)} | ${fmt(s.cost)} | ${fmt(s.turns)} | ${fmt(s.seconds)} |`);
     }
   }
   lines.push('', '## Each defect and decoy, sessions that found or flagged it', '');
@@ -139,8 +139,8 @@ function report(task, rows, meta) {
     if (sel.length) lines.push(`- ${variant} ${branch}: ${Object.entries(perDefect(sel, task.rules)).map(([id, n]) => `${id} ${n}/${sel.length}`).join(' · ')}`);
   }
   lines.push('', tokensComparable(rows) ? `Every session saw ${rows[0] ? rows[0].tools : '?'} tools, so token totals compare.` : `Tool counts differ (${[...new Set(rows.map((r) => r.tools))].join(', ')}): token totals do not compare.`);
-  lines.push('', '## Sessions', '', '| # | Variant | Branch | Run | Found | Missed | Decoys | Passed | Tokens | Cost | Turns | Seconds | End | Results | Cut | Invoked | Answer |', '|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|');
-  for (const r of rows) lines.push(`| ${r.n} | ${r.variant} | ${r.branch} | ${r.run} | ${r.foundIds.join(' ') || '–'} | ${r.missed.join(' ') || '–'} | ${r.decoyIds.join(' ') || '–'} | ${r.passed ? 'yes' : 'no'} | ${r.total ?? '–'} | ${r.cost ?? '–'} | ${r.turns ?? '–'} | ${r.seconds ?? '–'} | ${r.end || '–'} | ${r.results} | ${r.cut ? 'yes' : ''} | ${r.invoked.join(', ') || '–'} | ${r.answerFile} |`);
+  lines.push('', '## Sessions', '', '| # | Variant | Branch | Run | Found | Missed | Decoys | Blocked | Passed | Tokens | Cost | Turns | Seconds | End | Results | Cut | Invoked | Answer |', '|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|');
+  for (const r of rows) lines.push(`| ${r.n} | ${r.variant} | ${r.branch} | ${r.run} | ${r.foundIds.join(' ') || '–'} | ${r.missed.join(' ') || '–'} | ${r.decoyIds.join(' ') || '–'} | ${r.blocked === null || r.blocked === undefined ? '–' : r.blocked ? 'yes' : 'no'} | ${r.passed ? 'yes' : 'no'} | ${r.total ?? '–'} | ${r.cost ?? '–'} | ${r.turns ?? '–'} | ${r.seconds ?? '–'} | ${r.end || '–'} | ${r.results} | ${r.cut ? 'yes' : ''} | ${r.invoked.join(', ') || '–'} | ${r.answerFile} |`);
   return lines.join('\n') + '\n';
 }
 

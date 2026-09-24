@@ -1,0 +1,67 @@
+{
+  "id": "review-03",
+  "skill": "bk-review",
+  "fixture": "build.cjs",
+  "prompt": "Review the changes on branch feature/payment-webhook against main before I merge it. List the problems you find, most severe first, each with its file and line.",
+  "commands": {
+    "K": "/bearingkit:bk-review",
+    "S": "/pr-review-toolkit:review-pr"
+  },
+  "sources": [
+    { "plugin": "superpowers", "dir": "_build/upstream/obra_superpowers", "source": "obra/superpowers" },
+    { "plugin": "code-review", "dir": "_build/upstream/claude-plugins-official/plugins/code-review", "source": "anthropics/claude-plugins-official" },
+    { "plugin": "pr-review-toolkit", "dir": "_build/upstream/claude-plugins-official/plugins/pr-review-toolkit", "source": "anthropics/claude-plugins-official" },
+    { "plugin": "mattpocock-skills", "dir": "_build/upstream/mattpocock_skills", "source": "mattpocock/skills" }
+  ],
+  "limits": { "seconds": 900, "turns": 40 },
+  "rules": {
+    "defects": [],
+    "clearSections": ["^[\\W\\d]*(strengths?|what('s| is| was) (good|done well|right)|positives?( (observations|notes|aspects|points))?|looks good|done well|well done|good (practices|patterns|things)|(verified|confirmed) (safe|correct|ok|fine)|not (issues|problems|defects|bugs)|non-issues|false positives|(things|what) I checked|no action (needed|required))[\\W\\d]*$"],
+    "clear": [
+      "(?<!not |n't |never |not really |not entirely |not fully |not completely |type-|type |to be |must be |would be |to )\\bsafe(ly)?\\b",
+      "(?<!not |n't |never )\\bfine\\b(?!-)",
+      "(?<!not |n't |never |the |a |be |to |should |must |would )\\bcorrect(ly)?\\b",
+      "(?<!not |n't |never |without )\\bproperly\\b",
+      "(?<!not |n't |never |should |must |would |could |fails to |failing to )\\bprevents?\\b",
+      "(?<!not |n't |never |should |must |would |could |fails to )\\bprotects?\\b",
+      "(?<!not |n't |never |should |must |would |could )\\bguards? against\\b",
+      "(?<!not |n't |never |should |must |would |could |fails to )\\benforces?\\b",
+      "\\bnot (vulnerable|injectable|exploitable|susceptible|an? (real |actual )?(issue|problem|bug|vulnerabilit|concern|risk|defect|leak))",
+      "\\b(by design|as designed)\\b",
+      "\\b(is|are|looks|seems|appears|was) (intentional|deliberate)",
+      "[—–:,(-]\\s*intentional",
+      "(?<!not |n't |never )\\bfalse positive",
+      "(?<!not |n't |never |un)\\bacceptable\\b",
+      "\\bnon-issue",
+      "no (action|change) (is )?(needed|required)",
+      "\\bnone (of these )?apply\\b",
+      "[:—–-]\\s*(OK|pass(ed)?)\\s*[.)]?\\s*(✅|✔|✓)?\\s*(\\n|$)",
+      "\\b(is|are) (right|intended|expected)\\b",
+      "✅|✔|✓"
+    ],
+    "decoys": [
+      { "id": "X1", "what": "search query: every value bound, ORDER BY is Prisma.raw of a fixed map's value", "all": [["queryRaw", "Prisma\\.raw", "ORDER BY", "\\bsort\\b", "raw SQL", "\\bsearch\\b", "ILIKE", "SORTS"], ["inject"]], "unless": ["\\bno (SQL |sql-)?injection"] },
+      { "id": "X2", "what": "length check before timingSafeEqual: both are SHA-256 digests", "all": [["timingSafeEqual", "length (check|comparison)", "signature (length|comparison)", "\\blength\\b[^.\\n]{0,60}\\b(signature|digest|buffer)", "constant.time"], ["leak", "timing (attack|side|oracle|difference|channel)", "side.channel", "oracle", "reveal", "non.constant", "not constant", "short.circuit"]], "unless": ["\\bno (timing )?(leak|side.channel)", "(leaks|reveals) (nothing|only)", "\\b(is|are) public\\b"] },
+      { "id": "X3", "what": "webhook marks the invoice paid with no tenant filter: the id comes from the signed payload", "all": [["webhook", "payments/route", "updateMany"], ["\\b(missing|no|without|lacks?|lacking|never|not) [^.\\n]{0,25}tenant", "cross.tenant", "any tenant", "other tenants?", "another tenant"]], "unless": ["(?<!not |n't |un)\\bsigned\\b", "\\bno (tenant|session) context", "(does|do)(n't| not) need", "needs no tenant", "\\bno [^.\\n]{0,30}\\bneeded\\b(?!\\s+(here|for))", "not (needed|required|applicable)", "(?<!not |n't |un)\\btrusted\\b", "(HMAC|signature)[- ]verified", "verified (by|with) (the |its )?(HMAC|signature)"] },
+      { "id": "X4", "what": "events endpoint checks the invoice's tenant, then lists that invoice's events", "all": [["events/route", "events route", "events endpoint", "\\[id\\]/events", "paymentEvent\\.findMany", "payment events", "findUnique"], ["IDOR", "\\b(missing|no|without|lacks?|lacking|never|not) [^.\\n]{0,25}(tenant|scop|authori|ownership)", "cross.tenant", "any tenant", "other tenants?", "another tenant", "unscoped", "access control"]], "unless": ["\\bno IDOR", "(?<!never |n't |not |only |to )(checks|verifies|validates|confirms) (the )?(invoice'?s? )?(tenant|ownership)", "(does|do)(n't| not) (expose|leak|return|reveal|show)", "\\breturns? (a )?404\\b", "\\b404 for (an?other|other|a foreign)"] }
+    ],
+    "blocks": [
+      "(?<!\\bnot to |\\bno reason to )\\bdo not merge",
+      "\\bdon't merge",
+      "\\bnot (yet )?(ready|safe) to merge",
+      "(?<!no reason (why )?(this |it )?)\\b(should|must|can)(not|n't| not) be merged",
+      "(?<!not |n't |no need to |\\bno )\\brequest(ing)? changes",
+      "(?<!\\bno |\\bnot )\\bchanges requested",
+      "(?<!(\\bno|\\bnothing|\\bnone|\\bnot|n't)\\b[^.\\n]{0,30})\\b(must|should|needs? to|has to|have to) be (fixed|addressed|resolved)[^.\\n]{0,40}before merg",
+      "(?<!(\\bno|\\bnothing|\\bnone|\\bnot|n't)\\b[^.\\n]{0,30})\\b(fix(ing)?|address(ing)?|resolv(e|ing))(?![^.\\n]*\\b(after merg|rather than|instead of|follow-?up)\\b)\\s+(?!before)[^.\\n]{1,40}before merg",
+      "(?<!(\\bno|\\bnothing|\\bnone|\\bnot|n't)\\b[^.\\n]{0,30})\\bneeds? (changes|work|fixes) before merg",
+      "\\b(must[- ])?fix(es)?( required| needed)? before merg(e|ing)\\)?[*_]*\\s*:\\s*[*_]*(?!\\s*(none|n/a|nothing|no\\b|[—–-]))\\S",
+      "\\b(must[- ])?fix(es)?( required| needed)? before merg(e|ing)\\)?[*_: ]*\\n+(?![-*\\s]*(\\d+[.)]\\s*)?[*_(✅\\s]*(none|n/a|nothing|no\\b|0\\b|[—–]))",
+      "(?<!\\bno |\\bnon-|\\bnon |\\bnot |\\bzero )\\b(merge )?block(er|ing)( issues?)?s?\\b[*_]*\\s*[:(]\\s*[*_]*\\s*(?!(none|n/a|nothing|0\\b|no\\b|[—–-]))\\S",
+      "(?<!\\bno |\\bnon-|\\bnon |\\bnot )\\bblock(er|ing)( issues?)?s?\\b[*_: ]*\\n+(?![-*\\s]*(\\d+[.)]\\s*)?[*_(✅\\s]*(none|n/a|nothing|no\\b|0\\b|[—–]))",
+      "(?<!(\\bno|\\bnothing|\\bnone|\\bnot|n't|\\banything)\\b[^.\\n]{0,30})\\bblocks? (the |this )?merge",
+      "ready to merge\\??[*_]*\\s*:?\\s*[*_]*\\s*(no|with fixes|not yet)\\b(?=\\s*([.!*_\\n,;:(—–-]|$))",
+      "(?<!no need to |no reason to )\\bhold (off )?(on )?(the )?merg"
+    ]
+  }
+}

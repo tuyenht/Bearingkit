@@ -214,7 +214,7 @@ test('review-02 keeps the pay route outside the diff and its rules tell a carefu
   fs.rmSync(dir, { recursive: true, force: true });
   const { rules } = loadTask('review-02', ROOT);
   const careful = '1. **Pay route skips the tenant check** `src/app/api/invoices/[id]/pay/route.ts:9`: assertTenant now returns null instead of throwing, and the pay route ignores the return value.\n2. `invoice-stats` is memoized without the tenant in the key, so one tenant sees another tenant\'s totals.\n3. The catch block logs every header with console.error, including the Authorization bearer token.\n- `fx-rates` has no tenant in its key, which is fine: the rates are global.';
-  assert.deepEqual(scoreAnswer(careful, rules), { found: ['H1', 'H2', 'H3'], missed: [], decoys: [], passed: true });
+  assert.deepEqual(scoreAnswer(careful, rules), { found: ['H1', 'H2', 'H3'], missed: [], decoys: [], blocked: null, passed: true });
   const careless = '- Both memo keys, `invoice-stats` and `fx-rates`, lack the tenant: cross-tenant leak.';
   assert.deepEqual(scoreAnswer(careless, rules).decoys, ['X1']);
 });
@@ -235,4 +235,174 @@ test('the fixture builder makes the branch with the planted defects and resets i
   assert.equal(fs.existsSync(path.join(dst, 'scratch.txt')), false);
   assert.equal(git('rev-parse', '--abbrev-ref', 'HEAD'), 'feature/invoice-export');
   fs.rmSync(dir, { recursive: true, force: true });
+});
+
+// review-03 is a clean diff: telling the owner not to merge it is a false outcome, read on the whole answer.
+const BLOCKS = { defects: [], decoys: [], blocks: loadTask('review-03', ROOT).rules.blocks };
+
+test('a block verdict is read on the whole answer, and a clean task fails when it blocks the merge', () => {
+  assert.equal(scoreAnswer('## Verdict\nDo not merge until the webhook is fixed.', BLOCKS).blocked, true);
+  assert.equal(scoreAnswer('Changes requested.', BLOCKS).blocked, true);
+  assert.equal(scoreAnswer('1. first\n2. second\n\nFix both before merging.', BLOCKS).blocked, true);
+  assert.equal(scoreAnswer('Nothing here blocks the merge. Ready to merge.', BLOCKS).blocked, false);
+  assert.equal(scoreAnswer('No blockers; ready to merge.', BLOCKS).blocked, false);
+  assert.equal(scoreAnswer('Ready to merge.', BLOCKS).passed, true);
+  assert.equal(scoreAnswer('This should not be merged yet.', BLOCKS).passed, false);
+  assert.equal(scoreAnswer('Do not merge.', RULES).blocked, null, 'a task with no block rule does not score the verdict');
+});
+
+test('review-03 is a clean branch whose own code passes its checks, and its rules tell a careful answer from a careless one', async (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dst = path.join(dir, 'review-03');
+  const build = require('../evals/bench/review-03/build.cjs');
+  build.build({ dst });
+  const { spawnSync } = require('node:child_process');
+  const git = (...a) => spawnSync('git', a, { cwd: dst, encoding: 'utf8' }).stdout.trim();
+  assert.equal(git('rev-parse', '--abbrev-ref', 'HEAD'), 'feature/payment-webhook');
+  const changed = git('diff', '--name-only', 'main...HEAD').split('\n');
+  for (const f of ['src/app/api/webhooks/payments/route.ts', 'src/app/api/invoices/[id]/events/route.ts', 'src/app/api/invoices/search/route.ts', 'src/lib/webhook-signature.ts', 'src/lib/search-params.ts', 'prisma/schema.prisma', 'tests/webhook-signature.test.ts', 'tests/search-params.test.ts', '.env.example']) assert.ok(changed.includes(f), `${f} is in the diff`);
+  assert.ok(changed.some((f) => /^prisma\/migrations\/\d+_payment_events\/migration\.sql$/.test(f)));
+  assert.ok(!fs.existsSync(path.join(dst, 'env.example')), 'the stored name does not reach the fixture');
+  assert.ok(!fs.existsSync(path.join(dst, 'src', 'components')), 'none of the sample app\'s planted defects comes along');
+  const read = (f) => fs.readFileSync(path.join(dst, f), 'utf8');
+  assert.match(read('src/app/api/invoices/search/route.ts'), /Prisma\.raw\(SORTS\[/);
+  assert.match(read('src/lib/webhook-signature.ts'), /given\.length === expected\.length && timingSafeEqual\(given, expected\)/);
+  assert.doesNotMatch(read('src/app/api/webhooks/payments/route.ts'), /tenant/i);
+  assert.match(read('src/app/api/invoices/[id]/events/route.ts'), /invoice\.tenantId !== session\.tenantId/);
+  // The claim "clean" rests on the code doing what it says: the two pure modules run here, types stripped by node.
+  if (!process.features.typescript) t.diagnostic('node cannot strip types: the fixture modules were not run');
+  else {
+    const { pathToFileURL } = require('node:url');
+    const { createHmac } = require('node:crypto');
+    const sig = await import(pathToFileURL(path.join(dst, 'src/lib/webhook-signature.ts')).href);
+    const sp = await import(pathToFileURL(path.join(dst, 'src/lib/search-params.ts')).href);
+    const body = '{"id":"evt_1"}'; const secret = 'whsec_test'; const t0 = 1790000000;
+    const header = (b, ts = t0) => `t=${ts},v1=${createHmac('sha256', secret).update(`${ts}.${b}`).digest('hex')}`;
+    assert.deepEqual(sig.verifySignature(body, header(body), secret, t0 * 1000), { ok: true });
+    assert.equal(sig.verifySignature(body + ' ', header(body), secret, t0 * 1000).reason, 'mismatch');
+    assert.equal(sig.verifySignature(body, header(body), secret, (t0 + 301) * 1000).reason, 'stale');
+    assert.equal(sig.verifySignature(body, header(body).slice(0, -2), secret, t0 * 1000).reason, 'mismatch', 'a short signature is refused, not thrown on');
+    assert.equal(sig.verifySignature(body, 'v1=abc', secret, t0 * 1000).reason, 'malformed');
+    assert.equal(sig.verifySignature(body, header(body) + 'zz', secret, t0 * 1000).reason, 'malformed', 'trailing characters that are not hex are refused, not dropped');
+    const old = createHmac('sha256', 'whsec_old').update(`${t0}.${body}`).digest('hex');
+    assert.deepEqual(sig.verifySignature(body, `t=${t0},v1=${old},v1=${header(body).split('v1=')[1]}`, secret, t0 * 1000), { ok: true }, 'any v1 of a rotating secret');
+    assert.equal(sig.verifySignature(body, `t=${t0},v1=${old}`, secret, t0 * 1000).reason, 'mismatch');
+    assert.equal(sig.verifySignature(body, null, secret, t0 * 1000).reason, 'missing');
+    const parse = (q) => sp.parseSearchParams(new URLSearchParams(q));
+    assert.deepEqual(parse('').value, { q: null, status: null, sort: 'newest', limit: 20, offset: 0 });
+    assert.deepEqual(parse('q=%20acme%20&status=open&sort=overdue&limit=500&offset=-4').value, { q: 'acme', status: 'open', sort: 'overdue', limit: 50, offset: 0 });
+    assert.equal(parse('limit=abc').value.limit, 20);
+    assert.equal(parse('sort=__proto__').ok, false);
+    assert.equal(parse('sort=toString').ok, false);
+    assert.equal(parse('status=archived').ok, false);
+    assert.equal(parse('q=' + 'x'.repeat(101)).ok, false);
+    assert.equal(sp.likePattern('50%_off\\'), '%50\\%\\_off\\\\%');
+  }
+  fs.writeFileSync(path.join(dst, 'scratch.txt'), 'left by a session');
+  build.reset({ dst });
+  assert.equal(fs.existsSync(path.join(dst, 'scratch.txt')), false);
+  assert.equal(git('rev-parse', '--abbrev-ref', 'HEAD'), 'feature/payment-webhook');
+  fs.rmSync(dir, { recursive: true, force: true });
+  const { rules } = loadTask('review-03', ROOT);
+  const careful = '1. The search builds SQL with `$queryRaw` and `Prisma.raw(SORTS[sort])`; it looks like SQL injection, but the sort comes from a fixed map and every value is bound, so it is safe.\n2. The length check before `timingSafeEqual` leaks nothing: both are 32-byte SHA-256 digests.\n3. The webhook marks the invoice paid with no tenant filter, which is correct: the id comes from the signed payload.\n4. The events route checks the invoice\'s tenant before listing payment events, so there is no IDOR.\n5. Minor: the search could use a trigram index.\n\nReady to merge.';
+  assert.deepEqual(scoreAnswer(careful, rules), { found: [], missed: [], decoys: [], blocked: false, passed: true });
+  const careless = '- **SQL injection** in search: `Prisma.raw` interpolates the sort into ORDER BY.\n- The length check before timingSafeEqual leaks timing information about the signature.\n- The webhook updates invoices of any tenant: no tenant filter on updateMany.\n- IDOR: the events route lists payment events with no tenant scope on the query.\n\nDo not merge until these are fixed.';
+  assert.deepEqual(scoreAnswer(careless, rules), { found: [], missed: [], decoys: ['X1', 'X2', 'X3', 'X4'], blocked: true, passed: false });
+});
+
+test('the report counts sessions that blocked the merge', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-rescore-'));
+  const init = { type: 'system', subtype: 'init', tools: new Array(31).fill('t') };
+  fs.writeFileSync(path.join(dir, '01-natural-F1.raw.jsonl'), stream([init, { ...resultEvent, result: '- Prisma.raw in ORDER BY: SQL injection.\n\nDo not merge.' }]));
+  fs.writeFileSync(path.join(dir, '02-natural-F2.raw.jsonl'), stream([init, { ...resultEvent, result: 'Ready to merge.' }]));
+  const rows = rescore(dir, loadTask('review-03', ROOT));
+  assert.deepEqual(rows.map((r) => [r.blocked, r.passed]), [[true, false], [false, true]]);
+  const md = fs.readFileSync(path.join(dir, 'results.md'), 'utf8');
+  assert.ok(md.includes('| Blocked |'), 'both tables have a Blocked column');
+  assert.ok(md.includes('- natural F: X1 1/2 · X2 0/2 · X3 0/2 · X4 0/2 · blocked 1/2'));
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+// Phrasings from the independent review of review-03 (2026-09-24): praise and clearing lines, verdicts either way.
+test('review-03 rules do not count praise or a cleared decoy as a false finding, and still count the flags', () => {
+  const { rules } = loadTask('review-03', ROOT);
+  const decoys = (text) => scoreAnswer(text, rules).decoys;
+  for (const line of [
+    '- Uses `timingSafeEqual` to prevent timing attacks.',
+    '- The length check reveals only the length, which is public (32 bytes).',
+    '- Search binds every value via `Prisma.sql`, which prevents SQL injection.',
+    '- The sort is whitelisted, not injectable.',
+    '- Events route properly scopes by tenant.',
+    '- No tenant filter in the webhook — intentional, the payload is signed.',
+    '- Style: use `findFirst` with `tenantId` in the events route instead of `findUnique`, as the main route does.',
+  ]) assert.deepEqual(decoys(line), [], line);
+  assert.deepEqual(decoys('## Strengths\n- Parameterized search, no injection risk from `Prisma.raw`.\n- The events route checks the tenant; the webhook needs no tenant filter.\n\n## Issues\n- Minor: add a test for the P2003 path.'), [], 'a strengths section is not a list of findings');
+  assert.deepEqual(decoys('**Strengths**\n- The webhook leaks no timing: timingSafeEqual.\n\n**Issues**\n- `Prisma.raw` in ORDER BY: SQL injection.'), ['X1'], 'a bold line opens a section as a heading does');
+  assert.deepEqual(decoys('- `Prisma.raw` is not really safe here: SQL injection through the sort.'), ['X1']);
+  assert.deepEqual(decoys('- The length check makes the comparison non-constant-time.'), ['X2']);
+  assert.deepEqual(decoys('- The webhook updates invoices of any tenant: no tenant filter on updateMany.'), ['X3']);
+  assert.deepEqual(decoys('- IDOR: the events route lists payment events with no tenant scope on the query.'), ['X4']);
+});
+
+test('review-03 reads the merge verdict in the formats the review plugins write', () => {
+  const { rules } = loadTask('review-03', ROOT);
+  const blocked = (text) => scoreAnswer(text, rules).blocked;
+  for (const text of ['No merge blockers.', 'Merge blockers: none.', 'No issues block the merge.', 'Nothing I found blocks the merge.', "No reason this shouldn't be merged.", 'No changes requested.', "I'm not requesting changes.", 'No need to fix these before merging.', '**Ready to merge?** Yes', 'Ready to merge: no issues found.', '### Critical (must fix before merge)\nNone.\n\n### Suggestions\n- add a test', '- Non-blocking: rename a variable.']) assert.equal(blocked(text), false, text);
+  for (const text of ['**Ready to merge?** No', '**Ready to merge?** With fixes', '### Critical (must fix before merge)\n- The webhook trusts the amount.', 'These should be fixed before merging.', 'Fix before merge: the webhook.', '**Blocker:** the webhook.', '### Blocking issues\n- The webhook.', 'Hold off merging until the webhook is fixed.', 'Do not merge.', 'Changes requested.']) assert.equal(blocked(text), true, text);
+});
+
+// The second pass of the independent review (2026-09-24): fixes that follow a claim, negations, empty verdict sections.
+test('review-03 keeps a flag whose finding ends with a fix, and clears praise the second review listed', () => {
+  const { rules } = loadTask('review-03', ROOT);
+  const decoys = (text) => scoreAnswer(text, rules).decoys;
+  const flagged = [
+    ['- The webhook\'s updateMany has no tenant filter, so a provider event can mark any tenant\'s invoice. Fix: add tenantId to prevent cross-tenant writes.', 'X3'],
+    ['- Prisma.raw in ORDER BY is an injection risk; use a CASE to be safe.', 'X1'],
+    ['- `Prisma.raw` in the search isn’t safe: SQL injection through the sort.', 'X1'],
+    ['- SQL injection in the search via Prisma.raw is not acceptable in a payment app.', 'X1'],
+    ['- timingSafeEqual is constant-time, but the early length return leaks the signature length.', 'X2'],
+    ['- IDOR: the events route never checks the tenant of the events it lists.', 'X4'],
+    ['- The events route has no tenant filter on paymentEvent.findMany, without properly checking ownership.', 'X4'],
+  ];
+  for (const [line, id] of flagged) assert.deepEqual(decoys(line), [id], line);
+  for (const line of [
+    '- The events route does not expose other tenants\' events.',
+    '- Events endpoint returns 404, not 403, for another tenant\'s invoice.',
+    '- No tenant filter needed on the webhook.',
+    '- SQL injection in search: OK ✅',
+  ]) assert.deepEqual(decoys(line), [], line);
+  assert.deepEqual(decoys('## Strengths\n- ok\n\nIssues:\n1. Prisma.raw in ORDER BY: SQL injection.'), ['X1'], 'a plain line ends the praise');
+  assert.deepEqual(decoys('### Strengths\n- fine\n\n**Issues**\n- Prisma.raw in ORDER BY: SQL injection.'), ['X1'], 'a bold line ends a praise heading of any level');
+  assert.deepEqual(decoys('## Strengths and weaknesses\n- Prisma.raw in ORDER BY: SQL injection.'), ['X1'], 'a heading is praise only when it is nothing else');
+  assert.deepEqual(decoys('1. **Webhook**\n   **Fix:** nothing\n   The webhook has no tenant filter: cross-tenant writes.'), ['X3'], 'an indented bold line does not cut a finding');
+});
+
+test('review-03 verdicts: negated blocks and empty blocking sections do not block; the remaining forms do', () => {
+  const { rules } = loadTask('review-03', ROOT);
+  const blocked = (text) => scoreAnswer(text, rules).blocked;
+  for (const text of ["These don't block the merge.", "I don't see anything that blocks the merge.", 'Ready to merge: no blocking issues.', '### Blocking issues\n\nNo blocking issues found.', '### Critical (must fix before merge)\n\nNo critical issues.', '### Critical (must fix before merge)\n_(none)_', '### Blocking\n✅ None', 'Blockers: —', 'Not blocking: add a trigram index.', 'Non blocking: add a trigram index.', "These are optional and don't need to be fixed before merging.", 'I don’t think this should block the merge.']) assert.equal(blocked(text), false, text);
+  for (const text of ['Ready to merge: Not yet', 'Recommend addressing the webhook before merging.', 'Needs changes before merge.', 'Fixing #1 is required before merge.', 'Hold the merge until the webhook is fixed.', 'This shouldn’t be merged yet.']) assert.equal(blocked(text), true, text);
+});
+
+// The third pass of the independent review (2026-09-24), the last before the rules froze.
+test('review-03 third pass: hedged clears, the plugins\' praise heading, and claims the clearing words must not hide', () => {
+  const { rules } = loadTask('review-03', ROOT);
+  const decoys = (text) => scoreAnswer(text, rules).decoys;
+  for (const text of [
+    '- Prisma.raw in ORDER BY looks like SQL injection. Should be fine: SORTS is a fixed map.',
+    '- Prisma.raw only sees SORTS values, so this should be safe from injection.',
+    '- The webhook has no tenant filter, which is right: the payload is HMAC-verified.',
+    '## Positive Observations\n- The events route has no tenant filter on the events query, but checks the invoice first.',
+    '## Strengths (3)\n- No tenant filter in the webhook; the id comes from the provider.',
+  ]) assert.deepEqual(decoys(text), [], text);
+  for (const [text, id] of [
+    ['- **SQL injection** — passes the sort value into Prisma.raw.', 'X1'],
+    ['- Passes sort straight into ORDER BY: injection.', 'X1'],
+    ['- The webhook\'s updateMany has no tenant check where one is required.', 'X3'],
+    ['- IDOR: the events route loads any tenant\'s invoice with findUnique before its 404 check.', 'X4'],
+  ]) assert.deepEqual(decoys(text), [id], text);
+  const blocked = (text) => scoreAnswer(text, rules).blocked;
+  assert.equal(blocked('**Ready to merge?** No — fix the webhook first.'), true);
+  assert.equal(blocked('Ready to merge: With fixes (see Important)'), true);
+  assert.equal(blocked('Nice-to-have; fine to address after merge rather than before merging.'), false);
 });

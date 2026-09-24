@@ -69,6 +69,34 @@ What the two tasks say together: on a small branch with planted defects, Sonnet 
 
 Each is calibrated on the floor first by the same protocol.
 
+## Task 3 · `review-03`, a clean diff
+
+Written before any session ran (2026-09-24, the owner's choice "Diff sạch (Recommended)"). Branch `feature/payment-webhook` of a small invoice app of its own (`evals/bench/review-03/build.cjs` builds it from `main/` and `branch/` beside it; not the sample app, whose files carry defects planted for other evals). The branch is correct as far as a reading can tell: a payment-provider webhook that verifies a timestamped HMAC signature, records each event once and marks the invoice paid in one transaction; an endpoint that lists an invoice's payment events; an invoice search with a whitelisted sort; the Prisma model and its migration; tests for the signature check and the search parameters. Next.js 15 route params are awaited. It has no planted defect. It has four decoys, each correct code that a hurried review flags:
+
+| Id | What is correct | False finding when an item says |
+|---|---|---|
+| X1 | the search query is one `$queryRaw` tagged template: every value is a bound parameter, and the `ORDER BY` fragment is `Prisma.raw` of a value from a fixed map, reached only after `Object.hasOwn` accepted the key | SQL injection in the search, the sort or `Prisma.raw` |
+| X2 | the signature check compares the byte lengths before `timingSafeEqual`: both sides are SHA-256 digests, the expected one always 32 bytes, so the length says nothing about the secret | a timing leak or side channel in the length check or the comparison |
+| X3 | the webhook marks the invoice paid by id with no tenant filter: the id comes from the provider's signed payload, not from a caller, and no session exists | a missing tenant scope or cross-tenant write in the webhook |
+| X4 | the events endpoint loads the invoice by id, returns 404 unless its tenant is the caller's, then lists the events of that id | a missing tenant scope or IDOR in the events endpoint |
+
+Scored by script, per session: each decoy flagged (rules in `task.json`, as for the other tasks), and **blocked**, whether the answer tells the owner not to merge (phrases such as "do not merge", "not ready to merge", "request changes", "must be fixed before merging", read on the whole answer). On a clean diff both are false outcomes. The task passes when no decoy is flagged and the answer does not block the merge. Read by eye, not scored: every other item that claims a defect, each checked against the fixture and recorded as true, arguable or false, with the reason; the script's calls are checked in the same reading and a disagreement is reported.
+
+Scoring additions, all inert on the earlier tasks (the kept `review-01` and `review-02` streams rescored with them: none of the 18 sessions changed outcome):
+- a line that starts with `**` and is all bold starts a new item, as a heading does;
+- a task may name praise headings (`clearSections`, matched against the whole heading: "Strengths", "What's good"…); their items are left out when decoys are counted, until the next heading or bold line of any level, or until an item that carries an unindented plain line (an "Issues:" line);
+- clearing words shared by every decoy (`clear`: "prevents", "properly", "by design"…), each guarded against the negations that turn it around ("not safe", "not acceptable", "without properly");
+- clearing words are looked for with the item's fix sentences left out (sentences that open with "Fix", "Suggest", "Recommend", "Consider", "Instead", "Should"…), so "Fix: add tenantId to prevent cross-tenant writes" does not clear the claim before it;
+- curly apostrophes are read as straight ones.
+
+The decoy rules require a claim, not only the topic: "no tenant filter", "IDOR", "leak", not merely "tenant". Three independent passes over the rules supplied the phrasings their tests pin (the five "review-03 …" rule and verdict tests in `tests/bench.test.cjs`), including the verdict formats of the source plugins ("Ready to merge? With fixes", "Critical (must fix before merge)" over an empty section). Phrasings no test pins can still be mis-scored; that is what the reading is for.
+
+The independent review found no real defect in the branch and confirmed the four decoys; it listed what a reviewer may reasonably raise, and the cheap ones were closed before any run (a signature with non-hex characters is refused, not truncated; one `v1` per rotating secret is accepted; the overdue order compares in UTC; the amount must be a positive integer that fits the `INTEGER` column). Left open, to be read as **arguable**, not false: a payment that does not match the invoice (amount, currency, status) is recorded and only logged; an event for an unknown invoice is answered 200 and only logged; no test drives the route handlers; several `v1` values give an attacker several guesses per request (harmless against a 256-bit HMAC); `%q%` cannot use a b-tree index; offset paging; no body size limit; `findUnique` plus a tenant comparison where the older route uses `findFirst` with the tenant.
+
+Calibration protocol, fixed now: (1) three `natural` sessions on the floor F; (2) the task is usable only if at least two of the three floor sessions contain a false outcome that the script scored **and** the reading confirms (a decoy flagged, or a block); a script call the reading rejects does not count, so a matcher error cannot make the task look usable; otherwise it is rebuilt with stronger decoys, not scored; (3) decoys the floor never flags stay in the task, because a skill can add false findings the floor does not make; (4) the rules in `task.json` are frozen once F has run, and a later change is reported with the outcome before and after; (5) then three sessions each of K and S, `natural`, then `command`; F's three sessions are reused as the floor. Limits as `review-01`: 900 seconds, 40 turns.
+
+The fixture is reviewed by someone other than its author before the floor runs, for any real defect the author missed: a real defect in a "clean" diff would make a correct finding look false.
+
 ## Later tasks
 
 `debug-01`: a failing test planted in the fixture, for the `bk-debug` sprint (sources: Superpowers `systematic-debugging`, and the ideas-only sources, which are not installable and so stay out of S). `build-01`: a small feature with a TDD or spec step, where `security-guidance`'s edit and commit hooks act. Each gets its own design line here before it runs.
