@@ -11,7 +11,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { spawn, spawnSync } = require('node:child_process');
 const { parseArgs, parseQuota, quotaStop, authStop, ancestorMemoryFiles } = require('./evals.cjs');
-const { scoreAnswer, usageFrom, invocations, summarize, tokensComparable } = require('./lib/bench-score.cjs');
+const { scoreAnswer, usageFrom, invocations, summarize, tokensComparable, perDefect } = require('./lib/bench-score.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 const OPTIONS = new Set(['task', 'config-dir', 'runs', 'branches', 'variants', 'model', 'timeout', 'turns', 'dry-run', 'rescore']);
@@ -132,6 +132,11 @@ function report(task, rows, meta) {
       const s = summarize(sel);
       lines.push(`| ${variant} | ${branch} | ${s.sessions} | ${s.passes} | ${fmt(s.found)} | ${fmt(s.decoys)} | ${fmt(s.total)} | ${fmt(s.fresh)} | ${fmt(s.cost)} | ${fmt(s.turns)} | ${fmt(s.seconds)} |`);
     }
+  }
+  lines.push('', '## Each defect and decoy, sessions that found or flagged it', '');
+  for (const variant of [...new Set(rows.map((r) => r.variant))]) for (const branch of [...new Set(rows.map((r) => r.branch))]) {
+    const sel = rows.filter((r) => r.variant === variant && r.branch === branch);
+    if (sel.length) lines.push(`- ${variant} ${branch}: ${Object.entries(perDefect(sel, task.rules)).map(([id, n]) => `${id} ${n}/${sel.length}`).join(' · ')}`);
   }
   lines.push('', tokensComparable(rows) ? `Every session saw ${rows[0] ? rows[0].tools : '?'} tools, so token totals compare.` : `Tool counts differ (${[...new Set(rows.map((r) => r.tools))].join(', ')}): token totals do not compare.`);
   lines.push('', '## Sessions', '', '| # | Variant | Branch | Run | Found | Missed | Decoys | Passed | Tokens | Cost | Turns | Seconds | End | Results | Cut | Invoked | Answer |', '|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|');

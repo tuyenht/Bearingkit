@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable } = require('../scripts/lib/bench-score.cjs');
+const { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect } = require('../scripts/lib/bench-score.cjs');
 const { loadTask, branchSetup, promptFor, schedule, preflight, rescore } = require('../scripts/bench.cjs');
 
 const ROOT = path.join(__dirname, '..');
@@ -119,6 +119,12 @@ test('median and spread over sessions', () => {
   assert.deepEqual(s.total, { median: 200, min: 100, max: 300 });
 });
 
+// Calibration keeps a defect only when the floor misses it, so the report counts each defect per branch.
+test('each defect and decoy is counted per branch', () => {
+  const rows = [{ foundIds: ['D1', 'D2'], decoyIds: [] }, { foundIds: ['D1'], decoyIds: ['X1'] }, { foundIds: [], decoyIds: [] }];
+  assert.deepEqual(perDefect(rows, { defects: [{ id: 'D1' }, { id: 'D2' }, { id: 'D3' }], decoys: [{ id: 'X1' }] }), { D1: 2, D2: 1, D3: 0, X1: 1 });
+});
+
 test('token totals are compared only when every session saw the same number of tools', () => {
   assert.equal(tokensComparable([{ tools: 31 }, { tools: 31 }]), true);
   assert.equal(tokensComparable([{ tools: 31 }, { tools: 33 }]), false);
@@ -191,6 +197,23 @@ test('a results folder is scored again from its raw streams with the rules as th
   assert.deepEqual(rows.map((r) => [r.branch, r.run, r.variant, r.passed]), [['K', 1, 'natural', true], ['F', 1, 'natural', false]]);
   assert.ok(fs.readFileSync(path.join(dir, 'results.md'), 'utf8').includes('| natural | K | 1 | 1 |'));
   fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('review-02 keeps the pay route outside the diff and its rules tell a careful answer from a careless one', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dst = path.join(dir, 'review-02');
+  const build = require('../evals/bench/review-02/build.cjs');
+  build.build({ dst, src: path.join(ROOT, 'evals', 'fixtures', 'sample-app') });
+  const { spawnSync } = require('node:child_process');
+  const changed = spawnSync('git', ['diff', '--name-only', 'main...HEAD'], { cwd: dst, encoding: 'utf8' }).stdout.split('\n');
+  assert.ok(changed.some((f) => f.endsWith('tenancy.ts')));
+  assert.ok(!changed.some((f) => f.includes('/pay/')), 'the pay route is not in the diff');
+  fs.rmSync(dir, { recursive: true, force: true });
+  const { rules } = loadTask('review-02', ROOT);
+  const careful = '1. **Pay route skips the tenant check** `src/app/api/invoices/[id]/pay/route.ts:9`: assertTenant now returns null instead of throwing, and the pay route ignores the return value.\n2. `invoice-stats` is memoized without the tenant in the key, so one tenant sees another tenant\'s totals.\n3. The catch block logs every header with console.error, including the Authorization bearer token.\n- `fx-rates` has no tenant in its key, which is fine: the rates are global.';
+  assert.deepEqual(scoreAnswer(careful, rules), { found: ['H1', 'H2', 'H3'], missed: [], decoys: [], passed: true });
+  const careless = '- Both memo keys, `invoice-stats` and `fx-rates`, lack the tenant: cross-tenant leak.';
+  assert.deepEqual(scoreAnswer(careless, rules).decoys, ['X1']);
 });
 
 test('the fixture builder makes the branch with the planted defects and resets it', () => {

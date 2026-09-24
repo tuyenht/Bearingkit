@@ -145,6 +145,9 @@ test('the six commands run from bin, with the same flags and the same three line
   // update prints the host's update command, not its install commands.
   const updClaude = run('update', '--host', 'claude', '--no-pull');
   assert.match(updClaude.stdout, /claude plugin update bearingkit@bearingkit/);
+  // The host keeps its own local-scope record for an activated project, and a user-scope update leaves it behind
+  // (seen 2026-09-24: user at the new commit, local still at the old one until updated from that project).
+  assert.match(updClaude.stdout, /claude plugin update bearingkit@bearingkit --scope local/);
   assert.doesNotMatch(updClaude.stdout, /marketplace add/);
 });
 

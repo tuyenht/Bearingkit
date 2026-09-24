@@ -102,4 +102,12 @@ function summarize(rows) {
 
 const tokensComparable = (rows) => new Set(rows.map((r) => r.tools)).size <= 1;
 
-module.exports = { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, events };
+// How many sessions found each defect and flagged each decoy: a task's defects are calibrated on the floor with this.
+function perDefect(rows, rules) {
+  const out = {};
+  for (const d of rules.defects) out[d.id] = rows.filter((r) => (r.foundIds || []).includes(d.id)).length;
+  for (const x of rules.decoys || []) out[x.id] = rows.filter((r) => (r.decoyIds || []).includes(x.id)).length;
+  return out;
+}
+
+module.exports = { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect, events };

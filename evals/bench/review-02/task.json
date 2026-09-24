@@ -1,0 +1,27 @@
+{
+  "id": "review-02",
+  "skill": "bk-review",
+  "fixture": "build.cjs",
+  "prompt": "Review the changes on branch feature/invoice-stats against main before I merge it. List the problems you find, most severe first, each with its file and line.",
+  "commands": {
+    "K": "/bearingkit:bk-review",
+    "S": "/pr-review-toolkit:review-pr"
+  },
+  "sources": [
+    { "plugin": "superpowers", "dir": "_build/upstream/obra_superpowers", "source": "obra/superpowers" },
+    { "plugin": "code-review", "dir": "_build/upstream/claude-plugins-official/plugins/code-review", "source": "anthropics/claude-plugins-official" },
+    { "plugin": "pr-review-toolkit", "dir": "_build/upstream/claude-plugins-official/plugins/pr-review-toolkit", "source": "anthropics/claude-plugins-official" },
+    { "plugin": "mattpocock-skills", "dir": "_build/upstream/mattpocock_skills", "source": "mattpocock/skills" }
+  ],
+  "limits": { "seconds": 900, "turns": 40 },
+  "rules": {
+    "defects": [
+      { "id": "H1", "what": "assertTenant returns null now; the unchanged pay route ignores the result", "all": [["pay/route", "pay route", "\\bpay\\b", "\\bPOST\\b.*paid", "mark(s|ed)? .*paid"], ["assertTenant"], ["null", "no longer throw", "doesn't throw", "does not throw", "return value", "ignor", "unchecked", "not checked"]] },
+      { "id": "H2", "what": "tenant stats memoized under a key with no tenant", "all": [["invoice-stats"], ["tenant", "leak", "shared across", "other (tenants|customers|users)"]] },
+      { "id": "H3", "what": "error branch logs every request header, the bearer token included", "all": [["console\\.error", "\\blog"], ["authorization", "bearer", "token", "credential"]] }
+    ],
+    "decoys": [
+      { "id": "X1", "what": "fx-rates memo key has no tenant, correctly: the data is global", "all": [["fx-rates", "fx rates", "exchange rate", "fetchFxRates"], ["tenant", "cache key", "leak"]], "unless": ["global", "not tenant", "same for (all|every)", "\\bfine\\b", "\\bsafe\\b", "correct", "not an? (problem|issue|bug)", "doesn't need", "does not need", "shared by design"] }
+    ]
+  }
+}
