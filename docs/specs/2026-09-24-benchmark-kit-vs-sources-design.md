@@ -169,6 +169,19 @@ Written before any Haiku session ran. Three `natural` floor sessions per task, r
 
 For each usable task, three `natural` sessions each of K and S on Haiku follow, F's three reused; the `command` variant only if the quota allows. The kit is measured as it ships at that commit: its `bk-reviewer` agent is pinned to Opus whatever the session's model (compat B13), so a K session on Haiku is a Haiku session with an Opus reviewer. Results go to their own folders (`…-haiku`; the runner never writes into a folder that already holds a run).
 
+### Calibration result on Haiku (2026-09-24)
+
+Registered in `9d23b43`, then `bearingkit bench --task <id> --config-dir _build/profile/claude --branches F --runs 3 --model haiku` for each task (`evals/results/2026-09-24-bench-<task>-natural-haiku/`). Every Haiku session saw 35 tools (the Sonnet sessions saw 31), so Haiku tokens compare only with Haiku tokens.
+
+| Task | Floor on Haiku | Read by eye | Usable |
+|---|---|---|---|
+| `debug-01` | passed 0 of 3: `visible` 3/3, `root` 0/3, `kept` 3/3, `regression` 0/3; 0.05–0.09 USD, 25–42 s | the checks decide, nothing to read | **yes** |
+| `review-01` | passed 0 of 3: D1 3/3, D2 1/3, D3 0/3, X1 0/3; 0.08–0.13 USD, 69–107 s | confirmed: F2 and F3 name only an unhandled error of the logo fetch, not the prefix bypass; no session mentions the reminder job or `void` | **yes** |
+| `review-02` | H1 1/3, H2 3/3, H3 2/3, X1 0/3; 0.09–0.10 USD | confirmed: F2 and F3 never mention the pay route | **yes**, scored set **H1** (the only candidate the floor found at most once) |
+| `review-03` | no decoy flagged, no block, in any session; 0.19–0.24 USD, 199–244 s | nothing scripted to confirm | no |
+
+So the Haiku floor misses what the Sonnet floor found: the defect outside the diff (`review-01` D3, `review-02` H1) and the root cause behind a tempting patch (`debug-01`), and it is still clean on the decoys. Three tasks go on to K and S on Haiku.
+
 ## The runner
 
 A new `scripts/bench.cjs` (verb `bearingkit bench`), not an extension of `scripts/evals.cjs`: that file scores routing, is already 512 lines, and shares only the helpers it exports (`parseArgs`, now exported, `parseQuota`, `quotaStop`, `authStop`, `ancestorMemoryFiles`). The old runner already takes `--plugin-dir none` for a floor, but only one plugin directory and no outcome score; the resume prompt of 2026-09-24 said the floor needed a runner change too, which was only half right. Before a run it checks that each source copy is the plugin named and sits at its pinned sha, and refuses a fixture with a memory file above it. The scorer is `scripts/lib/bench-score.cjs`. Tests first, red before green (`tests/bench.test.cjs`): branch to command line (plugin dirs and the inline settings), the matcher on written answers (found, missed, a decoy flagged, a decoy called safe), usage summed over models, median and spread, and the refusal to compare tokens across differing tool counts. Results go to `evals/results/<date>-bench-<task>.md` (untracked) with every scored answer beside it; the numbers that matter are copied into this file with the command that produced them.
