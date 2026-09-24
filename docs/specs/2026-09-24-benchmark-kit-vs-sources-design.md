@@ -1,6 +1,6 @@
 # Benchmark · the kit against its own sources · 2026-09-24
 
-Status: BUILT 2026-09-24; the first task `review-01` measured on Claude Code (section "Measured"): equal outcome on every branch, the kit at 2 to 3 times its sources' tokens. The owner's three design questions are answered below. Standing rule (owner, 2026-09-24, `AGENTS.md`): "cần phải đối chiếu, kiểm chứng và so sánh hiệu quả thực sự của các skils của chúng ta với các skill mà chúng ta lấy nguồn và tổng hợp, phát triển nhé. Tôi cần dữ liệu kiểm chứng và thực sự chất lượng tốt hơn." Requirements: `docs/plans/2026-09-19-v03-remaining-skills.md`, "Khung benchmark = so với skill nguồn". Until a skill has numbers from this frame, no text says it is better than its sources, only "not compared".
+Status: BUILT 2026-09-24; the first task `review-01` measured on Claude Code (section "Measured"): equal outcome on every branch, the kit at 2 to 3 times its sources' tokens; the second, `review-02`, failed its calibration on the floor (section "Task 2"), so small planted-defect branches cannot separate the branches and the next task has another shape. The owner's three design questions are answered below. Standing rule (owner, 2026-09-24, `AGENTS.md`): "cần phải đối chiếu, kiểm chứng và so sánh hiệu quả thực sự của các skils của chúng ta với các skill mà chúng ta lấy nguồn và tổng hợp, phát triển nhé. Tôi cần dữ liệu kiểm chứng và thực sự chất lượng tốt hơn." Requirements: `docs/plans/2026-09-19-v03-remaining-skills.md`, "Khung benchmark = so với skill nguồn". Until a skill has numbers from this frame, no text says it is better than its sources, only "not compared".
 
 ## What one comparison is
 
@@ -44,6 +44,31 @@ Source bundle for `bk-review` (its `Sources:` line and the inventory): Superpowe
 
 Limits: 900 seconds per session (the skill forks a reviewer), 40 turns.
 
+## Task 2 · `review-02`, calibrated on the floor
+
+Written before any session ran (2026-09-24). Branch `feature/invoice-stats` of the same app (`evals/bench/review-02/build.cjs`), three candidate defects and one decoy:
+
+| Id | Kind | What |
+|---|---|---|
+| H1 | candidate, caller outside the diff | `assertTenant` now returns the invoice or null instead of throwing; the branch updates the GET route, but the unchanged pay route still awaits it and ignores the result, so any tenant can mark any invoice paid |
+| H2 | candidate | the new stats endpoint memoizes tenant totals under `invoice-stats`, a key with no tenant in it |
+| H3 | candidate | its error branch logs every request header, the bearer token included |
+| X1 | decoy | the same endpoint memoizes exchange rates under `fx-rates`, no tenant in the key, correctly: the data is global |
+
+Protocol, fixed now: (1) three `natural` sessions on the floor F; (2) a candidate stays in the scored set only if F found it in at most one of three; if none stays, the task is rebuilt, not scored; (3) the scored set is written here before K and S run; (4) then three sessions each of K and S, natural first, then the command variant if the quota allows; F's three sessions are reused as the floor. The matcher rules in `task.json` are frozen once F has run; a change afterwards is reported with the outcome before and after.
+
+### Calibration result (2026-09-24)
+
+`bearingkit bench --task review-02 --config-dir _build/profile/claude --branches F --runs 3`: the floor found **H1, H2 and H3 in all three sessions** and flagged no decoy, at 142,476 to 143,181 tokens and 22 to 27 seconds each (`evals/results/2026-09-24-bench-review-02-natural/`). Read by eye, not only by the matcher: every answer opens with the pay route, names `pay/route.ts:9` as a line outside the diff that the diff breaks, and explains that `assertTenant` stopped throwing. By the protocol no candidate stays, so `review-02` is **not scored** and K and S were not run on it.
+
+What the two tasks say together: on a small branch with planted defects, Sonnet 5 with no plugin already finds the defect outside the diff, the cache key without its tenant, and the token in a log, and does not take the decoys. A review skill cannot show added recall on this shape of task, only added cost. The shapes left that could separate the branches, in the order they are cheapest to build:
+
+1. **A clean diff** (a correct, non-trivial change with no defect): measures false findings, where a method with a refute pass and a confidence bar should differ from a plain review. Scored as the number of items that claim a defect, each read against the fixture.
+2. **A realistic size**: the same kind of defects inside a branch of 20 to 40 changed files, most of them benign, so attention is spread as in a real pull request.
+3. **Defects only a run shows**: a change whose failure needs a test or the app run (a migration order, a race), where reading alone does not suffice.
+
+Each is calibrated on the floor first by the same protocol.
+
 ## Later tasks
 
 `debug-01`: a failing test planted in the fixture, for the `bk-debug` sprint (sources: Superpowers `systematic-debugging`, and the ideas-only sources, which are not installable and so stay out of S). `build-01`: a small feature with a TDD or spec step, where `security-guidance`'s edit and commit hooks act. Each gets its own design line here before it runs.
@@ -78,6 +103,14 @@ What it says:
 - **Cost: the kit loses.** With the same outcome, the kit spent 2.1 times the tokens of its sources on the natural prompt and 3.3 times on the command prompt (medians), 4.4 times the floor's; in cost, 2.9 and 3.9 times the sources' and 7 times the floor's. Part of it is the kit's design as it ships: `bk-review` forks and hands the hot path to `bk-reviewer` on Opus.
 - **So on this task `bk-review` is not better than its sources; it costs more for the same result.** That is the finding to carry, not a reason to stop measuring: one easy task says nothing about defects the floor misses, which is where a review skill has to earn its tokens.
 
+Where the kit's tokens go (per session, from each stream's per-model usage; `evals/results/…`, read 2026-09-24):
+
+- **The independent reviewer on Opus**: 267k to 328k tokens in the natural K sessions and 195k to 467k in the command ones, 32 to 55% of the session's tokens and 50 to 66% of its cost. `bk-review` hands a hot-path diff (tenancy, deletion, outbound fetch: all three here) to `bk-reviewer`, which is pinned to Opus (`agents/bk-reviewer.md:4`). The source's own reviewer agent is pinned to Opus too (`pr-review-toolkit/agents/code-reviewer.md`, `model: opus`), but `review-pr` chose not to start any agent on a diff it judged small, and the host's `/code-review` ran inline.
+- **The method itself, on Sonnet**: 429k to 569k tokens in the natural K sessions against 270k to 387k for S and 180k to 219k for F. The fork made 14 to 33 tool calls (F: 4 to 9), read three or four kit references (`review-lenses.md`, `code-review-exchange.md`, `security-lens.md`, once `evidence.md`), and read more of the code around the diff. Each call re-reads the whole context, so cache reads grow with every call.
+- **Refused calls**: 6 to 8 per natural K session (listing its own folder, tools the background reviewer may not ask for, compat B12); each is a wasted turn. The command K streams do not show the fork's calls at all, so their refusals cannot be counted.
+- **What the tokens bought, unscored**: the kit's answers list more items (natural 13 to 15, command 15 to 26) than S (7 to 10, 18 to 22) and F (6 to 11). Whether those extra items are real defects, noise or false findings is not scored: the rules check the three planted defects and one decoy only. A harder task (below) is the way to learn whether the extra method finds what the floor misses.
+- The rules were widened (D1's tenant words, X1's "safe" words) after the first run, on the pre-run review's advice; the rescore changed no session's outcome (the run's own scoring had the same 15 of 15).
+
 Read with it:
 
 - **The natural prompt never reached a source skill.** In all three S sessions the model invoked the host's own `/code-review` (listed bare in every branch, compat B10), not a plugin's. The natural S row measures the host's built-in review with the source plugins loaded.
@@ -86,4 +119,4 @@ Read with it:
 - The independent review before the run noted that D1 to D3 match the lenses `bk-review` took from `security-guidance`, which S does not load. With the floor finding all three, that advantage did not show.
 - One session (K1, natural) was woken by its background reviewer after its first answer; durations and turns are summed over its two result events (compat B11). A K command session reports 0 turns because the whole review ran inside the fork.
 
-Next for this skill: a harder `review-02` whose difficulty is calibrated on the floor first. Candidate defects run three times on F, and a defect enters the task only if the floor misses it in at least two of three; then the three branches run. Until then, `bk-review` against its sources reads "compared on one task: equal outcome, 2 to 3 times the tokens".
+Next for this skill: a harder `review-02` whose difficulty is calibrated on the floor first. Candidate defects run three times on F, and a defect enters the task only if the floor misses it in at least two of three; then the three branches run. Until then, `bk-review` against its sources reads "compared on one task: equal outcome, 2 to 3 times the tokens". (Done the same day: `review-02` failed its calibration, the floor found every candidate; see "Task 2".)
