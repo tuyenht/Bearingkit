@@ -1,6 +1,6 @@
 # Benchmark · the kit against its own sources · 2026-09-24
 
-Status: BUILT 2026-09-24; the first task `review-01` measured on Claude Code (section "Measured"): equal outcome on every branch, the kit at 2 to 3 times its sources' tokens; the second, `review-02`, failed its calibration on the floor (section "Task 2"), so small planted-defect branches cannot separate the branches; the third, `review-03`, a clean diff for false findings, failed too (section "Task 3"): the floor flagged no decoy outright (one hedged), and the diff held one real defect; the fourth, `debug-01`, failed too (section "Task 4"): the floor made the root fix in every session. The owner's three design questions are answered below. Standing rule (owner, 2026-09-24, `AGENTS.md`): "cần phải đối chiếu, kiểm chứng và so sánh hiệu quả thực sự của các skils của chúng ta với các skill mà chúng ta lấy nguồn và tổng hợp, phát triển nhé. Tôi cần dữ liệu kiểm chứng và thực sự chất lượng tốt hơn." Requirements: `docs/plans/2026-09-19-v03-remaining-skills.md`, "Khung benchmark = so với skill nguồn". Until a skill has numbers from this frame, no text says it is better than its sources, only "not compared".
+Status: BUILT 2026-09-24; the first task `review-01` measured on Claude Code (section "Measured"): equal outcome on every branch, the kit at 2 to 3 times its sources' tokens; the second, `review-02`, failed its calibration on the floor (section "Task 2"), so small planted-defect branches cannot separate the branches; the third, `review-03`, a clean diff for false findings, failed too (section "Task 3"): the floor flagged no decoy outright (one hedged), and the diff held one real defect; the fourth, `debug-01`, failed too (section "Task 4"): the floor made the root fix in every session. On the owner's next choice the frame moved to Haiku 4.5 (section "The frame on Haiku 4.5"): its floor misses what the Sonnet floor found, and on `review-02` the kit found the defect outside the diff 3 of 3 against 1 of 3 for its sources and the floor, while missing a defect the floor found 3 of 3; three sessions each, not yet a basis for "better". The owner's three design questions are answered below. Standing rule (owner, 2026-09-24, `AGENTS.md`): "cần phải đối chiếu, kiểm chứng và so sánh hiệu quả thực sự của các skils của chúng ta với các skill mà chúng ta lấy nguồn và tổng hợp, phát triển nhé. Tôi cần dữ liệu kiểm chứng và thực sự chất lượng tốt hơn." Requirements: `docs/plans/2026-09-19-v03-remaining-skills.md`, "Khung benchmark = so với skill nguồn". Until a skill has numbers from this frame, no text says it is better than its sources, only "not compared".
 
 ## What one comparison is
 
@@ -181,6 +181,26 @@ Registered in `9d23b43`, then `bearingkit bench --task <id> --config-dir _build/
 | `review-03` | no decoy flagged, no block, in any session; 0.19–0.24 USD, 199–244 s | nothing scripted to confirm | no |
 
 So the Haiku floor misses what the Sonnet floor found: the defect outside the diff (`review-01` D3, `review-02` H1) and the root cause behind a tempting patch (`debug-01`), and it is still clean on the decoys. Three tasks go on to K and S on Haiku.
+
+### Measured on Haiku (2026-09-24)
+
+`bearingkit bench --task <id> --config-dir _build/profile/claude --branches K,S --runs 3 --model haiku` for `debug-01`, `review-01`, `review-02` (`…-natural-haiku-2/`), at `ae2f514` (the kit with the reviewer-when-needed rule of `bk-review`); the floor's three calibration sessions are reused, and the combined tables are rescored copies (`…-natural-haiku-kvsf/`). Every session ran `claude-haiku-4-5-20251001` and saw 35 tools. Natural prompt, three sessions per branch; with three runs only a large difference means anything.
+
+| Task | What is scored | K kit | S sources | F floor | Cost USD, median K / S / F |
+|---|---|---|---|---|---|
+| `review-02` | H1, the pay route outside the diff (the scored set) | **3 of 3** | 1 of 3 | 1 of 3 | 0.134 / 0.041 / 0.095 |
+| `review-02` | H2 and H3, not scored (the floor found them) | H2 **0 of 3**, H3 3 of 3 | H2 1 of 3, H3 3 of 3 | H2 3 of 3, H3 2 of 3 | |
+| `review-01` | D1 / D2 / D3, X1 | 2 / 2 / 0 of 3, X1 0 | 3 / 2 / 1 of 3, X1 0 | 3 / 1 / 0 of 3, X1 0 | 0.141 / 0.084 / 0.104 |
+| `debug-01` | `visible` / `root` / `kept` / `regression` | 3 / 0 / 3 / 0 of 3 | 3 / 0 / 3 / 0 of 3 | 3 / 0 / 3 / 0 of 3 | 0.109 / 0.096 / 0.069 |
+
+Read by eye: the three K answers of `review-02` open with the pay route (`pay/route.ts:9`, `assertTenant` returning null) and none mentions the memo cache or `invoice-stats`; the S and F sessions that missed H1 never mention the pay route. What was invoked: K reached its own skill in all nine sessions (`bk-review` six times, sometimes the host's `/code-review` too; `bk-debug` three times, once followed by `bk-ship`), S reached `superpowers:systematic-debugging` three times and the host's `/code-review` or the `code-review` plugin's command in the six review sessions. No K session started an Opus reviewer (the diffs are small and not written by the session); one S session (`review-01` S2) started `pr-review-toolkit:code-reviewer` on Opus and is the only one of the nine `review-01` sessions that found D3.
+
+What it says:
+- **The first outcome difference for the kit:** on `review-02` the kit found the defect outside the diff in every session, its sources and the floor in one of three each. It is also the only task where the kit **lost** something the floor had: the tenant-less cache key (H2), which the floor found every time and the kit never. The kit trades one tenancy defect for the other on this task; its lens order or its hot-path focus may explain it, not established.
+- `review-01` does not separate the branches; the one D3 came with an Opus reviewer.
+- `debug-01` does not either: no branch fixed the root cause, and no session added the regression test that `bk-debug`'s gate asks for ("No 'resolved' without the regression test"), the kit's sessions included. That is the input for the `bk-debug` sprint.
+- Cost: the kit costs 1.4 to 1.6 times the floor and 1.1 to 3.3 times its sources on Haiku (medians per task).
+- So `bk-review` against its sources, on Haiku: "one task where the kit found more (3 of 3 against 1 of 3) and one where it found less (0 of 3 against 3 of 3 for the floor), three sessions each"; not a basis for "better". The next step is more sessions on `review-02` and a look at why the kit drops H2.
 
 ## The runner
 
