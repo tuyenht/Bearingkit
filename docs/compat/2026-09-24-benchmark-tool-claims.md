@@ -1,0 +1,39 @@
+# Tool claims behind the benchmark and the day's migration steps · 2026-09-24
+
+Every row is a reading of the source named, done by the session itself on 2026-09-24 (raw markdown fetched with curl for code.claude.com, the pinned copies under `_build/upstream/` for plugins), or a run on this machine where the row says so. Claude Code 2.1.281.
+
+## Claude Code
+
+| # | Claim | Source (verbatim where quoted) | Checked |
+|---|---|---|---|
+| B1 | `--plugin-dir` may be repeated to load several plugins in one session | CLI reference: "Each flag takes one path. Repeat the flag for more paths: `--plugin-dir A --plugin-dir B.zip`" | read; run: branch S loaded `superpowers`, `code-review`, `pr-review-toolkit` and `mattpocock-skills` together (init event) |
+| B2 | `--settings` takes a file or inline JSON whose keys override the settings files for that session only | CLI reference: "Values you set here override the same keys in your `settings.json` files for this session. Keys you omit keep their file-based values" | read; run: `enabledPlugins` passed this way switched each branch's `<name>@inline` plugins on |
+| B3 | A plugin loaded by `--plugin-dir` is named `<name>@inline` | no sentence found; `docs/compat/2026-09-19-per-project-activation.md` CC-3 measured it for the kit | run: the four source plugins listed in the init event after `enabledPlugins` named them `@inline` |
+| B4 | The three branches of `review-01` see the same number of tools | — | run in the isolated profile, one max-turns-1 session per branch from a neutral folder: 31, 31, 31; skills 38 (K, 17 of the kit), 60 (S), 21 (F); agents 10, 12, 6 |
+| B5 | `skillListingBudgetFraction` defaults to 1% of the context window; when the listing is over the cap, descriptions of the least-used skills are dropped | settings reference: "**Default**: `0.01`, which reserves 1% of the context window"; "keeps every skill's name but drops the descriptions of the least-used skills" | read |
+| B6 | `skillListingMaxDescChars` defaults to 1536 characters per skill (description and `when_to_use` together) | settings reference: "**Default**: `1536`" | read |
+| B7 | A project-level `enabledPlugins: true` in `.claude/settings.local.json` wins over the user-level `false` that `install` wrote | settings reference (per-project activation compat, C4) | run in the daily profile after `bearingkit activate`: 17 kit skills and the SessionStart bootstrap in this repository; 0 kit skills in a folder that was not activated |
+| B8 | The host records a local-scope install of its own | — | run: after the first session in the activated repository, `installed_plugins.json` held a second `bearingkit@bearingkit` entry, scope `local`, `projectPath` this repository, and `claude plugin list` shows it (enabled here, disabled elsewhere). Nothing of the kit wrote it |
+| B9 | `claude plugin disable` without `--scope` wrote the user settings for plugins installed at user scope | — | run: "Successfully disabled plugin: superpowers (scope: user)"; `~/.claude/settings.json` changed only `enabledPlugins` (script comparison) |
+
+| B10 | The host ships its own `/code-review` skill, listed bare (`code-review`) in every branch next to a plugin's namespaced `code-review:code-review` | — | run: the init event of every `review-01` session lists `code-review` among skills and slash commands, in K, S and F alike; the three natural-prompt S sessions invoked that bare `code-review` (and its `ReportFindings` tool), not a source plugin |
+| B11 | A background agent that reports after a `-p` session's first answer wakes the session for another turn, and the host writes a second result event | — | run, one session (K1 of `review-01`): two result events, 57.5 s and 14.3 s, with identical `modelUsage` and cost. That the second carries running totals rather than a turn that spent nothing is the reading the scorer uses; one session does not settle it |
+| B12 | A skill that runs forked (`bk-review`) cannot, in a `-p` session of the isolated profile, list or search the plugin's own folder, and its background reviewer is refused tools that need a prompt | — | run: K1 carried seven `permission_denied` events: `find` and Glob on the checkout ("outside allowed working directories"), and PowerShell and Glob for the background `bk-reviewer` ("Permission prompts are not available in this context"); the review still finished |
+| B13 | The kit's `bk-reviewer` agent runs on Opus whatever the session's model | `agents/bk-reviewer.md:4` `model: opus` | run: every K session's `modelUsage` holds `claude-opus-5-5[1m]` beside `claude-sonnet-5` |
+| B14 | In the activated repository, Antigravity 2.15.0 lists the kit's skills and nothing from the checkout's `_build/upstream/` | — | run 2026-09-24 through a new project file for this repository (owner's approval), app restarted with the DevTools port and back without it after: 17 `bk-*`, the four host skills, and two global skills of the owner under `~/.gemini/config/skills/` that every workspace lists; none of the 330 skill names under `_build/upstream/` (the 39 of 2026-09-20 came from declaring the checkout itself, AG-5) |
+
+## Source plugins
+
+| # | Claim | Source | Checked |
+|---|---|---|---|
+| P1 | `code-review`'s `/code-review` reviews a GitHub pull request only | `plugins/code-review/commands/code-review.md` frontmatter: `allowed-tools: Bash(gh issue view:*), … Bash(gh pr diff:*), Bash(gh pr view:*), Bash(gh pr list:*)`; body: "Provide a code review for the given pull request." | read at the pinned sha; so the command variant of branch S names `/pr-review-toolkit:review-pr`, which runs on local git (`allowed-tools: ["Bash", "Glob", "Grep", "Read", "Task"]`) |
+| P2 | `security-guidance` ships no skill, only hooks: SessionStart, UserPromptSubmit, PostToolUse on edits and on `git commit`/`push`, Stop, SubagentStop | `plugins/security-guidance/hooks/hooks.json`; the folder has no `skills/` or `commands/` | read |
+| P3 | Its LLM review reads the diff the session itself made, from a baseline taken at the prompt | its README: "uses `git diff` against a baseline SHA (captured at UserPromptSubmit) to get only the code changed during the" session; "On each UserPromptSubmit, the plugin runs `git stash create`" | read |
+| P4 | Its venv and state live under `CLAUDE_CONFIG_DIR/security` (so under an isolated profile when one is set), with one legacy path under `~/.claude` | `hooks/ensure_agent_sdk.py:26` "state-dir resolver: SECURITY_WARNINGS_STATE_DIR → CLAUDE_CONFIG_DIR/security"; `hooks/session_state.py:75` `os.path.expanduser("~/.claude")` | read; what line 75 does with that path was not traced |
+| P5 | `mattpocock/skills` ships a Claude Code plugin, `mattpocock-skills` 1.2.3 | `.claude-plugin/plugin.json` and `marketplace.json` at the pinned sha; README: "The Claude Code plugin installs the whole set as a managed, read-only bundle" | read |
+
+## The decoy of `review-01`
+
+| # | Claim | Source | Checked |
+|---|---|---|---|
+| X1 | Prisma's `$queryRaw` with a tagged template sends a prepared statement, safe from SQL injection | Prisma docs, "Raw queries" (prisma.io/docs/orm/prisma-client/using-raw-sql/raw-queries): "The method is implemented as a tagged template, which allows you to pass a template literal where you can insert your variables. In turn, Prisma Client creates prepared statements that are safe from SQL injections" | read |
