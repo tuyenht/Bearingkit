@@ -8,15 +8,23 @@ const root = path.join(__dirname, '..');
 const read = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8'));
 
 // One name and one version across package.json and every host manifest; a mismatch is what a marketplace rejects.
-test('every host manifest carries the package name and version', () => {
+// Claude Code is the exception for the version: "Setting `version` pins the plugin", and an install then keeps its
+// cached copy until the string changes, so neither auto-update nor `claude plugin update` reaches a new commit;
+// without it "Claude Code uses the source's resolved commit SHA" (plugin-marketplaces page, read 2026-09-24;
+// docs/compat/2026-09-24-claude-plugin-install-local-path.md). The page also warns against a version in both
+// plugin.json and the marketplace entry, so neither carries one.
+test('every host manifest carries the package name and version, except that Claude Code follows commits', () => {
   const pkg = read('package.json');
   for (const file of ['.claude-plugin/plugin.json', '.codex-plugin/plugin.json', '.cursor-plugin/plugin.json', 'gemini-extension.json', '.antigravity/plugin.json']) {
     const m = read(file);
     assert.equal(m.name, pkg.name, file + ': name');
-    assert.equal(m.version, pkg.version, file + ': version');
+    if (file === '.claude-plugin/plugin.json') assert.equal(m.version, undefined, file + ': no version, so installs follow commits');
+    else assert.equal(m.version, pkg.version, file + ': version');
   }
   const market = read('.claude-plugin/marketplace.json');
-  assert.ok(market.plugins.some((p) => p.name === pkg.name), 'marketplace.json lists the plugin');
+  const entry = market.plugins.find((p) => p.name === pkg.name);
+  assert.ok(entry, 'marketplace.json lists the plugin');
+  assert.equal(entry.version, undefined, 'marketplace.json: no version on the plugin entry');
 });
 
 // Installed once for the machine, used only where the owner says (D5 question 29): the manifest ships the plugin

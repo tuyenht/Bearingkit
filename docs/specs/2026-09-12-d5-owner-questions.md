@@ -340,6 +340,13 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 - **Phương án bị loại:** sửa ngay trong phiên (vượt câu duyệt một gói đo, và văn bản model đọc phải đo trước commit); bỏ qua (gate "số kèm cách đo" là lõi của skill).
 - **Phụ:** `bnd-en-01` không có lần đọc sạch trong gói này (ba lần rời bản stage sau khi đã định tuyến đúng). Khuyến nghị: giữ nguyên, ghi nhận; nếu lặp ở gói sau thì xét viết lại prompt cho khớp bản stage, như `bnd-en-03`.
 
+### 32. Version trong manifest Claude Code (owner-migration, 2026-09-24)
+> **ĐÃ CHỐT 2026-09-24 — owner: "Bỏ version, làm ngay (Recommended)".**
+
+- **Hiện tượng:** sau khi cài kit từ GitHub vào profile hằng ngày, audit đọc trang plugin-marketplaces (lưu nguyên văn): "Setting `version` pins the plugin"; với `"version": "0.1.0"` ở `.claude-plugin/plugin.json` và ở mục marketplace, bản cài giữ bản cache cũ khi có commit mới, cả với auto-update lẫn `claude plugin update`. Trang cũng khuyên không đặt version ở cả hai chỗ. Chi tiết: `docs/compat/2026-09-24-claude-plugin-install-local-path.md`, handoff 2026-09-24.
+- **Quyết định:** bỏ `version` khỏi `.claude-plugin/plugin.json` và khỏi mục plugin trong `marketplace.json`; bản cài lấy commit SHA làm version và theo các commit đã push (mọi văn bản model đọc đã đo trước commit). Giữ version ở `package.json` và manifest các host khác. `tests/manifests.test.cjs` canh cả hai điều. Xét lại ở v1.0, khi người dùng công khai có thể cần bản phát hành thay vì từng commit.
+- **Phương án bị loại:** tăng version mỗi lần phát hành (thêm một bước mỗi lần, dễ quên); giữ nguyên (bản cài không bao giờ cập nhật).
+
 ---
 
 ## Quyết định 2026-09-12 và những gì mở khoá — CHƯA áp dụng, chỉ liệt kê

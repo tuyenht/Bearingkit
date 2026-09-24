@@ -6,7 +6,6 @@
     {
       "name": "bearingkit",
       "description": "Autonomy gate, evidence rules, spec → plan → build → test → review → ship → close, independent review for hot paths, session handoffs",
-      "version": "0.1.0",
       "source": "./",
       "author": { "name": "tuyenht" }
     }
