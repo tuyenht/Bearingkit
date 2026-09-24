@@ -365,6 +365,20 @@ test('a session that failed to authenticate is reported as such and stops the ru
   assert.match(stop.message, /authenticate|login/i);
   assert.equal(authStop(line({ type: 'result', subtype: 'success', is_error: false, num_turns: 3, result: 'done' })), null, 'an ordinary session is not stopped');
   assert.equal(authStop(''), null);
+  // 2026-09-24: a security review that reached the model talks about credentials, OAuth and API keys; the first
+  // version of this check read that answer as an expired login and stopped the run.
+  const review = [
+    line({ type: 'system', subtype: 'init' }),
+    line({ type: 'assistant', message: { content: [{ type: 'text', text: 'Blocking: the logo fetch reaches the cloud metadata endpoint and its credentials; the OAuth callback and the API key handling are sound.' }] } }),
+    line({ type: 'result', subtype: 'success', is_error: false, num_turns: 14, result: 'Do not push yet: an attacker can read instance credentials through the logo URL.' }),
+  ].join('\n');
+  assert.equal(authStop(review), null, 'an answer about credentials is an answer, not a failed login');
+  // The failure line may come with a prefix and without an error result; a short message still reads as one.
+  const prefixed = [
+    line({ type: 'assistant', message: { content: [{ type: 'text', text: 'Error: Failed to authenticate. Run /login.' }] } }),
+    line({ type: 'result', subtype: 'success', is_error: false, num_turns: 1, result: '' }),
+  ].join('\n');
+  assert.ok(authStop(prefixed), 'a short failure message with a prefix still stops the run');
 });
 
 // \"no-action\" was one marker for two different things: a prompt that never reached the model, and an answer
@@ -445,6 +459,14 @@ test('the runner stops before any session for --help, an unknown option, a stray
   // A named profile is enough to start; that it must also enable the inline plugin is the test above.
   assert.equal(preflight({ _: [], 'config-dir': 'x', 'plugin-dir': 'none' }), null);
   assert.equal(preflight({ _: [], daily: true }), null, 'the daily profile when it is named');
+  // 2026-09-24: a review that forks a context and dispatches an independent reviewer ran past the fixed 180 seconds
+  // and was cut mid-stream; the table still said "ok". A longer ceiling is asked for in seconds, and must be one.
+  assert.equal(preflight({ _: [], daily: true, timeout: '600' }), null, 'a longer ceiling in seconds');
+  for (const bad of ['0', '-5', 'ten', true]) {
+    const r = preflight({ _: [], daily: true, timeout: bad });
+    assert.equal(r && r.exit, 2, `--timeout ${bad} is refused`);
+    assert.match(r.message, /--timeout/);
+  }
   assert.equal(preflight({ _: [], host: 'antigravity', score: true }), null, 'an Antigravity run needs no Claude profile');
   assert.equal(preflight({ _: [], host: 'antigravity', 'stage-only': true, activate: true }), null, 'a stage may be asked to carry its activation');
 });

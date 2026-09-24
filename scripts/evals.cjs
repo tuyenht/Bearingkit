@@ -24,13 +24,13 @@ function parseArgs(argv) {
 
 const USAGE = [
   'usage: bearingkit evals --config-dir <isolated profile> [--plugin-dir <checkout>|none] [--model sonnet] [--intent <i>] [--id a,b]',
-  '         [--per-intent N] [--limit N] [--cwd <project>] [--tag <t>] [--equivalents <json>] [--raw] [--turns N] [--file <jsonl>[,<jsonl>...]]',
+  '         [--per-intent N] [--limit N] [--cwd <project>] [--tag <t>] [--equivalents <json>] [--raw] [--turns N] [--timeout <seconds, 180>] [--file <jsonl>[,<jsonl>...]]',
   '       bearingkit evals --daily ...   (the same, in your daily profile, where the host keeps every session)',
   '       bearingkit evals --host antigravity [--stage-only [--stage-dir <dir>] [--activate [--dest <store>]] | --arm --id a,b | --drive <projectId> --count N | --score --tag t | --disarm]',
 ].join('\n') + '\n';
 const OPTIONS = new Set(['activate', 'allow-ancestor-memory', 'arm', 'config-dir', 'count', 'cwd', 'daily', 'dest', 'disarm', 'drive', 'equivalents',
   'eval-dir', 'file', 'help', 'host', 'id', 'intent', 'limit', 'max-seven-day', 'max-utilization', 'model', 'out', 'per-intent',
-  'plugin-dir', 'probe-glob', 'raw', 'score', 'stage-dir', 'stage-only', 'tag', 'trigger', 'turns']);
+  'plugin-dir', 'probe-glob', 'raw', 'score', 'stage-dir', 'stage-only', 'tag', 'timeout', 'trigger', 'turns']);
 
 // Everything that must stop a run before a session starts. A Claude run without --config-dir would use the daily
 // profile and leave its sessions there, so it has to be asked for by name (--daily); `--help` and a typo used to be
@@ -40,6 +40,7 @@ function preflight(args) {
   const unknown = Object.keys(args).filter((k) => k !== '_' && !OPTIONS.has(k));
   if (unknown.length) return { exit: 2, message: `unknown option ${unknown.map((u) => '--' + u).join(', ')}\n` + USAGE };
   if (args._.length) return { exit: 2, message: `unexpected argument ${args._.join(' ')}\n` + USAGE };
+  if (args.timeout !== undefined && !(typeof args.timeout === 'string' && Number(args.timeout) > 0)) return { exit: 2, message: `--timeout takes a number of seconds above 0, not ${args.timeout}\n` + USAGE };
   if ((args.host || 'claude') === 'claude' && !args['config-dir'] && !args.daily && !args['stage-only']) {
     return { exit: 2, message: 'no --config-dir: this run would use your daily profile and leave its sessions there. Name an isolated profile with --config-dir, or pass --daily to mean the daily profile.\n' + USAGE };
   }
@@ -180,19 +181,23 @@ function listingNote(inits) {
 // A run stops itself before it exhausts the account. Returns the window that is at or over its ceiling, or null.
 // A session that never reached the model is not a result. The host answers an expired login with one assistant
 // message and an error result, which the table would otherwise record as "no-action" thirteen times over
-// (2026-09-20). Recognised from the stream, it stops the run and names the fix.
+// (2026-09-20). Recognised from the stream, it stops the run and names the fix. An answer that reached the model may
+// talk about credentials, OAuth or API keys (a security review does, 2026-09-24), so the words alone prove nothing:
+// the host's error result says it, or a short assistant message carries the host's own failure line (an answer that
+// reached the model runs to paragraphs; the failure notice is one line, sometimes behind a prefix such as "Error:").
 function authStop(raw) {
   const text = String(raw || '');
   if (!/authenticat|oauth|api key|invalid.{0,12}credential/i.test(text)) return null;
   for (const line of text.split('\n')) {
     let o;
     try { o = JSON.parse(line); } catch { continue; }
+    if (!o) continue;
     // What the host said, in its own words: the result text, or the assistant message's text parts.
-    const parts = o && o.message && Array.isArray(o.message.content) ? o.message.content.filter((c) => c && c.type === 'text').map((c) => c.text) : [];
-    const body = [typeof o?.result === 'string' ? o.result : '', ...parts].join(' ');
-    if (o && (o.is_error || o.type === 'assistant') && /failed to authenticate|oauth|invalid api key|credential/i.test(body)) {
-      return { message: body.replace(/\s+/g, ' ').trim().slice(0, 200) };
-    }
+    const parts = o.message && Array.isArray(o.message.content) ? o.message.content.filter((c) => c && c.type === 'text').map((c) => c.text) : [];
+    const body = [typeof o.result === 'string' ? o.result : '', ...parts].join(' ').replace(/\s+/g, ' ').trim();
+    const failedResult = o.type === 'result' && o.is_error && /failed to authenticate|oauth|invalid api key|credential/i.test(body);
+    const failureLine = o.type === 'assistant' && body.length <= 300 && /failed to authenticate|invalid api key/i.test(body);
+    if (failedResult || failureLine) return { message: body.slice(0, 200) };
   }
   return null;
 }
@@ -299,7 +304,7 @@ function runClaudePrompt(prompt, opts) {
   const promptFile = path.join(os.tmpdir(), `bearingkit-prompt-${process.pid}.txt`);
   fs.writeFileSync(promptFile, prompt);
   const fd = fs.openSync(promptFile, 'r');
-  const spawnOpts = { stdio: [fd, 'pipe', 'pipe'], encoding: 'utf8', env, cwd: opts.cwd, timeout: 180000, maxBuffer: 20 * 1024 * 1024 };
+  const spawnOpts = { stdio: [fd, 'pipe', 'pipe'], encoding: 'utf8', env, cwd: opts.cwd, timeout: opts.timeoutMs || 180000, maxBuffer: 20 * 1024 * 1024 };
   let r;
   try {
     r = process.platform === 'win32'
@@ -307,7 +312,9 @@ function runClaudePrompt(prompt, opts) {
       : spawnSync('claude', args, spawnOpts);
   } finally { fs.closeSync(fd); fs.rmSync(promptFile, { force: true }); }
   const raw = r.stdout || '';
-  return { got: classify(raw), raw, stderr: r.stderr || '', status: r.status, quota: parseQuota(raw), init: parseInit(raw) };
+  // A session killed at the ceiling leaves a stream with no result: its routing may be right while its answer is lost.
+  const timedOut = Boolean(r.error && r.error.code === 'ETIMEDOUT');
+  return { got: classify(raw), raw, stderr: r.stderr || '', status: r.status, timedOut, quota: parseQuota(raw), init: parseInit(raw) };
 }
 
 // What the session did. One turn with no tool call and no user event used to be "no-action" whatever came back,
@@ -454,7 +461,7 @@ async function run(argv) {
     if (!args['allow-ancestor-memory']) { process.stdout.write('refusing to run; move the fixture (--stage-dir) or pass --allow-ancestor-memory\n'); process.exitCode = 2; return; }
   }
   if (args['stage-only']) return;
-  const opts = { model: args.model || 'sonnet', configDir: args['config-dir'] ? path.resolve(args['config-dir']) : null, cwd, turns: args.turns ? Number(args.turns) : 6, pluginDir: args['plugin-dir'] === 'none' ? null : path.resolve(String(args['plugin-dir'] || ROOT)) };
+  const opts = { model: args.model || 'sonnet', configDir: args['config-dir'] ? path.resolve(args['config-dir']) : null, cwd, turns: args.turns ? Number(args.turns) : 6, timeoutMs: args.timeout ? Number(args.timeout) * 1000 : 180000, pluginDir: args['plugin-dir'] === 'none' ? null : path.resolve(String(args['plugin-dir'] || ROOT)) };
   const equivalents = args.equivalents ? JSON.parse(fs.readFileSync(path.resolve(args.equivalents), 'utf8')) : null;
   const limits = { fiveHour: args['max-utilization'] ? Number(args['max-utilization']) : 0.9, sevenDay: args['max-seven-day'] ? Number(args['max-seven-day']) : 0.95 };
   const tag = args.tag ? '-' + String(args.tag).replace(/[^a-z0-9-]/gi, '') : '';
@@ -469,7 +476,7 @@ async function run(argv) {
     results.push(row);
     inits.push(r.init);
     quota = r.quota || quota;
-    process.stdout.write(`${p.id.padEnd(12)} expect=${p.expect.padEnd(10)} got=${r.got.padEnd(10)} ${passes(row, equivalents) ? 'ok' : 'MISS'}\n`);
+    process.stdout.write(`${p.id.padEnd(12)} expect=${p.expect.padEnd(10)} got=${r.got.padEnd(10)} ${passes(row, equivalents) ? 'ok' : 'MISS'}${r.timedOut ? `  (cut at the ${opts.timeoutMs / 1000}s ceiling: no final answer; --timeout raises it)` : ''}\n`);
     if (args.raw) fs.writeFileSync(path.join(outDir, `${date}-${p.id}${tag}.raw.jsonl`), r.raw);
     const auth = authStop(r.raw);
     if (auth) {
