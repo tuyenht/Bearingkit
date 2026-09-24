@@ -1,6 +1,6 @@
 # Benchmark · the kit against its own sources · 2026-09-24
 
-Status: BUILT 2026-09-24; the first task `review-01` measured on Claude Code (section "Measured"): equal outcome on every branch, the kit at 2 to 3 times its sources' tokens; the second, `review-02`, failed its calibration on the floor (section "Task 2"), so small planted-defect branches cannot separate the branches and the next task has another shape. The owner's three design questions are answered below. Standing rule (owner, 2026-09-24, `AGENTS.md`): "cần phải đối chiếu, kiểm chứng và so sánh hiệu quả thực sự của các skils của chúng ta với các skill mà chúng ta lấy nguồn và tổng hợp, phát triển nhé. Tôi cần dữ liệu kiểm chứng và thực sự chất lượng tốt hơn." Requirements: `docs/plans/2026-09-19-v03-remaining-skills.md`, "Khung benchmark = so với skill nguồn". Until a skill has numbers from this frame, no text says it is better than its sources, only "not compared".
+Status: BUILT 2026-09-24; the first task `review-01` measured on Claude Code (section "Measured"): equal outcome on every branch, the kit at 2 to 3 times its sources' tokens; the second, `review-02`, failed its calibration on the floor (section "Task 2"), so small planted-defect branches cannot separate the branches; the third, `review-03`, a clean diff for false findings, failed too (section "Task 3"): the floor flagged no decoy outright (one hedged), and the diff held one real defect. The owner's three design questions are answered below. Standing rule (owner, 2026-09-24, `AGENTS.md`): "cần phải đối chiếu, kiểm chứng và so sánh hiệu quả thực sự của các skils của chúng ta với các skill mà chúng ta lấy nguồn và tổng hợp, phát triển nhé. Tôi cần dữ liệu kiểm chứng và thực sự chất lượng tốt hơn." Requirements: `docs/plans/2026-09-19-v03-remaining-skills.md`, "Khung benchmark = so với skill nguồn". Until a skill has numbers from this frame, no text says it is better than its sources, only "not compared".
 
 ## What one comparison is
 
@@ -96,6 +96,24 @@ The independent review found no real defect in the branch and confirmed the four
 Calibration protocol, fixed now: (1) three `natural` sessions on the floor F; (2) the task is usable only if at least two of the three floor sessions contain a false outcome that the script scored **and** the reading confirms (a decoy flagged, or a block); a script call the reading rejects does not count, so a matcher error cannot make the task look usable; otherwise it is rebuilt with stronger decoys, not scored; (3) decoys the floor never flags stay in the task, because a skill can add false findings the floor does not make; (4) the rules in `task.json` are frozen once F has run, and a later change is reported with the outcome before and after; (5) then three sessions each of K and S, `natural`, then `command`; F's three sessions are reused as the floor. Limits as `review-01`: 900 seconds, 40 turns.
 
 The fixture is reviewed by someone other than its author before the floor runs, for any real defect the author missed: a real defect in a "clean" diff would make a correct finding look false.
+
+### Calibration result (2026-09-24)
+
+Rules committed in `6e58937` before the run. `bearingkit bench --task review-03 --config-dir _build/profile/claude --branches F --runs 3`: 158,075 to 219,216 tokens, 57 to 66 seconds, 0.15 to 0.17 USD each, 31 tools in every init event (`evals/results/2026-09-24-bench-review-03-natural/`). Each answer read in full:
+
+| Session | Script | Reading |
+|---|---|---|
+| F1 | no decoy, no block | agrees. X1, X2 and X4 named under "Checked and fine" as correct; X3 not mentioned at all. Problems listed: the unmatched payment that is only logged, the unknown invoice answered 200, no route tests, the unbounded events list, `%q%` and offset paging: all arguable, none false |
+| F2 | X1, no block | **X1 rejected**: the line says `Prisma.raw(SORTS[sort])` "isn't injectable" under a bold "Checked and fine" (neither "isn't" nor that heading is in the rules). **Missed by the script**: problem 3, "the webhook isn't scoped to a tenant … acceptable if a single provider account serves all tenants … please confirm this is intended", a hedged X3; and "Before merging: fix #1", a block |
+| F3 | X3, X4, block | **X3 and X4 rejected**: they come from a test-coverage item that names the untested "cross-tenant 404". **Block confirmed**: "I'd fix problem 1 before merging" |
+
+Confirmed by both, as the protocol counts: one session of three (F3, a block). The task is **not usable**, and K and S were not run. A reading-only count would reach two of three (F2 and F3 both ask to fix the unmatched-payment case before merging), but both blocks stand on an item this section lists as arguable, and all three sessions raised it first.
+
+**The diff was not clean.** F3 found a real defect that the author and the independent review both missed: the offset is clamped to 10,000 while `nextOffset` stays `offset + limit` (`search-params.ts:26`, `search/route.ts:33`), so a client that follows `nextOffset` past 10,000 receives the same page forever. By the rule above this alone disqualifies the fixture.
+
+What it says: on this small diff, Sonnet 5 with no plugin flagged no decoy outright in any session (the one hedged X3 asks the owner to confirm), cleared most of them in so many words, and spent its findings on the arguable design choices of the webhook and on one real defect. A skill cannot show fewer false findings where the floor makes almost none. With `review-01` and `review-02`, three small-branch tasks now fail to separate the branches, from the recall side and from the precision side. A rebuild with stronger decoys (the protocol's next step) is not taken yet: the floor came near only one of the decoys it has, and only to ask, so decoy strength is not what is missing. The remaining shapes are the realistic size (20 to 40 changed files) and defects only a run shows (section "Task 2"); which one, or none, is the owner's call (`docs/handoff/`).
+
+The script's errors are recorded, not fixed, since the task is not scored: a bold heading "Checked and fine" is not a praise section; "isn't injectable" and "isn't scoped" are not read as negations; a verdict line that puts "Before merging:" first is missed; an item about missing tests that mentions a "cross-tenant 404" is read as a claim.
 
 ## Later tasks
 
