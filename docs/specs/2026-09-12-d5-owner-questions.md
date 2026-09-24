@@ -349,6 +349,14 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ---
 
+### 33. Hai xung đột khi lấy chữ của mattpocock vào `bk-spec` và `bk-debug` (v0.3, 2026-09-24)
+> **ĐÃ CHỐT 2026-09-24 — owner (câu hỏi có lựa chọn, nhãn nguyên văn): (a) "Tối đa 4 câu một lượt (Recommended)"; (b) "Xếp hạng 3–5, thử từng cái (Recommended)".** Áp dụng khi viết phần lấy chữ ở sprint `bk-debug` (mục 4 của thứ tự v0.3: sửa phase 3 của `systematic-debugging.md` cho khớp) và sprint `bk-spec` (mục 8: luật "Questions" của `brainstorming.md` đổi sang lượt tối đa bốn câu độc lập, mỗi câu kèm khuyến nghị); văn bản model đọc, nên đo trước commit như mọi sprint. Hỏi trong phiên v0.3 (`docs/handoff/2026-09-24-v03-bk-review.md`).
+*(MỚI 2026-09-24. Nguồn: kiểm kê từng mục, `docs/specs/2026-09-18-item-inventory.md:138-140`, ghi "Each needs the owner's choice when the absorb is written"; hai xung đột còn lại ở đó đã quyết là không mang theo.)*
+- **(a) Hỏi từng câu hay theo lượt, ở `bk-spec`.** `bk-spec/references/brainstorming.md:12` (Superpowers): "One question per message." Absorb `mattpocock:skills/productivity/grilling` (`item-inventory.md:107`): hỏi cả "frontier" (mọi câu không phụ thuộc câu còn mở) trong một lượt, đánh số, mỗi câu kèm câu trả lời khuyến nghị; sự thật thì tự tra, không hỏi. Dữ kiện: `bk-plan` đã hỏi ba tới tám câu một lượt (`skills/bk-plan/SKILL.md:17`); addyosmani `interview-me` giữ một câu mỗi tin (`item-inventory.md:475`); owner đã trả lời một lượt hỏi gom trong phiên migration (`docs/handoff/2026-09-24.md:39`). Lựa chọn: (1) giữ một câu mỗi tin, chỉ lấy phần khuyến nghị kèm từng câu và tự tra sự thật; (2) theo lượt của `grilling`, cả frontier một lần; (3) theo lượt có trần: tối đa bốn câu độc lập một lượt, mỗi câu kèm khuyến nghị, câu phụ thuộc chờ lượt sau. **Khuyến nghị: (3)**: bớt số lượt so với (1), mỗi lượt vẫn trả lời được, khớp cách `bk-plan` đang làm; luật "chỉ hỏi khi câu trả lời đổi việc" giữ nguyên.
+- **(b) Một giả thuyết hay xếp hạng nhiều giả thuyết, ở `bk-debug`.** `bk-debug/references/systematic-debugging.md:23` (Superpowers): "One hypothesis, written". Absorb `mattpocock:skills/engineering/diagnosing-bugs` (`item-inventory.md:79`): xếp hạng ba tới năm giả thuyết kiểm chứng được trước khi thử cái nào. Kiểm kê ghi là hợp nhau nếu đọc là "xếp hạng nhiều, thử từng cái một". Lựa chọn: (1) giữ một giả thuyết mỗi lần, không xếp hạng; (2) xếp hạng ba tới năm giả thuyết, thử từng cái một, sửa lại chữ phase 3 cho khớp. **Khuyến nghị: (2)**.
+
+---
+
 ## Quyết định 2026-09-12 và những gì mở khoá — CHƯA áp dụng, chỉ liệt kê
 
 Owner đã chốt câu 1, 2, 3, 4, 6, 8 làm quyết định thật; câu 5 owner yêu cầu kiểm lại thay vì tự quyết, đã kiểm (xem khối audit trong câu 5 ở trên) — vẫn là khuyến nghị. Tier 2 (trừ câu 9/12/14/16, nhóm riêng không mặc định) và Tier 3 giữ nguyên như owner chỉ định. Mục này liệt kê **chính xác** việc sẽ mở khoá cho từng quyết định — không file nào trong repo bị sửa theo mục này.
