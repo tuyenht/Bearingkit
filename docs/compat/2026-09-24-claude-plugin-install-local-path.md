@@ -29,3 +29,7 @@ The login file was located by name only; it was not opened or printed.
 ## Consequence for the kit
 
 On a machine where the checkout has `_build/` (every development machine of this kit), a local-path install copies eval material and the eval profile's login into the host's plugin cache. Install from the repository URL instead, which clones tracked, pushed files only. `docs/hosts.md` carries this note.
+
+## Reinstall from GitHub, same day
+
+After the owner's go-ahead the orphaned cache directory was deleted, then `claude plugin marketplace add tuyenht/Bearingkit` cloned the private repository (the machine's git credentials sufficed) into `~/.claude/plugins/marketplaces/bearingkit`, and `claude plugin install bearingkit@bearingkit` filled `~/.claude/plugins/cache/bearingkit/bearingkit/0.1.0` with **250 files, the number of tracked files**: no `_build/`, no `evals/results/`, no `.git`, no credential-like names; `gitCommitSha` was the pushed `main`. The install again wrote `"bearingkit@bearingkit": false` and `claude plugin list` showed the kit disabled. `"autoUpdate": true` was then added to the user's `extraKnownMarketplaces.bearingkit` entry, as the settings reference describes; its effect shows only after a restart and was not observed in this session.
