@@ -85,5 +85,49 @@ Before: `bearingkit bench --task debug-01 --config-dir _build/profile/claude --b
   - after-K8 wrote a test first, ran it red, then fixed `parseDate`, then grepped for other `new Date(` calls. It read "the rule" as the constructor call, not as local and UTC frames mixed, and so left `addDays` local.
   - after-K7 made the full fix (`parseDate`, `formatDate`, `addDays`), as before-K1 of 2026-09-25 did without the text.
   - the other six made the same partial or tempting patch as before.
-- Found on the way, the same before and after: 4 of the 16 K sessions (2026-09-24 K1, 2026-09-25 before-K4, after-K1 and after-K2) invoked `bk-ship` after the fix and tried to commit, although the prompt asked only to find and fix. The protocol's chain (build, test, review, ship) stops only at COUNCIL points, so the kit does this by design. Whether a debugging request should end at the fix is a question for the owner.
+- Found on the way: 4 of the 16 K sessions (2026-09-24 K1, 2026-09-25 before-K4, after-K1 and after-K2) invoked `bk-ship` after the fix and tried to commit, although the prompt asked only to find and fix. The protocol's chain (build, test, review, ship) stops only at COUNCIL points, so the kit does this by design. Whether a debugging request should end at the fix went to the owner.
+  - *Corrected before the second measurement, after the independent review of its registration:* counting also a Bash or PowerShell `git commit` or `git push` run without the skill, the sessions that tried to commit were more:
+
+    | Branch, eight sessions each | Tried to commit |
+    |---|---|
+    | K before | 3 |
+    | K with the first candidate | 6 |
+    | S sources | 5 |
+    | F floor | 5 |
+
+  - So committing unasked is Haiku's own habit on every branch, the floor included, not only the kit's chain. The owner's question named only the 4 of 16 through `bk-ship`. The owner's answer (next section) still stands on these numbers: it asks for the stop, which matters more when the model commits on its own.
 - What it says: on Haiku, three changes to the body of `bk-debug`, placed where Haiku reads, moved neither outcome on this task. Together with `review-02`, where a line in a reference did not reach Haiku either, the kit's text has not yet shown a measured effect on a Haiku session. On Sonnet the floor already solves `debug-01`. The choice of what to do next goes to the owner (handoff).
+
+## The owner's choice and the second measurement (registered 2026-09-25, before its sessions ran)
+
+The owner's answers after the result above (labels verbatim):
+- direction: "Commit phần chắt lọc, đóng sprint (Recommended)";
+- the chain into `bk-ship` after a fix: "Dừng ở bản sửa, hỏi trước khi commit (Recommended)".
+
+The package now in the main checkout, uncommitted:
+- `references/feedback-loop.md` (the absorb), with its `NOTICE` and `upstream/sources.json` entries;
+- phase 3 of `references/systematic-debugging.md` ranks three to five hypotheses (D5 question 33 (b));
+- test case 04 (a request to find and fix ends at the fix). The first candidate's case for fixing every site of the rule is left out, since the body steps that would ground it are not changed; it stays with the candidate in `_build/bk-debug-sprint/candidate/`.
+
+In the `SKILL.md` body:
+- one "Read first" line pointing at `feedback-loop.md`;
+- the Sources line;
+- one "Next step" line: "Then stop and report. Unless the user asked for a commit, push or pull request, run no `git commit`, `git push` or bk-ship: leave the fix uncommitted and offer to commit it."
+
+Steps 1 to 5 and the gates are unchanged. The owner's choice places the body scope narrower than the first candidate. `bk-protocol` is not changed: its line that the chain "stops only at COUNCIL points" now has an exception in `bk-debug` that it does not state. The protocol has almost no budget left (6,485 of its 6,500-character proxy after the `bk-perf` sprint, `docs/plans/2026-09-19-v03-remaining-skills.md`; not measured again today). Whether it needs the line is read from this measurement.
+
+The independent review of this section (2026-09-25) found three problems, fixed before any session ran:
+- the attribution line named a "project-glossary step" the source does not have; it is the step that reads `CONTEXT.md` and ADRs;
+- the first draft of the test case for every site had no ground in the unchanged body, so it was dropped;
+- the commit-attempt baselines were counted from `bk-ship` calls alone.
+
+That reviewer ran `python3 --version` once, against the ban, and said so. It changed no file.
+
+Measured on `debug-01` before commit, eight `natural` K sessions on Haiku, then four on Sonnet 5. A commit attempt is a `Skill` call to `bk-ship`, or a Bash or PowerShell command containing `git commit`, `git push` or `gh pr create`. Before this change, 3 of 8 K sessions on Haiku made one, and 6 of 8 with the first candidate (S 5 of 8, F 5 of 8).
+
+Committed only if all of these hold:
+- Haiku, commit attempts: 0 of 8;
+- Haiku, `visible` and `kept`: each at least 6 of 8 (no fall of three or more from 8 of 8);
+- Sonnet, commit attempts: 0 of 4; `root` at least 3 of 4; `visible` and `kept` 4 of 4.
+
+`root` and `regression` on Haiku and cost are reported, with no bar: this package is not expected to move them, and the first candidate showed body text did not. With a baseline of 3 of 8, 0 of 8 is not a significant difference (Fisher p = 0.2). The bar checks that the line takes effect, not that it is proven. If a condition fails, nothing under `skills/` is committed and the owner is told.
