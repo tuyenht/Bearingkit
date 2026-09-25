@@ -141,4 +141,17 @@ function perDefect(rows, rules) {
   return out;
 }
 
-module.exports = { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect, events };
+// Two-sided Fisher exact test on [[a, b], [c, d]]: a of a+b sessions found it on one branch, c of c+d on the other.
+// The p is the sum of every table with the same margins that is no more likely than the one observed.
+function fisherExact(a, b, c, d) {
+  const lf = (n) => { let s = 0; for (let i = 2; i <= n; i++) s += Math.log(i); return s; };
+  const choose = (n, k) => Math.exp(lf(n) - lf(k) - lf(n - k));
+  const r1 = a + b; const c1 = a + c; const n = a + b + c + d;
+  const p = (x) => choose(c1, x) * choose(n - c1, r1 - x) / choose(n, r1);
+  const observed = p(a);
+  let sum = 0;
+  for (let x = Math.max(0, r1 - (n - c1)); x <= Math.min(r1, c1); x++) if (p(x) <= observed * (1 + 1e-9)) sum += p(x);
+  return Math.min(1, sum);
+}
+
+module.exports = { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect, events, fisherExact };

@@ -310,6 +310,16 @@ test('review-03 is a clean branch whose own code passes its checks, and its rule
   assert.deepEqual(scoreAnswer(careless, rules), { found: [], missed: [], decoys: ['X1', 'X2', 'X3', 'X4'], blocked: true, passed: false });
 });
 
+// Eight sessions per branch cannot show much: the exact test says how much a count difference is worth.
+test('the two-sided Fisher exact test gives the p of a found-count difference', () => {
+  const { fisherExact } = require('../scripts/lib/bench-score.cjs');
+  assert.equal(fisherExact(5, 3, 1, 7).toFixed(3), '0.119');
+  assert.equal(fisherExact(5, 3, 3, 13).toFixed(3), '0.065');
+  assert.equal(fisherExact(3, 0, 1, 2).toFixed(3), '0.400');
+  assert.equal(fisherExact(5, 3, 5, 3), 1);
+  assert.ok(fisherExact(8, 0, 0, 8) < 0.001);
+});
+
 test('a median of an even number of sessions is printed rounded, not with float noise', () => {
   const { report } = require('../scripts/bench.cjs');
   const row = (n, cost) => ({ n, variant: 'natural', branch: 'F', run: n, foundIds: [], missed: [], decoyIds: [], blocked: null, found: 0, decoys: 0, passed: false, total: 1, fresh: 1, cost, turns: 1, seconds: 1, tools: 31, results: 1, invoked: [], answerFile: 'a' });
