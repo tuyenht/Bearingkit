@@ -270,6 +270,29 @@ Result (`evals/results/2026-09-25-bench-review-02-natural/` and `-3/` new, `-2/`
   - The scorer read only a session's last answer. When a background reviewer wakes the session again, the first answer holds the review and the second often only says the reviewer agreed; old K3 of the first old block named H2 only in the first. The scorer now reads every answer in order (`usageFrom` in `scripts/lib/bench-score.cjs`, test in `tests/bench.test.cjs`). Every results folder with a two-answer session was rescored (`review-01-natural`, `review-01-natural-haiku-2` and `-kvsf`, `review-02-natural-haiku-3` and `-eight`, and this run's four); only that one session changed.
   - The runner's timeout did not end the cut session: the host's last heartbeat says the skill had run 2,663 seconds against a 900-second limit, and the block took 48 minutes. Not reproduced, so the cause is not fixed. Since the audit of the same day the runner guards against it: a session still open 60 seconds after its kill is given up as an orphan, the kill's exit status is kept, and the run stops without running the fixture's checks or resetting it, so nothing touches a directory the orphan may still be writing (`runSession` and `run` in `scripts/bench.cjs`, two tests in `tests/bench.test.cjs`, one of them the control where the kill works). The same audit made `--rescore` keep the run's model, profile, fixture, limits and cut sessions (`meta.json` beside the streams); folders from before it still lose that header line.
 
+## `debug-01` on Sonnet, scored on the regression test (registered 2026-09-25, before its sessions ran)
+
+The owner's message after the `bk-debug` sprint asked for the best next steps to be carried out ("Nếu chuẩn thì duyệt xử lý chúng một cách tối ưu nhất, tốt nhất tự động cho tôi."). This measurement comes first because it is the cheapest one that can answer the owner's standing rule on the daily model. The realistic-size task the owner's choice named comes after it; it is not dropped.
+
+Why this measurement: on Sonnet 5 the floor makes the root fix (3 of 3 at calibration), so `root` does not separate the branches. But it added no regression test in any of its three sessions. The kit with the committed `bk-debug` package (`3a0f1b8`) added one in 4 of 4, which is 4 of 4 against 0 of 3, p = 0.029. That comparison was not registered, and its floor ran a day earlier.
+
+Design:
+- `bearingkit bench --task debug-01 --config-dir _build/profile/claude --branches K,S,F --runs 4`, then `--branches S,F --runs 4`. The kit is at the commit of the run, whose `skills/bk-debug/` is `3a0f1b8`'s.
+- Eight sessions per branch: K is the four sessions of `…-debug-01-natural/` plus four new; S and F are eight new each. The floor's three calibration sessions of 2026-09-24 are reported beside, not pooled.
+- Prompt, checks and permissions as frozen.
+
+Outcomes:
+- **Primary: `regression`**, the fixture check "the suite counts more than its original eight tests". It is read by eye in each stream: whether the added test was run and seen failing on the unfixed code before the fix, and whether it exercises the time-zone cause, not only the reporter's case.
+- Guards and context: `root`, `visible`, `kept`; commit attempts, as defined in `docs/specs/2026-09-25-bk-debug-design.md`; cost.
+
+Rule:
+- K is "better than its sources on the regression test, `debug-01`, Sonnet" only if K's `regression` count is at least four above S's with two-sided Fisher p ≤ 0.05. The same bar applies against F.
+- At eight sessions each, "four above" never reaches p ≤ 0.05 by itself. The pairs that pass are a gap of five or more near the floor (5 against 0, 6 against 1, 7 against 2, 8 against 3; each p ≤ 0.041); 8 against 4 gives p = 0.077 and does not pass. So if S already writes a test in four or more sessions, this task cannot show K better, and the result says so.
+- **Seen failing**, operationally: after the tool call that adds the test, and before the first edit under `src/`, the stream holds a run of that test or of the suite whose output reports a failure. A test that was never seen failing is reported beside the count. If more than two of K's counted tests were never run red, the claim is withheld.
+- These two points were added after the independent review of this section, while the sessions were running, once two of them had been seen (K1 and S1). They do not change the p threshold. They clarify it and define "seen failing".
+- Otherwise it reads "no clear difference".
+- `root` falling three or more below S or F is reported against K.
+
 ## The runner
 
 A new `scripts/bench.cjs` (verb `bearingkit bench`), not an extension of `scripts/evals.cjs`: that file scores routing, is already 512 lines, and shares only the helpers it exports (`parseArgs`, now exported, `parseQuota`, `quotaStop`, `authStop`, `ancestorMemoryFiles`). The old runner already takes `--plugin-dir none` for a floor, but only one plugin directory and no outcome score; the resume prompt of 2026-09-24 said the floor needed a runner change too, which was only half right. Before a run it checks that each source copy is the plugin named and sits at its pinned sha, and refuses a fixture with a memory file above it. The scorer is `scripts/lib/bench-score.cjs`. Tests first, red before green (`tests/bench.test.cjs`): branch to command line (plugin dirs and the inline settings), the matcher on written answers (found, missed, a decoy flagged, a decoy called safe), usage summed over models, median and spread, and the refusal to compare tokens across differing tool counts. Results go to `evals/results/<date>-bench-<task>.md` (untracked) with every scored answer beside it; the numbers that matter are copied into this file with the command that produced them.
