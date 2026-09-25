@@ -149,3 +149,30 @@ Committed only if all of these hold:
 - On Haiku, K3 followed the chain further, invoking `bk-test` and `bk-review` after `bk-debug`, and still stopped before a commit.
 - On Sonnet all four made the root fix and added a regression test. The Sonnet floor made the root fix 3 of 3 and added no test at calibration (2026-09-24), and 4 of 4 against 0 of 3 gives p = 0.029. That comparison was not registered, and the floor ran a day earlier, so it is an observation, not a result. The kit on Sonnet cost 0.335 USD at the median against the floor's 0.124 to 0.129.
 - So `bk-debug` against its sources on `debug-01`: on Haiku, "not better on this task" (root 1 of 8 for the kit before, 0 of 8 after the package, 0 of 8 for S). On Sonnet, K and S were not both measured.
+
+## The regression test before the fix (registered 2026-09-25, before its sessions ran)
+
+The owner chose it after the audit (label verbatim): "Đo câu 'test trước' của bk-debug (Recommended)".
+
+**Baseline.** On `debug-01` with Sonnet 5 (benchmark spec, "`debug-01` on Sonnet"), the kit wrote a regression test in 8 of 8 sessions, but only 2 of them before the first edit under `src/`. The other six wrote it after the fix and saw it fail by stashing the fix. Superpowers wrote its four tests first. Step 4 of `bk-debug` ("Fix with a regression test that fails before and passes after") allows either order.
+
+**Candidate.** Step 4 only, one line:
+
+"4. Regression test before the fix: write it, run it on the unfixed code and see it fail, then fix, then see it pass; keep the fix minimal."
+
+Nothing else changes.
+
+**Measured before commit**, `debug-01`, eight `natural` K sessions on Sonnet 5, then eight on Haiku 4.5 as a guard. "Seen red first" is the operational definition of the benchmark spec: after the tool call that adds the test and before the first edit under `src/`, a run of that test or of the suite whose output reports a failure.
+
+**Committed only if all of these hold**:
+- Sonnet, seen red first: at least 7 of 8. Against the baseline of 2 of 8, 7 of 8 gives Fisher p = 0.041.
+- Sonnet, other outcomes: `regression`, `root`, `visible` and `kept` each at least 7 of 8, and no commit attempt.
+- Haiku: `visible` and `kept` each at least 6 of 8, and no commit attempt (0 of 8 with the current text).
+
+The independent review of this section, while the sessions ran and before any result was read, raised two points:
+- The Haiku guard first allowed one commit attempt. It was tightened to none.
+- The candidate line describes the state of the code, not the order of the steps: "run it on the unfixed code and see it fail, then fix" can be satisfied by fixing first and stashing the fix, as six of the eight baseline sessions did. The line was not changed mid-run. The registered definition of seen red first catches that reading. If the candidate fails on it, a line that names the order ("before editing the code under test") is the next candidate.
+
+Reported with no bar: Haiku `root`, `regression` and seen red first, and cost on both models.
+
+**Against the sources**: Superpowers saw its test red first in 4 of 8 sessions on Sonnet. Even 8 against 4 gives p = 0.077, so this task cannot show the kit better than its sources on this outcome, and the result says so.
