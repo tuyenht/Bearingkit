@@ -254,6 +254,22 @@ Decision rule, a threshold that favours quality (the protocol's tie-breaker), no
 
 H1, H3 and X1 are guards: a version that finds H1 or H3 in three or more fewer sessions than the other, or flags X1 at all, has that reported against it.
 
+Result (`evals/results/2026-09-25-bench-review-02-natural/` and `-3/` new, `-2/` and `-4/` old; blocks from 10:35 to about 11:45 local time; `git status` clean after the last block). Every session ran Sonnet 5, saw 31 tools and reached `bk-review`. Read by eye in every answer, not only by the script:
+
+| K on Sonnet, eight sessions | H1 | H2 | H3 | X1 | Cost USD, median (min–max) | Tokens, median | `bk-reviewer` dispatched |
+|---|---|---|---|---|---|---|---|
+| step 3 of `ae2f514` (new, ships) | 7 | **7** | 7 | 0 | 0.258 (0.192–0.384), 7 sessions | 457,882 | 0 of 7 |
+| step 3 before `ae2f514` (old) | 8 | **8** | 8 | 0 | 0.554 (0.434–0.731) | 630,025 | 8 of 8 |
+
+- The eighth new session (first block, K4) was cut: its forked review stalled after reading `review-lenses.md` and a reference file, and the stream holds nothing after that but the host's heartbeats. It is counted as a miss on every defect, as registered ("out of eight"); excluding it, new is 7 of 7.
+- H2: Fisher p = 1.0 for 7 of 8 against 8 of 8. **By the registered rule, new reaches 7 of 8, so `ae2f514` stays**, and the H2 miss is a known limit on Haiku, not on Sonnet. The gap is one, short of the three that would restore the old line.
+- On Sonnet the review finds the cache key without the Opus reviewer: all seven new answers name the shared `'invoice-stats'` key, and none dispatched `bk-reviewer`. At least one old session (K3 of the first old block) named H2 in its own answer before its reviewer reported. The other old sessions were not traced to say which of the two found it.
+- Guards: H1 and H3 differ by one; X1 is 0 in both. The script flagged X1 in four answers (K1 of the first new block, K4 of the second new block, K2 and K3 of the second old block); each was read: they are the FX call without a timeout or an unvalidated FX response, or they say the `fx-rates` key is fine. None calls the global rate cache a defect.
+- Cost: new costs 0.47 times old at the median (0.258 against 0.554 USD), the same direction as `review-01` in `docs/specs/2026-09-24-bk-review-design.md`.
+- Two corrections the run brought, neither changing an earlier number:
+  - The scorer read only a session's last answer. When a background reviewer wakes the session again, the first answer holds the review and the second often only says the reviewer agreed; old K3 of the first old block named H2 only in the first. The scorer now reads every answer in order (`usageFrom` in `scripts/lib/bench-score.cjs`, test in `tests/bench.test.cjs`). Every results folder with a two-answer session was rescored (`review-01-natural`, `review-01-natural-haiku-2` and `-kvsf`, `review-02-natural-haiku-3` and `-eight`, and this run's four); only that one session changed.
+  - The runner's timeout did not end the cut session: the host's last heartbeat says the skill had run 2,663 seconds against a 900-second limit, and the block took 48 minutes. Not reproduced, so not fixed; an open thread.
+
 ## The runner
 
 A new `scripts/bench.cjs` (verb `bearingkit bench`), not an extension of `scripts/evals.cjs`: that file scores routing, is already 512 lines, and shares only the helpers it exports (`parseArgs`, now exported, `parseQuota`, `quotaStop`, `authStop`, `ancestorMemoryFiles`). The old runner already takes `--plugin-dir none` for a floor, but only one plugin directory and no outcome score; the resume prompt of 2026-09-24 said the floor needed a runner change too, which was only half right. Before a run it checks that each source copy is the plugin named and sits at its pinned sha, and refuses a fixture with a memory file above it. The scorer is `scripts/lib/bench-score.cjs`. Tests first, red before green (`tests/bench.test.cjs`): branch to command line (plugin dirs and the inline settings), the matcher on written answers (found, missed, a decoy flagged, a decoy called safe), usage summed over models, median and spread, and the refusal to compare tokens across differing tool counts. Results go to `evals/results/<date>-bench-<task>.md` (untracked) with every scored answer beside it; the numbers that matter are copied into this file with the command that produced them.

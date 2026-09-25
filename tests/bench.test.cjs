@@ -77,8 +77,15 @@ test('a session woken again after its first answer adds up durations and turns, 
   assert.equal(u.seconds, 75);
   assert.equal(u.turns, 10);
   assert.equal(u.total, 15 + 2300 + 510000 + 42000, 'the last result carries the total, not a share of it');
-  assert.equal(u.answer, 'the answer after the agent reported');
   assert.equal(u.results, 2);
+});
+
+// The user reads both answers, and the first is often the full review while the second only says the reviewer agreed
+// (review-02 on Sonnet, 2026-09-25: the cache key was named only in the first), so both are scored.
+test('a session woken again is scored on every answer it gave, in order', () => {
+  const second = { ...resultEvent, num_turns: 1, duration_ms: 14000, result: 'the answer after the agent reported', subtype: 'success' };
+  const u = usageFrom(stream([{ type: 'system', subtype: 'init', tools: [] }, resultEvent, second]));
+  assert.equal(u.answer, 'final answer\n\nthe answer after the agent reported');
 });
 
 test('the way a session ended is kept, so a turn limit is told apart from a weak answer', () => {

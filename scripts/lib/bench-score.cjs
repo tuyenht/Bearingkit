@@ -91,7 +91,9 @@ function usageFrom(raw) {
   u.turns = turns.length ? turns.reduce((a, b) => a + b, 0) : null;
   const ms = results.map((r) => r.duration_ms).filter((n) => typeof n === 'number');
   u.seconds = ms.length ? Math.round(ms.reduce((a, b) => a + b, 0) / 1000) : null;
-  u.answer = typeof result.result === 'string' ? result.result : null;
+  // The user reads every answer the session gave; a later one often only says the background reviewer agreed.
+  const answers = results.map((r) => r.result).filter((a) => typeof a === 'string');
+  u.answer = answers.length ? answers.join('\n\n') : null;
   u.isError = Boolean(result.is_error);
   u.end = result.subtype || null;
   return u;
