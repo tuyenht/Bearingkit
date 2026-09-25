@@ -63,3 +63,27 @@ Otherwise nothing under `skills/` is committed, the results are recorded here, a
 - One task. The candidate text was written after reading how this task's sessions failed. With no held-out task, a pass says the text helps on `debug-01`, not on debugging in general.
 - The daylight-saving case is named in the checks, and the wording names environment boundaries only in general terms.
 - Haiku sessions see 35 tools and Sonnet sessions 31, so tokens compare only within a model.
+
+## Result (2026-09-25): the candidate did not pass, nothing under `skills/` was committed
+
+Before: `bearingkit bench --task debug-01 --config-dir _build/profile/claude --branches K,S,F --runs 5 --model haiku` (`evals/results/2026-09-25-bench-debug-01-natural-haiku/`), with the three of each from 2026-09-24. After: the same with `--branches K --runs 8` and the candidate set in the main checkout (`…-natural-haiku-2/`), then `git checkout` and removal of the two new files; `git status` clean. The candidate files are kept outside the repository, in the session's scratchpad. Every session ran Haiku 4.5 and saw 35 tools.
+
+| Eight sessions each | `root` | `regression` | `visible` | `kept` | Cost USD, median (min–max) |
+|---|---|---|---|---|---|
+| K before | 1 | 0 | 8 | 8 | 0.103 (0.085–0.184) |
+| K after (candidate) | 1 | 1 | 8 | 8 | 0.119 (0.100–0.196) |
+| S sources | 0 | 0 | 8 | 8 | 0.112 (0.086–0.148) |
+| F floor | 0 | 0 | 8 | 8 | 0.072 (0.052–0.109) |
+
+- **By the commit rule the candidate fails**: `root` 1 against 1 and `regression` 1 against 0, both Fisher p = 1.0. The Sonnet guard was not run, since the first condition already failed. Against the sources: "not better on this task" (after-K 1 and 1 against S 0 and 0, p = 1.0).
+- It cost 15% more at the median (0.119 against 0.103) for no measured gain.
+- Read in the streams (a read-only script over the raw streams; every K session before and after):
+  - every one ran the suite before its first edit;
+  - none opened a reference, the new `feedback-loop.md` included;
+  - none ran the code in another zone.
+- **Where the new text did reach the model**:
+  - after-K8 wrote a test first, ran it red, then fixed `parseDate`, then grepped for other `new Date(` calls. It read "the rule" as the constructor call, not as local and UTC frames mixed, and so left `addDays` local.
+  - after-K7 made the full fix (`parseDate`, `formatDate`, `addDays`), as before-K1 of 2026-09-25 did without the text.
+  - the other six made the same partial or tempting patch as before.
+- Found on the way, the same before and after: 4 of the 16 K sessions (2026-09-24 K1, 2026-09-25 before-K4, after-K1 and after-K2) invoked `bk-ship` after the fix and tried to commit, although the prompt asked only to find and fix. The protocol's chain (build, test, review, ship) stops only at COUNCIL points, so the kit does this by design. Whether a debugging request should end at the fix is a question for the owner.
+- What it says: on Haiku, three changes to the body of `bk-debug`, placed where Haiku reads, moved neither outcome on this task. Together with `review-02`, where a line in a reference did not reach Haiku either, the kit's text has not yet shown a measured effect on a Haiku session. On Sonnet the floor already solves `debug-01`. The choice of what to do next goes to the owner (handoff).
