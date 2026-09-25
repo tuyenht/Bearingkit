@@ -351,6 +351,26 @@ Rule:
 - **Cost is level** (0.259 against 0.258 USD at the median). The kit's premium over its sources on this task, 1.4 times at the first eight sessions with the old step 4, is gone with the new line.
 - **Defects fixed are tied**: `root` 16 of 16 each. Neither branch tried to commit.
 
+## `debug-01` on Sonnet, confirmation: the regression test as the registered outcome (registered 2026-09-26, before its sessions ran)
+
+The owner's answer to the recommendation (verbatim): "có test hồi quy". The recommendation it answers: a confirmation run with the regression test as the primary outcome, on sessions that are all new. At sixteen sessions each, `regression` read 16 of 16 for the kit against 9 of 16 for Superpowers (p = 0.007). That run was registered on another outcome, so its data only raised the hypothesis. This run tests it on data that did not.
+
+Design:
+- `bearingkit bench --task debug-01 --config-dir _build/profile/claude --branches K,S --runs 16`, interleaved.
+- Sonnet 5; the kit at the commit of the run, whose `skills/bk-debug/` is `77de975`'s. The prompt, checks and permissions are as frozen.
+- No earlier session is pooled.
+- F is not run: the floor wrote no test in eight sessions, and this question is the kit against its sources.
+
+Outcome and rule:
+- **Primary: `regression`**, the fixture check "the suite counts more than its original eight tests".
+- The kit is "better than its sources at leaving a regression test, `debug-01`, Sonnet" if its count is higher and the two-sided Fisher p is ≤ 0.05. Examples: 16 against 9 gives p = 0.007; 16 against 11, p = 0.043; 15 against 10, p = 0.083, which does not pass.
+- Otherwise it reads "no clear difference".
+- Guard: a counted test that was never seen failing on the unfixed code, before or after the fix (read in the stream), is reported. A counted test that only copies an original test is reported too: it gets past the count and fails on the unfixed code, since the originals fail in UTC+7. A test counts as more than a copy when it sets or varies the zone, or asserts a date the original tests do not. If more than two of the kit's counted tests are either never seen failing or only copies, the claim is withheld. This guard was added after the independent review of this section, before any session ran.
+
+Reported beside it, with no bar: seen red first (`seenRedFirst` with the fixture root), `root`, `visible`, `kept`, commit attempts, cost.
+
+Limits, stated now: one small task, one model, one process outcome. It would be the first registered result of the kit above one of its sources, and it says nothing on defects found or fixed. There `root` has tied at 16 of 16.
+
 ## The runner
 
 A new `scripts/bench.cjs` (verb `bearingkit bench`), not an extension of `scripts/evals.cjs`: that file scores routing, is already 512 lines, and shares only the helpers it exports (`parseArgs`, now exported, `parseQuota`, `quotaStop`, `authStop`, `ancestorMemoryFiles`). The old runner already takes `--plugin-dir none` for a floor, but only one plugin directory and no outcome score; the resume prompt of 2026-09-24 said the floor needed a runner change too, which was only half right. Before a run it checks that each source copy is the plugin named and sits at its pinned sha, and refuses a fixture with a memory file above it. The scorer is `scripts/lib/bench-score.cjs`. Tests first, red before green (`tests/bench.test.cjs`): branch to command line (plugin dirs and the inline settings), the matcher on written answers (found, missed, a decoy flagged, a decoy called safe), usage summed over models, median and spread, and the refusal to compare tokens across differing tool counts. Results go to `evals/results/<date>-bench-<task>.md` (untracked) with every scored answer beside it; the numbers that matter are copied into this file with the command that produced them.
