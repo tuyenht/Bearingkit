@@ -16,6 +16,8 @@ Phiên này là cùng cuộc trò chuyện với `docs/handoff/2026-09-24-bench.
 7. Trả lời hai câu hỏi sau khi bản ứng viên `bk-debug` không qua (nhãn nguyên văn): hướng "Commit phần chắt lọc, đóng sprint (Recommended)"; chuỗi sang `bk-ship` "Dừng ở bản sửa, hỏi trước khi commit (Recommended)".
 8. Sau khi sprint đóng: "Audit kỹ quá trình xử lý code cũng như các phản hồi ở trên xem có gap hoặc lỗi không? Nếu có thì fix cho tôi luôn nhé. / Audit kỹ các đề xuất khuyến nghị xử lý ở trên đã chuẩn chưa? Nếu chuẩn thì duyệt xử lý chúng một cách tối ưu nhất, tốt nhất tự động cho tôi. / Cho tôi các khuyến nghị đề xuất tốt nhất, phù hợp nhất để xem các bước tiếp theo chúng ta nên ưu tiên làm gì?"
 9. Trả lời sau audit (nhãn nguyên văn): "Có, cập nhật ngay (Recommended)"; "Đo câu 'test trước' của bk-debug (Recommended)".
+10. "Cho tôi khuyến nghị tiếp theo chúng tan nên làm gì thếp theo sau khi trải qua các vòng duyệt?"
+11. "Xử lý theo đề xuất khuyến nghị cho tôi." (duyệt: cập nhật bản cài hằng ngày, rồi đo `debug-01` Sonnet 16 lượt mỗi nhánh, kit so với Superpowers).
 
 Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới so với bước 3 cũ, 8 lượt mỗi bản, quy tắc quyết định đăng ký trước. Lời 5 được hiểu là duyệt đúng việc đó; lời 6 là duyệt sprint `bk-debug`. Không có bước ghi nào dưới `~/.claude` hay `~/.gemini`.
 
@@ -39,7 +41,12 @@ Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới 
   - Sonnet thấy test đỏ trước khi sửa 8/8 (trước 2/8, p = 0,007); test hồi quy, sửa tận gốc, `visible` và `kept` đều 8/8; không tự commit; chi phí 0,261 USD (trước 0,330);
   - guard Haiku đạt: test hồi quy 5/8, sửa tận gốc 1/8;
   - so với nguồn: 8/8 so với 4/8 (p = 0,077), không hơn trên task này.
-- **Auto-update có chạy, nhưng chỉ ở scope user** (B15): trước lần cập nhật tay, bản user đã tự lên `f987680`, còn bản local vẫn ở `e8b6dc1`. Cả hai nay ở `ab471f9`; commit của câu "test trước" cần một lần cập nhật nữa.
+- **`debug-01` Sonnet, 16 lượt mỗi nhánh, kit so với Superpowers** (đăng ký `0506d55`):
+  - thấy test đỏ trước khi sửa 14/16 so với 8/16, p = 0,054, **không khác rõ** theo quy tắc;
+  - test hồi quy 16/16 so với 9/16 (p = 0,007), nhưng đây không phải chỉ số đăng ký, nên chỉ là manh mối cho lần đo đăng ký sau;
+  - sửa tận gốc 16/16 mỗi bên; chi phí ngang nhau (0,259 so với 0,258 USD).
+  - Bộ đếm là `seenRedFirst` trong `scripts/lib/bench-score.cjs`, có test, đã kiểm tay hai phiên.
+- **Auto-update có chạy, nhưng chỉ ở scope user** (B15): trước lần cập nhật tay, bản user đã tự lên `f987680`, còn bản local vẫn ở `e8b6dc1`. Sau hai lần cập nhật theo lời "có" của owner, cả hai scope nay ở `470e89a`, đã có câu "test trước".
 - **Haiku tự commit dù không được bảo, ở mọi nhánh**: kit trước 3/8, bản ứng viên đầu 6/8, S 5/8, F 5/8 (đếm cả lệnh `git commit` chạy thẳng, không chỉ lời gọi `bk-ship`). Câu hỏi gửi owner chỉ nêu 4/16 lời gọi `bk-ship`; số đầy đủ ghi trong spec, và lựa chọn "dừng ở bản sửa" đứng vững trên đó. `bk-protocol` chưa ghi ngoại lệ này (câu "chuỗi chỉ dừng ở điểm COUNCIL"); ngân sách ký tự gần hết.
 - **Trên Sonnet, review tìm ra khoá cache mà không cần reviewer Opus**: cả 7 câu trả lời của bản mới đều nêu key `'invoice-stats'` dùng chung.
 - **Bộ chấm từng chỉ đọc câu trả lời cuối.** Khi reviewer chạy nền đánh thức phiên, câu trả lời đầu chứa bài review, câu sau thường chỉ nói reviewer đồng ý. Đã sửa: `usageFrom` nối mọi câu trả lời theo thứ tự (test mới). Mọi thư mục kết quả có phiên hai câu trả lời đều được chấm lại; chỉ một phiên đổi (phiên cũ K3 hôm nay, H2 tìm thấy). Không con số nào đã công bố trước đó bị đổi.
@@ -52,6 +59,8 @@ Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới 
 
 ### Lessons
 
+- Đoạn đăng ký của lần đo 16 lượt được commit (`0506d55`) trước khi có reviewer rà, trái luật; reviewer rà bổ sung trước commit kết quả.
+- Chọn chỉ số chính trước khi chạy và giữ nó: lần này chỉ số phụ (test hồi quy) đạt ngưỡng còn chỉ số chính thì không; không được đổi sang chỉ số phụ sau khi đã thấy dữ liệu.
 - Bộ đếm thấy test đỏ phải nhận mọi đường dẫn `node --test` tự chạy (kể cả `test-*.js` ở thư mục gốc) và mọi cách ghi file (Edit, Write, chuyển hướng shell), nhưng không nhầm `2>&1` là ghi file. Bản đầu đếm thiếu 3 phiên Haiku; bản rộng đầu tiên lại đếm thừa 1 phiên Sonnet. Mỗi bộ nhận diện cần được đối chiếu tay trên một phiên.
 - Đếm hành vi theo định nghĩa đầy đủ ngay từ đầu. Lần đầu tôi chỉ đếm lời gọi `bk-ship`, nên thấy "4/16"; số thật là Haiku tự commit ở mọi nhánh (3/8 tới 6/8). Reviewer bắt được lỗi này trước khi đo.
 - Reviewer Sonnet vẫn chạy Python dù bị cấm (lần này là `python3 --version`); prompt phải cấm cả dạng đó, và luôn kiểm lời tự khai.
@@ -65,15 +74,15 @@ Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới 
 
 ### State
 
-- HEAD = commit cuối của phiên = `origin/main`; suite 162/162; `doctor` sáu `ok`.
+- HEAD = commit cuối của phiên = `origin/main`; suite 167/167; `doctor` sáu `ok`.
 - Commit cuối của phiên đổi `skills/bk-debug/`. Bản cài hằng ngày Claude Code vẫn ở `e8b6dc1`, **cũ hơn** `skills/`: cần owner nói "có" để chạy ba lệnh cập nhật (marketplace, `--scope user`, `--scope local`). Kho Antigravity được làm mới bằng `update --no-pull` sau khi push (không cần hỏi).
 - Kết quả (không track): `review-02` Sonnet ở `evals/results/2026-09-25-bench-review-02-natural/` và `-3/` (bản mới), `-2/` và `-4/` (bản cũ); `debug-01` ở `…-debug-01-natural-haiku/` (trước, K S F), `-haiku-2/` (bản ứng viên đầu), `-haiku-3/` và `…-debug-01-natural/` (gói đã commit, Haiku và Sonnet).
 
 ### Decisions waiting on the owner
 
 Chờ owner:
-1. **Cập nhật bản cài hằng ngày** lên commit có câu "test trước": ba lệnh ghi dưới `~/.claude`, cần một câu "có" (lần trước đã lên `ab471f9` với lời "có" của owner).
-2. **Bước kế tiếp**: dựng task benchmark cỡ thật (lựa chọn 7 của owner), rồi tới mục (5) `bk-test` của thứ tự v0.3. Câu "test trước" đã đo và commit.
+1. **Bản cài hằng ngày** ở `470e89a` (cả hai scope). Commit sau đó chỉ đổi `scripts/`, `tests/` và `docs/`, không đổi `skills/`, nên không cần cập nhật.
+2. **Bước kế tiếp** (khuyến nghị 10 và 11 của owner đã duyệt): dựng task benchmark cỡ thật, hiệu chỉnh trên sàn trước; rồi tới mục (5) `bk-test`. Tùy chọn rẻ nếu owner muốn: một lần đo đăng ký với test hồi quy là chỉ số chính, 16 lượt mỗi nhánh K và S (manh mối 16/16 so với 9/16).
 3. **Ngoại lệ "không tự commit" trong `bk-protocol`** cho mọi skill: đổi thiết kế, protocol gần hết ngân sách ký tự, cần đo định tuyến; owner quyết.
 4. Từ phiên gộp: (14) LSP và context7; gỡ hẳn Superpowers và `fullstack-dev-skills` sau tuần dùng thử; push `a0cda92` của repo KB (tuỳ owner).
 

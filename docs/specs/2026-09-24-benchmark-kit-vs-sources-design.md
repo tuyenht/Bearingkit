@@ -335,6 +335,22 @@ Rule:
 - Otherwise it reads "no clear difference".
 - That would be the first registered result of the kit above one of its sources. It stays limited to this process outcome on one small task. It says nothing on defects found or fixed, where the branches tie (`root` 8 of 8 each).
 
+### Result (2026-09-25): 14 against 8, p = 0.054, no clear difference
+
+`evals/results/2026-09-25-bench-debug-01-natural-5/` (eight K and eight S, interleaved), with the earlier eight of each. Every session ran Sonnet 5 with 31 tools. Seen red first was counted by `seenRedFirst` (`scripts/lib/bench-score.cjs`, five tests in `tests/bench.test.cjs`, written while the sessions ran). On the earlier sets it gives the counts already reported: kit before the line 2 of 8, with it 8 of 8, Superpowers 4 of 8, Haiku 5 of 8. The independent review found two gaps, both fixed before commit. A test file written outside the fixture, such as a scratch copy, was counted; the function now takes the fixture root. An explicit `1>` redirect was missed. Recounted with the fix, every count above is unchanged. Checked by hand on two new sessions:
+- K4 edited `src/dates.js` before writing its test, and stashed the fix to see it red: not counted, correctly;
+- S1 wrote `tests/timezone.test.js`, ran it red, then edited `src/`: counted, correctly.
+
+| Sixteen sessions each | Seen red first | `regression` | `root` | `visible` / `kept` | Tried to commit | Cost USD, median (min–max) |
+|---|---|---|---|---|---|---|
+| K kit (`77de975`'s `bk-debug`) | **14** | 16 | 16 | 16 / 16 | 0 | 0.259 (0.213–0.343) |
+| S sources | **8** | 9 | 16 | 16 / 16 | 0 | 0.258 (0.201–0.452) |
+
+- **By the registered rule: no clear difference.** 14 against 8 gives Fisher p = 0.054, just over 0.05. This is the case the registration named as not passing. The first eight new K sessions ran 6 of 8, against 8 of 8 in the earlier set.
+- **Reported beside it, not the registered outcome:** the kit added a regression test in 16 of 16 sessions and Superpowers in 9 of 16, which gives p = 0.007. The eight-session registration of `991cc25` had `regression` as its primary outcome, but at eight sessions it could not pass (8 against 4); this sixteen-session registration named seen red first instead. So the 16 against 9 is a lead for the next registered measurement, not a result. Choosing the outcome after seeing the data is the thing the registration exists to prevent.
+- **Cost is level** (0.259 against 0.258 USD at the median). The kit's premium over its sources on this task, 1.4 times at the first eight sessions with the old step 4, is gone with the new line.
+- **Defects fixed are tied**: `root` 16 of 16 each. Neither branch tried to commit.
+
 ## The runner
 
 A new `scripts/bench.cjs` (verb `bearingkit bench`), not an extension of `scripts/evals.cjs`: that file scores routing, is already 512 lines, and shares only the helpers it exports (`parseArgs`, now exported, `parseQuota`, `quotaStop`, `authStop`, `ancestorMemoryFiles`). The old runner already takes `--plugin-dir none` for a floor, but only one plugin directory and no outcome score; the resume prompt of 2026-09-24 said the floor needed a runner change too, which was only half right. Before a run it checks that each source copy is the plugin named and sits at its pinned sha, and refuses a fixture with a memory file above it. The scorer is `scripts/lib/bench-score.cjs`. Tests first, red before green (`tests/bench.test.cjs`): branch to command line (plugin dirs and the inline settings), the matcher on written answers (found, missed, a decoy flagged, a decoy called safe), usage summed over models, median and spread, and the refusal to compare tokens across differing tool counts. Results go to `evals/results/<date>-bench-<task>.md` (untracked) with every scored answer beside it; the numbers that matter are copied into this file with the command that produced them.
