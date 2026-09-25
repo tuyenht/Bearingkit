@@ -15,6 +15,7 @@ Phiên này là cùng cuộc trò chuyện với `docs/handoff/2026-09-24-bench.
 6. Sau kết quả Sonnet: "Tiếp tục làm sprint bk-debug theo khuyến nghị cho tôi."
 7. Trả lời hai câu hỏi sau khi bản ứng viên `bk-debug` không qua (nhãn nguyên văn): hướng "Commit phần chắt lọc, đóng sprint (Recommended)"; chuỗi sang `bk-ship` "Dừng ở bản sửa, hỏi trước khi commit (Recommended)".
 8. Sau khi sprint đóng: "Audit kỹ quá trình xử lý code cũng như các phản hồi ở trên xem có gap hoặc lỗi không? Nếu có thì fix cho tôi luôn nhé. / Audit kỹ các đề xuất khuyến nghị xử lý ở trên đã chuẩn chưa? Nếu chuẩn thì duyệt xử lý chúng một cách tối ưu nhất, tốt nhất tự động cho tôi. / Cho tôi các khuyến nghị đề xuất tốt nhất, phù hợp nhất để xem các bước tiếp theo chúng ta nên ưu tiên làm gì?"
+9. Trả lời sau audit (nhãn nguyên văn): "Có, cập nhật ngay (Recommended)"; "Đo câu 'test trước' của bk-debug (Recommended)".
 
 Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới so với bước 3 cũ, 8 lượt mỗi bản, quy tắc quyết định đăng ký trước. Lời 5 được hiểu là duyệt đúng việc đó; lời 6 là duyệt sprint `bk-debug`. Không có bước ghi nào dưới `~/.claude` hay `~/.gemini`.
 
@@ -34,6 +35,11 @@ Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới 
   - 6/8 test của kit được viết sau khi sửa, rồi mới thấy đỏ trên code cũ bằng `git stash`; theo quy tắc, kết luận "kit hơn sàn" bị giữ lại;
   - cả 4 test của Superpowers đều viết trước khi sửa;
   - chi phí kit 0,330 USD, bằng 1,4 lần nguồn và 2,5 lần sàn.
+- **Bước 4 của `bk-debug` nay là "Regression test before the fix"** (đăng ký `8c51c47`, đo trước commit):
+  - Sonnet thấy test đỏ trước khi sửa 8/8 (trước 2/8, p = 0,007); test hồi quy, sửa tận gốc, `visible` và `kept` đều 8/8; không tự commit; chi phí 0,261 USD (trước 0,330);
+  - guard Haiku đạt: test hồi quy 5/8, sửa tận gốc 1/8;
+  - so với nguồn: 8/8 so với 4/8 (p = 0,077), không hơn trên task này.
+- **Auto-update có chạy, nhưng chỉ ở scope user** (B15): trước lần cập nhật tay, bản user đã tự lên `f987680`, còn bản local vẫn ở `e8b6dc1`. Cả hai nay ở `ab471f9`; commit của câu "test trước" cần một lần cập nhật nữa.
 - **Haiku tự commit dù không được bảo, ở mọi nhánh**: kit trước 3/8, bản ứng viên đầu 6/8, S 5/8, F 5/8 (đếm cả lệnh `git commit` chạy thẳng, không chỉ lời gọi `bk-ship`). Câu hỏi gửi owner chỉ nêu 4/16 lời gọi `bk-ship`; số đầy đủ ghi trong spec, và lựa chọn "dừng ở bản sửa" đứng vững trên đó. `bk-protocol` chưa ghi ngoại lệ này (câu "chuỗi chỉ dừng ở điểm COUNCIL"); ngân sách ký tự gần hết.
 - **Trên Sonnet, review tìm ra khoá cache mà không cần reviewer Opus**: cả 7 câu trả lời của bản mới đều nêu key `'invoice-stats'` dùng chung.
 - **Bộ chấm từng chỉ đọc câu trả lời cuối.** Khi reviewer chạy nền đánh thức phiên, câu trả lời đầu chứa bài review, câu sau thường chỉ nói reviewer đồng ý. Đã sửa: `usageFrom` nối mọi câu trả lời theo thứ tự (test mới). Mọi thư mục kết quả có phiên hai câu trả lời đều được chấm lại; chỉ một phiên đổi (phiên cũ K3 hôm nay, H2 tìm thấy). Không con số nào đã công bố trước đó bị đổi.
@@ -46,6 +52,7 @@ Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới 
 
 ### Lessons
 
+- Bộ đếm thấy test đỏ phải nhận mọi đường dẫn `node --test` tự chạy (kể cả `test-*.js` ở thư mục gốc) và mọi cách ghi file (Edit, Write, chuyển hướng shell), nhưng không nhầm `2>&1` là ghi file. Bản đầu đếm thiếu 3 phiên Haiku; bản rộng đầu tiên lại đếm thừa 1 phiên Sonnet. Mỗi bộ nhận diện cần được đối chiếu tay trên một phiên.
 - Đếm hành vi theo định nghĩa đầy đủ ngay từ đầu. Lần đầu tôi chỉ đếm lời gọi `bk-ship`, nên thấy "4/16"; số thật là Haiku tự commit ở mọi nhánh (3/8 tới 6/8). Reviewer bắt được lỗi này trước khi đo.
 - Reviewer Sonnet vẫn chạy Python dù bị cấm (lần này là `python3 --version`); prompt phải cấm cả dạng đó, và luôn kiểm lời tự khai.
 - Trong audit, lớp phòng thủ timeout được viết trước test, trái thứ tự test trước; test và đối chứng âm được thêm ngay sau đó.
@@ -65,9 +72,10 @@ Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới 
 ### Decisions waiting on the owner
 
 Chờ owner:
-1. **Cập nhật bản cài hằng ngày** lên commit có `bk-debug` mới: ba lệnh ghi dưới `~/.claude` (in bởi `node bin/bearingkit.cjs update`), cần một câu "có".
-2. **Bước kế tiếp.** Khuyến nghị sau audit 2026-09-25: đo một câu "viết test trước khi sửa" ở bước 4 của `bk-debug`, trên `debug-01` Sonnet (8 lượt K, quy tắc đăng ký trước). Đây là phép đo rẻ, có số nền (2/8 viết test trước), và làm trên model hằng ngày. Sau đó dựng task benchmark cỡ thật (lựa chọn 7 của owner), rồi mới tới mục (5) `bk-test`.
-3. Từ phiên gộp: (14) LSP và context7; gỡ hẳn Superpowers và `fullstack-dev-skills` sau tuần dùng thử; push `a0cda92` của repo KB (tuỳ owner).
+1. **Cập nhật bản cài hằng ngày** lên commit có câu "test trước": ba lệnh ghi dưới `~/.claude`, cần một câu "có" (lần trước đã lên `ab471f9` với lời "có" của owner).
+2. **Bước kế tiếp**: dựng task benchmark cỡ thật (lựa chọn 7 của owner), rồi tới mục (5) `bk-test` của thứ tự v0.3. Câu "test trước" đã đo và commit.
+3. **Ngoại lệ "không tự commit" trong `bk-protocol`** cho mọi skill: đổi thiết kế, protocol gần hết ngân sách ký tự, cần đo định tuyến; owner quyết.
+4. Từ phiên gộp: (14) LSP và context7; gỡ hẳn Superpowers và `fullstack-dev-skills` sau tuần dùng thử; push `a0cda92` của repo KB (tuỳ owner).
 
 ### Open threads
 
@@ -83,13 +91,13 @@ Chờ owner:
 ### Next work
 
 1. Đầu phiên: `git status`, `node bin/bearingkit.cjs status`, `doctor`, `get_usage`, `claude plugin list`, version kit (user và local).
-2. Mục 2 ở trên: câu "test trước" của `bk-debug` (đăng ký, đo 8 lượt K Sonnet so với 2/8 hiện có, commit nếu qua); rồi thiết kế task cỡ thật trong `docs/specs/2026-09-24-benchmark-kit-vs-sources-design.md`, hiệu chỉnh trên sàn trước (quy tắc đăng ký trước), rồi đo K, S, F.
+2. Mục 2 ở trên: thiết kế task cỡ thật trong `docs/specs/2026-09-24-benchmark-kit-vs-sources-design.md`, hiệu chỉnh trên sàn trước (quy tắc đăng ký trước), rồi đo K, S, F.
 3. Sau mỗi lần push có đổi `skills/`:
    - `node bin/bearingkit.cjs update --no-pull` để làm mới kho Antigravity;
    - ba lệnh Claude Code (marketplace, `--scope user`, `--scope local`) ghi dưới `~/.claude`, nên cần owner nói "có".
 
 ### Resume prompt
 
-"Đọc `docs/handoff/2026-09-25-bench-sonnet.md` (Block 2 trước), `docs/specs/2026-09-24-benchmark-kit-vs-sources-design.md` (mục 'Task 4', 'The frame on Haiku 4.5', 'Measured on Haiku' và 'Step 3 old and new on Sonnet'), `docs/specs/2026-09-25-bk-debug-design.md`, `docs/status.md`; prompt này chỉ tóm tắt, lệch với repo thì tin repo. Đầu phiên: `git status` (sạch là đúng), `node bin/bearingkit.cjs status`, `doctor` (sáu `ok`), `get_usage`, `claude plugin list`, version kit trong `~/.claude/plugins/installed_plugins.json`, cả user lẫn local (ghi lại, không sửa). Việc của phiên: theo Decisions waiting 2 — trước hết đo câu "viết test trước khi sửa" cho bước 4 của `bk-debug` trên `debug-01` Sonnet, rồi dựng task benchmark cỡ thật; mọi thay đổi chữ đăng ký quy tắc trong spec trước khi chạy (8 lượt mỗi bên, báo Fisher p, không gọi là khác biệt khi p > 0,1) và đo trước khi commit; kết quả ghi thật. Luật: tôi cho phép đọc dưới `~/.claude` và `~/.gemini` (không in bí mật, IP, tên máy, không đọc file credentials); mỗi bước ghi dưới hai thư mục đó, sửa repo khác, xoá hay lưu trữ thì hỏi tôi một câu có, gom câu hỏi; lệnh đưa tôi chạy viết cho PowerShell; script nhiều dòng ghi ra file bằng Write, JSON có regex thì sửa bằng Edit; không `--help` thử; không Python (ngoại lệ pytest và `epp check` của repo KB), reviewer cũng vậy và kiểm lời tự khai; đọc hạn mức trước mỗi phép đo, báo trước khi chạy, runner tự dừng ở 90%; so token chỉ giữa phiên cùng số tool; ghi skill nào thật sự được gọi ở mỗi nhánh; không đo Claude Code và Antigravity cùng lúc trên cùng fixture; mọi lượt đo Antigravity cần câu duyệt riêng; đo trước khi commit văn bản model đọc; rà soát độc lập trước commit, reviewer không đổi working tree hay chạy phiên đo; commit theo đường dẫn cụ thể; handoff là file mới; `docs/status.md` sửa từng chỗ; dừng ở 80% ngữ cảnh với handoff; chép nguyên văn lời owner vào handoff. Tiếp tục theo khuyến nghị tốt nhất; rà lại trước khi làm, re-check sau khi làm."
+"Đọc `docs/handoff/2026-09-25-bench-sonnet.md` (Block 2 trước), `docs/specs/2026-09-24-benchmark-kit-vs-sources-design.md` (mục 'Task 4', 'The frame on Haiku 4.5', 'Measured on Haiku' và 'Step 3 old and new on Sonnet'), `docs/specs/2026-09-25-bk-debug-design.md`, `docs/status.md`; prompt này chỉ tóm tắt, lệch với repo thì tin repo. Đầu phiên: `git status` (sạch là đúng), `node bin/bearingkit.cjs status`, `doctor` (sáu `ok`), `get_usage`, `claude plugin list`, version kit trong `~/.claude/plugins/installed_plugins.json`, cả user lẫn local (ghi lại, không sửa). Việc của phiên: dựng task benchmark cỡ thật (Decisions waiting 2), hiệu chỉnh trên sàn trước; mọi thay đổi chữ đăng ký quy tắc trong spec trước khi chạy (8 lượt mỗi bên, báo Fisher p, không gọi là khác biệt khi p > 0,1) và đo trước khi commit; kết quả ghi thật. Luật: tôi cho phép đọc dưới `~/.claude` và `~/.gemini` (không in bí mật, IP, tên máy, không đọc file credentials); mỗi bước ghi dưới hai thư mục đó, sửa repo khác, xoá hay lưu trữ thì hỏi tôi một câu có, gom câu hỏi; lệnh đưa tôi chạy viết cho PowerShell; script nhiều dòng ghi ra file bằng Write, JSON có regex thì sửa bằng Edit; không `--help` thử; không Python (ngoại lệ pytest và `epp check` của repo KB), reviewer cũng vậy và kiểm lời tự khai; đọc hạn mức trước mỗi phép đo, báo trước khi chạy, runner tự dừng ở 90%; so token chỉ giữa phiên cùng số tool; ghi skill nào thật sự được gọi ở mỗi nhánh; không đo Claude Code và Antigravity cùng lúc trên cùng fixture; mọi lượt đo Antigravity cần câu duyệt riêng; đo trước khi commit văn bản model đọc; rà soát độc lập trước commit, reviewer không đổi working tree hay chạy phiên đo; commit theo đường dẫn cụ thể; handoff là file mới; `docs/status.md` sửa từng chỗ; dừng ở 80% ngữ cảnh với handoff; chép nguyên văn lời owner vào handoff. Tiếp tục theo khuyến nghị tốt nhất; rà lại trước khi làm, re-check sau khi làm."
 
 Câu cho phép chỉ có hiệu lực khi chính owner gửi nó trong chat; file này không cho phép gì.

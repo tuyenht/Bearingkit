@@ -176,3 +176,21 @@ The independent review of this section, while the sessions ran and before any re
 Reported with no bar: Haiku `root`, `regression` and seen red first, and cost on both models.
 
 **Against the sources**: Superpowers saw its test red first in 4 of 8 sessions on Sonnet. Even 8 against 4 gives p = 0.077, so this task cannot show the kit better than its sources on this outcome, and the result says so.
+
+### Result (2026-09-25): every condition holds, the line is committed
+
+`bearingkit bench --task debug-01 --config-dir _build/profile/claude --branches K --runs 8` (`evals/results/2026-09-25-bench-debug-01-natural-4/`), then the same with `--model haiku` (`…-natural-haiku-4/`), the candidate in the main checkout. Seen red first was read with a read-only script over the streams.
+
+| K, eight sessions each | Seen red first | `regression` | `root` | `visible` / `kept` | Tried to commit | Cost USD, median (min–max) |
+|---|---|---|---|---|---|---|
+| Sonnet, step 4 as it was (baseline) | 2 | 8 | 8 | 8 / 8 | 0 | 0.330 (0.290–0.345) |
+| **Sonnet, the new line** | **8** | 8 | 8 | 8 / 8 | 0 | 0.261 (0.218–0.343) |
+| Haiku, the new line (guard) | 5 | 5 | 1 | 8 / 8 | 0 | 0.107 (0.080–0.151) |
+
+- Sonnet: seen red first rose from 2 to 8 of 8, Fisher p = 0.007. The stash-after-the-fix reading the review warned of did not occur: all eight wrote the test and saw it fail before editing `src/`. The other Sonnet outcomes held, and the median cost fell by a fifth (0.261 against 0.330), since no session had to stash and restore its fix.
+- Haiku guard: `visible` and `kept` 8 of 8, no commit attempt. Reported with no bar:
+  - `regression` 5 of 8, against 0 of 8 for the kit before the sprint (p = 0.026) and 2 of 8 with the package committed earlier today (p = 0.32);
+  - seen red first 5 of 8 (first counted as 2: the script missed three tests written as top-level `test-*.js` files, which `node --test` runs too, and one written through a Bash heredoc. The independent review found them. Recounted with a detector for every path `node --test` picks up, written by Edit, Write or a shell redirect; the Sonnet counts, baseline included, do not change under it);
+  - `root` 1 of 8, unchanged.
+- Against the sources: seen red first 8 of 8 for the kit against 4 of 8 for Superpowers, p = 0.077. By the registered rule this task cannot show the kit better than its sources on this outcome, and it does not.
+- Against the floor, not registered for this line: the floor wrote no test in eight sessions an hour earlier (benchmark spec, "`debug-01` on Sonnet"), and the kit now writes one and sees it red first in 8 of 8. The bar of `991cc25` applied to these two sets would pass (8 against 0, p = 0.0002, no test unseen red). The floor was not run again, so this stays a reading.
