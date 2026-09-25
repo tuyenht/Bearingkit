@@ -559,3 +559,54 @@ test('a session that outlives its kill is given up as an orphan after the grace 
   treeKill(s.pid);
   fs.rmSync(dir, { recursive: true, force: true });
 });
+
+// Seen red first (registered 2026-09-25 for debug-01): a file node --test runs is written, a node run reports a
+// failure, and only then is anything under src/ edited.
+const { seenRedFirst } = require('../scripts/lib/bench-score.cjs');
+const use = (id, name, input) => ({ type: 'assistant', message: { content: [{ type: 'tool_use', id, name, input }] } });
+const out = (id, content) => ({ type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: id, content }] } });
+
+test('a test written and seen failing before the fix counts as seen red first', () => {
+  assert.equal(seenRedFirst(stream([
+    use('a', 'Write', { file_path: 'C:/fx/tests/timezone.test.js', content: 'x' }),
+    use('b', 'Bash', { command: 'node --test' }), out('b', 'ℹ pass 8\nℹ fail 1'),
+    use('c', 'Edit', { file_path: 'C:/fx/src/dates.js', old_string: 'a', new_string: 'b' }),
+  ])), true);
+});
+
+test('a test written after the fix does not count, even if a stash later shows it red', () => {
+  assert.equal(seenRedFirst(stream([
+    use('c', 'Edit', { file_path: 'C:/fx/src/dates.js', old_string: 'a', new_string: 'b' }),
+    use('a', 'Write', { file_path: 'C:/fx/tests/timezone.test.js', content: 'x' }),
+    use('b', 'Bash', { command: 'git stash push -- src/dates.js && node --test' }), out('b', 'ℹ fail 2'),
+  ])), false);
+});
+
+test('reading a test file with 2>&1 is not writing one', () => {
+  assert.equal(seenRedFirst(stream([
+    use('a', 'Bash', { command: 'cat tests/dates.test.js; echo --; node --test 2>&1' }), out('a', 'ℹ fail 6'),
+    use('c', 'Edit', { file_path: 'C:/fx/src/dates.js', old_string: 'a', new_string: 'b' }),
+  ])), false);
+});
+
+test('a top-level test-*.js written through a shell redirect counts', () => {
+  assert.equal(seenRedFirst(stream([
+    use('a', 'Bash', { command: "cat > test-tz.js <<'EOF'\nrequire('assert')\nEOF" }),
+    use('b', 'Bash', { command: 'node test-tz.js' }), out('b', [{ type: 'text', text: 'AssertionError: expected' }]),
+    use('c', 'Edit', { file_path: 'C:/fx/src/dates.js', old_string: 'a', new_string: 'b' }),
+  ])), true);
+});
+
+test('a test file written outside the fixture does not count, and an explicit 1> redirect does', () => {
+  const root = 'C:/fx';
+  assert.equal(seenRedFirst(stream([
+    use('a', 'Write', { file_path: 'C:/Temp/scratchpad/probe.test.js', content: 'x' }),
+    use('b', 'Bash', { command: 'node --test C:/Temp/scratchpad/probe.test.js' }), out('b', 'ℹ fail 1'),
+    use('c', 'Edit', { file_path: 'C:/fx/src/dates.js', old_string: 'a', new_string: 'b' }),
+  ]), root), false, 'a scratch file is not a file the fixture suite runs');
+  assert.equal(seenRedFirst(stream([
+    use('a', 'Bash', { command: 'printf x 1> tests/tz.test.js' }),
+    use('b', 'Bash', { command: 'node --test' }), out('b', 'ℹ fail 1'),
+    use('c', 'Edit', { file_path: 'C:/fx/src/dates.js', old_string: 'a', new_string: 'b' }),
+  ]), root), true);
+});

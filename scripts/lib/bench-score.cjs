@@ -156,4 +156,38 @@ function fisherExact(a, b, c, d) {
   return Math.min(1, sum);
 }
 
-module.exports = { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect, events, fisherExact };
+// Seen red first (debug-01, registered 2026-09-25): a file `node --test` runs is written by Edit, Write or a shell
+// redirect whose target is that file (2>&1 is not a target), then a `node` run reports a failure, and only then is
+// anything under src/ edited. A first version of this count missed top-level test-*.js files; a second read
+// `cat tests/x.test.js 2>&1` as a write.
+const TEST_FILE = /([\\/]tests?[\\/][^\s'"]*\.[cm]?js$|(^|[\\/])(test-[^\\/]*|[^\\/]*[._-]test|test)\.[cm]?js$)/;
+const REDIRECT = /(?:(?:^|[^2&>])>{1,2}|\btee(?:\s+-a)?|Out-File(?:\s+-FilePath)?|Set-Content(?:\s+-Path)?)\s*['"]?([^\s'"|;&>]+)/g;
+const FAILED = /# fail [1-9]|ℹ fail [1-9]|not ok|✖|AssertionError|fail [1-9]/;
+function seenRedFirst(raw, root = null) {
+  // With the fixture root given, an absolute path outside it (a scratch copy) is not a file the fixture suite runs.
+  const norm = (p) => String(p).replace(/\\/g, '/').toLowerCase();
+  const absolute = (p) => /^([a-z]:)?\//.test(norm(p));
+  const inFixture = (p) => !root || !absolute(p) || norm(p).startsWith(norm(root).replace(/\/?$/, '/'));
+  const text = (c) => (typeof c === 'string' ? c : Array.isArray(c) ? c.map((x) => (x && x.text) || '').join('\n') : '');
+  const commands = new Map();
+  let written = false;
+  for (const e of events(raw)) {
+    const content = e.message && Array.isArray(e.message.content) ? e.message.content : [];
+    for (const c of content) {
+      if (c.type === 'tool_use') {
+        const i = c.input || {};
+        const cmd = String(i.command || '');
+        commands.set(c.id, cmd);
+        const file = String(i.file_path || '');
+        if ((c.name === 'Edit' || c.name === 'Write') && /[\\/]src[\\/]/.test(file)) return false;
+        const shellWrite = (c.name === 'Bash' || c.name === 'PowerShell') && [...cmd.split('\n')[0].matchAll(REDIRECT)].some((m) => TEST_FILE.test(m[1]) && inFixture(m[1]));
+        if (shellWrite || ((c.name === 'Edit' || c.name === 'Write') && TEST_FILE.test(file) && inFixture(file))) written = true;
+      } else if (c.type === 'tool_result' && written && /\bnode\b/.test(commands.get(c.tool_use_id) || '') && FAILED.test(text(c.content))) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+module.exports = { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect, events, fisherExact, seenRedFirst };
