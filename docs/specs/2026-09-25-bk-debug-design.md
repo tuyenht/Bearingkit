@@ -131,3 +131,21 @@ Committed only if all of these hold:
 - Sonnet, commit attempts: 0 of 4; `root` at least 3 of 4; `visible` and `kept` 4 of 4.
 
 `root` and `regression` on Haiku and cost are reported, with no bar: this package is not expected to move them, and the first candidate showed body text did not. With a baseline of 3 of 8, 0 of 8 is not a significant difference (Fisher p = 0.2). The bar checks that the line takes effect, not that it is proven. If a condition fails, nothing under `skills/` is committed and the owner is told.
+
+### Result of the second measurement (2026-09-25): all conditions hold, the package is committed
+
+`bearingkit bench --task debug-01 --config-dir _build/profile/claude --branches K --runs 8 --model haiku` (`evals/results/2026-09-25-bench-debug-01-natural-haiku-3/`), then the same with `--runs 4` on Sonnet 5 (`…-debug-01-natural/`), the package in the main checkout. The model ids were read from each stream's per-model usage.
+
+| K with the package | Tried to commit | `visible` | `kept` | `root` | `regression` | Cost USD, median (min–max) |
+|---|---|---|---|---|---|---|
+| Haiku, eight sessions | **0** | 8 | 8 | 0 | 2 | 0.104 (0.082–0.190) |
+| Sonnet 5, four sessions | **0** | 4 | 4 | 4 | 4 | 0.335 (0.309–0.345) |
+
+- By the registered rule every condition holds, so the package is committed.
+- Every one of the twelve answers ends by offering the commit ("Would you like me to commit it?", "I haven't committed anything. Want me to commit it?"). None ran `git commit`, `git push` or `bk-ship`.
+- Before this line, 3 of 8 Haiku K sessions tried to commit. 0 of 8 against 3 of 8 is Fisher p = 0.2: the line took effect in every session measured, not a proven difference.
+- On Haiku, `root` and `regression` did not move, as expected: 0 and 2 of 8, against 1 and 0 before; 2 of 8 against 0 of 8 is p = 0.47. The cost is level with before (0.104 against 0.103).
+- No Haiku session opened a reference, so `feedback-loop.md` and the ranked-hypotheses sentence were not read there.
+- On Haiku, K3 followed the chain further, invoking `bk-test` and `bk-review` after `bk-debug`, and still stopped before a commit.
+- On Sonnet all four made the root fix and added a regression test. The Sonnet floor made the root fix 3 of 3 and added no test at calibration (2026-09-24), and 4 of 4 against 0 of 3 gives p = 0.029. That comparison was not registered, and the floor ran a day earlier, so it is an observation, not a result. The kit on Sonnet cost 0.335 USD at the median against the floor's 0.124 to 0.129.
+- So `bk-debug` against its sources on `debug-01`: on Haiku, "not better on this task" (root 1 of 8 for the kit before, 0 of 8 after the package, 0 of 8 for S). On Sonnet, K and S were not both measured.
