@@ -96,7 +96,7 @@ Before: `bearingkit bench --task debug-01 --config-dir _build/profile/claude --b
     | F floor | 5 |
 
   - So committing unasked is Haiku's own habit on every branch, the floor included, not only the kit's chain. The owner's question named only the 4 of 16 through `bk-ship`. The owner's answer (next section) still stands on these numbers: it asks for the stop, which matters more when the model commits on its own.
-- What it says: on Haiku, three changes to the body of `bk-debug`, placed where Haiku reads, moved neither outcome on this task. Together with `review-02`, where a line in a reference did not reach Haiku either, the kit's text has not yet shown a measured effect on a Haiku session. On Sonnet the floor already solves `debug-01`. The choice of what to do next goes to the owner (handoff).
+- What it says: on Haiku, three changes to the body of `bk-debug`, placed where Haiku reads, moved neither outcome on this task. Together with `review-02`, where a line in a reference did not reach Haiku either, the kit's text has not yet shown a measured effect on a Haiku session. (Later the same day the stop-at-the-fix line took effect in 8 of 8 Haiku sessions, against 3 of 8 that tried to commit before, p = 0.2: an effect in every session measured, not a proven one; next section.) On Sonnet the floor already solves `debug-01`. The choice of what to do next goes to the owner (handoff).
 
 ## The owner's choice and the second measurement (registered 2026-09-25, before its sessions ran)
 
@@ -142,7 +142,7 @@ Committed only if all of these hold:
 | Sonnet 5, four sessions | **0** | 4 | 4 | 4 | 4 | 0.335 (0.309–0.345) |
 
 - By the registered rule every condition holds, so the package is committed.
-- Every one of the twelve answers ends by offering the commit ("Would you like me to commit it?", "I haven't committed anything. Want me to commit it?"). None ran `git commit`, `git push` or `bk-ship`.
+- Eleven of the twelve answers end by offering the commit ("Would you like me to commit it?", "I haven't committed anything. Want me to commit it?"); one (Haiku K2) ends "Ready to commit." without asking (read again in the audit of the same day). None ran `git commit`, `git push` or `bk-ship`.
 - Before this line, 3 of 8 Haiku K sessions tried to commit. 0 of 8 against 3 of 8 is Fisher p = 0.2: the line took effect in every session measured, not a proven difference.
 - On Haiku, `root` and `regression` did not move, as expected: 0 and 2 of 8, against 1 and 0 before; 2 of 8 against 0 of 8 is p = 0.47. The cost is level with before (0.104 against 0.103).
 - No Haiku session opened a reference, so `feedback-loop.md` and the ranked-hypotheses sentence were not read there.

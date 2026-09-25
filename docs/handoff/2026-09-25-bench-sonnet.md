@@ -14,6 +14,7 @@ Phiên này là cùng cuộc trò chuyện với `docs/handoff/2026-09-24-bench.
 
 6. Sau kết quả Sonnet: "Tiếp tục làm sprint bk-debug theo khuyến nghị cho tôi."
 7. Trả lời hai câu hỏi sau khi bản ứng viên `bk-debug` không qua (nhãn nguyên văn): hướng "Commit phần chắt lọc, đóng sprint (Recommended)"; chuỗi sang `bk-ship` "Dừng ở bản sửa, hỏi trước khi commit (Recommended)".
+8. Sau khi sprint đóng: "Audit kỹ quá trình xử lý code cũng như các phản hồi ở trên xem có gap hoặc lỗi không? Nếu có thì fix cho tôi luôn nhé. / Audit kỹ các đề xuất khuyến nghị xử lý ở trên đã chuẩn chưa? Nếu chuẩn thì duyệt xử lý chúng một cách tối ưu nhất, tốt nhất tự động cho tôi. / Cho tôi các khuyến nghị đề xuất tốt nhất, phù hợp nhất để xem các bước tiếp theo chúng ta nên ưu tiên làm gì?"
 
 Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới so với bước 3 cũ, 8 lượt mỗi bản, quy tắc quyết định đăng ký trước. Lời 5 được hiểu là duyệt đúng việc đó; lời 6 là duyệt sprint `bk-debug`. Không có bước ghi nào dưới `~/.claude` hay `~/.gemini`.
 
@@ -40,6 +41,10 @@ Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới 
 
 ### Lessons
 
+- Đếm hành vi theo định nghĩa đầy đủ ngay từ đầu. Lần đầu tôi chỉ đếm lời gọi `bk-ship`, nên thấy "4/16"; số thật là Haiku tự commit ở mọi nhánh (3/8 tới 6/8). Reviewer bắt được lỗi này trước khi đo.
+- Reviewer Sonnet vẫn chạy Python dù bị cấm (lần này là `python3 --version`); prompt phải cấm cả dạng đó, và luôn kiểm lời tự khai.
+- Trong audit, lớp phòng thủ timeout được viết trước test, trái thứ tự test trước; test và đối chứng âm được thêm ngay sau đó.
+
 - Đọc hạn mức, đăng ký quy tắc trong spec, commit đăng ký, rồi mới chạy. Chia khối xen kẽ để hai bản không chạy lệch giờ.
 - Trong bash, chuỗi `node -e "…"` chứa backtick sẽ bị shell thực thi; sửa file markdown bằng Edit.
 - Quyết định sản phẩm dựa trên model owner dùng hằng ngày (Sonnet); Haiku chỉ là phép thăm dò.
@@ -48,7 +53,7 @@ Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới 
 
 ### State
 
-- HEAD = commit cuối của phiên = `origin/main`; suite 159/159; `doctor` sáu `ok`.
+- HEAD = commit cuối của phiên = `origin/main`; suite 162/162; `doctor` sáu `ok`.
 - Commit cuối của phiên đổi `skills/bk-debug/`. Bản cài hằng ngày Claude Code vẫn ở `e8b6dc1`, **cũ hơn** `skills/`: cần owner nói "có" để chạy ba lệnh cập nhật (marketplace, `--scope user`, `--scope local`). Kho Antigravity được làm mới bằng `update --no-pull` sau khi push (không cần hỏi).
 - Kết quả (không track): `review-02` Sonnet ở `evals/results/2026-09-25-bench-review-02-natural/` và `-3/` (bản mới), `-2/` và `-4/` (bản cũ); `debug-01` ở `…-debug-01-natural-haiku/` (trước, K S F), `-haiku-2/` (bản ứng viên đầu), `-haiku-3/` và `…-debug-01-natural/` (gói đã commit, Haiku và Sonnet).
 
@@ -61,9 +66,9 @@ Chờ owner:
 
 ### Open threads
 
-- Timeout của runner không cắt được phiên treo (xem Facts). Sửa khi tái hiện được, ví dụ bằng một task giả treo.
+- Timeout của runner không cắt được phiên treo (xem Facts). Nguyên nhân chưa tái hiện được; từ audit cùng ngày runner có lớp phòng thủ: phiên còn mở 60 giây sau lệnh kill bị bỏ như orphan, mã thoát của lệnh kill được giữ, và lượt đo dừng.
 - Script chấm nhầm X1 trên `review-02` (các câu về FX).
-- `--rescore` bỏ mất dòng "Model … profile … fixture" ở đầu `results.md`.
+- `--rescore` giữ meta của lượt chạy từ audit cùng ngày (`meta.json`); các thư mục cũ hơn vẫn mất dòng đầu đó.
 - `bk-review`:
   - câu "ai là người review" bị rơi (3/6);
   - ngưỡng diff lớn chưa có phép đo nào;
