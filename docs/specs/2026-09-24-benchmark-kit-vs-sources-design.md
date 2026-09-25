@@ -427,6 +427,28 @@ The fixture test in `tests/bench.test.cjs` pins the planted state, the benign mo
 - Cost and whether `bk-reviewer` was dispatched are reported.
 - The kit is measured as it ships. With 29 files, step 3 of `bk-review` dispatches its Opus reviewer.
 
+### Calibration result (2026-09-26)
+
+`bearingkit bench --task review-04 --config-dir _build/profile/claude --branches F --runs 3` (`evals/results/2026-09-25-bench-review-04-natural/`, UTC date). The floor found **D1, D2 and D3 in all three sessions** and flagged no decoy, at 0.17 to 0.22 USD and 43 to 55 seconds each, with 31 tools. Read by eye, not only by the script:
+- every answer opens with the export route or `findByNumber`;
+- each names `requireRole` returning a boolean, and the unchanged caller at `export/route.ts:11`;
+- each notes that the repository tests skip `findByNumber`;
+- each puts the void writes in a transaction.
+
+By the protocol no candidate stays, so **`review-04` is not scored**, and K and S were not run.
+
+The floor also found three real defects in the branch that were not planted, in all three sessions. Neither the author nor the independent review of the fixture had seen them:
+- the pay route does not refuse a `VOID` invoice, so paying one flips it back to `PAID` under its credit note;
+- the revenue report still counts payments on voided invoices;
+- any member can void an invoice, since the void route has no role check.
+
+A planted-defect fixture carries the side defects of its own feature, and the Sonnet floor finds them too.
+
+What it says. On a 29-file, 425-line pull request whose defects are visible by reading, Sonnet 5 with no plugin found every planted defect and three unplanned ones in under a minute each. Together with the four small tasks, reading-based review does not separate the kit from the floor on Sonnet at this size. What is left that could separate them, for the owner to choose:
+- defects that only running the code shows (an ordering, a race, a migration), where the kit's evidence rules ask for a run;
+- a diff an order of magnitude larger (thousands of lines), where attention, not reading skill, is the limit;
+- stopping outcome benchmarking of review on Sonnet, and measuring the kit where it has shown a difference: process discipline (stop at the fix, test first) and cost.
+
 ## The runner
 
 A new `scripts/bench.cjs` (verb `bearingkit bench`), not an extension of `scripts/evals.cjs`: that file scores routing, is already 512 lines, and shares only the helpers it exports (`parseArgs`, now exported, `parseQuota`, `quotaStop`, `authStop`, `ancestorMemoryFiles`). The old runner already takes `--plugin-dir none` for a floor, but only one plugin directory and no outcome score; the resume prompt of 2026-09-24 said the floor needed a runner change too, which was only half right. Before a run it checks that each source copy is the plugin named and sits at its pinned sha, and refuses a fixture with a memory file above it. The scorer is `scripts/lib/bench-score.cjs`. Tests first, red before green (`tests/bench.test.cjs`): branch to command line (plugin dirs and the inline settings), the matcher on written answers (found, missed, a decoy flagged, a decoy called safe), usage summed over models, median and spread, and the refusal to compare tokens across differing tool counts. Results go to `evals/results/<date>-bench-<task>.md` (untracked) with every scored answer beside it; the numbers that matter are copied into this file with the command that produced them.
