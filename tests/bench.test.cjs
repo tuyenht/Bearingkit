@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect } = require('../scripts/lib/bench-score.cjs');
-const { loadTask, branchSetup, promptFor, schedule, preflight, rescore } = require('../scripts/bench.cjs');
+const { loadTask, branchSetup, promptFor, schedule, preflight, rescore, runSession } = require('../scripts/bench.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const RULES = {
@@ -206,6 +206,19 @@ test('a results folder is scored again from its raw streams with the rules as th
   assert.ok(md.includes('| natural | K | 1 | 1 |'));
   assert.ok(md.includes('- natural K: D1 1/1 · D2 1/1 · D3 1/1 · X1 0/1'), 'the per-defect section counts each branch');
   assert.ok(md.includes('- natural F: D1 0/1 · D2 0/1 · D3 0/1 · X1 0/1'));
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+// A rescore used to call every session whole and drop the run's model and limits (2026-09-25: a session cut at the
+// time limit read as a finished one that found nothing). The run now keeps its meta beside the streams.
+test('a rescore keeps the run meta and still counts a session with no result as cut', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-rescore-'));
+  fs.writeFileSync(path.join(dir, 'meta.json'), JSON.stringify({ date: '2026-09-25', model: 'haiku', configDir: 'profile', fixture: 'fx', seconds: 900, turns: 40 }));
+  fs.writeFileSync(path.join(dir, '01-natural-K1.raw.jsonl'), stream([{ type: 'system', subtype: 'init', tools: new Array(31).fill('t') }]));
+  const rows = rescore(dir, loadTask('review-01', ROOT));
+  assert.equal(rows[0].cut, true, 'no result event: the session was cut or lost, not a finished one');
+  const md = fs.readFileSync(path.join(dir, 'results.md'), 'utf8');
+  assert.ok(md.includes('Model haiku · profile profile · fixture fx · limits 900s, 40 turns'), 'the run meta survives a rescore');
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
@@ -514,4 +527,35 @@ test('each run gets a results folder of its own, named for its model', () => {
   assert.equal(path.basename(resultsDir(root, '2026-09-24', 'review-01', ['natural', 'command'], 'sonnet')), '2026-09-24-bench-review-01-natural+command');
   assert.equal(path.basename(resultsDir(root, '2026-09-24', 'review-01', ['natural'], 'sonnet')), '2026-09-24-bench-review-01-natural-3');
   fs.rmSync(root, { recursive: true, force: true });
+});
+
+// A session that outlives its kill is given up after a grace period and marked an orphan, so the run can stop
+// instead of waiting on it (2026-09-25: a stalled session ran 2,663 seconds against a 900-second limit).
+const sleeper = () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-sleeper-'));
+  const file = path.join(dir, 'sleep.cjs');
+  fs.writeFileSync(file, 'setTimeout(() => {}, 4000);\n');
+  return { dir, bin: `node ${file}` };
+};
+const sessionOpts = (bin, extra) => ({ bin, turns: 1, model: 'x', configDir: os.tmpdir(), cwd: os.tmpdir(), seconds: 0.3, ...extra });
+const treeKill = (pid) => (process.platform === 'win32' ? require('node:child_process').spawnSync('taskkill', ['/T', '/F', '/PID', String(pid)], { stdio: 'ignore' }) : process.kill(pid, 'SIGKILL'));
+
+test('a session its kill ends is cut, not an orphan', async () => {
+  const { dir, bin } = sleeper();
+  const s = await runSession('p', { settings: {}, pluginDirs: [] }, sessionOpts(bin, { graceMs: 3000 }));
+  assert.equal(s.cut, true);
+  assert.equal(s.orphan, false, 'the tree kill worked, so the close event came before the grace period');
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('a session that outlives its kill is given up as an orphan after the grace period', async () => {
+  const { dir, bin } = sleeper();
+  const t0 = Date.now();
+  const s = await runSession('p', { settings: {}, pluginDirs: [] }, sessionOpts(bin, { graceMs: 200, kill: () => 7 }));
+  assert.equal(s.orphan, true);
+  assert.equal(s.cut, true);
+  assert.equal(s.killStatus, 7, 'the kill result is kept for the report');
+  assert.ok(Date.now() - t0 < 3000, 'resolved before the process would have ended by itself');
+  treeKill(s.pid);
+  fs.rmSync(dir, { recursive: true, force: true });
 });

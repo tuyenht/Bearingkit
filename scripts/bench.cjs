@@ -87,29 +87,38 @@ function runSession(prompt, setup, opts) {
   const fd = fs.openSync(promptFile, 'r');
   const quote = (a) => (/\s/.test(a) ? `"${a}"` : a);
   const win = process.platform === 'win32';
+  const bin = opts.bin || 'claude';
   const child = win
-    ? spawn(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', ['claude', ...args.map(quote)].join(' ')], { stdio: [fd, 'pipe', 'pipe'], env, cwd: opts.cwd, windowsHide: true })
-    : spawn('claude', args, { stdio: [fd, 'pipe', 'pipe'], env, cwd: opts.cwd });
+    ? spawn(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', [bin, ...args.map(quote)].join(' ')], { stdio: [fd, 'pipe', 'pipe'], env, cwd: opts.cwd, windowsHide: true })
+    : spawn(bin, args, { stdio: [fd, 'pipe', 'pipe'], env, cwd: opts.cwd });
   let raw = '';
   child.stdout.setEncoding('utf8');
   child.stdout.on('data', (d) => { raw += d; });
   child.stderr.resume();
+  const kill = opts.kill || ((pid) => (win ? spawnSync('taskkill', ['/T', '/F', '/PID', String(pid)], { encoding: 'utf8' }).status : (child.kill('SIGKILL') ? 0 : 1)));
   return new Promise((resolve) => {
     let cut = false;
+    let killStatus = null;
+    let grace = null;
+    let done = false;
+    let finish = null;
+    // 2026-09-25: one session outlived its tree kill by half an hour, still writing heartbeats. Not reproduced, so
+    // the cause is unknown; after a grace period the runner gives the session up as an orphan and the run stops, since
+    // a live session may still be editing the fixture the next one would use.
     const timer = setTimeout(() => {
       cut = true;
-      if (win) spawnSync('taskkill', ['/T', '/F', '/PID', String(child.pid)], { stdio: 'ignore' });
-      else child.kill('SIGKILL');
+      killStatus = kill(child.pid);
+      grace = setTimeout(() => finish(null, true, true), opts.graceMs ?? 60000);
     }, opts.seconds * 1000);
-    let done = false;
-    const finish = (status, failed) => {
+    finish = (status, failed, orphan = false) => {
       if (done) return;
       done = true;
       clearTimeout(timer);
+      clearTimeout(grace);
       try { fs.closeSync(fd); } catch { /* already closed */ }
       fs.rmSync(tmp, { recursive: true, force: true });
       // A session that never started is recorded as lost, so one bad spawn does not end the run and its results.
-      resolve({ raw, cut: cut || failed, status });
+      resolve({ raw, cut: cut || failed, status, orphan, killStatus, pid: child.pid });
     };
     child.on('error', () => finish(null, true));
     child.on('close', (status) => finish(status, false));
@@ -159,17 +168,22 @@ function report(task, rows, meta) {
 
 // Scores a results folder again from its raw streams, with the task's rules as they stand now; the numbers of a run
 // scored under older rules are replaced, and the file says so.
+// The run's meta.json (model, profile, fixture, limits, and the sessions the runner cut) is read back, so a rescore
+// keeps the header and the cut flag of a session that was stopped after it had already answered once.
 function rescore(dir, task) {
   const rows = [];
+  let meta = {};
+  try { meta = JSON.parse(fs.readFileSync(path.join(dir, 'meta.json'), 'utf8')); } catch { /* a folder from before meta.json */ }
+  const cutBases = new Set(meta.cut || []);
   for (const f of fs.readdirSync(dir).filter((n) => n.endsWith('.raw.jsonl')).sort()) {
     const m = f.match(/^(\d+)-(\w+)-([KSF])(\d+)\.raw\.jsonl$/);
     if (!m) continue;
     const base = f.replace(/\.raw\.jsonl$/, '');
     const checkFile = path.join(dir, `${base}.check.json`);
     const check = fs.existsSync(checkFile) ? JSON.parse(fs.readFileSync(checkFile, 'utf8')) : null;
-    rows.push(scoreRow({ n: Number(m[1]), variant: m[2], branch: m[3], run: Number(m[4]) }, fs.readFileSync(path.join(dir, f), 'utf8'), false, task, base, check));
+    rows.push(scoreRow({ n: Number(m[1]), variant: m[2], branch: m[3], run: Number(m[4]) }, fs.readFileSync(path.join(dir, f), 'utf8'), cutBases.has(base), task, base, check));
   }
-  fs.writeFileSync(path.join(dir, 'results.md'), report(task, rows, { date: path.basename(dir).slice(0, 10), note: `rescored ${new Date().toISOString().slice(0, 16)}Z from the raw streams with the rules of evals/bench/${task.id}/task.json` }));
+  fs.writeFileSync(path.join(dir, 'results.md'), report(task, rows, { ...meta, date: meta.date || path.basename(dir).slice(0, 10), note: `rescored ${new Date().toISOString().slice(0, 16)}Z from the raw streams with the rules of evals/bench/${task.id}/task.json` }));
   return rows;
 }
 
@@ -211,6 +225,7 @@ async function run(argv) {
   const meta = { date, ...opts, fixture: builder.DST };
   const rows = [];
   let stopped = null;
+  let orphaned = false;
   for (const [i, p] of plan.entries()) {
     builder.reset();
     const s = await runSession(promptFor(task, p.variant, p.branch), branchSetup(task, p.branch), { ...opts, cwd: builder.DST });
@@ -218,21 +233,26 @@ async function run(argv) {
     fs.writeFileSync(path.join(outDir, `${base}.raw.jsonl`), s.raw);
     // A check that throws (a file held open on Windows) costs that session its checks, not the run.
     let check = null;
-    if (builder.check) try { check = builder.check(builder.DST); } catch (e) { check = { error: String(e && e.message || e) }; }
+    // An orphan may still be writing the fixture, so its checks are not run: they would read a moving target.
+    if (builder.check && !s.orphan) try { check = builder.check(builder.DST); } catch (e) { check = { error: String(e && e.message || e) }; }
     if (check) fs.writeFileSync(path.join(outDir, `${base}.check.json`), JSON.stringify(check) + '\n');
     const row = scoreRow({ n: i + 1, ...p }, s.raw, s.cut, task, base, check);
     fs.writeFileSync(path.join(outDir, `${base}.answer.md`), row.answer || '(no final answer)\n');
     rows.push(row);
     process.stdout.write(`${base}: found ${row.foundIds.join(' ') || '-'} · decoys ${row.decoyIds.join(' ') || '-'} · ${row.total ?? '?'} tokens · ${row.seconds ?? '?'}s${row.cut ? ' · CUT' : ''}\n`);
     fs.writeFileSync(path.join(outDir, 'results.md'), report(task, rows, meta));
+    fs.writeFileSync(path.join(outDir, 'meta.json'), JSON.stringify({ ...meta, cut: rows.filter((r) => r.cut).map((r) => r.answerFile.replace(/\.answer\.md$/, '')) }) + '\n');
+    if (s.orphan) { orphaned = true; stopped = `session ${base} outlived its kill (exit ${s.killStatus}, pid ${s.pid}); stopped, and the fixture left as it is, so nothing resets it under a live session`; break; }
     const auth = authStop(s.raw);
     if (auth) { stopped = `login failed: ${auth.message}`; break; }
     const q = quotaStop(parseQuota(s.raw), { fiveHour: 0.9, sevenDay: 0.95 });
     if (q) { stopped = `${q.window} window at ${Math.round(q.used * 100)}%`; break; }
   }
-  builder.reset();
+  // A reset is a hard git reset of the directory an orphan may still be working in; it is left to the owner then.
+  if (!orphaned) builder.reset();
   fs.writeFileSync(path.join(outDir, 'results.md'), report(task, rows, { ...meta, stopped }));
+  if (stopped) fs.writeFileSync(path.join(outDir, 'meta.json'), JSON.stringify({ ...meta, stopped, cut: rows.filter((r) => r.cut).map((r) => r.answerFile.replace(/\.answer\.md$/, '')) }) + '\n');
   process.stdout.write(`${stopped ? `stopped: ${stopped}\n` : ''}results: ${path.join(outDir, 'results.md')}\n`);
 }
 
-module.exports = { preflight, loadTask, branchSetup, promptFor, schedule, checkSources, report, rescore, resultsDir, run };
+module.exports = { preflight, loadTask, branchSetup, promptFor, schedule, checkSources, report, rescore, resultsDir, run, runSession };
