@@ -314,6 +314,27 @@ Rule:
 - Cost: K 1.4 times S and 2.5 times F at the median.
 - No branch tried to commit (0 of 24). On Sonnet the floor and the sources did not commit unasked either, unlike on Haiku.
 
+## `debug-01` on Sonnet, sixteen sessions each, kit against sources (registered 2026-09-25, before its sessions ran)
+
+The owner's word (verbatim): "Xử lý theo đề xuất khuyến nghị cho tôi." The recommendation it approves: with eight sessions a branch, 8 against 4 cannot reach p ≤ 0.05, so the kit and Superpowers go to sixteen each on the outcome where the kit leads.
+
+Design:
+- `bearingkit bench --task debug-01 --config-dir _build/profile/claude --branches K,S --runs 8`, interleaved. The kit is at the commit of the run, whose `skills/bk-debug/` is `77de975`'s, the test-before-the-fix line.
+- K: the eight sessions of `…-debug-01-natural-4/` (the same text) plus eight new.
+- S: its eight of `…-debug-01-natural-2/` and `-3/`, plus eight new.
+- F is not run; the floor wrote no test in eight sessions.
+
+Outcomes:
+- **Primary: seen red first.** A test is seen red first when a file that `node --test` runs (under `tests/` or `test/`, or named `*.test.js`, `*-test.js`, `*_test.js`, `test-*.js` or `test.js`) is written by Edit, Write or a shell redirect whose target is that file (`2>&1` is not one), and a `node` run then reports a failure before the first edit under `src/`.
+  - The count comes from `seenRedFirst` in `scripts/lib/bench-score.cjs`, with tests, written while the sessions run. Its first reading is checked by hand on two sessions.
+  - Counted this way, the existing sets read K 8 of 8 and S 4 of 8.
+- Reported beside it: `regression`, `root`, `visible`, `kept`, commit attempts, cost.
+
+Rule:
+- The kit is "better than its sources on writing the regression test first, `debug-01`, Sonnet" if its count is higher and the two-sided Fisher p is ≤ 0.05. For instance, 16 against 8 gives p = 0.002 and 15 against 8 p = 0.015, while 14 against 8 gives p = 0.054, which does not pass.
+- Otherwise it reads "no clear difference".
+- That would be the first registered result of the kit above one of its sources. It stays limited to this process outcome on one small task. It says nothing on defects found or fixed, where the branches tie (`root` 8 of 8 each).
+
 ## The runner
 
 A new `scripts/bench.cjs` (verb `bearingkit bench`), not an extension of `scripts/evals.cjs`: that file scores routing, is already 512 lines, and shares only the helpers it exports (`parseArgs`, now exported, `parseQuota`, `quotaStop`, `authStop`, `ancestorMemoryFiles`). The old runner already takes `--plugin-dir none` for a floor, but only one plugin directory and no outcome score; the resume prompt of 2026-09-24 said the floor needed a runner change too, which was only half right. Before a run it checks that each source copy is the plugin named and sits at its pinned sha, and refuses a fixture with a memory file above it. The scorer is `scripts/lib/bench-score.cjs`. Tests first, red before green (`tests/bench.test.cjs`): branch to command line (plugin dirs and the inline settings), the matcher on written answers (found, missed, a decoy flagged, a decoy called safe), usage summed over models, median and spread, and the refusal to compare tokens across differing tool counts. Results go to `evals/results/<date>-bench-<task>.md` (untracked) with every scored answer beside it; the numbers that matter are copied into this file with the command that produced them.
