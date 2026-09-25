@@ -293,6 +293,27 @@ Rule:
 - Otherwise it reads "no clear difference".
 - `root` falling three or more below S or F is reported against K.
 
+### Result (2026-09-25): K writes a verified test every time, but after the fix; by the registered rule the claim is withheld
+
+`…-debug-01-natural-2/` (K, S, F four each) and `…-natural-3/` (S, F four each), plus K's four in `…-debug-01-natural/`. Every session ran Sonnet 5 and saw 31 tools. Seen red is counted by the operational definition above, with a read-only script over the streams.
+
+| Eight sessions each | `regression` | of them seen red before the first `src/` edit | `root` | Tried to commit | Cost USD, median (min–max) |
+|---|---|---|---|---|---|
+| K kit | **8** | **2** | 8 | 0 | 0.330 (0.290–0.345) |
+| S sources | 4 | 4 | 8 | 0 | 0.241 (0.213–0.303) |
+| F floor | 0 | – | 8 | 0 | 0.131 (0.112–0.140) |
+
+- **K against S**: 8 against 4, Fisher p = 0.077. No clear difference; as registered, S writes a test in four sessions, so this task cannot show K better than S.
+- **K against F**: 8 against 0, p = 0.0002, which clears the bar. But six of K's eight tests were not seen failing before the first edit under `src/`, more than the two the rule allows, so **the claim is withheld**.
+- Read in the streams, what the six did: each wrote the test after the fix, then showed it failing on the unfixed code by stashing the fix (`git stash push -- src/dates.js`), or by running it against a copy of the original file, then restored the fix. So every one of K's eight tests is shown to fail on the unfixed code. Six of the eight fail it after the fix, not before. S's four tests were all seen failing before the fix.
+- What it says, as a reading and not a registered result:
+  - on Sonnet the kit's `bk-debug` writes a regression test and checks it against the unfixed code in every session, where the floor never writes one;
+  - the kit writes a test more often than Superpowers, not significantly (8 against 4);
+  - the kit's order is fix first, then red by stash, where Superpowers writes the test first.
+  - Step 4 of `bk-debug` ("Fix with a regression test that fails before and passes after") allows either order. Making the test come first is text the model reads, so it is measured before any change.
+- Cost: K 1.4 times S and 2.5 times F at the median.
+- No branch tried to commit (0 of 24). On Sonnet the floor and the sources did not commit unasked either, unlike on Haiku.
+
 ## The runner
 
 A new `scripts/bench.cjs` (verb `bearingkit bench`), not an extension of `scripts/evals.cjs`: that file scores routing, is already 512 lines, and shares only the helpers it exports (`parseArgs`, now exported, `parseQuota`, `quotaStop`, `authStop`, `ancestorMemoryFiles`). The old runner already takes `--plugin-dir none` for a floor, but only one plugin directory and no outcome score; the resume prompt of 2026-09-24 said the floor needed a runner change too, which was only half right. Before a run it checks that each source copy is the plugin named and sits at its pinned sha, and refuses a fixture with a memory file above it. The scorer is `scripts/lib/bench-score.cjs`. Tests first, red before green (`tests/bench.test.cjs`): branch to command line (plugin dirs and the inline settings), the matcher on written answers (found, missed, a decoy flagged, a decoy called safe), usage summed over models, median and spread, and the refusal to compare tokens across differing tool counts. Results go to `evals/results/<date>-bench-<task>.md` (untracked) with every scored answer beside it; the numbers that matter are copied into this file with the command that produced them.
