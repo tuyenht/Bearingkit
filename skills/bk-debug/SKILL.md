@@ -14,7 +14,7 @@ description: "Root cause before any fix; four phases; council after three failed
 1. Reproduce: the exact command and the exact output, saved. A bug that cannot be reproduced is documented as such, not "fixed".
 2. Isolate: bisect by change or by input; use a negative control (a case that must pass) to prove the isolation is real.
 3. Root cause: the line and the reason, cited as `file:line`. A symptom fix is not a fix.
-4. Fix with a regression test that fails before and passes after; keep the fix minimal.
+4. Regression test before the fix: write it, run it on the unfixed code and see it fail, then fix, then see it pass; keep the fix minimal.
 5. After three failed fix attempts, stop. Hand the evidence to bk-audit; never retry the same approach.
 
 ## Gates
