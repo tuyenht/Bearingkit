@@ -8,6 +8,7 @@ description: "Root cause before any fix; four phases; council after three failed
 ## Read first
 - The stack profile (run `detect-stack` as bk-protocol's host notes say), the project's instruction files, the exact error text, and the last change before the failure (git log).
 - `references/systematic-debugging.md`: the four phases, tracing to the source, condition-based waiting, defense in depth.
+- `references/feedback-loop.md`: building a loop that goes red on the symptom, minimising it, ranked hypotheses, tagged logs.
 
 ## Steps
 1. Reproduce: the exact command and the exact output, saved. A bug that cannot be reproduced is documented as such, not "fixed".
@@ -25,5 +26,6 @@ description: "Root cause before any fix; four phases; council after three failed
 
 ## Next step
 - bk-test for the surrounding suite, then bk-review.
+- Then stop and report. Unless the user asked for a commit, push or pull request, run no `git commit`, `git push` or bk-ship: leave the fix uncommitted and offer to commit it.
 
-Sources: obra/superpowers 5.1.0 (MIT) via references/systematic-debugging.md; attribution in NOTICE.
+Sources: obra/superpowers 5.1.0 (MIT) via references/systematic-debugging.md; mattpocock/skills (MIT) via references/feedback-loop.md; attribution in NOTICE.

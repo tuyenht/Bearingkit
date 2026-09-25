@@ -245,9 +245,13 @@
       "verified": "2026-09-11",
       "note": "row 16",
       "tracked": [
-        "skills/engineering/code-review/SKILL.md"
+        "skills/engineering/code-review/SKILL.md",
+        "skills/engineering/diagnosing-bugs/SKILL.md"
       ],
       "derived": {
+        "skills/bk-debug/references/feedback-loop.md": [
+          "skills/engineering/diagnosing-bugs/SKILL.md"
+        ],
         "skills/bk-review/references/review-lenses.md": [
           "skills/engineering/code-review/SKILL.md"
         ]

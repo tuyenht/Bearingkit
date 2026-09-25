@@ -19,6 +19,7 @@ Bearingkit is distributed under the MIT license in `LICENSE` (declared in `packa
 - Repository: https://github.com/mattpocock/skills, commit `3cca18b368ae95cdbdebbff572ccafa662551015` (recorded in `upstream/sources.json`, read 2026-09-24).
 - License: MIT, Copyright (c) 2026 Matt Pocock.
 - Adapted into `skills/bk-review/references/review-lenses.md` from `skills/engineering/code-review/SKILL.md`: the baseline of twelve Fowler code smells with the move for each, and the two rules that bind it (the project's documented standard wins; a smell is a judgement call, never a violation). The parallel sub-agents, the spec axis and the issue-tracker setup are not carried.
+- Adapted into `skills/bk-debug/references/feedback-loop.md` from `skills/engineering/diagnosing-bugs/SKILL.md` (read 2026-09-25): the feedback loop built first and the ways to build it, its tightening, raising the rate of a flaky bug, minimising, ranked falsifiable hypotheses, tagged debug logs, the perf branch and the no-correct-seam finding. The human-in-the-loop script template and the step that reads the project's `CONTEXT.md` and ADRs are not carried.
 
 ```
 MIT License

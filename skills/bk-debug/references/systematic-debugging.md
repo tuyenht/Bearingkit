@@ -20,7 +20,7 @@ Find working code that does the same thing in this codebase; read a reference im
 
 ## Phase 3: hypothesis
 
-One hypothesis, written: "X is the cause because Y". The smallest change that tests it, one variable at a time. Confirmed: phase 4. Not confirmed: a new hypothesis, never a second fix stacked on the first. Not understood: say so and research; do not pretend.
+Three to five hypotheses, ranked, before testing any (`references/feedback-loop.md`); then one at a time, each written: "X is the cause because Y". The smallest change that tests it, one variable at a time. Confirmed: phase 4. Not confirmed: a new hypothesis, never a second fix stacked on the first. Not understood: say so and research; do not pretend.
 
 ## Phase 4: fix
 
