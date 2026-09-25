@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MEMBER
+  ADMIN
+}
+
+enum InvoiceStatus {
+  DRAFT
+  OPEN
+  PAID
+}
+
+model Tenant {
+  id        String     @id @default(cuid())
+  name      String
+  users     User[]
+  customers Customer[]
+  invoices  Invoice[]
+}
+
+model User {
+  id       String @id @default(cuid())
+  tenantId String
+  email    String @unique
+  role     Role   @default(MEMBER)
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+}
+
+model Customer {
+  id       String    @id @default(cuid())
+  tenantId String
+  name     String
+  email    String
+  tenant   Tenant    @relation(fields: [tenantId], references: [id])
+  invoices Invoice[]
+}
+
+model Invoice {
+  id          String        @id @default(cuid())
+  tenantId    String
+  customerId  String
+  number      String
+  currency    String        @default("USD")
+  amountMinor Int
+  status      InvoiceStatus @default(DRAFT)
+  dueDate     DateTime
+  createdAt   DateTime      @default(now())
+  tenant      Tenant        @relation(fields: [tenantId], references: [id])
+  customer    Customer      @relation(fields: [customerId], references: [id])
+  payments    Payment[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId, status])
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  tenantId    String
+  invoiceId   String
+  amountMinor Int
+  paidAt      DateTime @default(now())
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+}

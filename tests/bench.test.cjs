@@ -610,3 +610,49 @@ test('a test file written outside the fixture does not count, and an explicit 1>
     use('c', 'Edit', { file_path: 'C:/fx/src/dates.js', old_string: 'a', new_string: 'b' }),
   ]), root), true);
 });
+
+// review-04, a pull request of realistic size (2026-09-26): 29 files over four commits, three planted defects among
+// benign changes, two decoys. The fixture test pins the planted state and the benign modules' behaviour.
+test('review-04 plants its three defects in a 29-file branch and its rules tell a careful answer from a careless one', async (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dst = path.join(dir, 'review-04');
+  const build = require('../evals/bench/review-04/build.cjs');
+  build.build({ dst });
+  const { spawnSync } = require('node:child_process');
+  const git = (...a) => spawnSync('git', a, { cwd: dst, encoding: 'utf8' }).stdout.trim();
+  assert.equal(git('rev-parse', '--abbrev-ref', 'HEAD'), 'feature/billing-q4');
+  const changed = git('diff', '--name-only', 'main...HEAD').split('\n');
+  assert.equal(changed.length, 29);
+  assert.ok(!changed.includes('src/app/api/admin/export/route.ts'), 'D1: the export route is outside the diff');
+  const read = (f) => fs.readFileSync(path.join(dst, f), 'utf8');
+  assert.match(read('src/app/api/admin/export/route.ts'), /^\s+requireRole\(session, 'ADMIN'\);$/m, 'D1: called as a statement');
+  assert.match(read('src/lib/roles.ts'), /: boolean \{\n\s+return rank/, 'D1: the helper returns a boolean');
+  assert.match(read('src/repos/invoices.ts'), /findByNumber\(tenantId: string, number: string\) \{\n\s+return db\.invoice\.findFirst\(\{ where: \{ number \}/, 'D2');
+  const voidRoute = read('src/app/api/invoices/[id]/void/route.ts');
+  assert.doesNotMatch(voidRoute, /\$transaction/, 'D3: no transaction');
+  assert.match(voidRoute, /catch \(e\) \{\n\s+logger\.error/, 'D3: the catch only logs');
+  assert.match(read('src/app/api/invoices/[id]/pay/route.ts'), /db\.\$transaction\(\[/, 'the pay route keeps its transaction');
+  assert.match(read('src/app/api/reports/revenue/route.ts'), /Prisma\.sql`[\s\S]*= \$\{session\.tenantId\}/, 'X1: values bound');
+  assert.match(read('src/lib/fx.ts'), /same for every tenant/, 'X2');
+  assert.ok(!fs.existsSync(path.join(dst, 'env.example')));
+  if (!process.features.typescript) t.diagnostic('node cannot strip types: the fixture modules were not run');
+  else {
+    const { pathToFileURL } = require('node:url');
+    const money = await import(pathToFileURL(path.join(dst, 'src/lib/money.ts')).href);
+    const cn = await import(pathToFileURL(path.join(dst, 'src/lib/credit-notes.ts')).href);
+    assert.equal(money.formatMoney(12345, 'USD'), '$123.45');
+    assert.equal(money.formatMoney(12345, 'JPY'), '¥12,345');
+    assert.equal(money.minorDigits('kwd'), 3);
+    assert.equal(cn.creditNoteNumber('INV-7'), 'CN-INV-7');
+    assert.equal(cn.creditAmountMinor([{ amountMinor: 5 }, { amountMinor: 7 }]), 12);
+  }
+  fs.writeFileSync(path.join(dst, 'scratch.txt'), 'left by a session');
+  build.reset({ dst });
+  assert.equal(fs.existsSync(path.join(dst, 'scratch.txt')), false);
+  fs.rmSync(dir, { recursive: true, force: true });
+  const { rules } = loadTask('review-04', ROOT);
+  const careful = '1. **Any member can export the full CSV** at src/app/api/admin/export/route.ts:11: requireRole now returns a boolean and this route ignores the result.\n2. **findByNumber ignores the tenant** at src/repos/invoices.ts:19, so the by-number route reads another tenant\'s invoice.\n3. **Void is not atomic** at src/app/api/invoices/[id]/void/route.ts:17: no transaction, the catch only logs, and it still returns 200.\n\nChecked and fine: the revenue report binds every value through Prisma.sql, no SQL injection; the fx cache has no tenant in its key, which is fine since rates are the same for every tenant.';
+  assert.deepEqual(scoreAnswer(careful, rules), { found: ['D1', 'D2', 'D3'], missed: [], decoys: [], blocked: null, passed: true });
+  const careless = '1. SQL injection risk in the revenue report: $queryRaw is used.\n2. The fx rates cache is not keyed by tenant, so tenants share cached data.';
+  assert.deepEqual(scoreAnswer(careless, rules), { found: [], missed: ['D1', 'D2', 'D3'], decoys: ['X1', 'X2'], blocked: null, passed: false });
+});

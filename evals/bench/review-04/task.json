@@ -1,0 +1,182 @@
+{
+  "id": "review-04",
+  "skill": "bk-review",
+  "fixture": "build.cjs",
+  "prompt": "Review the changes on branch feature/billing-q4 against main before I merge it. List the problems you find, most severe first, each with its file and line.",
+  "commands": {
+    "K": "/bearingkit:bk-review",
+    "S": "/pr-review-toolkit:review-pr"
+  },
+  "sources": [
+    {
+      "plugin": "superpowers",
+      "dir": "_build/upstream/obra_superpowers",
+      "source": "obra/superpowers"
+    },
+    {
+      "plugin": "code-review",
+      "dir": "_build/upstream/claude-plugins-official/plugins/code-review",
+      "source": "anthropics/claude-plugins-official"
+    },
+    {
+      "plugin": "pr-review-toolkit",
+      "dir": "_build/upstream/claude-plugins-official/plugins/pr-review-toolkit",
+      "source": "anthropics/claude-plugins-official"
+    },
+    {
+      "plugin": "mattpocock-skills",
+      "dir": "_build/upstream/mattpocock_skills",
+      "source": "mattpocock/skills"
+    }
+  ],
+  "limits": {
+    "seconds": 1200,
+    "turns": 60
+  },
+  "rules": {
+    "defects": [
+      {
+        "id": "D1",
+        "what": "requireRole returns a boolean now; the unchanged export route still calls it as a statement, so any member downloads the CSV",
+        "all": [
+          [
+            "export"
+          ],
+          [
+            "requireRole",
+            "role check",
+            "admin check"
+          ],
+          [
+            "boolean",
+            "returns? (true|false)",
+            "no longer throw",
+            "doesn't throw",
+            "does not throw",
+            "return value",
+            "ignor",
+            "unchecked",
+            "not checked",
+            "discard",
+            "any member",
+            "non-admin",
+            "every member",
+            "bypass"
+          ]
+        ]
+      },
+      {
+        "id": "D2",
+        "what": "findByNumber takes the tenant id and does not use it; the by-number route reads other tenants' invoices",
+        "all": [
+          [
+            "findByNumber",
+            "by-number",
+            "by number"
+          ],
+          [
+            "tenant",
+            "cross-tenant",
+            "IDOR",
+            "other (customers|organi[sz]ations|accounts|compan(y|ies)|businesses)",
+            "another (company|business|organi[sz]ation|customer|account)"
+          ]
+        ]
+      },
+      {
+        "id": "D3",
+        "what": "void sets VOID then creates the credit note outside a transaction, the catch only logs, the route answers 200",
+        "all": [
+          [
+            "void"
+          ],
+          [
+            "transaction",
+            "atomic",
+            "partial",
+            "half",
+            "inconsistent",
+            "roll ?back",
+            "swallow",
+            "only logs",
+            "logs and",
+            "still returns",
+            "returns? (200|ok|success)",
+            "ok: ?true"
+          ]
+        ]
+      }
+    ],
+    "clearSections": [
+      "^[\\W\\d]*(strengths?|what('s| is| was) (good|done well|right)|positives?( (observations|notes|aspects|points))?|looks good|done well|well done|good (practices|patterns|things)|(verified|confirmed) (safe|correct|ok|fine)|not (issues|problems|defects|bugs)|non-issues|false positives|(things|what) I checked|no action (needed|required))[\\W\\d]*$"
+    ],
+    "clear": [
+      "(?<!not |n't |never |not really |not entirely |not fully |not completely |type-|type |to be |must be |would be |to )\\bsafe(ly)?\\b",
+      "(?<!not |n't |never )\\bfine\\b(?!-)",
+      "(?<!not |n't |never |the |a |be |to |should |must |would )\\bcorrect(ly)?\\b",
+      "(?<!not |n't |never |without )\\bproperly\\b",
+      "(?<!not |n't |never |should |must |would |could |fails to |failing to )\\bprevents?\\b",
+      "(?<!not |n't |never |should |must |would |could |fails to )\\bprotects?\\b",
+      "(?<!not |n't |never |should |must |would |could )\\bguards? against\\b",
+      "(?<!not |n't |never |should |must |would |could |fails to )\\benforces?\\b",
+      "\\bnot (vulnerable|injectable|exploitable|susceptible|an? (real |actual )?(issue|problem|bug|vulnerabilit|concern|risk|defect|leak))",
+      "\\b(by design|as designed)\\b",
+      "\\b(is|are|looks|seems|appears|was) (intentional|deliberate)",
+      "[—–:,(-]\\s*intentional",
+      "(?<!not |n't |never )\\bfalse positive",
+      "(?<!not |n't |never |un)\\bacceptable\\b",
+      "\\bnon-issue",
+      "no (action|change) (is )?(needed|required)",
+      "\\bnone (of these )?apply\\b",
+      "[:—–-]\\s*(OK|pass(ed)?)\\s*[.)]?\\s*(✅|✔|✓)?\\s*(\\n|$)",
+      "\\b(is|are) (right|intended|expected)\\b",
+      "✅|✔|✓"
+    ],
+    "decoys": [
+      {
+        "id": "X1",
+        "what": "revenue report: raw SQL through Prisma.sql, every value bound",
+        "all": [
+          [
+            "queryRaw",
+            "Prisma\\.sql",
+            "raw SQL",
+            "revenue"
+          ],
+          [
+            "inject"
+          ]
+        ],
+        "unless": [
+          "\\bno (SQL |sql-)?injection",
+          "parameteri[sz]ed",
+          "\\bbound\\b"
+        ]
+      },
+      {
+        "id": "X2",
+        "what": "exchange-rate cache is process-wide with no tenant in its key, correctly: rates are the same for every tenant",
+        "all": [
+          [
+            "fx",
+            "exchange.?rate",
+            "rates? cache",
+            "getRates"
+          ],
+          [
+            "tenant"
+          ]
+        ],
+        "unless": [
+          "same for (all|every)",
+          "global",
+          "not tenant",
+          "tenant-independent",
+          "doesn't need",
+          "does not need",
+          "shared by design"
+        ]
+      }
+    ]
+  }
+}

@@ -392,6 +392,41 @@ Limits, stated now: one small task, one model, one process outcome. It would be 
   - the kit slightly cheaper at the median (0.255 against 0.277).
 - **What `debug-01` on Sonnet now says, across four registered measurements.** The kit with its `bk-debug` changes of 2026-09-25 fixes the cause as often as its sources and the floor, stops at the fix, and writes a regression test, which it runs red first in most sessions. It costs about what Superpowers costs and about twice the floor. It is not measurably better than Superpowers on any registered outcome of this task. It is ahead of the floor on the regression test, which the floor never wrote, but that comparison was not registered with the current text.
 
+## Task 5 · `review-04`, a pull request of realistic size (registered 2026-09-26, before any session ran)
+
+Owner's word (verbatim): "Ok tiếp tục đi.", after the recommendation to build a realistic-size task, since `debug-01` and the three small review tasks are exhausted on Sonnet.
+
+**The fixture** (`evals/bench/review-04/`, built by `build.cjs`, its own small billing app, not the sample app): branch `feature/billing-q4`, four commits, 29 files changed, about 425 lines. Most changes are benign: a repository refactor, a by-number lookup, roles returning a decision, credit notes, multi-currency formatting, a revenue report, structured logs, docs, lint. Three candidate defects and two decoys sit among them:
+
+| Id | Kind | What |
+|---|---|---|
+| D1 | candidate, caller outside the diff | `requireRole` now returns a boolean instead of throwing. The branch updates the users route, but the unchanged export route calls it as a statement, so any member downloads the tenant's full invoice CSV with customer contacts |
+| D2 | candidate | the new repository's `findByNumber(tenantId, number)` does not use `tenantId`, so the new by-number route returns another tenant's invoice, customer and payments. Its tests pin the other functions' `where`, not this one |
+| D3 | candidate | voiding sets `VOID` and then creates the credit note outside a transaction, inside a `try` whose `catch` only logs, and the route answers 200 either way |
+| X1 | decoy | the revenue report is raw SQL through `Prisma.sql`, every value bound |
+| X2 | decoy | the exchange-rate cache is process-wide with no tenant in its key, correctly: the rates are the same for every tenant |
+
+While writing it, two defects that were not planned were found and removed:
+- the pay route's transaction called the global client inside an interactive transaction;
+- the currency conversion ignored minor digits.
+
+The fixture test in `tests/bench.test.cjs` pins the planted state, the benign modules' behaviour, and a careful and a careless answer against the rules. Limits: 1,200 seconds and 60 turns, since the diff is larger.
+
+**Calibration on the floor, Sonnet 5** (the protocol of `review-02`):
+- three `natural` F sessions;
+- a candidate stays in the scored set only if the floor found it in at most one of three, by the script and confirmed by reading;
+- if none stays, the task is rebuilt harder and not scored;
+- decoys flagged by the floor are reported;
+- the rules are frozen once F has run.
+
+**Then, registered now:**
+- K, S and F, eight `natural` sessions each on Sonnet 5, interleaved (F's three reused, plus five new).
+- Primary: for each defect that stayed, the sessions that found it, read by eye.
+- The kit is "better than its sources on review-04" for a defect if its count is higher and the two-sided Fisher p is ≤ 0.05 divided by the number of defects that stayed. The same bar applies against the floor.
+- Decoys: a decoy flagged in three or more K sessions than S is reported against the kit.
+- Cost and whether `bk-reviewer` was dispatched are reported.
+- The kit is measured as it ships. With 29 files, step 3 of `bk-review` dispatches its Opus reviewer.
+
 ## The runner
 
 A new `scripts/bench.cjs` (verb `bearingkit bench`), not an extension of `scripts/evals.cjs`: that file scores routing, is already 512 lines, and shares only the helpers it exports (`parseArgs`, now exported, `parseQuota`, `quotaStop`, `authStop`, `ancestorMemoryFiles`). The old runner already takes `--plugin-dir none` for a floor, but only one plugin directory and no outcome score; the resume prompt of 2026-09-24 said the floor needed a runner change too, which was only half right. Before a run it checks that each source copy is the plugin named and sits at its pinned sha, and refuses a fixture with a memory file above it. The scorer is `scripts/lib/bench-score.cjs`. Tests first, red before green (`tests/bench.test.cjs`): branch to command line (plugin dirs and the inline settings), the matcher on written answers (found, missed, a decoy flagged, a decoy called safe), usage summed over models, median and spread, and the refusal to compare tokens across differing tool counts. Results go to `evals/results/<date>-bench-<task>.md` (untracked) with every scored answer beside it; the numbers that matter are copied into this file with the command that produced them.
