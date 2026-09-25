@@ -371,6 +371,27 @@ Reported beside it, with no bar: seen red first (`seenRedFirst` with the fixture
 
 Limits, stated now: one small task, one model, one process outcome. It would be the first registered result of the kit above one of its sources, and it says nothing on defects found or fixed. There `root` has tied at 16 of 16.
 
+### Result (2026-09-26): 16 against 13, p = 0.23, the lead did not hold
+
+`evals/results/2026-09-25-bench-debug-01-natural-6/`: sixteen K and sixteen S sessions, interleaved and all new. The folder carries the UTC date, and the runs started after midnight local time. Every session ran Sonnet 5 with 31 tools.
+
+| Sixteen new sessions each | `regression` (registered) | Seen red first | `root` | `visible` / `kept` | Tried to commit | Cost USD, median (min–max) |
+|---|---|---|---|---|---|---|
+| K kit | **16** | 15 | 16 | 16 / 16 | 0 | 0.255 (0.203–0.373) |
+| S sources | **13** | 11 | 16 | 16 / 16 | 0 | 0.277 (0.220–0.458) |
+
+- **By the registered rule: no clear difference.** 16 against 13 gives Fisher p = 0.23. Superpowers left a test in 13 of 16 sessions here, against 9 of 16 in the run that raised the hypothesis. The 16 against 9 was mostly the sampling, which is what a confirmation run is for. Pooling the two runs is not allowed, since the first one chose the hypothesis.
+- **Guards**, from a read-only script over the streams, with its flags read by eye:
+  - one K test (K11) was not caught by the script as seen failing on the unfixed code. By reading, K11 fixed first, wrote its test, reverted the fix by hand with an Edit of `src/dates.js`, ran the test and restored the fix;
+  - one S test (S11) was flagged the same way;
+  - no counted test was only a copy of an original.
+- **Reported beside it, with no bar**:
+  - seen red first 15 against 11 (p = 0.17);
+  - `root` tied at 16 of 16;
+  - no commit attempt on either branch;
+  - the kit slightly cheaper at the median (0.255 against 0.277).
+- **What `debug-01` on Sonnet now says, across four registered measurements.** The kit with its `bk-debug` changes of 2026-09-25 fixes the cause as often as its sources and the floor, stops at the fix, and writes a regression test, which it runs red first in most sessions. It costs about what Superpowers costs and about twice the floor. It is not measurably better than Superpowers on any registered outcome of this task. It is ahead of the floor on the regression test, which the floor never wrote, but that comparison was not registered with the current text.
+
 ## The runner
 
 A new `scripts/bench.cjs` (verb `bearingkit bench`), not an extension of `scripts/evals.cjs`: that file scores routing, is already 512 lines, and shares only the helpers it exports (`parseArgs`, now exported, `parseQuota`, `quotaStop`, `authStop`, `ancestorMemoryFiles`). The old runner already takes `--plugin-dir none` for a floor, but only one plugin directory and no outcome score; the resume prompt of 2026-09-24 said the floor needed a runner change too, which was only half right. Before a run it checks that each source copy is the plugin named and sits at its pinned sha, and refuses a fixture with a memory file above it. The scorer is `scripts/lib/bench-score.cjs`. Tests first, red before green (`tests/bench.test.cjs`): branch to command line (plugin dirs and the inline settings), the matcher on written answers (found, missed, a decoy flagged, a decoy called safe), usage summed over models, median and spread, and the refusal to compare tokens across differing tool counts. Results go to `evals/results/<date>-bench-<task>.md` (untracked) with every scored answer beside it; the numbers that matter are copied into this file with the command that produced them.
