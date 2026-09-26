@@ -95,7 +95,7 @@ Branch `main` · working tree sạch sau commit cuối · đã push. Đọc file
 2. **D3: bước đánh giá độc lập cho `bk-close`.** Khuyến nghị: có, dạng tuỳ chọn `--verify`, ở P6.
 3. **D4: đo Antigravity.** Nay có bốn skill đã đổi: `bk-review`, `bk-debug`, `bk-test`, `bk-build`. Cần câu duyệt riêng; dự kiến P7.
 
-**Python trong phiên đo** (2026-09-26, sau khi audit resume prompt; owner chọn: "Cho Python trong phiên đo (Recommended)"): chỉ các phiên đo của task Python được chạy `python`/`pytest` trên fixture Python, qua quyền của task; phiên chính và reviewer vẫn không Python. Máy lúc đó chỉ có lối tắt `python.exe`, `py.exe` trong `WindowsApps` (chưa xác minh là Python thật) và không có `pytest`; owner cài Python thật và `pytest` trước khi dựng fixture, rồi phiên P3 kiểm bằng `Get-Command` (không chạy Python).
+**Python trong phiên đo** (2026-09-26, sau khi audit resume prompt; owner chọn: "Cho Python trong phiên đo (Recommended)"): chỉ các phiên đo của task Python được chạy `python`/`pytest` trên fixture Python, qua quyền của task; phiên chính và reviewer vẫn không Python. Máy đã có sẵn Python thật, kiểm 2026-09-26 bằng cách đọc file, không chạy Python (câu trước đó của phiên nói có thể chỉ là lối tắt Store là sai, owner chỉ ra): Python Install Manager của PSF (gói `PythonSoftwareFoundation.PythonManager` 26.3.240.0), runtime 3.14 ở `%LOCALAPPDATA%Pythonpythoncore-3.14-64` (owner thấy `Python 3.14.2`), với `pytest` 9.0.3, `pytest_asyncio` 1.3.0 và `pip` 26.2.1 trong `site-packages`. `pytest` không nằm trên PATH, nên phiên đo gọi `python -m pytest`. Không cần cài gì thêm.
 
 ### Open threads
 
