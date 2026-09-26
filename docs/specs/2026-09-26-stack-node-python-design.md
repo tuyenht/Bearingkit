@@ -14,9 +14,9 @@ Item 7 of the v0.3 order, first half (`docs/plans/2026-09-26-v03-roadmap.md`, se
 | cloudflare/skills `b052c32` | Apache-2.0, reference | 769 | — | yes, at the pin |
 | c0x12c/ai-toolkit (Spartan) `96b2c9d` | none, ideas only | — | 928–932 | yes, at the pin; paraphrased, nothing quoted |
 | PatrickJS/awesome-cursorrules `b044f95` | CC0-1.0, reference | 1161 | 1162 | yes, at the pin |
-| tuyenht/Antigravity-Core `1774280` | owner's own, adapt | 21 rows (1370–1538) | 15 rows (1385–1523) | **no**: the pin exists only in the owner's local repository (`upstream/sources.json`: "the public remote has only the older 1c744167"); a fetch from GitHub answered "not our ref", as expected |
+| tuyenht/Antigravity-Core `1774280` | owner's own, adapt | 21 rows (1370–1538) | 15 rows (1385–1523) | not in P3a: the pin exists only in the owner's local repository (`upstream/sources.json`: "the public remote has only the older 1c744167"), so a fetch from GitHub answered "not our ref", as expected; **read in P3b** from `_build/upstream/tuyenht_Antigravity-Core`, `git rev-parse HEAD` = `1774280ee0d5…` |
 
-So the text rests on **5 of 26** `node` rows and **7 of 22** `python` rows. The Antigravity-Core rows are unread, not rejected. (Corrected after the review, before any fixture or session: the first version of this paragraph called the failed fetch a finding — history rewritten or a wrong pin. `upstream/sources.json` already says why: the pinned commit was fetched on 2026-09-18 from the owner's local repository into `_build/upstream/tuyenht_Antigravity-Core`, and the public remote never had it.) P3b reads those rows from that copy (Sonnet agent, same brief), after checking with `git -C _build/upstream/tuyenht_Antigravity-Core rev-parse HEAD` that it is at the pin; any sentence they add goes through the same review before any session. If the copy is missing or not at the pin, the owner is asked (question 35 (2)).
+In P3a the text rested on **5 of 26** `node` rows and **7 of 22** `python` rows; the Antigravity-Core rows were unread, not rejected. **P3b read all 36** (below, "Antigravity-Core in P3b"), so every row of both buckets is now read. (Corrected after the review, before any fixture or session: the first version of this paragraph called the failed fetch a finding — history rewritten or a wrong pin. `upstream/sources.json` already says why: the pinned commit was fetched on 2026-09-18 from the owner's local repository into `_build/upstream/tuyenht_Antigravity-Core`, and the public remote never had it.) P3b reads those rows from that copy (Sonnet agent, same brief), after checking with `git -C _build/upstream/tuyenht_Antigravity-Core rev-parse HEAD` that it is at the pin; any sentence they add goes through the same review before any session. If the copy is missing or not at the pin, the owner is asked (question 35 (2)).
 
 **Reading.** Two Sonnet agents, read only, brief forbidding background commands and any search outside the repository and the fetched sources, produced candidate tables (41 rows for `node`, 58 for `python`), each with a `path:line` and a short quote. The main session opened every line cited below and checked it against the quote. The tables are untracked (`scratchpad`), so the part that matters is copied into the provenance tables of this document.
 
@@ -29,6 +29,8 @@ So the text rests on **5 of 26** `node` rows and **7 of 22** `python` rows. The 
 - awesome-cursorrules `python.mdc:29` prefers `Optional[Type]`; `python-pro` (`SKILL.md:59`) and Spartan (`PYDANTIC.md:109`) prefer `X | None`. Two sources against one; `python.md` follows the two.
 - `python-pro`'s timeout sample returns `{"error": "timeout"}` (`async-patterns.md:256-261`); Spartan forbids returning error dicts (`ERROR_HANDLING.md:94`). `python.md` carries the deadline and the "raise, do not return an error dict" rule, not the sample's return.
 - Framework layering (Router → Service → Repository), URL style, error-response shape and one project's package list are the project's own conventions (Spartan `ENDPOINTS.md`, `ERROR_HANDLING.md:5-13`; awesome-cursorrules `fastapi-production-architecture`, `python-312-fastapi…`) and stay out, as `kotlin.md` keeps framework conventions out.
+
+**Antigravity-Core in P3b.** A Sonnet agent (read only, same brief) read the 36 rows from the local copy at the pin and reported, per row, what it carries against both files; the main session opened every line cited for a sentence. 31 rows carry nothing within the files' scope (framework or API-design conventions — Express, NestJS, GraphQL, gRPC, SSE, WebSocket, FastAPI, Flask, Django —, one project's layout, ORM or library catalogues, i18n, packaging), and one (1456, branded IDs) is already covered. Four sentences are added, each in the provenance tables below: `node.md` wrapped error keeps its `cause` (row 1471), nothing blocks the event loop on a request path (row 1515), non-null assertion replaced by a guard or a throw (row 1464); `python.md` `CancelledError` re-raised (row 1437). Rejected: `asyncio.shield` for operations that must finish (row 1437, `async-programming.md:528-548`): a technique for a narrow case whose misuse is itself a pitfall, not a rule every project shares. No candidate conflicted with a sentence already written. The four additions go through the independent review below before any session.
 
 ## Provenance: every sentence and its source line
 
@@ -45,6 +47,8 @@ Paths are relative to each source's root at its pin. "Kit" means a line of this 
 | Concurrency has a bound: a queue with a maximum in flight | jeffallan `skills/javascript-pro/references/async-patterns.md:189-192`; inventory line 607 |
 | Every network call has a deadline, via `AbortController` | same file `:9` (`fetchWithTimeout`), `:258-265` |
 | No catch, log and `null`; the error propagates or is returned as an error to handle | inventory line 607 (rejects `javascript-pro/SKILL.md:79-82`); cloudflare `runtime-patterns.md:290-296` |
+| A wrapped error keeps the original as its `cause` (P3b) | antigravity-core `.agent/rules/web-development/core/javascript-es2024.md:416-421` (sample), `:488` ("Preserve error causes"); inventory line 1471 |
+| In a process serving requests, nothing on the request path blocks the loop; sync call such as `fs.readFileSync`, or CPU-heavy work; async API or off the loop (P3b) | antigravity-core `.agent/skills/nodejs-best-practices/SKILL.md:282-285`, `:385`; inventory line 1515 |
 | Module scope is shared; request state through arguments | cloudflare `runtime-patterns.md:188-192`; inventory line 769 ("rules any Node host shares") |
 | Unbounded body streamed; small known-size payload fine | cloudflare `runtime-patterns.md:15`, `:17` |
 | Constant-time comparison, hashed to the same length, no early return | cloudflare `runtime-patterns.md:253`, `:255`; Node API name: kit adaptation (above) |
@@ -57,6 +61,7 @@ Paths are relative to each source's root at its pin. "Kit" means a line of this 
 | `typescript-react.md`'s type rules apply | kit `stacks/typescript-react.md:19-20` |
 | Exhaustive `switch` through `never` | jeffallan `skills/typescript-pro/references/type-guards.md:82-97` |
 | Branded IDs | jeffallan `typescript-pro/SKILL.md:118` |
+| Non-null assertion `!` replaced by a guard or an explicit throw (P3b) | antigravity-core `.agent/rules/typescript/strict-mode.md:1015-1033`; inventory line 1464 |
 | `satisfies` over `as` | same, `:119`; inventory line 642 |
 | `noUncheckedIndexedAccess` in a strict config; enabling it is its own change | jeffallan `typescript-pro/references/configuration.md:23` + kit `skills/bk-build/SKILL.md:16` |
 | Evidence: full output, red before green | kit `skills/bk-build/SKILL.md:17`, `:28`; `stacks/kotlin.md:23` |
@@ -73,6 +78,7 @@ Paths are relative to each source's root at its pin. "Kit" means a line of this 
 | Fan-out bounded by a semaphore; bare `gather` starts all | same, `:190-197` (semaphore); `:22-24` (the unbounded `gather` sample); inventory line 623 ("gather sample has no bound") |
 | Await outside the process has a deadline, `asyncio.timeout` | same, `:256-261` |
 | Blocking call in `async def` blocks the loop; `requests`, sync driver; `run_in_executor` | Spartan `ASYNC.md:23-27`, `:124-128`; jeffallan `async-patterns.md:333-336`, `SKILL.md:67` |
+| A caught `CancelledError` is re-raised after cleanup (P3b) | antigravity-core `.agent/rules/python/async-programming.md:509-516`; inventory line 1437 |
 | No mutable default; Pydantic field exception | jeffallan `python-pro/SKILL.md:66`; Spartan `PYDANTIC.md:108` |
 | No bare `except`, no `except: pass` | jeffallan `SKILL.md:69`; Spartan `ERROR_HANDLING.md:93` |
 | Expected failure raises, not an error dict; layers between propagate | Spartan `ERROR_HANDLING.md:84-89`, `:94`, `:95` |
@@ -136,6 +142,11 @@ This is the limit of the design, stated now: the tasks test whether the text's r
 | C | cost | USD, API calls, tool calls, seconds | stream |
 
 The scorer calls `export` exactly as the prompt spells it. A session that changes the invocation (`--file`) fails O1, N1, N2 and N3 alike; that is read by eye and reported, not re-scored.
+
+**As built in P3b** (`evals/bench/node-01/`, test `tests/bench-node-01.test.cjs`). Three details the table leaves open, fixed before any session: (1) N2, N3 and X count only where the export actually requested the SKU that fails or hangs — without this, the untouched fixture (no `export`: a usage line on stderr, exit 2 at once) passed N2 and N3; N1 likewise needs every distinct SKU requested in both runs. `reach()` reads the skill name from `skill`, `name` or `command`, as `invocations()` does. Both points came from the independent review of P3b (Sonnet, read only); its note that the read-only commands are not path-scoped (a session could read the scorer outside the fixture) is inherited unchanged from `build-01` and is read by eye in the streams. (2) O1 is read from N1's 200-SKU run (the same file, every SKU answering) rather than a separate run. (3) `check()` is async, since the stand-in server runs in the scorer's own process; the runner now awaits it (`scripts/bench.cjs`), which changes nothing for a synchronous check. R is read by `reach()` in `scripts/lib/bench-score.cjs` (an open is a `Read`, `Grep` or shell command naming the path; a `Glob` listing is not). The test builds the fixture and checks, at shrunk sizes and times: untouched green with N = 0; a sequential port with no deadline passes N1 and N2 and fails N3; a `Promise.all` port fails N1 (class "unbounded"); a pool of 8 with a 1 s deadline passes all three and X; the same with a deadline beyond the scorer's limit fails N3 without being killed; one progress line on stdout fails N2 and O1. Four mutations of the scorer (N1 ignoring the peak, N2 ignoring stdout, N3 ignoring the deadline, N3 ignoring whether the hang was reached) each turn the test red.
+
+**S as shipped.** The `cloudflare` plugin at `b052c32` declares an HTTP MCP server (`.mcp.json`: `https://mcp.cloudflare.com/mcp`). S loads it as released; whether it connects in a headless session, and the tool count it adds, is read from the stream. Token totals of S are compared with other branches only where the tool counts match (existing rule).
+
 
 ### Task `py-01`
 

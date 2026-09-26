@@ -10,6 +10,8 @@
 - **Concurrency has a bound.** Work over a list of unknown length runs through a queue with a maximum in flight, not every call started at once.
 - **Every network call has a deadline.** Pass the call an `AbortController`'s signal, and abort it from a timer or when the caller gives up.
 - **An async failure is not logged and turned into `null`.** The caller can no longer tell "not found" from "failed"; the error propagates, or is returned as an error the caller has to handle.
+- **A wrapped error keeps the original as its `cause`:** `new Error(message, { cause: err })`, so the caller still sees what failed.
+- **In a process that serves requests, nothing on the request path blocks the event loop.** A synchronous call such as `fs.readFileSync`, or CPU-heavy work, stalls every other request; use the async API or move the work off the loop.
 
 ## State, bodies and secrets
 
@@ -34,6 +36,7 @@
 `typescript-react.md`'s rules on types (the type is the contract; no `any` in a diff) apply unchanged. In addition:
 - A `switch` over a discriminated union ends in a `default` that passes the value to a function taking `never`, so a new variant is a compile error.
 - IDs of different kinds are branded types, so one cannot be passed where the other is expected.
+- A non-null assertion (`!`) is replaced by a guard, or by an explicit throw where the value must be there.
 - `satisfies` over `as` when a literal is checked against a type.
 - `noUncheckedIndexedAccess` belongs to a strict configuration; turning it on in an existing project is its own change, not part of a feature's diff.
 

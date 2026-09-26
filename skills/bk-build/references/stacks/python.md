@@ -10,6 +10,7 @@
 - **Fan-out has a bound.** Work over a list of unknown length goes through an `asyncio.Semaphore` or an equivalent limit; a bare `asyncio.gather` over every item starts them all at once.
 - **An await on anything outside the process has a deadline:** wrap it in `asyncio.timeout(...)`.
 - **A blocking call inside `async def` blocks the whole event loop.** `time.sleep`, a synchronous HTTP client such as `requests`, or a synchronous database driver in a coroutine stalls every other task; use the async equivalent, or hand the synchronous code to `loop.run_in_executor`.
+- **A caught `asyncio.CancelledError` is re-raised** after cleanup, never swallowed; swallowing it breaks the cancellation of whatever awaits the task.
 
 ## Values and errors
 
