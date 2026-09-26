@@ -75,3 +75,17 @@ Guard, `test-01`, eight `natural` K sessions on Sonnet 5 with the text. It is co
 - no suite is `textLocked`.
 
 Reported with no bar: cost against the floor's calibration median; whether the sessions broke the code on purpose to see a test fail. The text is not measured against Superpowers, and no "better" is claimed.
+
+### Guard result (2026-09-26): the text holds and is committed
+
+`bearingkit bench --task test-01 --config-dir _build/profile/claude --branches K --runs 8` (`evals/results/2026-09-26-bench-test-01-natural-2/`), the text in the main checkout. Every session ran Sonnet 5 with 31 tools and reached `bk-test`.
+
+| Sessions | Killed 12 of 12 | `green` / `kept` | Text-locked | Tests per session | Proved the tests can fail | Cost USD, median (min–max) |
+|---|---|---|---|---|---|---|
+| K with the text, eight | 8 | 8 / 8 | 0 | 24 to 38 | 8 | 0.339 (0.307–0.415) |
+| F floor, calibration, three | 3 | 3 / 3 | 0 | 20 to 23 | 0 | 0.164 (0.157–0.182) |
+
+- **By the guard rule the text is committed.** Killed was 12 of 12 in 8 of 8, `green` and `kept` 8 of 8, no suite text-locked.
+- **What the text changed in the process.** All eight kit sessions copied the module to a scratch folder, broke its conditions one at a time, and ran the suite against each break. All eight reported it, and none edited `src/pricing.js` in place. None of the three floor sessions did either thing: their answers do not mention a mutation or a deliberate break. This is a reading, reported with no bar, and the floor's three were not run with the same count.
+- **What it cost.** 2.1 times the floor at the median, for the same score on this module. The deliberate breaks are part of that cost. No outcome difference was measurable here, since the floor already kills every mutant.
+- **Against the sources**: not measured (S was not run), so no "better" is claimed.
