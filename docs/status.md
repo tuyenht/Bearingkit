@@ -23,7 +23,7 @@ Kit đã qua Phase 1 (v1) và đã đổi hình dạng sang v2 (skills ở gốc
 | — còn thiếu | `bk-perf`, cuối cùng theo thứ tự dựng đã chốt (câu 27) | §5.1 |
 | Nguồn trong `upstream/sources.json` | 23 (adapt 5 · ideas-only 6 · reference 12; `ChromeDevTools/chrome-devtools-mcp` vào 2026-09-23, reference, skill vendor mà `bk-perf` nhường) | đọc file bằng `node -e` |
 | — nguồn **cần nội dung** (adapt + ideas-only) | 11, đã xong **3** (superpowers, karpathy, claude-plugins-official một phần); mattpocock **bắt đầu** 2026-09-24 (1 trong 10 absorb) | cùng lệnh |
-| — nguồn đã có `derived` (chữ thật đã port) | **4** nguồn, **24** mục dẫn xuất trên **23** file (2026-09-24: `security-lens.md` từ claude-plugins-official, và `review-lenses.md` nay ở cả map của mattpocock; trước đó 3 nguồn, 22) | `_build/v03-prep/recount-status-numbers.cjs` |
+| — nguồn đã có `derived` (chữ thật đã port) | **4** nguồn, **28** mục dẫn xuất trên **26** file (đếm lại 2026-09-26 sau P2 bằng `_build/v03-prep/recount-status-numbers.cjs`: sprint `bk-test` và `bk-build` thêm `characterization.md`, phần mattpocock của `tdd.md` và `major-upgrade.md`; dòng này đã cũ từ sprint `bk-test`. Bản ghi trước: 24 trên 23, 2026-09-24: `security-lens.md` từ claude-plugins-official, và `review-lenses.md` nay ở cả map của mattpocock; trước đó 3 nguồn, 22) | `_build/v03-prep/recount-status-numbers.cjs` |
 | Mục trong `NOTICE` | **3** (anthropics/claude-plugins-official, mattpocock/skills từ 2026-09-24, obra/superpowers) | `grep '^##' NOTICE` |
 | Hàng nguồn trong ma trận | 39 (gồm host candidate, tool, và 8 mục owner loại) | `grep -c '^\| [0-9]'` |
 | Test | 170/170 xanh (2026-09-26, phiên benchmark: +26 test benchmark; phiên gộp trước đó +21) | `node --test tests/*.test.cjs` |
