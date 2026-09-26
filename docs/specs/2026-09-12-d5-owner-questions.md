@@ -369,6 +369,13 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 - **(2) Antigravity-Core: đọc 36 hàng từ clone local nếu clone đúng pin `1774280`; không đúng pin thì dừng và hỏi owner.** Clone local đó là `_build/upstream/tuyenht_Antigravity-Core` (bản lấy từ repo local của owner ngày 2026-09-18, theo `upstream/sources.json`; remote công khai không có commit này, nên việc fetch thất bại trên cloud là bình thường, không phải phát hiện — sửa 2026-09-26 sau audit, không đổi nội dung quyết định). Câu nào thêm vào `node.md`/`python.md` từ đó phải có dòng nguồn và qua reviewer trước mọi phiên đo.
 - **(3) Tách phiên: P3b chỉ `node-01`; `py-01` để P3c.**
 
+### 36. `node.md` qua guard về hình thức nhưng không phiên nào đọc nó: merge hay giữ trên nhánh (v0.3, 2026-09-26)
+> **ĐÃ CHỐT 2026-09-26 — owner chọn "Giữ trên nhánh (Recommended)"** (câu hỏi trong phiên P3b). `node.md` không vào `main`; không cập nhật cài hằng ngày, không làm mới kho Antigravity vì việc này.
+*(MỚI 2026-09-26, phiên P3b. Nguồn: `docs/specs/2026-09-26-stack-node-python-design.md`, mục "Results, `node-01`".)*
+- Hiệu chỉnh F: N = 2 ở 3/3 phiên → task không usable → guard. Guard 8 phiên K-after: O1 8/8, O2 8/8, trung vị N = 2 = sàn, tức luật merge đăng ký **đạt về hình thức**.
+- Nhưng `stacks/node.md` được mở 0/8 phiên, `index.md` 0/8; `bk-spec` 8/8 (router đúng: yêu cầu là tính năng), `bk-build` 2/8, và hai phiên đó cũng không theo lối tới `references/stacks/`. Theo chính đăng ký: file không được đọc, kết quả không phải bằng chứng về chữ.
+- **Khuyến nghị: giữ `node.md` trên nhánh**, không merge; việc tiếp theo là đường tới file (bk-spec → bk-build → stacks) như một thay đổi riêng có đo, rồi chạy lại guard `node-01`. Bác: merge ngay vì luật đạt — sẽ đưa vào `main` chữ model đọc mà chưa phiên đo nào đọc.
+
 ---
 
 ## Quyết định 2026-09-12 và những gì mở khoá — CHƯA áp dụng, chỉ liệt kê

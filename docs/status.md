@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-26, sau phiên P3a** (cloud, nhánh `claude/serene-franklin-3f3bb7`, chưa vào `main`). Phiên gần nhất: `docs/handoff/2026-09-26-p3a-stack-design.md`. Lộ trình: `docs/plans/2026-09-26-v03-roadmap.md`. Lịch sử của file này, nguyên văn tới commit `b89eb36`: `docs/status-history.md`; mọi tham chiếu "status §N" hay "status §7 (xx)" viết trước 2026-09-26 trỏ về đó.
+Cập nhật: **2026-09-26, sau phiên P3b** (máy owner, nhánh `claude/serene-franklin-3f3bb7`, chưa vào `main`). Phiên gần nhất: `docs/handoff/2026-09-26-p3b-node-guard.md`. Lộ trình: `docs/plans/2026-09-26-v03-roadmap.md`. Lịch sử của file này, nguyên văn tới commit `b89eb36`: `docs/status-history.md`; mọi tham chiếu "status §N" hay "status §7 (xx)" viết trước 2026-09-26 trỏ về đó.
 
 > **File này là bảng điều khiển, không phải nguồn sự thật.** Nó chỉ đếm và trỏ; nội dung thật nằm ở:
 > - thiết kế: `docs/specs/2026-09-11-bearingkit-v2-design.md` (§13 bảng mốc, §15 log quyết định);
@@ -12,7 +12,7 @@ Cập nhật: **2026-09-26, sau phiên P3a** (cloud, nhánh `claude/serene-frank
 
 ## 1. Đang ở đâu
 
-Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. P3a xong trên nhánh: `node.md`, `python.md` và thiết kế đo `docs/specs/2026-09-26-stack-node-python-design.md` (đã qua reviewer); chưa đo, chưa vào `main`. Kế tiếp P3b trên máy owner. Sáu sprint lifecycle đầu đã xong (`bk-review`, test case `bk-audit`/`bk-next`, khung benchmark, `bk-debug`, `bk-test`, `bk-build`); còn `bk-spec` + `bk-plan` (P5), `bk-ship` + `bk-close` (P6), cổng v0.3 (P7).
+Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. `node.md`, `python.md` viết trên nhánh (P3a, thêm bốn câu Antigravity-Core ở P3b). P3b đo `node-01`: sàn N = 2 ở 3/3 → guard; K-after đạt luật về hình thức nhưng mở `node.md` 0/8, nên owner giữ file trên nhánh (câu 36). Kế tiếp: đường tới file stack (bk-spec → bk-build → `stacks/`) như thay đổi riêng có đo, rồi guard lại; `py-01` ở P3c. Sáu sprint lifecycle đầu đã xong (`bk-review`, test case `bk-audit`/`bk-next`, khung benchmark, `bk-debug`, `bk-test`, `bk-build`); còn `bk-spec` + `bk-plan` (P5), `bk-ship` + `bk-close` (P6), cổng v0.3 (P7).
 
 | Đếm được hôm nay | Số | Lệnh / nguồn (chạy lại 2026-09-26) |
 |---|---|---|
@@ -22,11 +22,11 @@ Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. P3a xong trên n
 | Nguồn có `derived` (chữ thật đã port) | **4** nguồn, **28** mục dẫn xuất trên **26** file kit | `_build/v03-prep/recount-status-numbers.cjs` |
 | Mục trong `NOTICE` | **3** (anthropics/claude-plugins-official, mattpocock/skills, obra/superpowers) | `grep '^##' NOTICE` |
 | Kiểm kê từng mục (§5.2) | **1.295** mục của **22/22** nguồn: 46 absorb, 610 idea, 639 drop, 0 lệch | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
-| Test | **174/174** xanh | `node --test tests/*.test.cjs` |
+| Test | **176/176** xanh | `node --test tests/*.test.cjs` |
 | Prompt activation | **96** ở `phase-1.jsonl`, **6** ranh giới, **2** acceptance | `evals/activation/*.jsonl` |
 | Case trong `skills/<name>/tests/` | **17/17** skill, **55** case (`bk-protocol` không cần) | `recount-status-numbers.cjs` |
-| File stack `bk-build/references/stacks/` | **3/8** trên `main`; **5/8** trên nhánh P3a (`node`, `python` chờ đo) | `ls` |
-| Task benchmark trong `evals/bench/` | **8** (`build-01`, `debug-01`, `probe-review-authored`, `review-01`…`04`, `test-01`) | `ls evals/bench/*/task.json` |
+| File stack `bk-build/references/stacks/` | **3/8** trên `main`; **5/8** trên nhánh (`node` giữ trên nhánh sau guard, câu 36; `python` chờ `py-01`) | `ls` |
+| Task benchmark trong `evals/bench/` | **9** (`build-01`, `debug-01`, `node-01` trên nhánh, `probe-review-authored`, `review-01`…`04`, `test-01`) | `ls evals/bench/*/task.json` |
 | Hàng nguồn trong ma trận | **39** | `grep -c '^\| [0-9]' docs/specs/2026-09-10-coverage-matrix.md` |
 | Host đã qua acceptance | **2/7** (Claude Code, Antigravity; bảy host của `docs/hosts.md`, trong đó Copilot CLI và Factory Droid chung một mục. §2 mục 11 là chỉ số khác: 2/6 host owner thực dùng, câu 8) | `docs/hosts.md` |
 | Bootstrap protocol | **6.485/6.500** ký tự | proxy của `tests/session-start.test.cjs`, đo lại 2026-09-26 |
@@ -40,7 +40,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 |---|---|---|---|
 | 1 | Catalog đủ skill (v2 §5.1) | 18 | **18/18** |
 | 2 | Mỗi skill đạt cả 5 điều kiện quality bar (v2 §5.3) | 18/18 | **0/18 đủ cả năm; 17 đạt 4/5** (thừa hưởng 2026-09-24). Thiếu chung: **#2**, mỗi dòng luật truy được về nguồn hoặc field lesson |
-| 3 | File stack (v2 §5.5) | 8 | **3/8** trên `main`; `node`, `python` viết xong trên nhánh P3a, chờ đo ở P3b. P4 viết ba file còn lại |
+| 3 | File stack (v2 §5.5) | 8 | **3/8** trên `main`; `node` đã guard ở P3b nhưng không được đọc (0/8), giữ trên nhánh; `python` chờ `py-01` (P3c). P4 viết ba file còn lại |
 | 4 | Nguồn lấy chữ hoặc lấy ý có quyết định, kèm `NOTICE`/`derived` khi lấy chữ | 11 | **3/11** |
 | 5 | Fixed context ≤5.000 qua `/context` (v1 §17, v2 §12) | 1 số | **Đạt trên Claude Code, ≈4.010** sau `bk-research` (thừa hưởng 2026-09-23, `docs/specs/2026-09-23-bk-research-design.md`); sau `bk-perf` chưa đọc lại bằng `/context` |
 | 6 | Activation precision và recall ≥0,9, cả hai host | 2 host | **Đạt 2/2** (thừa hưởng: Claude Code 2026-09-16 recall 0,958, precision 1,000; Antigravity 2026-09-17 recall và precision 0,979, chấm lại 2026-09-20). Chi tiết: `docs/compat/2026-09-16-daily-driver-gate.md` |
@@ -63,7 +63,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 
 ## 4. Đang chờ owner
 
-- **35/35 câu D5 có quyết định** (`docs/specs/2026-09-12-d5-owner-questions.md`). Mới nhất: câu 35 (2026-09-26), ba khuyến nghị sau P3a.
+- **36/36 câu D5 có quyết định** (`docs/specs/2026-09-12-d5-owner-questions.md`). Mới nhất: câu 36 (2026-09-26), giữ `node.md` trên nhánh.
 - Việc chờ owner của phiên đang mở: mục Decisions waiting của handoff mới nhất.
 
 ## 5. Luồng mở mang từ bản cũ của file này
