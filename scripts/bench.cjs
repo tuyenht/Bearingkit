@@ -234,7 +234,7 @@ async function run(argv) {
     // A check that throws (a file held open on Windows) costs that session its checks, not the run.
     let check = null;
     // An orphan may still be writing the fixture, so its checks are not run: they would read a moving target.
-    if (builder.check && !s.orphan) try { check = builder.check(builder.DST); } catch (e) { check = { error: String(e && e.message || e) }; }
+    if (builder.check && !s.orphan) try { check = builder.check(builder.DST, s.raw); } catch (e) { check = { error: String(e && e.message || e) }; }
     if (check) fs.writeFileSync(path.join(outDir, `${base}.check.json`), JSON.stringify(check) + '\n');
     const row = scoreRow({ n: i + 1, ...p }, s.raw, s.cut, task, base, check);
     fs.writeFileSync(path.join(outDir, `${base}.answer.md`), row.answer || '(no final answer)\n');

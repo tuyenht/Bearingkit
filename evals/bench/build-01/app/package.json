@@ -1,0 +1,9 @@
+{
+  "name": "invoice-tools",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Invoice rendering, reminders and the accountant's CSV import and export.",
+  "scripts": {
+    "test": "node --test"
+  }
+}

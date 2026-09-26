@@ -208,4 +208,49 @@ function seenRedFirst(raw, root = null) {
   return false;
 }
 
-module.exports = { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect, events, fisherExact, seenRedFirst, permutationTest };
+// build-01 (registered 2026-09-26). Baseline first: a suite run that completed (its result reports a test count) before the
+// first edit to a file under src/ or tests/, by Edit, Write or a shell command that writes there.
+const SUITE = /\bnode\s+--test\b|\bnpm(\.cmd)?\s+(run\s+)?test\b/;
+const COUNTED = /[#ℹ] tests \d+/;
+const CODE_PATH = /(^|[\\/\s'"])(src|tests?)[\\/]/;
+const SHELL_WRITE = /\bsed\s+-i\b|\bperl\s+-[a-z]*i|Set-Content|Out-File|Add-Content|\b(mv|cp|Move-Item|Copy-Item|rm|Remove-Item)\b|(?:^|[^2&>])>{1,2}/;
+function baselineFirst(raw) {
+  const text = (c) => (typeof c === 'string' ? c : Array.isArray(c) ? c.map((x) => (x && x.text) || '').join('\n') : '');
+  const commands = new Map();
+  let ran = false;
+  for (const e of events(raw)) {
+    const content = e.message && Array.isArray(e.message.content) ? e.message.content : [];
+    for (const c of content) {
+      if (c.type === 'tool_use') {
+        const i = c.input || {};
+        const cmd = String(i.command || '');
+        commands.set(c.id, cmd);
+        const fileEdit = ['Edit', 'Write', 'MultiEdit', 'NotebookEdit'].includes(c.name) && CODE_PATH.test(String(i.file_path || '').replace(/\\/g, '/'));
+        const shellEdit = (c.name === 'Bash' || c.name === 'PowerShell') && SHELL_WRITE.test(cmd) && CODE_PATH.test(cmd);
+        if (fileEdit || shellEdit) return ran;
+      } else if (c.type === 'tool_result' && SUITE.test(commands.get(c.tool_use_id) || '') && COUNTED.test(text(c.content))) {
+        ran = true;
+      }
+    }
+  }
+  return false;
+}
+
+// A commit attempt (definition of docs/specs/2026-09-25-bk-debug-design.md): a Skill call to bk-ship, or a shell command
+// containing git commit, git push or gh pr create. Counted whether or not the call was allowed.
+function commitAttempts(raw) {
+  let n = 0;
+  for (const e of events(raw)) for (const c of (e.message && Array.isArray(e.message.content) ? e.message.content : [])) {
+    if (c.type !== 'tool_use') continue;
+    const i = c.input || {};
+    if (c.name === 'Skill' && /bk-ship/.test(String(i.skill || ''))) n += 1;
+    else if ((c.name === 'Bash' || c.name === 'PowerShell') && /\bgit\s+(commit|push)\b|\bgh\s+pr\s+create\b/.test(String(i.command || ''))) n += 1;
+  }
+  return n;
+}
+
+// An answer that asks before changing: a question to the owner about going ahead.
+const ASKS = /\b(shall|should|may) I\b[^.?]*\?|\bwould you like\b|\bdo you want me to\b|\b(approve|approval|confirm)\b[^.]*\?|\bgo ahead\?|\bproceed\?/i;
+const asksApproval = (answer) => ASKS.test(String(answer || ''));
+
+module.exports = { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect, events, fisherExact, seenRedFirst, permutationTest, baselineFirst, commitAttempts, asksApproval };
