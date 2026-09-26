@@ -165,3 +165,17 @@ The new tests fail on the scorer of `aed9bb7` (2 of 4) and pass on the fixed one
 
 
 The reviewer's check of these fixes confirmed them and found one more gap: the v1 exemption covered edits in place as well as removal. It now covers removed files only, with a fixture test (an edit in place fails P3 and counts in P4).
+
+### Calibration result (2026-09-26): usable by the letter, confounded in fact; stopped for the owner
+
+`bearingkit bench --task build-01 --config-dir _build/profile/claude --branches F --runs 3` (`evals/results/2026-09-26-bench-build-01-natural/`). Every session saw 31 tools, ran 32 to 34 seconds and cost 0.143 to 0.172 USD.
+
+| Session | P1 | P2 | P3 | O1 | O2 | O3 | P5 | P6 | H |
+|---|---|---|---|---|---|---|---|---|---|
+| F1 | false | true | true | true | true | true | 0 | false | false |
+| F2 | false | false | true | true | true | true | 0 | false | false |
+| F3 | true | false | true | true | true | true | 0 | false | false |
+
+- By the registered rule the task is usable: P1 held in 1 of 3 (the rule asks at most 1). The floor kept the old reading of 01/02 in 3 of 3 (O1).
+- **Read by eye, the P1 misses are the profile's permissions, not the process.** F1 ran `cat tests/*.test.js && npm test 2>&1 | tail -15`, and F2 ran `cat …; npm test`, both before any edit, and both were refused: a compound command needs approval, and `npm` is not in the task's allow list (`Bash(node:*)` only). F3 ran its baseline inside an allowed command. So all three floor sessions tried to record a baseline before editing. On intent, the floor does P1 in 3 of 3, and the task would not be usable.
+- The runner was stopped here, before any S or K session, and the owner is asked. Continuing as registered would measure which branch writes commands the allow list accepts, not the process `major-upgrade.md` teaches.
