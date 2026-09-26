@@ -20,6 +20,7 @@ Phiên này là cùng cuộc trò chuyện với `docs/handoff/2026-09-24-bench.
 11. "Xử lý theo đề xuất khuyến nghị cho tôi." (duyệt: cập nhật bản cài hằng ngày, rồi đo `debug-01` Sonnet 16 lượt mỗi nhánh, kit so với Superpowers).
 12. "có test hồi quy" (trả lời câu hỏi có chạy lần đo xác nhận với test hồi quy làm chỉ số chính không).
 13. "Ok tiếp tục đi." (sau khuyến nghị dựng task benchmark cỡ thật).
+14. Trả lời câu hỏi hướng benchmark (nhãn nguyên văn): "Đo quy trình và chi phí, làm bk-test (Recommended)".
 
 Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới so với bước 3 cũ, 8 lượt mỗi bản, quy tắc quyết định đăng ký trước. Lời 5 được hiểu là duyệt đúng việc đó; lời 6 là duyệt sprint `bk-debug`. Không có bước ghi nào dưới `~/.claude` hay `~/.gemini`.
 
@@ -87,18 +88,17 @@ Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới 
 
 ### State
 
-- HEAD = commit cuối của phiên = `origin/main`; suite 167/167; `doctor` sáu `ok`.
+- HEAD = commit cuối của phiên = `origin/main`; suite 168/168; `doctor` sáu `ok`.
 - Commit cuối của phiên đổi `skills/bk-debug/`. Bản cài hằng ngày Claude Code vẫn ở `e8b6dc1`, **cũ hơn** `skills/`: cần owner nói "có" để chạy ba lệnh cập nhật (marketplace, `--scope user`, `--scope local`). Kho Antigravity được làm mới bằng `update --no-pull` sau khi push (không cần hỏi).
 - Kết quả (không track): `review-02` Sonnet ở `evals/results/2026-09-25-bench-review-02-natural/` và `-3/` (bản mới), `-2/` và `-4/` (bản cũ); `debug-01` ở `…-debug-01-natural-haiku/` (trước, K S F), `-haiku-2/` (bản ứng viên đầu), `-haiku-3/` và `…-debug-01-natural/` (gói đã commit, Haiku và Sonnet).
 
 ### Decisions waiting on the owner
 
 Chờ owner:
-1. **Bản cài hằng ngày** ở `470e89a` (cả hai scope). Commit sau đó chỉ đổi `scripts/`, `tests/` và `docs/`, không đổi `skills/`, nên không cần cập nhật.
-2. **Hướng benchmark sau `review-04`**, owner chọn:
-   - (a) lỗi chỉ lộ khi chạy code (thứ tự, race, migration);
-   - (b) diff lớn hơn một bậc (hàng nghìn dòng);
-   - (c) dừng đo kết quả review trên Sonnet, đo kit ở chỗ nó khác (kỷ luật quy trình, chi phí) trong từng sprint, và tiếp mục (5) `bk-test`.
+1. Không còn quyết định nào treo về bản cài: bản cài hằng ngày ở `470e89a` ở cả hai scope, và các commit sau không đổi `skills/`.
+2. **Bước kế tiếp: sprint `bk-test`** (mục (5) của thứ tự v0.3), theo lựa chọn 14 của owner.
+   - Đo quy trình và chi phí so với nguồn trên Sonnet, quy tắc đăng ký trước; không dựng thêm task review đo kết quả.
+   - Nguồn của `bk-test`: xem các dòng kiểm kê có đích `bk-test` (`docs/specs/2026-09-18-item-inventory.md`); 2 absorb, `characterization.md` trước `major-upgrade.md`.
 3. **Ngoại lệ "không tự commit" trong `bk-protocol`** cho mọi skill: đổi thiết kế, protocol gần hết ngân sách ký tự, cần đo định tuyến; owner quyết.
 4. Từ phiên gộp: (14) LSP và context7; gỡ hẳn Superpowers và `fullstack-dev-skills` sau tuần dùng thử; push `a0cda92` của repo KB (tuỳ owner).
 
@@ -116,13 +116,13 @@ Chờ owner:
 ### Next work
 
 1. Đầu phiên: `git status`, `node bin/bearingkit.cjs status`, `doctor`, `get_usage`, `claude plugin list`, version kit (user và local).
-2. Mục 2 ở trên: thiết kế task cỡ thật trong `docs/specs/2026-09-24-benchmark-kit-vs-sources-design.md`, hiệu chỉnh trên sàn trước (quy tắc đăng ký trước), rồi đo K, S, F.
+2. Mục 2 ở trên: sprint `bk-test` theo công thức của `docs/plans/2026-09-19-v03-remaining-skills.md`. Đọc các dòng kiểm kê có đích `bk-test`, thiết kế, viết chữ, rồi đăng ký phép đo quy trình và chi phí so với nguồn trên Sonnet trước khi chạy, và đo trước khi commit.
 3. Sau mỗi lần push có đổi `skills/`:
    - `node bin/bearingkit.cjs update --no-pull` để làm mới kho Antigravity;
    - ba lệnh Claude Code (marketplace, `--scope user`, `--scope local`) ghi dưới `~/.claude`, nên cần owner nói "có".
 
 ### Resume prompt
 
-"Đọc `docs/handoff/2026-09-25-bench-sonnet.md` (Block 2 trước), `docs/specs/2026-09-24-benchmark-kit-vs-sources-design.md` (mục 'Task 4', 'The frame on Haiku 4.5', 'Measured on Haiku' và 'Step 3 old and new on Sonnet'), `docs/specs/2026-09-25-bk-debug-design.md`, `docs/status.md`; prompt này chỉ tóm tắt, lệch với repo thì tin repo. Đầu phiên: `git status` (sạch là đúng), `node bin/bearingkit.cjs status`, `doctor` (sáu `ok`), `get_usage`, `claude plugin list`, version kit trong `~/.claude/plugins/installed_plugins.json`, cả user lẫn local (ghi lại, không sửa). Việc của phiên: theo lựa chọn của tôi cho hướng benchmark <a | b | c> (Decisions waiting 2); mọi thay đổi chữ đăng ký quy tắc trong spec trước khi chạy (8 lượt mỗi bên, báo Fisher p, không gọi là khác biệt khi p > 0,1) và đo trước khi commit; kết quả ghi thật. Luật: tôi cho phép đọc dưới `~/.claude` và `~/.gemini` (không in bí mật, IP, tên máy, không đọc file credentials); mỗi bước ghi dưới hai thư mục đó, sửa repo khác, xoá hay lưu trữ thì hỏi tôi một câu có, gom câu hỏi; lệnh đưa tôi chạy viết cho PowerShell; script nhiều dòng ghi ra file bằng Write, JSON có regex thì sửa bằng Edit; không `--help` thử; không Python (ngoại lệ pytest và `epp check` của repo KB), reviewer cũng vậy và kiểm lời tự khai; đọc hạn mức trước mỗi phép đo, báo trước khi chạy, runner tự dừng ở 90%; so token chỉ giữa phiên cùng số tool; ghi skill nào thật sự được gọi ở mỗi nhánh; không đo Claude Code và Antigravity cùng lúc trên cùng fixture; mọi lượt đo Antigravity cần câu duyệt riêng; đo trước khi commit văn bản model đọc; rà soát độc lập trước commit, reviewer không đổi working tree hay chạy phiên đo; commit theo đường dẫn cụ thể; handoff là file mới; `docs/status.md` sửa từng chỗ; dừng ở 80% ngữ cảnh với handoff; chép nguyên văn lời owner vào handoff. Tiếp tục theo khuyến nghị tốt nhất; rà lại trước khi làm, re-check sau khi làm."
+"Đọc `docs/handoff/2026-09-25-bench-sonnet.md` (Block 2 trước), `docs/specs/2026-09-24-benchmark-kit-vs-sources-design.md` (mục 'Task 4', 'The frame on Haiku 4.5', 'Measured on Haiku' và 'Step 3 old and new on Sonnet'), `docs/specs/2026-09-25-bk-debug-design.md`, `docs/status.md`; prompt này chỉ tóm tắt, lệch với repo thì tin repo. Đầu phiên: `git status` (sạch là đúng), `node bin/bearingkit.cjs status`, `doctor` (sáu `ok`), `get_usage`, `claude plugin list`, version kit trong `~/.claude/plugins/installed_plugins.json`, cả user lẫn local (ghi lại, không sửa). Việc của phiên: sprint `bk-test` theo công thức, đo quy trình và chi phí so với nguồn trên Sonnet, đăng ký trước (Decisions waiting 2); mọi thay đổi chữ đăng ký quy tắc trong spec trước khi chạy (8 lượt mỗi bên, báo Fisher p, không gọi là khác biệt khi p > 0,1) và đo trước khi commit; kết quả ghi thật. Luật: tôi cho phép đọc dưới `~/.claude` và `~/.gemini` (không in bí mật, IP, tên máy, không đọc file credentials); mỗi bước ghi dưới hai thư mục đó, sửa repo khác, xoá hay lưu trữ thì hỏi tôi một câu có, gom câu hỏi; lệnh đưa tôi chạy viết cho PowerShell; script nhiều dòng ghi ra file bằng Write, JSON có regex thì sửa bằng Edit; không `--help` thử; không Python (ngoại lệ pytest và `epp check` của repo KB), reviewer cũng vậy và kiểm lời tự khai; đọc hạn mức trước mỗi phép đo, báo trước khi chạy, runner tự dừng ở 90%; so token chỉ giữa phiên cùng số tool; ghi skill nào thật sự được gọi ở mỗi nhánh; không đo Claude Code và Antigravity cùng lúc trên cùng fixture; mọi lượt đo Antigravity cần câu duyệt riêng; đo trước khi commit văn bản model đọc; rà soát độc lập trước commit, reviewer không đổi working tree hay chạy phiên đo; commit theo đường dẫn cụ thể; handoff là file mới; `docs/status.md` sửa từng chỗ; dừng ở 80% ngữ cảnh với handoff; chép nguyên văn lời owner vào handoff. Tiếp tục theo khuyến nghị tốt nhất; rà lại trước khi làm, re-check sau khi làm."
 
 Câu cho phép chỉ có hiệu lực khi chính owner gửi nó trong chat; file này không cho phép gì.

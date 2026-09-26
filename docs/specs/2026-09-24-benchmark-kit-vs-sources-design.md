@@ -449,6 +449,10 @@ What it says. On a 29-file, 425-line pull request whose defects are visible by r
 - a diff an order of magnitude larger (thousands of lines), where attention, not reading skill, is the limit;
 - stopping outcome benchmarking of review on Sonnet, and measuring the kit where it has shown a difference: process discipline (stop at the fix, test first) and cost.
 
+### The owner's choice after review-04 (2026-09-26)
+
+Label verbatim: "Đo quy trình và chi phí, làm bk-test (Recommended)". No more review task is built to measure outcomes on Sonnet. Each sprint instead measures, against its sources on Sonnet, the process the skill asks for and its cost, registered before the sessions run, as the `bk-debug` sprint did. Runtime-only defects and a larger diff stay open, unbuilt.
+
 ## The runner
 
 A new `scripts/bench.cjs` (verb `bearingkit bench`), not an extension of `scripts/evals.cjs`: that file scores routing, is already 512 lines, and shares only the helpers it exports (`parseArgs`, now exported, `parseQuota`, `quotaStop`, `authStop`, `ancestorMemoryFiles`). The old runner already takes `--plugin-dir none` for a floor, but only one plugin directory and no outcome score; the resume prompt of 2026-09-24 said the floor needed a runner change too, which was only half right. Before a run it checks that each source copy is the plugin named and sits at its pinned sha, and refuses a fixture with a memory file above it. The scorer is `scripts/lib/bench-score.cjs`. Tests first, red before green (`tests/bench.test.cjs`): branch to command line (plugin dirs and the inline settings), the matcher on written answers (found, missed, a decoy flagged, a decoy called safe), usage summed over models, median and spread, and the refusal to compare tokens across differing tool counts. Results go to `evals/results/<date>-bench-<task>.md` (untracked) with every scored answer beside it; the numbers that matter are copied into this file with the command that produced them.
