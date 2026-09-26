@@ -63,7 +63,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 
 ## 4. Đang chờ owner
 
-- **34/34 câu D5 có quyết định** (`docs/specs/2026-09-12-d5-owner-questions.md`). Mới nhất: câu 34 (2026-09-26), D2–D4 theo khuyến nghị.
+- **35/35 câu D5 có quyết định** (`docs/specs/2026-09-12-d5-owner-questions.md`). Mới nhất: câu 35 (2026-09-26), ba khuyến nghị sau P3a.
 - Việc chờ owner của phiên đang mở: mục Decisions waiting của handoff mới nhất.
 
 ## 5. Luồng mở mang từ bản cũ của file này

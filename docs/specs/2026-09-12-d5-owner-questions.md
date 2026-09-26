@@ -362,6 +362,13 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 - **(D3) Bước đánh giá độc lập của `bk-close`: có, dạng tuỳ chọn `--verify`, làm ở P6.** Hai phép thử: một agent rà độ đầy đủ so với transcript; một agent chỉ nhận resume prompt trả lời câu hỏi trạng thái; sửa lỗ hổng trước commit cuối. Văn bản bắt buộc có điều kiện cho agent: chỉ đọc, chỉ transcript và file được nêu, không lệnh nền, không tìm ngoài repo, dừng mọi việc nền trước khi trả lời (sự cố `find /` ngày 2026-09-26). Đổi văn bản skill nên đo trước khi commit, như mọi sprint.
 - **(D4) Đo Antigravity các skill đã đổi (`bk-review`, `bk-debug`, `bk-test`, `bk-build`): một lượt chấp nhận ngắn ở P7, đã duyệt trước.** Kiểm định tuyến và việc mở được reference mới trên bản stage trung tính; không chạy cùng lúc với phép đo Claude Code; không benchmark đầy đủ. Câu duyệt này chỉ phủ lượt đó; lượt Antigravity khác vẫn cần câu duyệt riêng.
 
+### 35. Ba việc treo sau P3a: Python trong phần chấm `py-01`, nguồn Antigravity-Core, tách phiên đo (v0.3, 2026-09-26)
+> **ĐÃ CHỐT 2026-09-26 — owner, nguyên văn: "Đồng ý cả ba khuyến nghị."** Ba khuyến nghị là của phiên P3a (cloud), trình trong cùng cuộc trò chuyện; bản đầy đủ ở `docs/handoff/2026-09-26-p3a-stack-design.md`, Decisions waiting, và `docs/specs/2026-09-26-stack-node-python-design.md`.
+*(MỚI 2026-09-26. Nguồn: Decisions waiting 1–3 của handoff P3a.)*
+- **(1) Python trong scorer và test fixture của `py-01`: có**, chỉ trên fixture `py-01`, chỉ qua `python -m` (`python -m pytest`, `python -m stock`). Mở rộng ngoại lệ "Python trong phiên đo" (handoff P2, Block 2); phiên chính và reviewer vẫn không chạy Python ngoài phạm vi này.
+- **(2) Antigravity-Core: đọc 36 hàng từ clone local nếu clone đúng pin `1774280`; không đúng pin thì dừng và hỏi owner.** Câu nào thêm vào `node.md`/`python.md` từ đó phải có dòng nguồn và qua reviewer trước mọi phiên đo.
+- **(3) Tách phiên: P3b chỉ `node-01`; `py-01` để P3c.**
+
 ---
 
 ## Quyết định 2026-09-12 và những gì mở khoá — CHƯA áp dụng, chỉ liệt kê
