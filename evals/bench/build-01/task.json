@@ -15,6 +15,13 @@
     "allow": [
       "Edit(//c/Projects/.bearingkit-evals/bench/build-01/**)",
       "Bash(node:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run test:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
       "Bash(git log:*)",
       "Bash(git diff:*)",
       "Bash(git show:*)",

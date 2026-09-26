@@ -179,3 +179,22 @@ The reviewer's check of these fixes confirmed them and found one more gap: the v
 - By the registered rule the task is usable: P1 held in 1 of 3 (the rule asks at most 1). The floor kept the old reading of 01/02 in 3 of 3 (O1).
 - **Read by eye, the P1 misses are the profile's permissions, not the process.** F1 ran `cat tests/*.test.js && npm test 2>&1 | tail -15`, and F2 ran `cat …; npm test`, both before any edit, and both were refused: a compound command needs approval, and `npm` is not in the task's allow list (`Bash(node:*)` only). F3 ran its baseline inside an allowed command. So all three floor sessions tried to record a baseline before editing. On intent, the floor does P1 in 3 of 3, and the task would not be usable.
 - The runner was stopped here, before any S or K session, and the owner is asked. Continuing as registered would measure which branch writes commands the allow list accepts, not the process `major-upgrade.md` teaches.
+
+### The owner's choice after calibration, and the guard (registered 2026-09-26, before its sessions ran)
+
+Label verbatim: "Guard, nới quyền (Recommended)". The floor is taken to do the process and the outcome already (P1 3 of 3 on intent, O1 3 of 3), so the task is not scored against the sources, and the text is measured as a guard, as registered above and as in `bk-test`.
+
+- **Permissions widened for every branch** (`evals/bench/build-01/task.json`): `npm test`, `npm run test`, and the read-only `cat`, `ls`, `grep`, `head`, `tail`, beside `node` and read-only `git`. The floor's calibration ran under the narrower list; its numbers are kept as they were measured, and the comparison below says so.
+- **The text**: `skills/bk-build/references/major-upgrade.md` (36 lines), one "Read first" line and the Sources line in `SKILL.md`, the `NOTICE` entry and `derived` in `upstream/sources.json`.
+- **Guard**: eight `natural` K sessions on Sonnet 5 with the text in the main checkout. The text is committed only if all hold:
+  - O2 and O3 each at least 7 of 8;
+  - O1 not below the floor's calibration, which was 3 of 3, so **8 of 8**;
+  - P3 at least 7 of 8.
+- Reported with no bar: P1 (scored, and read by eye for refused runs), P2, P4, P5, P6, H, whether `major-upgrade.md` was read, cost against the floor's median (0.146 USD, narrower permissions), and the skill each session invoked. No "better" is claimed.
+- If a bar fails, nothing under `skills/` is committed and the owner is told.
+
+**Review of the text before the guard (2026-09-26, Sonnet, read only).** Two should-fix findings, both text written for the fixture rather than from the source, fixed before any guard session:
+- a sentence forbidding edits to vendored third-party code: no source line supports it; removed;
+- the pilot's show-the-user step was made conditional on prior approval: the source makes it unconditional; restored. For a single unit, "the pilot is the change itself" stays, as a reading of the source's pre-fan-out gate (the reviewer's judgment: a sound extrapolation, not a quote).
+
+One note, also applied: "a delta checked and not hit is noted" is named in the header as the kit's own addition. The reviewer confirmed the fixes, found fidelity, licence and attribution in order, and ran the suite (174 of 174).
