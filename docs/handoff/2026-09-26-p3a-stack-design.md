@@ -11,7 +11,7 @@ Branch **`claude/serene-franklin-3f3bb7`** (không phải `main`), đã push. Đ
 ### Facts established (do not re-derive)
 
 - **Việc đã làm trên nhánh** (chưa có trên `main`):
-  - `skills/bk-build/references/stacks/node.md` (46 dòng) và `python.md`;
+  - `skills/bk-build/references/stacks/node.md` (46 dòng) và `python.md` (40 dòng);
   - `stacks/index.md`: hai hàng `node`, `python` thành "written", "five exist today", câu version card sửa theo;
   - `skills/bk-build/SKILL.md`: "(five of the eight exist)";
   - thiết kế và đăng ký đo: `docs/specs/2026-09-26-stack-node-python-design.md`, có bảng nguồn cho **từng câu** của hai file;
@@ -83,7 +83,7 @@ Branch **`claude/serene-franklin-3f3bb7`** (không phải `main`), đã push. Đ
 
 1. Đầu phiên như Resume prompt dưới.
 2. Hỏi gom hai câu COUNCIL (Python trong scorer `py-01`; Antigravity-Core).
-3. Dựng `evals/bench/node-01/` đúng đăng ký: `build.cjs`, `app/`, `task.json`, scorer trong `scripts/lib/bench-score.cjs` nếu dùng chung; test fixture trong `tests/` đỏ trước rồi xanh (cây gốc xanh; bản port tuần tự không deadline trượt N3; bản port `Promise.all` trượt N1; bản tham chiếu qua cả ba). Rà độc lập **trước** commit. `--dry-run` phải thấy ba nhánh và hai nguồn ghim.
+3. Dựng `evals/bench/node-01/` đúng đăng ký: `build.cjs`, `app/`, `task.json`, phần chấm riêng của task (server giả, N1–N3, O1, X) trong `check()` của `evals/bench/node-01/build.cjs` như `build-01`; chỉ phần đọc stream dùng chung (R: skill gọi, file stack mở) vào `scripts/lib/bench-score.cjs`, có test; test fixture trong `tests/` đỏ trước rồi xanh (cây gốc xanh; bản port tuần tự không deadline trượt N3; bản port `Promise.all` trượt N1; bản tham chiếu qua cả ba). Rà độc lập **trước** commit. `--dry-run` phải thấy ba nhánh và hai nguồn ghim.
 4. Hiệu chỉnh ba phiên F; đọc bằng mắt mọi lệnh bị từ chối; quyết usable hay guard theo spec.
 5. Đo theo nhánh đã quyết (K-before từ worktree của `main`, K-after từ nhánh này). Đạt luật merge thì merge nhánh vào `main` (chỉ phần `node`; `python.md` chờ `py-01`), cập nhật cài hằng ngày cả `--scope user` và `--scope local`, làm mới kho Antigravity, `doctor`.
 
@@ -103,4 +103,4 @@ Luật: tôi cho phép đọc dưới `~/.claude` và `~/.gemini` (không in bí
 
 ### Cold start
 
-(điền sau diễn tập)
+Diễn tập (Sonnet, chỉ đọc, chỉ bắt đầu từ resume prompt): 12/12 câu đúng, mỗi câu kèm `file:line`. Hai lỗ hổng đã vá trước commit cuối: số dòng `python.md` thiếu trong Facts; chỗ đặt scorer của `node-01` còn bỏ ngỏ (nay: `check()` trong `build.cjs` của task, phần đọc stream dùng chung vào `bench-score.cjs`). Không thấy mâu thuẫn giữa handoff, spec và `docs/status.md`.
