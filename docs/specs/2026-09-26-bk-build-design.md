@@ -102,7 +102,7 @@ A fixture test comes first (red before green, in `tests/`), in the pattern of `t
   - O1 for K after is not below K before;
   - otherwise the text is not committed, and the owner decides.
 - **Against the sources.** K after is compared with S by the same test. "Better than its sources on `build-01`, Sonnet" is said only if p ≤ 0.05. Otherwise the result is "no clear difference".
-- Reported with no bar: P2 to P6, O1 and O2 per branch; cost median and spread per branch; which skill each session invoked; and, for decision 2 of the handoff, commit attempts per branch.
+- Reported with no bar: P2 to P6, H, O1 and O2 per branch; cost median and spread per branch; which skill each session invoked; and, for decision 2 of the handoff, commit attempts per branch.
 
 **Guard, if the task is not usable** (the owner's choice for `bk-debug`, "Commit phần chắt lọc, đóng sprint (Recommended)", 2026-09-25, applied as in `bk-test`). Eight K sessions run with the text. It is committed only if all three hold:
 - O2 and O3 each at least 7 of 8;
@@ -122,7 +122,7 @@ P1, P2, P5, P6 and cost are reported, with no bar and no "better".
 - **The protocol is in K only.** `bk-protocol` is injected by the kit's own hook (`hooks/session-start.cjs`), so K sessions carry `skills/bk-protocol/SKILL.md:76` (a major bump is its own reviewed change) and the ACT/COUNCIL gate; S and F do not. That is the kit as it ships, and is kept. Here the bump is the whole task and the prompt pre-approves it, so the line should not apply; if K stops to ask anyway, H counts it and O2 falls, which is scored against the kit, not excused. Expected direction, stated before the run: no effect on P1, a small risk to O2 for K.
 - P1 rewards running the suite before editing. A session could run it without reading the result. The scorer checks that the run completed, not that it was understood.
 
-**Budget.** Before the first session: read `get_usage`; the runner stops at 90%. Planned sessions: 3 calibration, then 5 + 8 + 8 + 8 = 29, or 3 + 8 for the guard. Cost per session is not measured for this task. On earlier Sonnet tasks it was 0.13 to 0.34 USD at the median, by branch.
+**Budget.** Before the first session: read `get_usage`; the runner stops at 90%. Planned sessions: 3 calibration, then 5 + 8 + 8 + 8 = 29, or 3 + 8 for the guard. Cost per session is not measured for this task. On earlier Sonnet tasks the median per branch ran from 0.11 USD (`review-01` F) to 0.77 USD (`review-01` K); on `debug-01` and `test-01` it was 0.13 to 0.34 USD at the median, by branch.
 
 ## Independent review of this registration
 
