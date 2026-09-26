@@ -144,6 +144,7 @@
         "plugins/code-modernization/commands/modernize-preflight.md",
         "plugins/code-modernization/agents/business-rules-extractor.md",
         "plugins/code-modernization/commands/modernize-extract-rules.md",
+        "plugins/code-modernization/agents/test-engineer.md",
         "plugins/security-guidance/hooks/review_api.py"
       ],
       "derived": {
@@ -160,6 +161,9 @@
         ],
         "skills/bk-test/references/coverage-lens.md": [
           "plugins/pr-review-toolkit/agents/pr-test-analyzer.md"
+        ],
+        "skills/bk-test/references/characterization.md": [
+          "plugins/code-modernization/agents/test-engineer.md"
         ],
         "skills/bk-map/references/codebase-map.md": [
           "plugins/code-modernization/agents/legacy-analyst.md",
@@ -246,11 +250,15 @@
       "note": "row 16",
       "tracked": [
         "skills/engineering/code-review/SKILL.md",
-        "skills/engineering/diagnosing-bugs/SKILL.md"
+        "skills/engineering/diagnosing-bugs/SKILL.md",
+        "skills/engineering/tdd/SKILL.md"
       ],
       "derived": {
         "skills/bk-debug/references/feedback-loop.md": [
           "skills/engineering/diagnosing-bugs/SKILL.md"
+        ],
+        "skills/bk-test/references/tdd.md": [
+          "skills/engineering/tdd/SKILL.md"
         ],
         "skills/bk-review/references/review-lenses.md": [
           "skills/engineering/code-review/SKILL.md"
