@@ -156,6 +156,24 @@ function fisherExact(a, b, c, d) {
   return Math.min(1, sum);
 }
 
+// Exact two-sided permutation test on the difference of means of two groups of counts (for instance mutants killed
+// per session): every split of the pooled values into groups of the same sizes is enumerated, and p is the share whose
+// absolute difference is at least the observed one. Exact for the sizes used here (8 and 8 give 12,870 splits).
+function permutationTest(a, b) {
+  const all = [...a, ...b];
+  const n = all.length; const k = a.length;
+  const total = all.reduce((s, x) => s + x, 0);
+  const diff = (sumA) => Math.abs(sumA / k - (total - sumA) / (n - k));
+  const observed = diff(a.reduce((s, x) => s + x, 0));
+  let extreme = 0; let splits = 0;
+  const walk = (start, left, sum) => {
+    if (left === 0) { splits += 1; if (diff(sum) >= observed - 1e-9) extreme += 1; return; }
+    for (let i = start; i <= n - left; i++) walk(i + 1, left - 1, sum + all[i]);
+  };
+  walk(0, k, 0);
+  return extreme / splits;
+}
+
 // Seen red first (debug-01, registered 2026-09-25): a file `node --test` runs is written by Edit, Write or a shell
 // redirect whose target is that file (2>&1 is not a target), then a `node` run reports a failure, and only then is
 // anything under src/ edited. A first version of this count missed top-level test-*.js files; a second read
@@ -190,4 +208,4 @@ function seenRedFirst(raw, root = null) {
   return false;
 }
 
-module.exports = { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect, events, fisherExact, seenRedFirst };
+module.exports = { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect, events, fisherExact, seenRedFirst, permutationTest };

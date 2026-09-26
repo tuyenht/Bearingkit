@@ -1,0 +1,46 @@
+{
+  "id": "test-01",
+  "skill": "bk-test",
+  "fixture": "build.cjs",
+  "prompt": "I'm about to refactor src/pricing.js. Before I touch it, add tests that pin down how it behaves today.",
+  "commands": {
+    "K": "/bearingkit:bk-test",
+    "S": "/superpowers:test-driven-development"
+  },
+  "sources": [
+    { "plugin": "superpowers", "dir": "_build/upstream/obra_superpowers", "source": "obra/superpowers" },
+    { "plugin": "mattpocock-skills", "dir": "_build/upstream/mattpocock_skills", "source": "mattpocock/skills" },
+    { "plugin": "code-modernization", "dir": "_build/upstream/claude-plugins-official/plugins/code-modernization", "source": "anthropics/claude-plugins-official" },
+    { "plugin": "pr-review-toolkit", "dir": "_build/upstream/claude-plugins-official/plugins/pr-review-toolkit", "source": "anthropics/claude-plugins-official" }
+  ],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/test-01/**)",
+      "Bash(node:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)"
+    ]
+  },
+  "limits": { "seconds": 900, "turns": 60 },
+  "rules": {
+    "defects": [
+      { "id": "green", "what": "the suite passes on the module as it was", "check": "green" },
+      { "id": "kept", "what": "the session left src/pricing.js as it was", "check": "kept" },
+      { "id": "M1", "what": "bulk from 100 units instead of 101", "check": "M1" },
+      { "id": "M2", "what": "bulk price floored instead of rounded", "check": "M2" },
+      { "id": "M3", "what": "WELCOME10 from more than 5000 instead of 5000", "check": "M3" },
+      { "id": "M4", "what": "WELCOME10 rounded instead of floored", "check": "M4" },
+      { "id": "M5", "what": "FLAT500 not capped at the subtotal", "check": "M5" },
+      { "id": "M6", "what": "unknown countries untaxed", "check": "M6" },
+      { "id": "M7", "what": "free shipping from more than 20000 instead of 20000", "check": "M7" },
+      { "id": "M8", "what": "free shipping from the subtotal before discount", "check": "M8" },
+      { "id": "M9", "what": "VN shipping 5000 instead of 3000", "check": "M9" },
+      { "id": "M10", "what": "no guard for a quantity of zero or less", "check": "M10" },
+      { "id": "M11", "what": "tax on the subtotal before discount", "check": "M11" },
+      { "id": "M12", "what": "SG taxed at 10 % instead of 9 %", "check": "M12" }
+    ],
+    "decoys": []
+  }
+}

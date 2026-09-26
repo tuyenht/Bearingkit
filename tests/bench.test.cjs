@@ -656,3 +656,82 @@ test('review-04 plants its three defects in a 29-file branch and its rules tell 
   const careless = '1. SQL injection risk in the revenue report: $queryRaw is used.\n2. The fx rates cache is not keyed by tenant, so tenants share cached data.';
   assert.deepEqual(scoreAnswer(careless, rules), { found: [], missed: ['D1', 'D2', 'D3'], decoys: ['X1', 'X2'], blocked: null, passed: false });
 });
+
+// test-01 (2026-09-26): characterization tests scored by mutation. Untouched, the suite kills nothing; a suite that pins
+// one input per quirk kills all twelve (so no mutant is equivalent); a suite that edits the module is not "kept".
+test('test-01 kills no mutant untouched, all twelve with a characterization suite, and notices an edited module', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dst = path.join(dir, 'test-01');
+  const build = require('../evals/bench/test-01/build.cjs');
+  build.build({ dst });
+  const first = build.check(dst);
+  assert.equal(first.killed, 0);
+  assert.equal(first.green, true);
+  assert.equal(first.kept, true);
+  assert.equal(first.added, false);
+  const suite = `'use strict';
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { lineTotal, orderTotal } = require('../src/pricing');
+const one = (unitCents, qty) => ({ items: [{ unitCents, qty }] });
+test('bulk from 101 units, rounded', () => {
+  assert.equal(lineTotal({ unitCents: 100, qty: 100 }), 10000);
+  assert.equal(lineTotal({ unitCents: 15, qty: 101 }), 1364);
+  assert.equal(lineTotal({ unitCents: 5, qty: -2 }), 0);
+});
+test('coupons', () => {
+  assert.equal(orderTotal({ ...one(5000, 1), coupon: 'WELCOME10', country: 'US' }).discount, 500);
+  assert.equal(orderTotal({ ...one(5005, 1), coupon: 'WELCOME10', country: 'US' }).discount, 500);
+  assert.equal(orderTotal({ ...one(300, 1), coupon: 'FLAT500', country: 'US' }).discount, 300);
+});
+test('tax', () => {
+  assert.equal(orderTotal({ ...one(1000, 1), country: 'JP' }).tax, 100);
+  assert.equal(orderTotal({ ...one(1000, 1), country: 'SG' }).tax, 90);
+  assert.equal(orderTotal({ ...one(1000, 1), coupon: 'FLAT500', country: 'VN' }).tax, 50);
+});
+test('shipping', () => {
+  assert.equal(orderTotal({ ...one(20000, 1), country: 'US' }).shipping, 0);
+  assert.equal(orderTotal({ ...one(20300, 1), coupon: 'FLAT500', country: 'US' }).shipping, 5000);
+  assert.equal(orderTotal({ ...one(1000, 1), country: 'VN' }).shipping, 3000);
+});
+`;
+  fs.writeFileSync(path.join(dst, 'tests', 'pricing.test.js'), suite);
+  const full = build.check(dst);
+  assert.equal(full.green, true);
+  assert.equal(full.added, true);
+  assert.deepEqual(Object.keys(build.MUTANTS).filter((id) => !full[id]), [], 'every mutant is killed by some input');
+  assert.equal(full.killed, 12);
+  fs.appendFileSync(path.join(dst, 'src', 'pricing.js'), '\n// touched\n');
+  const edited = build.check(dst);
+  assert.equal(edited.kept, false);
+  assert.equal(edited.killed, 12, 'the mutation runs use the original module');
+  assert.match(fs.readFileSync(path.join(dst, 'src', 'pricing.js'), 'utf8'), /touched/, 'the session\'s copy is put back');
+  build.reset({ dst });
+  assert.equal(build.check(dst).killed, 0);
+  // A suite locked to the file's text (a hash) fails on every mutant without pinning any behaviour; the canary, a
+  // comment-only change, catches it and the score is withheld.
+  const digest = require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT, 'evals/bench/test-01/app/src/pricing.js'), 'utf8')).digest('hex');
+  fs.writeFileSync(path.join(dst, 'tests', 'hash.test.js'), [
+    "const test = require('node:test'); const assert = require('node:assert/strict');",
+    "const fs = require('node:fs'); const path = require('node:path'); const crypto = require('node:crypto');",
+    "test('unchanged', () => {",
+    "  const text = fs.readFileSync(path.join(__dirname, '..', 'src', 'pricing.js'), 'utf8').split('\\r\\n').join('\\n');",
+    `  assert.equal(crypto.createHash('sha256').update(text).digest('hex'), '${digest}');`,
+    '});', '',
+  ].join('\n'));
+  const locked = build.check(dst);
+  assert.equal(locked.green, true);
+  assert.equal(locked.textLocked, true);
+  assert.equal(locked.killed, 0, 'a text-locked suite scores nothing');
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+// Exact two-sided permutation test on the difference of means, for counts such as mutants killed per session.
+const { permutationTest } = require('../scripts/lib/bench-score.cjs');
+test('the permutation test gives 1 for identical groups and a small p for separated ones', () => {
+  assert.equal(permutationTest([3, 3, 3], [3, 3, 3]), 1);
+  const p = permutationTest([12, 12, 11, 12, 12, 11, 12, 12], [6, 7, 5, 8, 6, 7, 6, 5]);
+  assert.ok(p < 0.001, `separated groups: ${p}`);
+  // Hand-checked: [1, 2] against [3, 4]: of the 6 splits, 2 are as extreme (|diff| = 2), so p = 1/3.
+  assert.ok(Math.abs(permutationTest([1, 2], [3, 4]) - 1 / 3) < 1e-9);
+});
