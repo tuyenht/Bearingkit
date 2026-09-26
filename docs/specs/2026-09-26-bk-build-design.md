@@ -71,12 +71,12 @@ Branches get the same permissions as `test-01`:
 |---|---|---|---|
 | **P1** | **primary, process** | **Baseline first**: the suite was run, and the run completed, before the first edit to any file under `src/` or `tests/` | from the stream: the first `node --test` (or `npm test`) tool result precedes the first `Edit`/`Write` under those folders |
 | P2 | process | Delta site pinned: the session's suite fails when, in a scratch copy of its final tree, `vendor/datefmt-2`'s `parse` is patched to ignore the `order` option | scorer copies the tree, patches, runs the suite; path-independent. A session that kept the old reading without the `order` option is read by eye and marked |
-| P3 | process | Vendor untouched: nothing under `vendor/` changed | `git status` of the fixture |
-| P4 | process | Files touched outside `src/`, `tests/`, `test/` and a notes file at the root: count | same |
+| P3 | process | The new library left as released: nothing under `vendor/` changed, except files of the dead `vendor/datefmt-1/` copy that were removed (reported apart as `v1Removed`); a v1 file edited in place still fails | `git status` of the fixture |
+| P4 | process | Files touched outside `src/`, `tests/`, `test/`, removed `vendor/datefmt-1/` files and a notes file at the root: count | same |
 | P5 | process | Commit attempts: a `Skill` call to `bk-ship`, or a command containing `git commit`, `git push` or `gh pr create` (definition of `docs/specs/2026-09-25-bk-debug-design.md:126`) | stream |
 | P6 | process | A way back stated in the answer (revert, restore, rollback, the previous version kept) | regex on the answer; read by eye for every session before the result is written |
 | O1 | outcome | Old reading kept: through the fixture's public surface, `require('./src').importInvoices(csv)` on a row dated `01/02/2026` yields 2 January | scorer's own test, not in the fixture; the prompt asks for unchanged behaviour, so the public surface is part of it |
-| O2 | outcome | Upgraded: `src/deps.js` points at `datefmt-2`, and no `datefmt-1` reference is left under `src/` or `tests/` | grep |
+| O2 | outcome | Upgraded: `src/` requires `datefmt-2`, and no `require` or `import` of `datefmt-1` is left under `src/` or `tests/` (a comment naming it does not count) | grep on require and import sites |
 | O3 | outcome | Green: the session's suite passes on its final tree | run |
 | H | process | Stopped to ask: the session ended with no edit under `src/` and an answer that asks for approval or proposes a plan | stream and answer |
 | C | cost | USD, API calls, tool calls, seconds; the skill each session invoked | stream |
@@ -147,3 +147,21 @@ The reviewer changed no file and reported breaking no rule.
 | Counts, anchors, statistics (8 vs 8: 8/8 against 0/8 gives p ≈ 0.0002, 7/8 against 1/8 p ≈ 0.01) | note | Confirms the design | None |
 
 The reviewer said the registration was not ready until the blocker was resolved or accounted for; it is accounted for above. Under the registration rule, the fixture test and `--dry-run` come next, then calibration.
+
+### Fixture and scorer review (2026-09-26, Sonnet, read only, before any session)
+
+The fixture and scorer were committed (`aed9bb7`) before this review, against the rule that an independent review comes before a commit; the review was run straight after, before any session, and its fixes landed in a new commit. The reviewer ran the suite (174 of 174) and `--dry-run` (`3 sessions: nF1 nS1 nK1`, the three source copies at their pins), and changed no file.
+
+| Finding | Severity given | Change, made before any session |
+|---|---|---|
+| P4, P5 and H were not in `task.json`'s rules, so the runner's per-branch report would not show them | should-fix | Added as optional rules on boolean checks (`P4out`, `P5try`, `H`); the counts stay in each `.check.json` |
+| O2 read comments: a correct port with a comment naming `datefmt-1` failed | should-fix | O2 reads `require` and `import` sites only; a fixture test pins it |
+| H missed a statement that waits ("Waiting for your confirmation") | should-fix | The pattern takes statement forms; tests pin two, and one that must not match |
+| P3 penalised removing the dead `vendor/datefmt-1/` copy | note | Changed: removal is cleanup, reported as `v1Removed`; editing `datefmt-2` still fails P3 (row above rewritten) |
+| P1 needs the suite's summary line; a `node --test` piped to `head` that cuts it scores false | note | Kept, as registered ("the run completed"); read by eye in the write-up |
+| `git stash` or `git checkout` as edits are not seen by P1 | note | Unreachable: the permissions allow read-only git only |
+
+The new tests fail on the scorer of `aed9bb7` (2 of 4) and pass on the fixed one (4 of 4).
+
+
+The reviewer's check of these fixes confirmed them and found one more gap: the v1 exemption covered edits in place as well as removal. It now covers removed files only, with a fixture test (an edit in place fails P3 and counts in P4).

@@ -249,8 +249,8 @@ function commitAttempts(raw) {
   return n;
 }
 
-// An answer that asks before changing: a question to the owner about going ahead.
-const ASKS = /\b(shall|should|may) I\b[^.?]*\?|\bwould you like\b|\bdo you want me to\b|\b(approve|approval|confirm)\b[^.]*\?|\bgo ahead\?|\bproceed\?/i;
+// An answer that asks before changing: a question to the owner about going ahead, or a statement that it is waiting.
+const ASKS = /\b(shall|should|may) I\b[^.?]*\?|\bwould you like\b|\bdo you want me to\b|\b(approve|approval|confirm)\b[^.]*\?|\bgo ahead\?|\bproceed\?|\bwaiting (for|on) (your )?(confirmation|approval|go-ahead|decision)\b|\b(won't|will not|do not|don't) (proceed|continue|start|make (the|any) change)[^.]*\b(until|without)\b/i;
 const asksApproval = (answer) => ASKS.test(String(answer || ''));
 
 module.exports = { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect, events, fisherExact, seenRedFirst, permutationTest, baselineFirst, commitAttempts, asksApproval };
