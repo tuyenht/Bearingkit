@@ -49,3 +49,29 @@ The prompt, the same for every branch: "I'm about to refactor src/pricing.js. Be
 - Cost median per branch is reported beside the results.
 
 **Limits, stated now.** This is one small module. The kit text will be written after reading how the K-before sessions miss mutants, so a pass says it helps on this module. A held-out module would be needed to say more, and none is built.
+
+### Calibration result (2026-09-26): not usable
+
+`bearingkit bench --task test-01 --config-dir _build/profile/claude --branches F --runs 3` (`evals/results/2026-09-26-bench-test-01-natural/`).
+- The floor killed **12 of 12 mutants in all three sessions**, with 20, 23 and 21 tests.
+- Every suite was green on the original, no session edited the module, and no suite tripped the canary.
+- Each session cost 0.16 to 0.18 USD and ran 45 to 55 seconds, with 31 tools.
+
+By the registered rule the task is not scored. A harder module is the registered next step. Like `debug-01` and the four review tasks, this measures something the Sonnet floor already does.
+
+## The text without a scored task (registered 2026-09-26, before its sessions ran)
+
+The owner's choice for `bk-debug` in the same situation ("Commit phần chắt lọc, đóng sprint (Recommended)", 2026-09-25) is applied here, and the owner is told. The decided distillation is written and measured as a guard, not as an improvement:
+- `references/characterization.md`, the absorb of `test-engineer.md`;
+- the mattpocock points merged into `references/tdd.md`;
+- in the `SKILL.md` body:
+  - a step for code that already exists, in which characterization tests pass first and each is proven able to fail by breaking the code on purpose;
+  - the "Read first" line;
+  - the Sources line.
+
+Guard, `test-01`, eight `natural` K sessions on Sonnet 5 with the text. It is committed only if:
+- killed is 11 or 12 in at least 7 of 8 sessions;
+- `green` and `kept` are each at least 7 of 8;
+- no suite is `textLocked`.
+
+Reported with no bar: cost against the floor's calibration median; whether the sessions broke the code on purpose to see a test fail. The text is not measured against Superpowers, and no "better" is claimed.
