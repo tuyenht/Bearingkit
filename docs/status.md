@@ -28,7 +28,7 @@ Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack, phiên P3 (`node
 | File stack `bk-build/references/stacks/` | **3/8** (`typescript-react`, `kotlin`, `sql`, cộng `index.md`) | `ls` |
 | Task benchmark trong `evals/bench/` | **8** (`build-01`, `debug-01`, `probe-review-authored`, `review-01`…`04`, `test-01`) | `ls evals/bench/*/task.json` |
 | Hàng nguồn trong ma trận | **39** | `grep -c '^\| [0-9]' docs/specs/2026-09-10-coverage-matrix.md` |
-| Host đã qua acceptance | **2/6** (Claude Code, Antigravity; bản cũ ghi 2/7, lệch với sáu mục host của `docs/hosts.md`) | `docs/hosts.md` |
+| Host đã qua acceptance | **2/7** (Claude Code, Antigravity; bảy host của `docs/hosts.md`, trong đó Copilot CLI và Factory Droid chung một mục. §2 mục 11 là chỉ số khác: 2/6 host owner thực dùng, câu 8) | `docs/hosts.md` |
 | Bootstrap protocol | **6.485/6.500** ký tự | proxy của `tests/session-start.test.cjs`, đo lại 2026-09-26 |
 | Bản cài hằng ngày | `83467cb` ở cả scope user lẫn local | `installed_plugins.json`, 2026-09-26 |
 
