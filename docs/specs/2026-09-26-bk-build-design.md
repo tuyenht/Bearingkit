@@ -198,3 +198,21 @@ Label verbatim: "Guard, nới quyền (Recommended)". The floor is taken to do t
 - the pilot's show-the-user step was made conditional on prior approval: the source makes it unconditional; restored. For a single unit, "the pilot is the change itself" stays, as a reading of the source's pre-fan-out gate (the reviewer's judgment: a sound extrapolation, not a quote).
 
 One note, also applied: "a delta checked and not hit is noted" is named in the header as the kit's own addition. The reviewer confirmed the fixes, found fidelity, licence and attribution in order, and ran the suite (174 of 174).
+
+### Guard result (2026-09-26): the text holds and is committed
+
+`bearingkit bench --task build-01 --config-dir _build/profile/claude --branches K --runs 8` (`evals/results/2026-09-26-bench-build-01-natural-2/`), the text in the main checkout. Every session ran Sonnet 5 with 31 tools, invoked `bearingkit:bk-build`, and opened `references/major-upgrade.md` (8 of 8, by tool call; one also opened `characterization.md`).
+
+| Branch | O1 | O2 | O3 | P3 | P1 | P2 | P6 | P4 > 0 | P5 | H | Cost USD, median (min–max) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| K with the text, eight | 8 | 8 | 8 | 8 | 8 | 8 | 7 by eye (6 scored) | 0 | 0 | 0 | 0.279 (0.251–0.318) |
+| F floor, calibration, three | 3 | 3 | 3 | 3 | 1 scored, 3 on intent | 1 | 0 | 0 | 0 | 0 | 0.146 (0.143–0.172) |
+
+- **By the guard rule the text is committed**: O2, O3, O1 and P3 are each 8 of 8.
+- **What the text changed in the process, reported with no bar.**
+  - P2 is 8 of 8 against the floor's 1 of 3: every kit session left a test that pins the ambiguous date. The answers read by eye describe writing it green on v1 before the edit, then seeing it fail with `parse` not yet fixed (K5, K6).
+  - P6 is 7 of 8 read by eye. The scorer's pattern missed "Going back means reverting…" (K5); K6 states no way back.
+  - The floor's three were run under the narrower permissions and with no second measurement, so these are readings, not comparisons.
+- **Decision 2 of the handoff (self-commits)**: 0 commit attempts in 8 kit sessions and in 3 floor sessions. K6 ends "Say the word and I'll commit it".
+- **What it cost**: 1.9 times the floor at the median, for the same outcome on this fixture.
+- **Against the sources**: not measured (S was not run), so no "better" is claimed.
