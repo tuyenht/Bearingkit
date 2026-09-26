@@ -83,6 +83,9 @@ Branch `main` · working tree sạch sau commit cuối · đã push. Đọc file
 
 ### Decisions waiting on the owner
 
+**Cả ba đã chốt 2026-09-26 sau khi đóng P2** (owner, nguyên văn: "Chốt D2, D3, D4 theo khuyến nghị"), thành câu 34 của `docs/specs/2026-09-12-d5-owner-questions.md`: D2 không đưa vào protocol; D3 `bk-close --verify` ở P6; D4 một lượt chấp nhận Antigravity ngắn ở P7, đã duyệt trước. Bản trình trước đó:
+
+
 1. **D2: có đưa ngoại lệ "không tự commit" vào `bk-protocol` không.** Số liệu mới:
    - `build-01` Sonnet: kit 0/8, sàn 0/3;
    - cộng các số trước: Sonnet chưa phiên nào tự commit; Haiku trên `debug-01` kit 0/8 sau dòng "dừng ở bản sửa".
