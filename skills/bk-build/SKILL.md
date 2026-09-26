@@ -9,7 +9,7 @@ description: "Execute a plan or a small change that fits in at most three files:
 - The stack profile (run `detect-stack` as bk-protocol's host notes say) (guardrail commands, hot paths), the project's instruction files, and the plan phase or the acceptance criteria.
 - `references/executing.md` before executing a plan: isolation, subagent-driven execution with the two-stage review, parallel agents.
 - `references/major-upgrade.md` when a dependency, framework or runtime moves a major version: whether the tests run on the new version, the delta catalog, the baseline before any edit, the pilot.
-- `references/stacks/` — one file per stack. The profile reports a language and frameworks, never a file name, so `references/stacks/index.md` maps them and says which stacks have no file yet (three of the eight exist). `sql.md` is opened by subject matter — a query, a migration, a schema — not by the profile. Each file opens with a version card stating what it was checked against; a major newer than that card goes through the pinned-documentation rule first.
+- `references/stacks/` — one file per stack. The profile reports a language and frameworks, never a file name, so `references/stacks/index.md` maps them and says which stacks have no file yet (five of the eight exist). `sql.md` is opened by subject matter — a query, a migration, a schema — not by the profile. Each file opens with a version card stating what it was checked against; a major newer than that card goes through the pinned-documentation rule first.
 
 ## Steps
 1. Scout the touchpoints first: every file and symbol the change reaches, as a `file:line` list, including callers and readers of anything renamed.
