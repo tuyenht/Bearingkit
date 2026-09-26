@@ -29,9 +29,13 @@ Trên Sonnet, kit tốn khoảng gấp 2 sàn cho cùng kết quả (`debug-01`,
 
 Trung vị không cộng dồn chính xác; các phép tách dưới đây là xấp xỉ.
 
+Nhóm `debug-01 K` gộp 40 phiên từ sáu thư mục chạy các bản chữ `bk-debug` khác nhau: bản phát hành trước sprint, bản ứng viên và bản đã commit (`docs/specs/2026-09-25-bk-debug-design.md`). Nhóm này là chi phí của kit qua sprint đó, không phải của một bản chữ. Nhóm F của `debug-01` chỉ có 8 phiên, lấy từ thư mục đầu.
+
+Phần chi phí không khớp với `total_cost_usd` (tỉ lệ 0,80 ở `test-01 K`) được chia đều theo tỉ phần khi co lại. Nếu phần thiếu đó là việc của agent con, vốn không nằm trong stream chính, thì nó thuộc phần hành vi, và phần nền còn nhỏ hơn con số ở dưới.
+
 ## Tách khoản chênh kit − sàn
 
-Phần tiền tố thêm của kit so với sàn là khoảng 4.400 token (protocol cùng danh sách skill), tức khoảng 12% tiền tố của kit.
+Phần tiền tố thêm của kit so với sàn là khoảng 4.400 token. Đó là những gì kit nạp vào đầu phiên: protocol, danh sách skill và agent của plugin. Cách chia 4.400 token này giữa các phần đó chưa đo, tức khoảng 12% tiền tố của kit.
 
 | | debug-01 | test-01 |
 |---|---|---|
@@ -47,13 +51,13 @@ So với Superpowers trên `debug-01`: tổng ngang nhau (0,273 và 0,270), ti�
 
 ## Quan sát phụ, chưa phải kết luận
 
-- `detect-stack`: trong 48 phiên kit trên Sonnet (`debug-01`, `test-01`), 21 phiên không gọi nó. Có 12 phiên (11/40 `debug-01`, 1/8 `test-01`) mà ít nhất một lần gọi bị profile đo từ chối: lệnh ghép `cd <kit> && …`, lệnh PowerShell có biến môi trường. Đó là luật quyền của profile cách ly, không phải lỗi của script; nhưng protocol ghi "run once per session from the project root" mà model thường `cd` vào thư mục kit. Chi phí của nó nhỏ (xem bảng), đây là chuyện đúng/sai, không phải chuyện tiền.
-- Mọi phiên trong bảng đều đã thấy cùng số công cụ, theo `results.md` của từng thư mục, nên so token là hợp lệ theo luật của owner.
+- `detect-stack`: trong 48 phiên kit trên Sonnet (`debug-01`, `test-01`), 19 phiên không gọi nó, 17 phiên chạy được, 12 phiên bị từ chối (11 phiên mọi lần gọi đều bị từ chối, 1 phiên chỉ một phần). 12 phiên đó chia thành 11/40 ở `debug-01` và 1/8 ở `test-01`. Lý do từ chối là luật quyền của profile đo: lệnh ghép `cd <kit> && …`, lệnh PowerShell có biến môi trường. Đó là luật quyền của profile cách ly, không phải lỗi của script; nhưng protocol ghi "run once per session from the project root" mà model thường `cd` vào thư mục kit. Chi phí của nó nhỏ (xem bảng), đây là chuyện đúng/sai, không phải chuyện tiền.
+- Mọi phiên trong bảng đều đã thấy 31 công cụ: dòng "Every session saw 31 tools" có trong `results.md` của cả mười thư mục đã dùng, nên so token là hợp lệ theo luật của owner.
 
 ## Đề xuất (không làm; cắt là COUNCIL)
 
 **Khuyến nghị: không cắt phần nền lúc này.** Lý do:
-- Cắt hết phần nền của kit cũng chỉ bớt tối đa khoảng 12–14% một phiên. Một lần cắt thực tế, chẳng hạn một phần ba protocol, bớt khoảng 3–4%, nhỏ hơn độ tản giữa các phiên (K `debug-01` từ 0,203 tới 0,373 USD), nên đo cũng không thấy được.
+- Cắt hết phần nền của kit cũng chỉ bớt khoảng 12–14% một phiên. Cận này hơi thấp, vì lượt gọi `Skill` và lượt gọi `detect-stack` tự thêm một lần gọi API, mà chi phí của lần gọi đó bị tính vào dòng "nhiều lần gọi hơn". Một lần cắt thực tế, chẳng hạn một phần ba protocol (khoảng 750 trong khoảng 2.250 token), bớt khoảng 1–2% (0,023 × 750/4.400 ≈ 0,004 USD trên 0,273), nhỏ hơn độ tản giữa các phiên (K `debug-01` từ 0,203 tới 0,373 USD), nên đo cũng không thấy được.
 - Protocol đã sát trần ngân sách ký tự và đang ngang Superpowers.
 
 Rủi ro chính: khoảng ba phần tư chi phí thêm là hành vi. Trên `debug-01`, hành vi đó gồm test hồi quy 16/16 so với 0/8 của sàn. Trên `test-01`, gồm chứng minh test có thể đỏ ở 8/8 phiên so với 0/3. Cắt phần hành vi là cắt đúng thứ được đo là giá trị.
