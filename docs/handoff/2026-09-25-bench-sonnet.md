@@ -22,6 +22,7 @@ Phiên này là cùng cuộc trò chuyện với `docs/handoff/2026-09-24-bench.
 13. "Ok tiếp tục đi." (sau khuyến nghị dựng task benchmark cỡ thật).
 14. Trả lời câu hỏi hướng benchmark (nhãn nguyên văn): "Đo quy trình và chi phí, làm bk-test (Recommended)".
 15. "Tiếp tục làm sprint bk-test luôn trong phiên này".
+16. "Có, cập nhật bản cài ngay".
 
 Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới so với bước 3 cũ, 8 lượt mỗi bản, quy tắc quyết định đăng ký trước. Lời 5 được hiểu là duyệt đúng việc đó; lời 6 là duyệt sprint `bk-debug`. Không có bước ghi nào dưới `~/.claude` hay `~/.gemini`.
 
@@ -102,7 +103,7 @@ Khuyến nghị số 1 lúc đó: đo `review-02` trên Sonnet, bước 3 mới 
 ### Decisions waiting on the owner
 
 Chờ owner:
-1. **Cập nhật bản cài hằng ngày**: commit của sprint `bk-test` đổi `skills/`, nên bản cài ở `470e89a` đã cũ; ba lệnh ghi dưới `~/.claude` cần owner nói "có".
+1. Không còn quyết định nào treo về bản cài: theo lời 16 của owner, bản cài hằng ngày đã lên `3f49309` ở cả hai scope (2026-09-26), đã có phần `bk-test` mới.
 2. **Bước kế tiếp: mục (6) `bk-build`** của thứ tự v0.3 (absorb `major-upgrade.md`; bước 1 phân loại khoảng 200 dòng stack), đo quy trình và chi phí so với nguồn trên Sonnet theo lựa chọn 14 của owner. Sprint `bk-test` đã xong.
 3. **Ngoại lệ "không tự commit" trong `bk-protocol`** cho mọi skill: đổi thiết kế, protocol gần hết ngân sách ký tự, cần đo định tuyến; owner quyết.
 4. Từ phiên gộp: (14) LSP và context7; gỡ hẳn Superpowers và `fullstack-dev-skills` sau tuần dùng thử; push `a0cda92` của repo KB (tuỳ owner).
