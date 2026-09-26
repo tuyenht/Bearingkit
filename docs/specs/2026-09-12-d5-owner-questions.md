@@ -366,7 +366,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 > **ĐÃ CHỐT 2026-09-26 — owner, nguyên văn: "Đồng ý cả ba khuyến nghị."** Ba khuyến nghị là của phiên P3a (cloud), trình trong cùng cuộc trò chuyện; bản đầy đủ ở `docs/handoff/2026-09-26-p3a-stack-design.md`, Decisions waiting, và `docs/specs/2026-09-26-stack-node-python-design.md`.
 *(MỚI 2026-09-26. Nguồn: Decisions waiting 1–3 của handoff P3a.)*
 - **(1) Python trong scorer và test fixture của `py-01`: có**, chỉ trên fixture `py-01`, chỉ qua `python -m` (`python -m pytest`, `python -m stock`). Mở rộng ngoại lệ "Python trong phiên đo" (handoff P2, Block 2); phiên chính và reviewer vẫn không chạy Python ngoài phạm vi này.
-- **(2) Antigravity-Core: đọc 36 hàng từ clone local nếu clone đúng pin `1774280`; không đúng pin thì dừng và hỏi owner.** Câu nào thêm vào `node.md`/`python.md` từ đó phải có dòng nguồn và qua reviewer trước mọi phiên đo.
+- **(2) Antigravity-Core: đọc 36 hàng từ clone local nếu clone đúng pin `1774280`; không đúng pin thì dừng và hỏi owner.** Clone local đó là `_build/upstream/tuyenht_Antigravity-Core` (bản lấy từ repo local của owner ngày 2026-09-18, theo `upstream/sources.json`; remote công khai không có commit này, nên việc fetch thất bại trên cloud là bình thường, không phải phát hiện — sửa 2026-09-26 sau audit, không đổi nội dung quyết định). Câu nào thêm vào `node.md`/`python.md` từ đó phải có dòng nguồn và qua reviewer trước mọi phiên đo.
 - **(3) Tách phiên: P3b chỉ `node-01`; `py-01` để P3c.**
 
 ---
