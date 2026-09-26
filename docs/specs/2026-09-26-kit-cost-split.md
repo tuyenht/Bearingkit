@@ -1,6 +1,6 @@
 # Chi phí của kit tách theo phần · phân tích chỉ đọc · 2026-09-26
 
-Status: ANALYSIS, trả lời Decisions waiting 1 của `docs/handoff/2026-09-26.md`. Cách làm đã chốt: phân tích chỉ đọc trên các stream đã có, không chạy phiên mới; đề xuất cắt sau, cắt là COUNCIL. Phiên: P1 của `docs/plans/2026-09-26-v03-roadmap.md`.
+Status: ANALYSIS, **owner đồng ý khuyến nghị không cắt, 2026-09-26** (nguyên văn: "Đồng ý D1 không cắt, tiếp tục P2."). Trả lời Decisions waiting 1 của `docs/handoff/2026-09-26.md`. Cách làm đã chốt: phân tích chỉ đọc trên các stream đã có, không chạy phiên mới; đề xuất cắt sau, cắt là COUNCIL. Phiên: P1 của `docs/plans/2026-09-26-v03-roadmap.md`.
 
 ## Câu hỏi
 
