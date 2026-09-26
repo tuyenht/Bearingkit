@@ -11,6 +11,7 @@ Branch `main` · working tree sạch sau commit cuối · đã push. Đọc file
 3. "Audit kỹ các xử lý cũng như các phản hồi ở trên cho tôi nhé."
 4. "Tiếp tục viết spec bk-build theo khuyến nghị"
 5. "Đóng phiên theo khuyến nghị"
+6. Gửi trong lúc đóng phiên: "Giảm chi phí kit: không cắt mù. Một phần lớn của mức "gấp 2 sàn" chính là giá trị kit mang lại: viết test hồi quy mà sàn không viết, và cố ý làm hỏng code để chứng minh test có thể đỏ. Nên làm trước một phân tích chỉ đọc trên dữ liệu đo đã có (không chạy phiên mới) để tách phần nền (protocol, đọc skill) khỏi phần hành vi, rồi mới đề xuất cắt phần nền." Lời này khớp với cách D1 đã được làm trong phiên: phân tích chỉ đọc có trong `docs/specs/2026-09-26-kit-cost-split.md`. Đề xuất rút ra từ phân tích là không cắt, vì cắt phần nền chỉ bớt 1–2% (một phần ba protocol), tối đa 12–14% (cắt hết). Ứng viên cắt cụ thể duy nhất là dòng `detect-stack` của protocol, có đo (Decisions waiting 1).
 
 ### Facts established (do not re-derive)
 
