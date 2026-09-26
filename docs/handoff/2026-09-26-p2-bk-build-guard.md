@@ -69,6 +69,7 @@ Branch `main` · working tree sạch sau commit cuối · đã push. Đọc file
 - RULE | benchmark | WHEN một chỉ số quy trình đọc từ stream THEN hiệu chỉnh xong phải đọc bằng mắt các lần trượt, tìm lệnh bị từ chối NOT tin số chấm | P1 của sàn 1/3 theo chấm, 3/3 theo ý định | 2026-09-26
 - RULE | commit | WHEN mã chấm hay fixture mới xong THEN rà độc lập trước commit NOT commit rồi mới rà | `aed9bb7` commit trước khi rà | 2026-09-26
 - RULE | viết chữ skill | WHEN viết bản chữ sẽ đo trên một fixture THEN mỗi câu phải có dòng nguồn đỡ NOT thêm câu khớp chỉ số của fixture | reviewer bắt hai câu | 2026-09-26
+- RULE | agent kiểm tra | WHEN giao việc cho agent chỉ đọc THEN brief cấm lệnh nền và cấm tìm ngoài repo, và khi thông báo nói agent "còn việc nền" thì dừng nó và dọn tiến trình NOT bỏ qua thông báo | sau khi đóng P2, agent rà độ đầy đủ để `find / -iname installed_plugins.json` chạy 1 giờ 26 phút và đọc một file ngoài brief; owner phát hiện, phiên đã dừng agent và tắt tiến trình | 2026-09-26
 - RULE | cài hằng ngày | WHEN cập nhật plugin THEN luôn ghi `--scope user` và `--scope local` NOT lệnh không có scope | lệnh không scope chỉ cập nhật local | 2026-09-26
 
 ## Block 2 · Resume payload
