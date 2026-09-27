@@ -221,7 +221,7 @@ The design is registered as above. P3b builds the `node-01` fixture and its test
 
 **Decision.** Not merged by this session: merging text that no measured session read would commit, unmeasured, text the model reads. Put to the owner (question 36 of `docs/specs/2026-09-12-d5-owner-questions.md`); **decided 2026-09-26: kept on the branch** (owner chose "Giữ trên nhánh (Recommended)"). Next: the path to the file (bk-spec → bk-build → `references/stacks/`) as its own measured change, then the `node-01` guard again. No comparison against S was run on the guard path (none is registered there), so nothing is said about the sources.
 
-## Reach fix, registered before any session (2026-09-27, owner: "Tự động xử lý tiếp cho tôi với các khuyến nghị tốt nhất phù hợp nhé.")
+## Reach fix, registered before any session (2026-09-27, owner, verbatim: "Tự động xử lý tiếp tho tôi với các khuyến nghị tốt nhất phù hợp nhé.")
 
 **Change.** `detect-stack` adds `stackFiles` to the profile: the bk-build stack files its languages and frameworks map to (the table of `stacks/index.md`), absolute paths, only files that exist. `bk-build` "Read first": "Before the first edit, read each file the profile lists under `stackFiles`." `bk-spec` "Read first" gains a line to read the same files. Why here: in the guard, `detect-stack` ran in 7 of 8 sessions while `bk-build` was invoked in 2 and `stacks/` opened in none. Rejected: fixing `bk-build` alone (6 of 8 sessions never reached it); a router row in the protocol (6,485 of 6,500 characters); a hook injecting the file (loads it into sessions that write no code).
 

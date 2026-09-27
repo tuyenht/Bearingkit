@@ -374,6 +374,7 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 *(MỚI 2026-09-26, phiên P3b. Nguồn: `docs/specs/2026-09-26-stack-node-python-design.md`, mục "Results, `node-01`".)*
 - Hiệu chỉnh F: N = 2 ở 3/3 phiên → task không usable → guard. Guard 8 phiên K-after: O1 8/8, O2 8/8, trung vị N = 2 = sàn, tức luật merge đăng ký **đạt về hình thức**.
 - Nhưng `stacks/node.md` được mở 0/8 phiên, `index.md` 0/8; `bk-spec` 8/8 (router đúng: yêu cầu là tính năng), `bk-build` 2/8, và hai phiên đó cũng không theo lối tới `references/stacks/`. Theo chính đăng ký: file không được đọc, kết quả không phải bằng chứng về chữ.
+- **Cập nhật 2026-09-27:** owner duyệt bước tiếp theo (nguyên văn: "Tự động xử lý tiếp tho tôi với các khuyến nghị tốt nhất phù hợp nhé."): `detect-stack` thêm `stackFiles`, `bk-build`/`bk-spec` đọc chúng; guard `node-01` lại: `node.md` mở 8/8, O1/O2 8/8, trung vị N 3; guard `build-01` vẫn giữ. `node.md` vào `main` ở `01ae83b` (đăng ký và kết quả: spec stack, mục "Reach fix"). Owner cũng duyệt cập nhật bản cài hằng ngày, làm mới kho Antigravity và xoá nhánh `p3b-k-before` (ba lựa chọn "(Recommended)").
 - **Khuyến nghị: giữ `node.md` trên nhánh**, không merge; việc tiếp theo là đường tới file (bk-spec → bk-build → stacks) như một thay đổi riêng có đo, rồi chạy lại guard `node-01`. Bác: merge ngay vì luật đạt — sẽ đưa vào `main` chữ model đọc mà chưa phiên đo nào đọc.
 
 ---
