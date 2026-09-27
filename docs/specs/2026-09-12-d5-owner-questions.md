@@ -380,6 +380,13 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 
 ### 37. O1 của `node-01` không đòi lệnh export gọi API; sửa như `py-01`? (v0.3, 2026-09-27)
 > **ĐÃ CHỐT 2026-09-27 — owner chọn "Sửa, commit riêng (Recommended)"** (câu hỏi trong phiên P3c-b; nguồn: reviewer P3c-a, handoff `2026-09-27-p3c-py01-build.md`). Làm ở `2fb76a7`: O1 đòi mọi SKU của file nhỏ được gọi; ca test đỏ rồi xanh; kết quả đo cũ không đổi (O1 chỉ đạt khi N1 đạt, mà N1 đã đòi đủ). Cùng lần hỏi, owner duyệt cập nhật cài hằng ngày lên `beb258c`, làm mới kho Antigravity và xoá worktree tạm.
+
+### 38. Cách đo ba file stack còn lại của P4 (v0.3, 2026-09-27)
+> **ĐÃ CHỐT 2026-09-27 theo ủy quyền của owner** (nguyên văn: "Audit kỹ các đề xuất khuyến nghị xử lý ở trên đã chuẩn chưa? Nếu chuẩn thì duyệt xử lý chúng một cách tối ưu nhất, tốt nhất tự động cho tôi." và, cho `c-cpp`: "Audit kỹ và cho tôi phương hướng xử lý với các khuyến nghị tốt nhất phù hợp nhé").
+*(Nguồn: kiểm máy owner 2026-09-27: có `php`, `bash`; không có `composer`, `cmake`, `gcc`, `g++`, `clang`, `cl`, `shellcheck`.)*
+- **(a) `php-laravel`**: fixture PHP thuần chạy bằng `php`; chỉ luật PHP chung được đo, câu riêng Laravel ghi "không đo".
+- **(b) `shell` (và `sql`)**: trước khi đo, `detect-stack` nêu file theo chủ đề (`shell.md` khi dự án có `*.sh`/`*.ps1`, `sql.md` khi có migration hay `*.sql`), là đổi thiết kế có đo reach như `stackFiles`.
+- **(c) `c-cpp`: hoãn.** Làm `php-laravel` rồi `shell` trước; trước khi quyết cài toolchain, một bước tìm hiểu chỉ đọc (toolchain tối thiểu biên dịch và chạy được test C++ trên Windows, dung lượng, cách gỡ — LLVM một mình không đủ, cần CRT và linker từ VS Build Tools hay MinGW), rồi owner quyết có số thật. Bác: cài ngay (chi phí chưa rõ); để chữ chưa đo trên nhánh vô thời hạn.
 ---
 
 ## Quyết định 2026-09-12 và những gì mở khoá — CHƯA áp dụng, chỉ liệt kê

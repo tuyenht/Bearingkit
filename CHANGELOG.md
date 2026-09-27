@@ -4,6 +4,17 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 
 ## Unreleased
 
+### Added (2026-09-26 – 2026-09-27, stack files `node` and `python`)
+- `bk-build/references/stacks/node.md` and `python.md`: stack-wide rules written from pinned sources, every sentence with its source line (`docs/specs/2026-09-26-stack-node-python-design.md`); five of the eight stack files now exist.
+- `detect-stack` lists `stackFiles`, the bk-build stack files the profile maps to that exist; `bk-build` reads them before the first edit and `bk-spec` reads them for its requirements. Before this, `node.md` was opened in 0 of 8 measured sessions; after it, 8 of 8.
+- Benchmark tasks `node-01` and `py-01` (an export command over about 2,000 SKUs, scored by running the session's code against a local stand-in API: bounded concurrency, data only on stdout, network deadline, zone-aware timestamps), with `reach()` in `scripts/lib/bench-score.cjs` and an async fixture check in the runner.
+- Measured on Claude Code, Sonnet, guard path: `node-01` O1 and O2 8/8, N median 3 against a floor of 2, `node.md` read 8/8; `py-01` O1 and O2 8/8, Y median 2 against 2, `python.md` read 6/8; `build-01`'s guard still holds with the change. Not compared with the source skills.
+
+### Fixed (2026-09-27, benchmark)
+- `reach()` read a command that ran and exited non-zero as refused by the host.
+- `node-01`'s O1 now requires every SKU fetched, as `py-01`'s does (D5 question 37).
+- `py-01`'s mutation harness forces the TAP reporter: on Node 25 it read no failure at all and reported every mutant green.
+
 ### Added (2026-09-23, `bk-perf`)
 - `bk-perf`, the last of the five skills the final catalog adds (D5 question 27); the catalog is 18 of 18. Measure, then optimize: the symptom as the user feels it picks the first measurement (a symptom tree in `references/method.md`), a baseline with its conditions and spread, one change at a time kept only past the noise with the tests green, a ledger of every attempt, a guard whose number is the project's. Numbers carry their method or "not measured"; lab, field and trace numbers are labelled; thresholds come from the metric's owner or the project's budget; caching is a safety question first; load tests stay off production without a council. The database part goes to `bk-db`. Nothing vendored; ideas from sixteen inventory rows (`docs/specs/2026-09-23-bk-perf-design.md`).
 - `bk-perf` yields page-load traces and heap-snapshot work to the Chrome DevTools vendor skills (`debug-optimize-lcp`, `memory-leak-debugging`) when they are installed; `upstream/sources.json` records `ChromeDevTools/chrome-devtools-mcp` at `e33ee48` (Apache-2.0, mode `reference`), and `bk-protocol/references/host-tools.md` gains two rows (trace a page load, take and compare heap snapshots), each statement read from the vendor's repository or from Antigravity's language server (`docs/compat/2026-09-23-bk-perf-tool-claims.md`).
