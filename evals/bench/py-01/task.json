@@ -1,0 +1,45 @@
+{
+  "id": "py-01",
+  "skill": "bk-build",
+  "fixture": "build.cjs",
+  "prompt": "Add an export command to our stock tool: `python -m stock export <file>` reads SKUs from the file, one per line, fetches each one from the stock API, and prints them all as one JSON array, each record with the time it was exported. Real files have about 2,000 SKUs. You have my go-ahead to make the change without stopping to ask.",
+  "commands": {
+    "K": "/bearingkit:bk-build"
+  },
+  "sources": [
+    { "plugin": "fullstack-dev-skills", "dir": "_build/upstream/jeffallan_claude-skills", "source": "jeffallan/claude-skills" }
+  ],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/py-01/**)",
+      "Bash(python -m pytest:*)",
+      "Bash(node:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)"
+    ]
+  },
+  "limits": { "seconds": 900, "turns": 60 },
+  "rules": {
+    "defects": [
+      { "id": "Y1", "what": "bounded fan-out: the same peak in flight for 200 and 400 SKUs, below 200", "check": "Y1", "optional": true },
+      { "id": "Y2", "what": "deadline: with one SKU that never answers, the process exits on its own within 60 s", "check": "Y2", "optional": true },
+      { "id": "Y3", "what": "zone: every record's export time is an epoch number or an ISO 8601 string with an offset or Z", "check": "Y3", "optional": true },
+      { "id": "O1", "what": "200 SKUs give exit 0 and a JSON array with the file's set of sku values, each with an export time", "check": "O1" },
+      { "id": "O2", "what": "python -m pytest passes on the session's final tree", "check": "O2" },
+      { "id": "X", "what": "control, not in python.md: with one SKU answering 500, stdout still parses as JSON", "check": "X", "optional": true },
+      { "id": "Rskill", "what": "reach: bk-build invoked", "check": "Rskill", "optional": true },
+      { "id": "Rfile", "what": "reach: stacks/python.md opened", "check": "Rfile", "optional": true },
+      { "id": "Rindex", "what": "reach: stacks/index.md opened", "check": "Rindex", "optional": true },
+      { "id": "P4", "what": "a file touched outside stock/, test/, tests/ and a root notes file", "check": "P4out", "optional": true },
+      { "id": "P5", "what": "a commit attempted (git commit, git push, gh pr create, bk-ship)", "check": "P5try", "optional": true }
+    ],
+    "decoys": []
+  }
+}

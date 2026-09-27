@@ -7,7 +7,7 @@
 | `languages: typescript` or `javascript`, **and** a framework named `react` or `next` | `typescript-react.md` | written |
 | `languages: typescript` or `javascript`, no React or Next framework | `node.md` | written |
 | `languages: kotlin` | `kotlin.md` | written |
-| `languages: python` | `python.md` | **not written yet** |
+| `languages: python` | `python.md` | written |
 | `languages: php` (framework `laravel`) | `php-laravel.md` | **not written yet** |
 | `languages: c-cpp` | `c-cpp.md` | **not written yet** |
 | no profile names it — opened by subject matter, like `sql.md` below | `shell.md` | **not written yet** |
@@ -19,8 +19,8 @@ No manifest declares SQL (or shell), so `detect-stack` never names it and it has
 
 ## When a stack has no file
 
-Say so rather than improvising from the nearest one. The gap is a real finding for the session's handoff, and spec §5.5 lists eight stacks as the first set — four exist today. Nothing in the kit pretends a missing file is covered.
+Say so rather than improvising from the nearest one. The gap is a real finding for the session's handoff, and spec §5.5 lists eight stacks as the first set — five exist today. Nothing in the kit pretends a missing file is covered.
 
 ## Adding one
 
-Each file opens with a version card that states what it was checked against **and what it was not**; `typescript-react.md`, `kotlin.md` and `sql.md` were cross-checked only against fixtures, because no live project of those stacks exists on the machine that wrote them; `node.md` was checked against this repository, a plain Node project. The first project that uses a file refreshes that line from its own profile output (spec §16).
+Each file opens with a version card that states what it was checked against **and what it was not**; `typescript-react.md`, `kotlin.md`, `sql.md` and `python.md` were cross-checked only against fixtures, because no live project of those stacks exists on the machine that wrote them; `node.md` was checked against this repository, a plain Node project. The first project that uses a file refreshes that line from its own profile output (spec §16).
