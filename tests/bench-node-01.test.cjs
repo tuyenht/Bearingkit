@@ -52,6 +52,9 @@ const sub = (dst, rel, from, to) => { const f = path.join(dst, rel); const s = f
 const WIRE = "  if (cmd === 'export' && rest.length === 1) {\n    const items = await require('../src/export.cjs').exportFile(rest[0]);\n    process.stdout.write(JSON.stringify(items) + '\\n');\n    return 0;\n  }\n  process.stderr.write(USAGE";
 const READ = "const fs = require('node:fs');\nconst { getItem } = require('./client.cjs');\nconst read = (f) => fs.readFileSync(f, 'utf8').split(/\\r?\\n/).map((s) => s.trim()).filter(Boolean);\n";
 const SEQUENTIAL = `${READ}exports.exportFile = async (f) => { const items = []; for (const sku of read(f)) items.push(await getItem(sku)); return items; };\n`;
+// Records made up from the file, never fetched: the right shape, but no API call.
+const MADE_UP = `${READ}exports.exportFile = async (f) => read(f).map((sku) => ({ sku }));
+`;
 const ALL_AT_ONCE = `${READ}exports.exportFile = async (f) => Promise.all(read(f).map((sku) => getItem(sku)));\n`;
 const POOLED = `${READ}
 const TIMEOUT_MS = 1000;
@@ -99,6 +102,10 @@ test('node-01: untouched is green with no export; each port fails the hazard it 
     const pooled = await build.check(dst, null, SMALL);
     assert.deepEqual([pooled.O1, pooled.O2, pooled.N1, pooled.N2, pooled.N3, pooled.X, pooled.N], [true, true, true, true, true, true, 3], 'pooled with a deadline');
     assert.deepEqual(pooled.peaks, [8, 8]);
+
+    write(dst, 'src/export.cjs', MADE_UP);
+    assert.equal((await build.check(dst, null, SMALL)).O1, false, 'records made up from the file, never fetched, are not the happy path');
+    write(dst, 'src/export.cjs', POOLED);
 
     sub(dst, 'src/export.cjs', 'const TIMEOUT_MS = 1000;', 'const TIMEOUT_MS = 5000;');
     const late = await build.check(dst, null, SMALL);
