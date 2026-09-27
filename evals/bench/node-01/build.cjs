@@ -137,11 +137,13 @@ async function check(dst = DST, raw = null, opts = {}) {
     const small = skus(o.small);
     const a = await run('small.txt', small);
     const b = await run('large.txt', skus(o.large));
-    // O1 is read from N1's small run: the same file, every SKU answering.
+    // O1 is read from N1's small run: the same file, every SKU answering, and every SKU fetched (records made up from
+    // the file without a call are not the happy path; added 2026-09-27 after the P3c-a review, as py-01 has it).
     const pa = parse(a.stdout);
-    out.O1 = a.code === 0 && pa.ok && Array.isArray(pa.value)
+    out.O1 = a.code === 0 && small.every((s) => a.asked.has(s)) && pa.ok && Array.isArray(pa.value)
       && (() => { const got = pa.value.map((x) => x && x.sku); return got.length === small.length && new Set(got).size === small.length && small.every((s) => got.includes(s)); })();
-    // N1: every SKU requested in both runs, the same peak for twice the SKUs, and below the small count.
+    // N1: as many distinct SKUs requested as each file holds (a count; O1 checks they are the file's), the same peak for
+    // twice the SKUs, and below the small count.
     out.peaks = [a.peak, b.peak];
     out.peakClass = peakClass(Math.max(a.peak, b.peak), o.small);
     out.N1 = a.asked.size >= o.small && b.asked.size >= o.large && a.peak === b.peak && b.peak < o.small;
