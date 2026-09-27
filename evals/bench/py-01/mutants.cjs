@@ -38,7 +38,7 @@ const jobs = [['M00 none (control)', '', ''], ...MUTANTS].map(([name, from, to],
   fs.rmSync(dir, { recursive: true, force: true });
   for (const p of COPY) fs.cpSync(p, path.join(dir, p), { recursive: true });
   fs.writeFileSync(path.join(dir, 'evals/bench/py-01/build.cjs'), from ? src.split(from).join(to) : src);
-  return new Promise((resolve) => exec('node --test tests/bench-py-01.test.cjs', { cwd: dir, timeout: 500000 }, (err, stdout) => {
+  return new Promise((resolve) => exec('node --test --test-reporter=tap tests/bench-py-01.test.cjs', { cwd: dir, timeout: 500000 }, (err, stdout) => {
     const fails = (stdout.match(/# fail (\d+)/) || [])[1];
     const skips = (stdout.match(/# SKIP (.*)$/m) || [])[1];
     const lines = stdout.split('\n');
