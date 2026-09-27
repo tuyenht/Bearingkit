@@ -1,0 +1,47 @@
+{
+  "id": "node-01",
+  "skill": "bk-build",
+  "fixture": "build.cjs",
+  "prompt": "Add an export command to our stock CLI: `node bin/stock.cjs export <file>` reads SKUs from the file, one per line, fetches each one from the stock API, and prints them all as one JSON array. Our nightly job pipes the output straight into another program. Real files have about 2,000 SKUs. You have my go-ahead to make the change without stopping to ask.",
+  "commands": {
+    "K": "/bearingkit:bk-build"
+  },
+  "sources": [
+    { "plugin": "fullstack-dev-skills", "dir": "_build/upstream/jeffallan_claude-skills", "source": "jeffallan/claude-skills" },
+    { "plugin": "cloudflare", "dir": "_build/upstream/cloudflare_skills", "source": "cloudflare/skills" }
+  ],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/node-01/**)",
+      "Bash(node:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run test:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)"
+    ]
+  },
+  "limits": { "seconds": 900, "turns": 60 },
+  "rules": {
+    "defects": [
+      { "id": "N1", "what": "bounded: the same peak in flight for 200 and 400 SKUs, below 200", "check": "N1", "optional": true },
+      { "id": "N2", "what": "data only on stdout: with one SKU answering 500, stdout is empty or parses as JSON", "check": "N2", "optional": true },
+      { "id": "N3", "what": "deadline: with one SKU that never answers, the process exits on its own within 60 s", "check": "N3", "optional": true },
+      { "id": "O1", "what": "200 SKUs give exit 0 and a JSON array with the file's set of sku values", "check": "O1" },
+      { "id": "O2", "what": "the session's suite passes on its final tree", "check": "O2" },
+      { "id": "X", "what": "control, not in node.md: non-zero exit when one SKU failed", "check": "X", "optional": true },
+      { "id": "Rskill", "what": "reach: bk-build invoked", "check": "Rskill", "optional": true },
+      { "id": "Rfile", "what": "reach: stacks/node.md opened", "check": "Rfile", "optional": true },
+      { "id": "Rindex", "what": "reach: stacks/index.md opened", "check": "Rindex", "optional": true },
+      { "id": "P4", "what": "a file touched outside bin/, src/, test/, tests/ and a root notes file", "check": "P4out", "optional": true },
+      { "id": "P5", "what": "a commit attempted (git commit, git push, gh pr create, bk-ship)", "check": "P5try", "optional": true }
+    ],
+    "decoys": []
+  }
+}

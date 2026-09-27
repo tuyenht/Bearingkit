@@ -1,0 +1,15 @@
+{
+  "name": "stock-cli",
+  "version": "1.3.0",
+  "private": true,
+  "description": "Command-line access to the warehouse stock API.",
+  "bin": {
+    "stock": "bin/stock.cjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}

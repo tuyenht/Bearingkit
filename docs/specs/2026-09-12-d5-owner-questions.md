@@ -362,6 +362,20 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 - **(D3) Bước đánh giá độc lập của `bk-close`: có, dạng tuỳ chọn `--verify`, làm ở P6.** Hai phép thử: một agent rà độ đầy đủ so với transcript; một agent chỉ nhận resume prompt trả lời câu hỏi trạng thái; sửa lỗ hổng trước commit cuối. Văn bản bắt buộc có điều kiện cho agent: chỉ đọc, chỉ transcript và file được nêu, không lệnh nền, không tìm ngoài repo, dừng mọi việc nền trước khi trả lời (sự cố `find /` ngày 2026-09-26). Đổi văn bản skill nên đo trước khi commit, như mọi sprint.
 - **(D4) Đo Antigravity các skill đã đổi (`bk-review`, `bk-debug`, `bk-test`, `bk-build`): một lượt chấp nhận ngắn ở P7, đã duyệt trước.** Kiểm định tuyến và việc mở được reference mới trên bản stage trung tính; không chạy cùng lúc với phép đo Claude Code; không benchmark đầy đủ. Câu duyệt này chỉ phủ lượt đó; lượt Antigravity khác vẫn cần câu duyệt riêng.
 
+### 35. Ba việc treo sau P3a: Python trong phần chấm `py-01`, nguồn Antigravity-Core, tách phiên đo (v0.3, 2026-09-26)
+> **ĐÃ CHỐT 2026-09-26 — owner, nguyên văn: "Đồng ý cả ba khuyến nghị."** Ba khuyến nghị là của phiên P3a (cloud), trình trong cùng cuộc trò chuyện; bản đầy đủ ở `docs/handoff/2026-09-26-p3a-stack-design.md`, Decisions waiting, và `docs/specs/2026-09-26-stack-node-python-design.md`.
+*(MỚI 2026-09-26. Nguồn: Decisions waiting 1–3 của handoff P3a.)*
+- **(1) Python trong scorer và test fixture của `py-01`: có**, chỉ trên fixture `py-01`, chỉ qua `python -m` (`python -m pytest`, `python -m stock`). Mở rộng ngoại lệ "Python trong phiên đo" (handoff P2, Block 2); phiên chính và reviewer vẫn không chạy Python ngoài phạm vi này.
+- **(2) Antigravity-Core: đọc 36 hàng từ clone local nếu clone đúng pin `1774280`; không đúng pin thì dừng và hỏi owner.** Clone local đó là `_build/upstream/tuyenht_Antigravity-Core` (bản lấy từ repo local của owner ngày 2026-09-18, theo `upstream/sources.json`; remote công khai không có commit này, nên việc fetch thất bại trên cloud là bình thường, không phải phát hiện — sửa 2026-09-26 sau audit, không đổi nội dung quyết định). Câu nào thêm vào `node.md`/`python.md` từ đó phải có dòng nguồn và qua reviewer trước mọi phiên đo.
+- **(3) Tách phiên: P3b chỉ `node-01`; `py-01` để P3c.**
+
+### 36. `node.md` qua guard về hình thức nhưng không phiên nào đọc nó: merge hay giữ trên nhánh (v0.3, 2026-09-26)
+> **ĐÃ CHỐT 2026-09-26 — owner chọn "Giữ trên nhánh (Recommended)"** (câu hỏi trong phiên P3b). `node.md` không vào `main`; không cập nhật cài hằng ngày, không làm mới kho Antigravity vì việc này.
+*(MỚI 2026-09-26, phiên P3b. Nguồn: `docs/specs/2026-09-26-stack-node-python-design.md`, mục "Results, `node-01`".)*
+- Hiệu chỉnh F: N = 2 ở 3/3 phiên → task không usable → guard. Guard 8 phiên K-after: O1 8/8, O2 8/8, trung vị N = 2 = sàn, tức luật merge đăng ký **đạt về hình thức**.
+- Nhưng `stacks/node.md` được mở 0/8 phiên, `index.md` 0/8; `bk-spec` 8/8 (router đúng: yêu cầu là tính năng), `bk-build` 2/8, và hai phiên đó cũng không theo lối tới `references/stacks/`. Theo chính đăng ký: file không được đọc, kết quả không phải bằng chứng về chữ.
+- **Khuyến nghị: giữ `node.md` trên nhánh**, không merge; việc tiếp theo là đường tới file (bk-spec → bk-build → stacks) như một thay đổi riêng có đo, rồi chạy lại guard `node-01`. Bác: merge ngay vì luật đạt — sẽ đưa vào `main` chữ model đọc mà chưa phiên đo nào đọc.
+
 ---
 
 ## Quyết định 2026-09-12 và những gì mở khoá — CHƯA áp dụng, chỉ liệt kê

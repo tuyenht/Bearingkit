@@ -173,3 +173,23 @@ test('cli prints JSON and exits 2 without a manifest', () => {
   assert.equal(bad.status, 2);
   assert.equal(JSON.parse(bad.stdout).error, 'no-manifest');
 });
+
+// stackFiles (2026-09-27, after node-01's guard: node.md opened in 0 of 8 sessions): the profile names the bk-build
+// stack files it maps to, by the table of stacks/index.md, as absolute paths, and only files that exist.
+test('stackFiles: the stack files the profile maps to, only those that exist', () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'stacks-'));
+  try {
+    for (const f of ['node.md', 'typescript-react.md', 'kotlin.md']) fs.writeFileSync(path.join(dir, f), '#\n');
+    const at = (n) => path.join(dir, n).split(path.sep).join('/');
+    assert.deepEqual(detect(fx('node-eslint-prettier'), { stacksDir: dir }).stackFiles, [at('node.md')]);
+    assert.deepEqual(detect(fx('node-pnpm'), { stacksDir: dir }).stackFiles, [at('typescript-react.md')], 'next means typescript-react.md');
+    assert.deepEqual(detect(fx('kotlin'), { stacksDir: dir }).stackFiles, [at('kotlin.md')]);
+    assert.deepEqual(detect(fx('python'), { stacksDir: dir }).stackFiles, [], 'a mapped file that does not exist is not named');
+    assert.deepEqual(detect(fx('go'), { stacksDir: dir }).stackFiles, [], 'no file planned for go');
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+  const kit = detect(fx('node-eslint-prettier')).stackFiles;
+  assert.equal(kit.length, 1);
+  assert.match(kit[0], /skills\/bk-build\/references\/stacks\/node\.md$/, 'by default the kit\'s own stack files');
+});

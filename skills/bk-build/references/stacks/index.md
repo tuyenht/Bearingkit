@@ -1,11 +1,11 @@
 # Which stack file to open
 
-`detect-stack` does not report a file name. It reports `languages` and `frameworks`, and this table maps them. Checked against the profile's real output on every fixture in `tests/fixtures/stacks/` on 2026-09-16, not from memory. (The first version, 2026-09-15, said the same and still had a `c` or `cpp` row: the detector reports `c-cpp` as one language. Only the rows actually run are checked.)
+`detect-stack` reports `languages` and `frameworks`, and this table maps them; since 2026-09-27 it also lists the mapped files that exist, as `stackFiles` (absolute paths), so a session reads the list rather than this table. Checked against the profile's real output on every fixture in `tests/fixtures/stacks/` on 2026-09-16, not from memory. (The first version, 2026-09-15, said the same and still had a `c` or `cpp` row: the detector reports `c-cpp` as one language. Only the rows actually run are checked.)
 
 | Profile says | Open | Status |
 |---|---|---|
 | `languages: typescript` or `javascript`, **and** a framework named `react` or `next` | `typescript-react.md` | written |
-| `languages: typescript` or `javascript`, no React or Next framework | `node.md` | **not written yet** — use `typescript-react.md`'s type and evidence sections, skip its rendering rules |
+| `languages: typescript` or `javascript`, no React or Next framework | `node.md` | written |
 | `languages: kotlin` | `kotlin.md` | written |
 | `languages: python` | `python.md` | **not written yet** |
 | `languages: php` (framework `laravel`) | `php-laravel.md` | **not written yet** |
@@ -19,8 +19,8 @@ No manifest declares SQL (or shell), so `detect-stack` never names it and it has
 
 ## When a stack has no file
 
-Say so rather than improvising from the nearest one. The gap is a real finding for the session's handoff, and spec §5.5 lists eight stacks as the first set — three exist today. Nothing in the kit pretends a missing file is covered.
+Say so rather than improvising from the nearest one. The gap is a real finding for the session's handoff, and spec §5.5 lists eight stacks as the first set — four exist today. Nothing in the kit pretends a missing file is covered.
 
 ## Adding one
 
-Each file opens with a version card that states what it was checked against **and what it was not**; the three written so far were cross-checked only against fixtures, because no live project of those stacks exists on the machine that wrote them. The first project that uses a file refreshes that line from its own profile output (spec §16).
+Each file opens with a version card that states what it was checked against **and what it was not**; `typescript-react.md`, `kotlin.md` and `sql.md` were cross-checked only against fixtures, because no live project of those stacks exists on the machine that wrote them; `node.md` was checked against this repository, a plain Node project. The first project that uses a file refreshes that line from its own profile output (spec §16).

@@ -249,8 +249,38 @@ function commitAttempts(raw) {
   return n;
 }
 
+// Reach of a stack file (R of docs/specs/2026-09-26-stack-node-python-design.md): bk-build invoked as a skill;
+// stacks/<stack>.md and stacks/index.md opened, by Read, Grep or a shell command naming the path (a Glob listing
+// does not open a file); detect-stack run, refused by the profile, or never tried. Counted whether or not it helped.
+const DENIED = /denied|not allowed|requires approval|permission/i;
+function reach(raw, stack) {
+  const text = (c) => (typeof c === 'string' ? c : Array.isArray(c) ? c.map((x) => (x && x.text) || '').join('\n') : '');
+  const detect = new Set();
+  const out = { skill: false, file: false, index: false, detect: 'none' };
+  const opens = (input, name) => new RegExp(`stacks/${name}\\.md\\b`).test(JSON.stringify(input || {}).replace(/\\\\/g, '/'));
+  for (const e of events(raw)) for (const c of (e.message && Array.isArray(e.message.content) ? e.message.content : [])) {
+    if (c.type === 'tool_use') {
+      const i = c.input || {};
+      if (c.name === 'Skill' && /(^|:)bk-build$/.test(String(i.skill || i.name || i.command || '').trim().replace(/^\//, '').split(/\s/)[0])) out.skill = true;
+      if (['Read', 'Grep', 'Bash', 'PowerShell'].includes(c.name)) {
+        if (opens(i, stack)) out.file = true;
+        if (opens(i, 'index')) out.index = true;
+      }
+      if ((c.name === 'Bash' || c.name === 'PowerShell') && /detect-stack/.test(String(i.command || ''))) detect.add(c.id);
+    } else if (c.type === 'tool_result' && detect.has(c.tool_use_id)) {
+      // A command that ran and exited non-zero comes back as an error starting "Exit code N"; its output (a profile
+      // listing `**/permissions/**`) must not read as the host's refusal.
+      const body = text(c.content);
+      const refused = c.is_error && !/^\s*Exit code \d+/.test(body) && DENIED.test(body);
+      if (!refused) out.detect = 'ran';
+      else if (out.detect === 'none') out.detect = 'refused';
+    }
+  }
+  return out;
+}
+
 // An answer that asks before changing: a question to the owner about going ahead, or a statement that it is waiting.
 const ASKS = /\b(shall|should|may) I\b[^.?]*\?|\bwould you like\b|\bdo you want me to\b|\b(approve|approval|confirm)\b[^.]*\?|\bgo ahead\?|\bproceed\?|\bwaiting (for|on) (your )?(confirmation|approval|go-ahead|decision)\b|\b(won't|will not|do not|don't) (proceed|continue|start|make (the|any) change)[^.]*\b(until|without)\b/i;
 const asksApproval = (answer) => ASKS.test(String(answer || ''));
 
-module.exports = { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect, events, fisherExact, seenRedFirst, permutationTest, baselineFirst, commitAttempts, asksApproval };
+module.exports = { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect, events, fisherExact, seenRedFirst, permutationTest, baselineFirst, commitAttempts, asksApproval, reach };
