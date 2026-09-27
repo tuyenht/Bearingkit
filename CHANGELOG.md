@@ -8,7 +8,7 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 - `bk-build/references/stacks/node.md` and `python.md`: stack-wide rules written from pinned sources, every sentence with its source line (`docs/specs/2026-09-26-stack-node-python-design.md`); five of the eight stack files now exist.
 - `detect-stack` lists `stackFiles`, the bk-build stack files the profile maps to that exist; `bk-build` reads them before the first edit and `bk-spec` reads them for its requirements. Before this, `node.md` was opened in 0 of 8 measured sessions; after it, 8 of 8.
 - Benchmark tasks `node-01` and `py-01` (an export command over about 2,000 SKUs, scored by running the session's code against a local stand-in API: bounded concurrency, data only on stdout, network deadline, zone-aware timestamps), with `reach()` in `scripts/lib/bench-score.cjs` and an async fixture check in the runner.
-- Measured on Claude Code, Sonnet, guard path: `node-01` O1 and O2 8/8, N median 3 against a floor of 2, `node.md` read 8/8; `py-01` O1 and O2 8/8, Y median 2 against 2, `python.md` read 6/8; `build-01`'s guard still holds with the change. Not compared with the source skills.
+- Measured on Claude Code, Sonnet, guard path: `node-01` O1 and O2 8/8, N median 3 against a floor of 2, `node.md` read 8/8; `py-01` O1 and O2 8/8, Y median 2 against 2, `python.md` read 6/8; `build-01`'s guard still holds with the change. Compared with the source skills, eight interleaved sessions each: no clear difference on either task (`node-01` p = 1.0, `py-01` p = 0.2), at higher cost; `node-01`'s deadline gain (N3 8/8 in the guard) did not replicate (1/8).
 
 ### Fixed (2026-09-27, benchmark)
 - `reach()` read a command that ran and exited non-zero as refused by the host.
