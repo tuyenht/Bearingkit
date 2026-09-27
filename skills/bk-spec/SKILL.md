@@ -7,6 +7,7 @@ description: "Pin down a request before building: restate, edge cases, assumptio
 
 ## Read first
 - The stack profile (run `detect-stack` as bk-protocol's host notes say), the project's instruction files (architecture, conventions, hot paths, "do not" lists), and `bk-protocol/references/gate-patterns.md`.
+- Each file the profile lists under `stackFiles`: the stack's rules, which shape the edge cases and the requirements.
 - The code the request touches: find the touchpoints and cite them as `file:line`.
 - `references/brainstorming.md` when the ask needs questions, a design, or a spec file.
 

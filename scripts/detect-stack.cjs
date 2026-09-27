@@ -287,6 +287,21 @@ function missingBinaries(commands, dir, envPath) {
 // ---------- merge ----------
 const DETECTORS = [php, gradle, dotnet, go, rust, cmake, python, node, terraform];
 
+// The bk-build stack files this profile maps to, by the table of skills/bk-build/references/stacks/index.md, as
+// absolute paths; a mapped file that does not exist yet is left out. Added 2026-09-27: in node-01's guard the kit's
+// sessions ran this script 7 times in 8 and never opened the stack file, so the profile now names it.
+const STACKS = path.resolve(__dirname, '..', 'skills', 'bk-build', 'references', 'stacks');
+function stackFilesFor(languages, frameworks, dir = STACKS) {
+  const names = new Set(frameworks.map((f) => f.name));
+  const files = languages.map((l) => {
+    if (l === 'typescript' || l === 'javascript') return names.has('react') || names.has('next') ? 'typescript-react.md' : 'node.md';
+    if (l === 'kotlin' || l === 'python' || l === 'c-cpp') return `${l}.md`;
+    if (l === 'php') return 'php-laravel.md';
+    return null;
+  });
+  return uniq(files.filter(Boolean)).filter((f) => exists(dir, f)).map((f) => path.join(dir, f).split(path.sep).join('/'));
+}
+
 function detect(dir = process.cwd(), opts = {}) {
   const parts = DETECTORS.map((f) => f(dir)).filter(Boolean);
   if (!parts.length) throw new Error('no-manifest');
@@ -307,6 +322,7 @@ function detect(dir = process.cwd(), opts = {}) {
     // Preconditions a guardrail has that its command line cannot say. Empty for most stacks; the key is always there.
     notes: uniq(parts.flatMap((p) => p.notes || [])),
   };
+  profile.stackFiles = stackFilesFor(profile.languages, profile.frameworks, opts.stacksDir);
   profile.parity = { missingBinaries: missingBinaries(commands, dir, opts.path) };
   return profile;
 }

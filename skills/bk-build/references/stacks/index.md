@@ -1,6 +1,6 @@
 # Which stack file to open
 
-`detect-stack` does not report a file name. It reports `languages` and `frameworks`, and this table maps them. Checked against the profile's real output on every fixture in `tests/fixtures/stacks/` on 2026-09-16, not from memory. (The first version, 2026-09-15, said the same and still had a `c` or `cpp` row: the detector reports `c-cpp` as one language. Only the rows actually run are checked.)
+`detect-stack` reports `languages` and `frameworks`, and this table maps them; since 2026-09-27 it also lists the mapped files that exist, as `stackFiles` (absolute paths), so a session reads the list rather than this table. Checked against the profile's real output on every fixture in `tests/fixtures/stacks/` on 2026-09-16, not from memory. (The first version, 2026-09-15, said the same and still had a `c` or `cpp` row: the detector reports `c-cpp` as one language. Only the rows actually run are checked.)
 
 | Profile says | Open | Status |
 |---|---|---|
