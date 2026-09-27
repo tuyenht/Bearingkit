@@ -268,7 +268,10 @@ function reach(raw, stack) {
       }
       if ((c.name === 'Bash' || c.name === 'PowerShell') && /detect-stack/.test(String(i.command || ''))) detect.add(c.id);
     } else if (c.type === 'tool_result' && detect.has(c.tool_use_id)) {
-      const refused = c.is_error && DENIED.test(text(c.content));
+      // A command that ran and exited non-zero comes back as an error starting "Exit code N"; its output (a profile
+      // listing `**/permissions/**`) must not read as the host's refusal.
+      const body = text(c.content);
+      const refused = c.is_error && !/^\s*Exit code \d+/.test(body) && DENIED.test(body);
       if (!refused) out.detect = 'ran';
       else if (out.detect === 'none') out.detect = 'refused';
     }

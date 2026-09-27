@@ -40,6 +40,9 @@ test('reach: bk-build invoked, the stack file and index opened, detect-stack run
     use('b', 'Bash', { command: 'node detect-stack.cjs' }), out('b', 'Permission denied', true),
     use('c', 'PowerShell', { command: 'node detect-stack.cjs' }), out('c', '{}'),
   ]), 'node').detect, 'ran', 'a later run wins over an earlier refusal');
+  assert.equal(reach(stream([
+    use('b', 'Bash', { command: 'node detect-stack.cjs; cat CLAUDE.md' }), out('b', 'Exit code 1\n{"hotPathGlobs":["**/permissions/**"]}', true),
+  ]), 'node').detect, 'ran', 'a run that exits non-zero ran; the word in its output is not a refusal');
 });
 
 const write = (dst, rel, text) => { fs.mkdirSync(path.dirname(path.join(dst, rel)), { recursive: true }); fs.writeFileSync(path.join(dst, rel), text); };
