@@ -4,7 +4,7 @@
 
 Source: `node _build/bk-build-sprint/count-rows.cjs --list` (142 rows target bk-build: `{ absorb: 7, drop: 32, idea: 103 }`). This file classifies the 103 `idea` rows. "Inventory line" below is the line number in `docs/specs/2026-09-18-item-inventory.md` (verified with `grep -n "| bk-build | idea |" docs/specs/2026-09-18-item-inventory.md`, 103 hits, matching the script's count).
 
-Five stack files are not written yet: `node.md`, `python.md`, `php-laravel.md`, `shell.md`, `c-cpp.md` (`skills/bk-build/references/stacks/index.md:8,10,11,12,13`). Rows bucketed to those names are reading input for future authoring, not text that exists to check today; their "covered" column is "not yet — file unwritten" unless noted otherwise.
+(Note 2026-09-27: since this classification, `node.md` and `python.md` are written and on `main`; see `docs/specs/2026-09-26-stack-node-python-design.md`. The paragraph below is left as it stood.) Five stack files are not written yet: `node.md`, `python.md`, `php-laravel.md`, `shell.md`, `c-cpp.md` (`skills/bk-build/references/stacks/index.md:8,10,11,12,13`). Rows bucketed to those names are reading input for future authoring, not text that exists to check today; their "covered" column is "not yet — file unwritten" unless noted otherwise.
 
 ## Bucket counts (sum = 103)
 
