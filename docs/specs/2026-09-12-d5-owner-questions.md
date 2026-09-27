@@ -377,6 +377,9 @@ Số "13" từng xuất hiện (`opus5-handoff.md:171`) đã bị chính file đ
 - **Cập nhật 2026-09-27:** owner duyệt bước tiếp theo (nguyên văn: "Tự động xử lý tiếp tho tôi với các khuyến nghị tốt nhất phù hợp nhé."): `detect-stack` thêm `stackFiles`, `bk-build`/`bk-spec` đọc chúng; guard `node-01` lại: `node.md` mở 8/8, O1/O2 8/8, trung vị N 3; guard `build-01` vẫn giữ. `node.md` vào `main` ở `01ae83b` (đăng ký và kết quả: spec stack, mục "Reach fix"). Owner cũng duyệt cập nhật bản cài hằng ngày, làm mới kho Antigravity và xoá nhánh `p3b-k-before` (ba lựa chọn "(Recommended)").
 - **Khuyến nghị: giữ `node.md` trên nhánh**, không merge; việc tiếp theo là đường tới file (bk-spec → bk-build → stacks) như một thay đổi riêng có đo, rồi chạy lại guard `node-01`. Bác: merge ngay vì luật đạt — sẽ đưa vào `main` chữ model đọc mà chưa phiên đo nào đọc.
 
+
+### 37. O1 của `node-01` không đòi lệnh export gọi API; sửa như `py-01`? (v0.3, 2026-09-27)
+> **ĐÃ CHỐT 2026-09-27 — owner chọn "Sửa, commit riêng (Recommended)"** (câu hỏi trong phiên P3c-b; nguồn: reviewer P3c-a, handoff `2026-09-27-p3c-py01-build.md`). Làm ở `2fb76a7`: O1 đòi mọi SKU của file nhỏ được gọi; ca test đỏ rồi xanh; kết quả đo cũ không đổi (O1 chỉ đạt khi N1 đạt, mà N1 đã đòi đủ). Cùng lần hỏi, owner duyệt cập nhật cài hằng ngày lên `beb258c`, làm mới kho Antigravity và xoá worktree tạm.
 ---
 
 ## Quyết định 2026-09-12 và những gì mở khoá — CHƯA áp dụng, chỉ liệt kê
