@@ -27,25 +27,39 @@ const MUTANTS = [
 ];
 const COPY = ['scripts', 'skills/bk-build/references/stacks', 'evals/bench/py-01', 'tests/bench-py-01.test.cjs'];
 
-const scratch = process.argv[2];
-if (!scratch) { console.error('usage: node evals/bench/py-01/mutants.cjs <scratch dir>'); process.exit(2); }
-const src = fs.readFileSync('evals/bench/py-01/build.cjs', 'utf8');
-// At most four at once: under heavier load a timing assertion can fail for the load, not for the mutation.
-const pool = (tasks, n) => { const out = []; let next = 0; const worker = async () => { while (next < tasks.length) { const i = next++; out[i] = await tasks[i](); } }; return Promise.all(Array.from({ length: n }, worker)).then(() => out); };
-const jobs = [['M00 none (control)', '', ''], ...MUTANTS].map(([name, from, to], i) => () => {
-  if (from && !src.includes(from)) return Promise.resolve(`${name}: PATTERN NOT FOUND`);
-  const dir = path.join(scratch, `mutant-${i}`);
-  fs.rmSync(dir, { recursive: true, force: true });
-  for (const p of COPY) fs.cpSync(p, path.join(dir, p), { recursive: true });
-  fs.writeFileSync(path.join(dir, 'evals/bench/py-01/build.cjs'), from ? src.split(from).join(to) : src);
-  return new Promise((resolve) => exec('node --test --test-reporter=tap tests/bench-py-01.test.cjs', { cwd: dir, timeout: 500000 }, (err, stdout) => {
-    const fails = (stdout.match(/# fail (\d+)/) || [])[1];
-    const skips = (stdout.match(/# SKIP (.*)$/m) || [])[1];
-    const lines = stdout.split('\n');
-    const at = lines.findIndex((l) => /error: /.test(l));
-    const why = at < 0 ? '' : (lines[at].includes('|-') ? lines[at + 1] : lines[at]).trim().slice(0, 110);
+// One mutant's line from its `node --test` run. Red or green is the exit code (non-zero is red); a run killed at the
+// timeout or never started has no verdict. The TAP output only gives the first assertion error and any skip.
+function verdict(err, stdout = '') {
+  const state = !err ? 'GREEN' : typeof err.code === 'number' && err.code !== 0 ? 'RED' : `NO RESULT (${err.killed ? 'killed' : err.signal || err.code})`;
+  const skips = (stdout.match(/# SKIP (.*)$/m) || [])[1];
+  const lines = stdout.split('\n');
+  const at = lines.findIndex((l) => /error: /.test(l));
+  const why = at < 0 ? '' : (lines[at].includes('|-') ? lines[at + 1] : lines[at]).trim().slice(0, 110);
+  return `${state} ${why}${skips ? ` [skip: ${skips}]` : ''}`;
+}
+
+function main(scratch) {
+  const src = fs.readFileSync('evals/bench/py-01/build.cjs', 'utf8');
+  // At most four at once: under heavier load a timing assertion can fail for the load, not for the mutation.
+  const pool = (tasks, n) => { const out = []; let next = 0; const worker = async () => { while (next < tasks.length) { const i = next++; out[i] = await tasks[i](); } }; return Promise.all(Array.from({ length: n }, worker)).then(() => out); };
+  const jobs = [['M00 none (control)', '', ''], ...MUTANTS].map(([name, from, to], i) => () => {
+    if (from && !src.includes(from)) return Promise.resolve(`${name}: PATTERN NOT FOUND`);
+    const dir = path.join(scratch, `mutant-${i}`);
     fs.rmSync(dir, { recursive: true, force: true });
-    resolve(`${name}: ${fails && fails !== '0' ? 'RED' : 'GREEN'} ${why}${skips ? ` [skip: ${skips}]` : ''}`);
-  }));
-});
-pool(jobs, 4).then((r) => console.log(r.join('\n')));
+    for (const p of COPY) fs.cpSync(p, path.join(dir, p), { recursive: true });
+    fs.writeFileSync(path.join(dir, 'evals/bench/py-01/build.cjs'), from ? src.split(from).join(to) : src);
+    return new Promise((resolve) => exec('node --test --test-reporter=tap tests/bench-py-01.test.cjs', { cwd: dir, timeout: 500000 }, (err, stdout) => {
+      fs.rmSync(dir, { recursive: true, force: true });
+      resolve(`${name}: ${verdict(err, stdout)}`);
+    }));
+  });
+  return pool(jobs, 4).then((r) => console.log(r.join('\n')));
+}
+
+module.exports = { verdict };
+
+if (require.main === module) {
+  const scratch = process.argv[2];
+  if (!scratch) { console.error('usage: node evals/bench/py-01/mutants.cjs <scratch dir>'); process.exit(2); }
+  main(scratch);
+}
