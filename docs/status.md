@@ -12,7 +12,7 @@ Cập nhật: **2026-09-27, sau phiên P3c-b** (máy owner; `python.md` và task
 
 ## 1. Đang ở đâu
 
-Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. `node.md` (P3b) và `python.md` (P3c) đã vào `main`: guard `node-01` N trung vị 3 (sàn 2), file mở 8/8; guard `py-01` Y trung vị 2 (sàn 2), file mở 6/8, O1/O2 8/8 ở cả hai. Còn P4: `php-laravel`, `c-cpp`, `shell`. Sáu sprint lifecycle đầu đã xong (`bk-review`, test case `bk-audit`/`bk-next`, khung benchmark, `bk-debug`, `bk-test`, `bk-build`); còn `bk-spec` + `bk-plan` (P5), `bk-ship` + `bk-close` (P6), cổng v0.3 (P7).
+Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. `node.md` và `python.md` đã vào `main` (guard: O1/O2 8/8, file được đọc 8/8 và 6/8). So với skill nguồn, tám phiên xen kẽ mỗi bên: **không khác biệt rõ** (`node-01` p = 1,0; `py-01` p = 0,2), kit tốn gấp ~1,4–1,7 lần; hiệu ứng deadline của `node.md` không lặp lại (8/8 rồi 1/8). Kế tiếp: kiểm giả thuyết luật "chạm tối thiểu" của `bk-build` đè luật file stack (phiên K1: timeout "out of scope"), rồi P4 theo câu 38. Sáu sprint lifecycle đầu đã xong (`bk-review`, test case `bk-audit`/`bk-next`, khung benchmark, `bk-debug`, `bk-test`, `bk-build`); còn `bk-spec` + `bk-plan` (P5), `bk-ship` + `bk-close` (P6), cổng v0.3 (P7).
 
 | Đếm được hôm nay | Số | Lệnh / nguồn (chạy lại 2026-09-26) |
 |---|---|---|
