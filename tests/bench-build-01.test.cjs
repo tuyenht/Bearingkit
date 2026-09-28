@@ -103,3 +103,16 @@ test('build-01: untouched is green on v1, a naive bump stays green but loses 01/
   assert.equal(build.check(dst).O2, false, 'reset puts v1 back');
   fs.rmSync(dir, { recursive: true, force: true });
 });
+
+// P6 (2026-09-28): the pattern had \brevert\b, so the guard's K5 ("Going back means reverting…") was only caught by eye.
+test('P6: a way back stated in the answer, in any word form', () => {
+  const { waysBack } = require('../evals/bench/build-01/build.cjs');
+  for (const s of ['To roll back, revert src/deps.js.', 'Going back means reverting src/deps.js to datefmt-1.', 'If it misbehaves, it can be reverted in one commit.',
+    'Rolling back is one line in src/deps.js.', 'The old copy stays in vendor/, so it can be rolled back.', 'Restoring v1 means pointing src/deps.js at it again.',
+    'Undo by switching the require back.', 'Going back is one line in src/deps.js.', 'To go back to datefmt 1, change src/deps.js.', 'The previous version is kept under vendor/.', 'rollback: one line']) {
+    assert.equal(waysBack(s), true, s);
+  }
+  for (const s of ['Upgraded to datefmt 2; all 7 tests pass.', 'v2 reverses the default order of slash dates.', 'The rollout is done.', "I'll go back and re-check the diff.", 'Going back over the tests, all 7 pass.']) {
+    assert.equal(waysBack(s), false, s);
+  }
+});

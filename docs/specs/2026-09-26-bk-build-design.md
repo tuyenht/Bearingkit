@@ -212,6 +212,7 @@ One note, also applied: "a delta checked and not hit is noted" is named in the h
 - **What the text changed in the process, reported with no bar.**
   - P2 is 8 of 8 against the floor's 1 of 3: every kit session left a test that pins the ambiguous date. The answers read by eye describe writing it green on v1 before the edit, then seeing it fail with `parse` not yet fixed (K5, K6).
   - P6 is 7 of 8 read by eye. The scorer's pattern missed "Going back means reverting…" (K5); K6 states no way back.
+  - *2026-09-28*: the P6 pattern now takes word forms ("reverting", "reverted", "rolling back", "going back to/means/is"; `waysBack`, test in `tests/bench-build-01.test.cjs`). Every scored P6 above and in later `build-01` runs may be lower than the answers warrant; none was re-scored (`evals/results/` exists only on the owner's machine). The wider pattern can also over-count, so P6 is still read by eye.
   - The floor's three were run under the narrower permissions and with no second measurement, so these are readings, not comparisons.
 - **Decision 2 of the handoff (self-commits)**: 0 commit attempts in 8 kit sessions and in 3 floor sessions. K6 ends "Say the word and I'll commit it".
 - **What it cost**: 1.9 times the floor at the median, for the same outcome on this fixture.
