@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-28, sau phiên P4 (Bước 0 và phần dựng `php-laravel`)** (máy owner; không phiên đo nào; hai nhánh chưa merge: `p4-step0-scope`, `p4a-php`). Phiên gần nhất: `docs/handoff/2026-09-28-p4-step0-php-build.md`. Lộ trình: `docs/plans/2026-09-26-v03-roadmap.md`. Lịch sử của file này, nguyên văn tới commit `b89eb36`: `docs/status-history.md`; mọi tham chiếu "status §N" hay "status §7 (xx)" viết trước 2026-09-26 trỏ về đó.
+Cập nhật: **2026-09-28, sau phiên P4 (Bước 0 và phần dựng `php-laravel`)** (máy owner; không phiên đo nào; ba nhánh chưa merge, chờ đo theo thứ tự: `p4-step0-scope`, `p4a-php`, `p4b-topic-stackfiles` — cái cuối dựng trên cloud). Phiên gần nhất: `docs/handoff/2026-09-28-p4-step0-php-build.md`. Lộ trình: `docs/plans/2026-09-26-v03-roadmap.md`. Lịch sử của file này, nguyên văn tới commit `b89eb36`: `docs/status-history.md`; mọi tham chiếu "status §N" hay "status §7 (xx)" viết trước 2026-09-26 trỏ về đó.
 
 > **File này là bảng điều khiển, không phải nguồn sự thật.** Nó chỉ đếm và trỏ; nội dung thật nằm ở:
 > - thiết kế: `docs/specs/2026-09-11-bearingkit-v2-design.md` (§13 bảng mốc, §15 log quyết định);

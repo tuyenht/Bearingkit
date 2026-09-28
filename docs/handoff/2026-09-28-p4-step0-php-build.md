@@ -65,7 +65,7 @@ Tiếp nối `docs/handoff/2026-09-27-p3c-py01-guard.md` (Block 1 của nó vẫ
 
 0. Sau khi tuần reset (2026-09-30 03:00 UTC): đo Bước 0 theo `docs/specs/2026-09-28-stack-rule-timing.md` (56 phiên; `get_usage` trước mỗi lô). Đạt thì merge `p4-step0-scope` vào `main`; không đạt thì giữ trên nhánh, báo owner.
 1. Rebase `p4a-php` lên `main` lúc đó; rồi `php-01` theo spec: 2 K thăm dò reach, 3 F hiệu chỉnh, rồi guard (K và S xen kẽ) hoặc so đầy đủ.
-2. P4b: `detect-stack` nêu file theo chủ đề (câu 38 (b)), rồi `shell`.
+2. P4b: `detect-stack` nêu file theo chủ đề (câu 38 (b)) — **đã dựng trên cloud cùng ngày**, nhánh `p4b-topic-stackfiles` (đã push; Bước A đã kiểm trên máy owner: 184/184, đột biến `py-01` đúng); đọc `git show origin/p4b-topic-stackfiles:docs/handoff/2026-09-28-p4b-topic-build.md` và làm Bước B của nó SAU mục 1 (đo 18 phiên; `sql.md` trùng hazard H2/H3 của `php-01`, nên nhánh này chỉ vào `main` sau khi `php-01` đã đo). Rồi `shell.md` và task `shell`.
 3. P4c `c-cpp` theo quyết định cài toolchain của owner.
 
 ### Resume prompt
