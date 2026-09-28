@@ -56,6 +56,8 @@ Tiếp nối `docs/handoff/2026-09-28-p4-step0-php-build.md` (Block 1 của nó 
 
 - Nhánh `p4b-topic-stackfiles` (đã push; từ `57361bd`): `3b1ef11` (detect-stack + spec + chữ `skills/`), `a78c527` (P6 `build-01`), `43478b3` (mutants `py-01`), cộng commit handoff này. `main`, `p4-step0-scope`, `p4a-php` không đổi. `docs/status.md` chưa sửa (sửa khi merge).
 
+- **Bước A đã làm trên máy owner** (2026-09-28, phiên Desktop P4, Windows, Node 25): suite đầy đủ `# tests 184`, 184 pass, 0 fail, 0 skipped theo TAP (gồm `bench-py-01` chạy pytest thật); `node evals/bench/py-01/mutants.cjs <scratch>`: M00 GREEN, M01–M16 RED, mỗi bản ở khẳng định mang tên nó; `node scripts/detect-stack.cjs .` trên checkout của owner (có `_build/upstream/`) chỉ nêu `node.md`. Phiên sau bắt đầu từ Bước B.
+
 ### Decisions waiting on the owner
 
 - Không có mới. Nếu lúc đo `php-01` chưa lên `main` (chưa đo, hoặc `php-laravel.md` ở lại nhánh): dừng và hỏi owner, không chạy từ nhánh trộn.
