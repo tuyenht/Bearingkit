@@ -1,0 +1,88 @@
+# `detect-stack` lists stack files by topic (`sql.md`, `shell.md`)
+
+P4b, first half (`docs/plans/2026-09-26-v03-roadmap.md`, row P4; next work item 2 of `docs/handoff/2026-09-28-p4-step0-php-build.md`). Built on the cloud on branch `p4b-topic-stackfiles`, from `main` at `57361bd`; **nothing here was measured**. The owner's decision this implements, question 38 (b) of `docs/specs/2026-09-12-d5-owner-questions.md` (settled 2026-09-27 under the owner's delegation): "trước khi đo, `detect-stack` nêu file theo chủ đề (`shell.md` khi dự án có `*.sh`/`*.ps1`, `sql.md` khi có migration hay `*.sql`), là đổi thiết kế có đo reach như `stackFiles`." The pattern it follows is "Reach fix, registered before any session" in `docs/specs/2026-09-26-stack-node-python-design.md`.
+
+## Why
+
+`sql.md` exists and `shell.md` will, but neither has a way in. No manifest declares SQL or shell, so no language row of `skills/bk-build/references/stacks/index.md` maps them, `stackFiles` never names them, and `bk-build` says `sql.md` is opened "by subject matter … not by the profile". The measurements say that is not enough: in `node-01`'s first guard `detect-stack` ran in 7 of 8 sessions and the stack file was opened in none; once the profile named it, 8 of 8 (the Reach fix, same spec). A file the profile does not list is, on that evidence, a file that is not read.
+
+## Design
+
+**Signals.** Read from the project tree, never from a manifest:
+
+| Topic file | Listed when the tree holds |
+|---|---|
+| `sql.md` | a file ending `.sql`; or a directory named `migrations` (which covers `migrations/`, `database/migrations/`, `prisma/migrations/`, Django's `<app>/migrations/`, EF Core's `Migrations/`), `migrate` directly under `db` (`db/migrate/`, Rails), or `alembic` |
+| `shell.md` | a file ending `.sh`, `.bash` or `.ps1` |
+
+Names and extensions are compared in lower case, so a Windows tree's `Migrations/` or `SETUP.PS1` counts. `alembic` is added to the four examples of the owner's prompt because the profile already treats `alembic/**` as a hot path for Python (`scripts/detect-stack.cjs:155`) and its migrations are `.py`, so no `.sql` would reveal them.
+
+**What the scan skips.** `.git`, `node_modules`, `vendor`, `dist`, `build`, `.venv`, and every directory whose name starts with a dot. `vendor` matters most: a Laravel project's `vendor/` holds its framework's own migrations, which say nothing about the project. Symbolic links are not followed (a `Dirent` for a link is neither a file nor a directory here), so a link cycle cannot hang the scan; the price is that a migrations directory or `.sql` file reached only through a link is not seen (a false negative). Hidden files, unlike hidden directories, are read: a `.x.sql` file counts.
+
+**Bound.** Breadth first from the directory `detect-stack` is given, entries sorted by name so a cut-off lands at the same place every run; it reads the root and directories down to **depth 4** (the root's children are depth 1), and stops after **5,000 directory entries** read, or as soon as both topics are found. Why these numbers:
+- Depth 4 reaches every layout named above at the root (`prisma/migrations/` is depth 2, `database/migrations/` depth 2) and one monorepo level deeper (`packages/api/prisma/migrations/` is depth 4). It deliberately stops short of this repository's own benchmark fixtures (`evals/bench/review-03/main/prisma/migrations/` is depth 6), so the kit's profile of itself does not change.
+- 5,000 entries: `detect-stack` runs at the start of every skill that reads the profile, so the scan must stay cheap on a large tree. The count bounds the work whatever the tree; on this repository (a few hundred tracked files, several hundred more under `.git` which is skipped) the scan ends well below it. Time on the cloud container: see "Build record" (a cloud reading, not the owner's machine).
+- A tree larger than the bound can hide a signal: that is a false negative, and the `bk-build` sentence keeps the subject-matter route for it (below).
+
+**Only files that exist.** As for the language rows, a topic file is listed only if it exists under the stacks directory. `shell.md` is not written (its one source, Antigravity-Core, is pinned only on the owner's machine), so today a project with `*.sh` gets nothing more; the signal is built and tested with a stand-in stacks directory, and starts listing the day `shell.md` is written.
+
+**Order.** Language files first, as today, then `sql.md`, then `shell.md`.
+
+**No new field (chosen), rather than a field saying why each file is listed.** The profile keeps its keys; only `stackFiles` can gain one or two paths. Rejected: a `stackReasons` map (`{"sql.md": "migrations/"}`). It would let a session see why `sql.md` is there, but no skill text reads it, so using it would mean a further line under `skills/` (outside this change's measured scope) and more tokens in every profile; the reason is one rule in `index.md`, and `sql.md` itself says what it governs. Also rejected: reporting a scan cut short by the bound (same cost, and the subject-matter sentence already covers a miss).
+
+**False positives, stated.** A `migrations/` directory that holds something other than database migrations, or a single stray `.sql` file (a dump, a fixture), lists `sql.md` for a project whose change may not touch a database. The cost is one file read of about 4.5 KB; the rules in it apply only to SQL the change writes. A shell script in a project whose change never touches it lists `shell.md` the same way, once that file exists.
+
+**Text the model reads, changed on this branch to match the new behaviour, nothing else under `skills/`:**
+- `skills/bk-build/SKILL.md:12`: "`sql.md` is opened by subject matter — a query, a migration, a schema — not by the profile." becomes a sentence saying the profile lists `sql.md` (and `shell.md`, once written) when the tree holds SQL files, a migrations directory or shell scripts, and that the subject-matter route still applies when it does not.
+- `skills/bk-build/references/stacks/index.md`: the section "`sql.md` is not reached this way" and the `shell.md` row, which said no profile names it.
+
+## Effect on tasks already registered
+
+- **`node-01`, `py-01`, `build-01`, `debug-01`, `test-01`**: no `.sql`, no migrations directory, no shell script in their fixtures (checked with `git ls-files` and the fixtures' `build.cjs` on 2026-09-28): their `stackFiles` do not change. `build-01` still changes, because `bk-build`'s text does (guard below).
+- **`review-03`, `review-04`** (`bk-review`): both fixtures carry `prisma/migrations/<id>/migration.sql` (depth 3), so a profile run there now lists `sql.md`. `bk-review` has no `stackFiles` line, so a session opens it only on its own initiative. Their registered results were taken without it; a later run of either on `main` after this change is a different condition: compare only runs interleaved in one call, and report whether `sql.md` was opened (`reach(raw, 'sql').file`).
+- **`php-01`** (branch `p4a-php`, not on `main`): the fixture has `schema.sql` at its root, so its profile lists `sql.md` next to `php-laravel.md`. This is not neutral for that measurement: `sql.md:40` ("Parameterised, always") and `sql.md:42` ("Multi-statement changes run in one transaction") state the same rules as `php-01`'s hazards H2 (bound parameters) and H3 (one transaction). If this change reaches `main` before `php-01` is measured:
+  - R of `php-01` stays `php-laravel.md`, and its bar is unchanged; a session opening `sql.md` is reported per session, with no threshold.
+  - H2 and H3 of K can no longer be credited to `php-laravel.md` alone: the result says "the kit (`php-laravel.md` with `sql.md` listed)", splits H2 and H3 by whether `sql.md` was opened (description only), and a comparison with S (the sources, where no `stackFiles` exists) is a comparison of the kit, not of the file.
+  - `tests/bench-php-01.test.cjs:89` checks `stackFiles.some(… php-laravel.md)`, so the fixture test still passes with `sql.md` listed.
+- **Recommended merge order**: `p4-step0-scope` (its measurement is first in the queue), then `p4a-php` measured and decided on that `main`, then this branch rebased onto that `main` and measured as registered below, then merged. All three branches edit `skills/bk-build/SKILL.md:12`, and `p4a-php` and this branch also edit `stacks/index.md` (`p4-step0-scope` does not), so the rebase here resolves those lines by hand (keep the step-0 sentence and the stack count from the others, the `sql.md` sentence from here) and re-runs the suite before any session.
+
+## Measurement, registered before any session
+
+Nothing below has run. It runs on the owner's machine, after the merge order above, from this branch rebased onto the `main` of that day.
+
+**Task: `php-01`, reused.** Why: it is a `bk-build` task (the skill whose text changed), its change is SQL work (two rows written together, a value with a quote in it), `schema.sql` sits at its root, and it already has calibration, permissions and a scorer. A new task would need its own fixture and calibration to answer the same reach question. Rejected: `review-03`/`review-04` (they measure `bk-review`, which has no `stackFiles` line, and ask for no change); a new `sql-01` task (cost, no gain for reach). If `php-01` is not on `main` by then (its own measurement not run, or `php-laravel.md` kept on its branch), stop and ask the owner rather than running it from a mix of branches. The task's files are not changed; reach of `sql.md` is read from each session's stored stream with the existing `reach(raw, 'sql')` of `scripts/lib/bench-score.cjs:256` (a `Read`, `Grep` or shell command naming `stacks/sql.md`).
+
+**Probe.** Two K sessions on `php-01`, the task's own prompt, permissions and scorer, Sonnet 5, `natural`. Go on if `sql.md` is opened in at least 1 of 2; otherwise stop and report.
+
+**Guard.** Eight K sessions (the probe's two not counted). This change merges only if `sql.md` is opened in **at least 4 of 8**, and `php-01`'s O1 and O2 are each at least 7 of 8, and H at its median is not below `php-01`'s floor calibration median. Reported with no bar: H1, H2, H3 and X per session, split by whether `sql.md` was opened (a lead, not a result); `php-laravel.md` opened; `detect-stack` ran; the skill invoked; the Skill `args` column (handoff 2026-09-28, the `args` turn); cost.
+
+**`build-01` again.** `bk-build`'s text changes, so `build-01`'s guard runs again before merging: eight K sessions, its bar as registered in `docs/specs/2026-09-26-bk-build-design.md` ("The owner's choice after calibration"): O1 8 of 8, O2 and O3 at least 7 of 8, P3 at least 7 of 8. Its profile does not list `sql.md` (no signal in the fixture), so this checks the sentence, not the scan.
+
+**`shell.md`.** Its signal is built and tested here, but its reach cannot be measured until the file exists; the `shell` task's own reach probe (P4b, second half) is that measurement.
+
+**Sessions**: 2 + 8 on `php-01`, 8 on `build-01`, 18 in all. **Budget: not measured** (no session of this change has run; read `get_usage` before each batch, the runner stops at 90%). If the quota does not allow both guards, the change stays on the branch and the owner is asked.
+
+## Two small fixes carried on this branch
+
+- **`build-01` P6** (`evals/bench/build-01/build.cjs`): the pattern used `\brevert\b`, so "reverting", "reverted", "going back" and "rolling back" were missed (the guard's K5, "Going back means reverting…", was read by eye). Fixed with word forms; "go back" counts only as "go back to", "going back means" or "going back is", so "I'll go back and re-check the diff" does not; test cases, positive and negative, in `tests/bench-build-01.test.cjs`. The wider pattern can also over-count ("restores" about something else); P6 stays read by eye before any result. A line in `docs/specs/2026-09-26-bk-build-design.md` says earlier P6 counts may be low and were not re-scored.
+- **`py-01` mutants** (`evals/bench/py-01/mutants.cjs`): red or green now comes from the exit code of `node --test` (non-zero is red); the TAP output is only mined for the reason. The TAP-count regex had already failed once on a reporter change (P3c-b, Node 25). Not run on the cloud: the harness runs `python -m pytest`, and this session runs no Python; the owner's machine reruns it (M00 green, M01–M16 red). `evals/bench/php-01/mutants.cjs` on `p4a-php` reads `# fail N` the same way; not touched here (out of this session's scope), noted for the owner.
+
+## Build record (cloud, Linux, Node 22, 2026-09-28)
+
+- **`detect-stack`**: `topicsIn(root, { depth, entries })` in `scripts/detect-stack.cjs`, called from `detect` (`opts.scan` overrides the bound, for tests only); `stackFilesFor` takes the topics after the language files. Two tests in `tests/detect-stack.test.cjs`, written first and red (the topic test failed, the fixture guard passed before and after, as a guard should): a `.sql` file, an upper-case extension, six migration layouts (`migrations/`, `database/migrations/`, `prisma/migrations/`, `db/migrate/`, `alembic/`, EF Core's `Data/Migrations/`), `migrate` outside `db/` not counted, seven skipped places (`node_modules`, `vendor`, `dist`, `build`, `.venv`, a hidden directory, `.git`), `shell.md` absent then present in a stand-in stacks directory (`opts.stacksDir`), `.bash`, the order, depth 4 read and depth 5 not, a migrations directory at depth 4, the entry bound and the depth bound, no new key in the profile; and no fixture of `tests/fixtures/stacks/` gains a topic file.
+- **Profiles of the benchmark fixtures, read with the kit's own stacks directory**: `review-03/main` and `review-04/branch` now list `typescript-react.md` and `sql.md` (they listed `typescript-react.md` before); `build-01`, `node-01`, `py-01` unchanged (`node.md`, `node.md`, `python.md`); this repository's own profile unchanged (`node.md`). `php-01` was not built here (it lives on `p4a-php`); its `schema.sql` at the root is a signal by construction. On the owner's machine the untracked `_build/upstream/` clones sit within the bound, so the kit's profile of itself there may list `sql.md` (or `shell.md` once written); no benchmark runs from that tree.
+- **Time**: `detect` on this repository (430 tracked files, `.git` skipped) took about 5 ms in one reading, the benchmark fixtures 1 to 2 ms; a cloud container, not the owner's machine, and not a benchmark.
+- **`build-01` P6**: `waysBack` exported from `evals/bench/build-01/build.cjs`; the new test was red on "Going back means reverting src/deps.js to datefmt-1." with the old pattern, green with the new; three negatives ("reverses", "rollout", a plain report) stay false.
+- **`py-01` mutants**: `verdict(err, stdout)` exported, the run moved under `require.main`; `tests/bench-py-01-mutants.test.cjs` (a file of its own, because `bench-py-01.test.cjs` runs Python) was red on a Node-25-style output ("ℹ fail 1", exit 1) with the TAP count and green with the exit code. A run killed at its timeout now reads "NO RESULT (killed)" instead of a colour. The harness itself was not run.
+- **Suite**, every `tests/*.test.cjs` except `bench-py-01.test.cjs` (it runs `python -m pytest`; this session runs no Python, although an interpreter is on the container's PATH): 181 tests, 175 pass, 5 fail, 1 skipped. The clean tree at `57361bd`, same files, before any change: 177, 171 pass, 5 fail, 1 skipped. The five failures have the same names in both (the orphan grace period of the runner; four of `bearingkit record`): environmental on cloud Linux, not this change. The owner's machine runs the whole suite, `bench-py-01` included.
+
+## Independent review (2026-09-28, Sonnet, read only, before the commit)
+
+The reviewer changed no file and ran no test, bench or Python. It hand-traced the scan's depth and entry bounds against every test case (no off-by-one), confirmed the fixture claims (`review-03`/`review-04` change; `build-01`, `node-01`, `py-01`, `debug-01`, `test-01`, the kit's own tree do not), the `sql.md:40`/`:42` match with `php-01`'s H2/H3, `build-01`'s registered bar, the owner's wording of question 38 (b), the `verdict` semantics, and that only the two stated passages under `skills/` changed. No must-fix.
+
+| Finding | Severity given | Weighed | Change |
+|---|---|---|---|
+| The merge-order note said the first two branches edit `index.md`; `p4-step0-scope` does not | should-fix | Correct (`git show origin/p4-step0-scope` leaves `index.md` as on `main`) | Names `p4a-php` and this branch |
+| The widened P6 pattern matched any "go back" ("I'll go back and re-check the diff"), untested and undisclosed | should-fix | Correct | "go back" only as "go back to / means / is"; two negatives and one positive added; the over-count risk stated here and in the `bk-build` spec |
+| A migrations directory or `.sql` reached only through a symbolic link is not seen | nit | Correct, a design choice | Stated under "What the scan skips" |
+| Hidden files are read while hidden directories are skipped | nit | Correct, low impact | Stated; code unchanged |

@@ -10,12 +10,12 @@
 | `languages: python` | `python.md` | written |
 | `languages: php` (framework `laravel`) | `php-laravel.md` | **not written yet** |
 | `languages: c-cpp` | `c-cpp.md` | **not written yet** |
-| no profile names it — opened by subject matter, like `sql.md` below | `shell.md` | **not written yet** |
+| no language: a `.sh`, `.bash` or `.ps1` file in the tree, like `sql.md` below | `shell.md` | **not written yet** |
 | `languages: java`, `go`, `rust`, `csharp` or `terraform` | — | **no file, none planned yet**: spec §5.5's first eight do not include them. The profile still carries their guardrail commands; say the file is missing rather than borrowing another stack's |
 
-## `sql.md` is not reached this way
+## `sql.md` is reached by what the tree holds
 
-No manifest declares SQL (or shell), so `detect-stack` never names it and it has no language row above. It is opened **by subject matter**: the change touches a query, a migration, a schema, or an index — whatever language the surrounding code is written in. A Kotlin service writing a migration reads `kotlin.md` and `sql.md` both.
+No manifest declares SQL (or shell), so it has no language row above. `detect-stack` lists it under `stackFiles` when the tree holds a `.sql` file or a migrations directory (`migrations/`, `db/migrate/`, `alembic/`), skipping dependency, build and hidden directories, down to four levels and a bounded number of entries. A large or deep tree can hide the signal, so it is also opened **by subject matter**: the change touches a query, a migration, a schema, or an index — whatever language the surrounding code is written in. A Kotlin service writing a migration reads `kotlin.md` and `sql.md` both.
 
 ## When a stack has no file
 
