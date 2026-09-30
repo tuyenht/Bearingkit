@@ -735,3 +735,30 @@ test('the permutation test gives 1 for identical groups and a small p for separa
   // Hand-checked: [1, 2] against [3, 4]: of the 6 splits, 2 are as extreme (|diff| = 2), so p = 1/3.
   assert.ok(Math.abs(permutationTest([1, 2], [3, 4]) - 1 / 3) < 1e-9);
 });
+
+// 2026-09-30: a K-before and a K-after run from different branches of the same checkout were told apart only by folder
+// order; meta.json now records the kit checkout's branch, commit and dirty state, and results.md shows it.
+test('the run records which kit checkout K loaded: branch, commit, uncommitted changes', () => {
+  const { kitRevision } = require('../scripts/bench.cjs');
+  const { spawnSync } = require('node:child_process');
+  const repo = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-kit-'));
+  const git = (...a) => spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...a], { cwd: repo, encoding: 'utf8' });
+  git('init', '-q', '-b', 'k-after');
+  fs.writeFileSync(path.join(repo, 'a.txt'), '1\n');
+  git('add', '-A');
+  git('commit', '-q', '-m', 'one');
+  const head = git('rev-parse', 'HEAD').stdout.trim();
+  assert.deepEqual(kitRevision(repo), { branch: 'k-after', commit: head, dirty: false });
+  fs.writeFileSync(path.join(repo, 'a.txt'), '2\n');
+  assert.equal(kitRevision(repo).dirty, true, 'an uncommitted edit to a tracked file is reported');
+  git('checkout', '-q', '--', 'a.txt');
+  fs.writeFileSync(path.join(repo, 'new.md'), 'x\n');
+  assert.equal(kitRevision(repo).dirty, true, 'a new file that is not ignored is reported: the plugin would load it');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-rescore-'));
+  fs.writeFileSync(path.join(dir, 'meta.json'), JSON.stringify({ date: '2026-09-30', model: 'sonnet', configDir: 'p', fixture: 'fx', seconds: 900, turns: 60, kit: { branch: 'k-after', commit: head, dirty: false } }));
+  fs.writeFileSync(path.join(dir, '01-natural-K1.raw.jsonl'), stream([{ type: 'system', subtype: 'init', tools: [] }]));
+  rescore(dir, loadTask('review-01', ROOT));
+  assert.ok(fs.readFileSync(path.join(dir, 'results.md'), 'utf8').includes(`kit k-after@${head.slice(0, 7)}`), 'results.md names the kit checkout');
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.rmSync(repo, { recursive: true, force: true });
+});
