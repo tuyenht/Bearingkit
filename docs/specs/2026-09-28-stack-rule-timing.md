@@ -57,3 +57,22 @@ The reviewer changed no file and ran no Python and no session; it ran the script
 ## Owner's decision (2026-09-28)
 
 Three questions, answered with the recommended option each: "Duyệt cả hai dòng (Recommended)" — both lines and the registration above; "Sau khi reset tuần (Recommended)" — the 56 sessions run after the weekly quota resets (2026-09-30 03:00 UTC; it stood at 86%); "Có, làm phần không đo (Recommended)" — this session goes on with P4a's unmeasured build (`php-laravel`), whose sessions run after this measurement so they use the `bk-build` that results from it. The two lines are committed to the branch now; they reach `main` only through the bar above.
+
+## Results (2026-09-30, owner's machine, Sonnet 5, host 2.1.281)
+
+Run as corrected in `d45c61b`: every branch from the main checkout, K-old rounds with `main` at `bec56aa`, K-new and S rounds with this branch at `77c357a`, alternating, K-old first, four rounds each per task; `node-01` 08:30–09:45 UTC, `py-01` 09:45–11:50 UTC. Each results folder's `meta.json` records the kit branch and commit (runner `889e4a3`); all sixteen rounds read `dirty: false`. Folders: `evals/results/2026-09-30-bench-node-01-natural{,-2…-8}`, `…-py-01-natural{,-2…-8}` (odd suffix, and the first, K-old; even, K-new and S).
+
+| Task | Branch | Deadline | O1 | O2 | File opened | `bk-build` | Median cost USD |
+|---|---|---|---|---|---|---|---|
+| `node-01` | K-old | 1/8 | 8/8 | 8/8 | 8/8 | 8/8 | 0.469 |
+| `node-01` | K-new | 5/8 | 8/8 | 8/8 | 8/8 | 8/8 | 0.463 |
+| `node-01` | S | 0/8 | 8/8 | 8/8 | — | — | 0.309 |
+| `py-01` | K-old | 3/8 | 8/8 | 8/8 | 8/8 | 8/8 | 0.467 |
+| `py-01` | K-new | 4/8 | 8/8 | 8/8 | 8/8 | 8/8 | 0.500 |
+| `py-01` | S | 0/8 | 8/8 | 8/8 | — | — | 0.316 |
+
+**Primary: deadline pooled, K-new 9/16 against K-old 4/16, Fisher exact two-sided p = 0.149.** The bar needs p ≤ 0.05, so **the change does not merge**; it stays on this branch and the owner decides. `build-01`'s guard was not run: it is part of a bar the primary already failed, so it could not change the outcome (eight sessions saved). Per task, descriptive: `node-01` p = 0.119, `py-01` p = 1.0; H K-new against K-old by permutation, p = 0.119 and 1.0.
+
+**Against the sources, as registered:** K-new 9/16 against S 0/16, p = 0.0008 — "better than its sources on these two tasks" holds for K-new (the text on this branch, not merged). No S session invoked a source skill; S sessions are the floor with the sources loaded.
+
+**Reported with no bar** (`evals/analysis/stack-rule-timing.cjs` on these folders only): the stack file was opened in 32 of 32 K sessions; **no session re-read it once `bk-build` started — 0 of 11 K-new sessions that had read it during `bk-spec`**, so the first line ("again, even if bk-spec already read it") was not followed. The shared client was edited by K-new in 6/8 (`node-01`) and 3/8 (`py-01`), by K-old in 2/8 and 0/8; on `node-01` all five K-new deadline passes edited the client, which is what the second line (a stack rule is part of the plan, in shared code if need be) asks for; on `py-01` only one of the four did (the others left the client unchanged). A lead on `node-01` only, not a result. The other parts of the bar held for K-new (O1 and O2 8/8 on both tasks), which does not change the outcome. 31 of 32 K sessions passed `args` to their first Skill call (the exception a K-old `node-01` session, `…-natural-5`), so the post-2026-09-27 condition held on both sides. One explicit out-of-scope sentence among the 19 misses (K-old).
