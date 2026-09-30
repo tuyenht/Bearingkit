@@ -186,3 +186,33 @@ The three task prompts share the sentence "You have my go-ahead to make the chan
 ### Probe extension, registered before any of its sessions (owner, 2026-09-30, verbatim: "Đồng ý A, tiếp tục theo khuyến nghị")
 
 Option A as proposed to the owner: **four more K sessions**, one `bench` call `--branches K --runs 4`, `p4a-php` checked out at the commit that adds this section (a documentation change only; `skills/`, `hooks/`, `agents/`, `scripts/` as at `c0a6e5b`). Go on to the three F calibration sessions and the path the calibration picks if `Rfile` holds in **at least 2 of the 4**; fewer, and `php-01` stops and goes back to the owner. Probe sessions count toward no bar. This loosens the registered stop after it fired, with the owner's approval and before any extension session: 2 of 4 is the bar's proportion ("opened in at least 4 of 8"), but with the first probe counted it is 2 of 6, below half. Each session counts as the scorer reads it, one that errors or times out included; none is re-run. If the runner stops itself on quota before four sessions, the missing ones run after the reset from the same commit. Operating characteristics (binomial, not measured): at a true rate of 10/12 the extension stops in about 2% of cases, at 10/14 in about 7%; at 0.2 it goes on in about 18%.
+
+### Probe extension: 2 of 4, go on
+
+`evals/results/2026-09-30-bench-php-01-natural-2`, `p4a-php@e2fa4c2`, `dirty: false`. `Rfile` held in K3 and K4, the two sessions that entered through `bk-spec` before `bk-build`; K1 and K2 entered through `bk-build` and never ran `detect-stack`, so no list reached them. The two that read the file put `declare(strict_types=1)` in the class file and not in the test file (H1 class `some`, H1 false: the registered H1 counts every added PHP file). H = 2 in all four. One refused command (K2, a compound `rm -f /tmp/…` smoke test outside the registered permissions), read by eye, no effect on the scores.
+
+### Calibration: not usable, guard path
+
+`--branches F --runs 3`, `evals/results/2026-09-30-bench-php-01-natural-3`, same commit. H = 2 in 3 of 3 (H2 and H3 held, H1 failed, class `none`), O1 3 of 3, so H ≤ 1 in 0 of 3: the task is **not usable** and the guard runs. H2 and H3 saturate on the floor, as "Limits" foresaw for H2; only H1 can separate branches. F median H = 2. One refused command (F2, the same compound `rm -f /tmp/…` smoke test), read by eye, no effect on the scores.
+
+### Guard: fails on reach (the file opened in 0 of 8)
+
+One `bench` call `--branches K,S --runs 8`, K and S interleaved, `evals/results/2026-09-30-bench-php-01-natural-4`, `p4a-php@e2fa4c2`, `dirty: false`, all sessions `claude-sonnet-5`, run after the five-hour window reset (the extension and calibration had used it to 77%). Tally: `evals/analysis/php01-tally.cjs`.
+
+| | K-after | S | F (calibration) |
+|---|---|---|---|
+| H per session | 2 ×8 | 2 ×8 | 2 ×3 |
+| H1 / H2 / H3 | 0 / 8 / 8 | 0 / 8 / 8 | 0 / 3 / 3 |
+| O1 / O2 / X | 8 / 8 / 8 | 8 / 8 / 8 | 3 / 3 / 3 |
+| `php-laravel.md` opened | 0 of 8 | 0 of 8 | 0 of 3 |
+| Skill invoked | `bk-build` 7, `bk-spec`>`bk-build` 1; `args` on the first call 8 of 8 | none | none |
+| P4, P5 | 0, 0 | 0, 0 | 0, 0 |
+| Cost USD, median (range), runner's figure | 0.339 (0.294–0.484) | 0.300 (0.278–0.462) | 0.248 (0.237–0.262) |
+
+**The bar, K-after:** O1 8 of 8, O2 8 of 8, H median 2 not below the calibration median 2, all held; the file opened in 0 of 8 (at least 4 required) failed. **`php-laravel.md` does not merge; the branch is kept.** Against the sources, on the same sessions: H mean 2.000 for both, exact two-sided permutation p = 1.0: no clear difference. The file was not read in any guard session, so none of this is evidence about its text.
+
+Reach in the guard: 3 of 8 K sessions received a `stackFiles` list (5 never ran `detect-stack`), and none of the 3 opened the file. Across all fourteen K sessions of `php-01`: a list reached 7, the file was opened in 2, both entering through `bk-spec`. The tool counts differ between branches (K 16–25 calls, S 15–24), so tokens are not compared. Refused commands, read by eye in every session that had one (K 1 in one session, S 11 in three; S also had one no-op `Edit` and one `Read` of a missing file): manual smoke tests outside the registered permissions (`rm -f /tmp/…`, commands prefixed with an environment variable, `find -exec`); none changed a score. S invoked no skill in any session: the plugin was installed as it ships and its `php-pro` and `laravel-specialist` skills were never called.
+
+Not measured, as registered: every sentence of the Laravel section and the PHP sentences a run cannot check without judging code. The columns of `stack-rule-timing.cjs` do not apply as written: that script reads only `node-01` and `py-01` and their deadline hazard, and the file was not read in the guard. By hand, for the only two sessions that read it (extension K3 and K4): K4 opened it before `bk-build` started, K3 after; both still left the test file without the declaration (H1 class `some`).
+
+What this says about the kit, not only this file: on `php-01`, sessions that entered through `bk-build` ran `detect-stack` in 4 of 11 (7 of 14 counting the three `bk-spec` entries; the scorer's `Rdetect`), and none of those 4 opened the file it listed, while 2 of the 3 that came through `bk-spec` did. On the other tasks the same line reached 10 of 12 (above). Until `bk-build` reaches its stack file on the path it is usually entered by, a guard of any stack file on a small-change task measures reach, not the file. Next step goes to the owner.
