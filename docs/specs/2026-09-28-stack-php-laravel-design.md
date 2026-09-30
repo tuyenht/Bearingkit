@@ -158,3 +158,31 @@ The reviewer changed no file and ran no test (a mutation run was in progress). I
 | `declare(strict_types=1, ticks=1)` would not match | note | No source and no realistic session writes it | None |
 
 **Found by the main session while writing the test, before any session:** X as registered ("exits non-zero and changes nothing") passes on the untouched fixture, which has no `transfer`, exits 2 and changes nothing. X now counts only where O1 holds, as H3 does.
+
+## Results (2026-09-30, owner's machine, Sonnet 5)
+
+### Branch brought up to date with `main`
+
+The registration says K-after is this branch "rebased on `main`… the rebase is recorded". The branch was already pushed, so `main` (`3d5f419`) was merged into it instead of rebasing: `c0a6e5b`, no conflict. The content is what a rebase would give: the 20 files the branch changes are byte-identical to `e540fbc` (`git diff e540fbc c0a6e5b -- <those files>` empty), every other file is identical to `main`. `bk-build` on `main` is the version the Step 0 measurement left there (its change stayed on `p4-step0-scope`). Suite on `c0a6e5b`: 183/183. The merge commit was made and pushed before its independent review, against the session rule; the review of the next commit covered it.
+
+### Reach probe: 0 of 2 (the registered stop)
+
+`--branches K --runs 2`, `evals/results/2026-09-30-bench-php-01-natural`, `meta.kit` = `p4a-php@c0a6e5b`, `dirty: false`. Both sessions invoked `bearingkit:bk-build` first (with `args`), ran `detect-stack` (its output listed `stacks/php-laravel.md` under `stackFiles`), never opened that file or `index.md`, added `src/StockTransfer.php` and `tests/TransferTest.php`, and had no refused command. Scores, both sessions alike: H1 false (class `none`: files added, none declaring strict types), H2, H3, O1, O2, X true, so H = 2; P4 and P5 0. About 90 s and 0.32–0.36 USD each (runner's figure). R below half: the scores are not evidence about the file's text.
+
+By the registration this stops the task and goes to the owner.
+
+### Reach by entry skill, from sessions already run
+
+`evals/analysis/stack-reach-by-entry.cjs` (written for this, read only) counts, for every K session of `node-01`, `py-01`, `php-01` and `build-01` in `evals/results`, whether a stack file was opened, against the first skill invoked and whether a tool result in the session listed a stack file under `stackFiles` (in practice the `detect-stack` output). "Opened" uses the scorer's tool set and path test (`scripts/lib/bench-score.cjs`, `reach`): a `Read`, `Grep`, `Bash` or `PowerShell` call whose input names a `stacks/<name>.md` other than `index.md`; the scorer tests the task's own stack file, which is the same thing on these tasks. All 94 sessions ran `claude-sonnet-5`. The sessions live in `evals/results`, untracked, so the table is reproducible on the owner's machine only.
+
+| Entry skill, stack file listed | Opened |
+|---|---|
+| `bk-spec` | 59 of 59 (`node-01` 32, `py-01` 27) |
+| `bk-build` | 10 of 14 (`build-01` 6/7, `py-01` 4/5, `php-01` 0/2) |
+| any, nothing listed | 0 of 21 |
+
+The three task prompts share the sentence "You have my go-ahead to make the change without stopping to ask", so the prompt does not explain why `php-01` sessions enter through `bk-build`; the likelier reason, not tested, is that the change fits the router's "small change, at most three files" row. How strong is 0 of 2? At the `bk-build` rate of the other tasks (10 of 12, `php-01` left out) its chance is about 0.03 (binomial); pooled with `php-01` (10 of 14), about 0.08. So it is some evidence of lower reach on `php-01`, not proof that the file is unreachable. The rate is also confounded: entry skill goes with task (every `bk-spec` entry is `node-01` or `py-01`) and the sessions span three tasks and several kit revisions. The gap between entry through `bk-spec` and through `bk-build` is a finding about `bk-build`'s own line (`SKILL.md:12`), not about this file; it goes to the handoff as an open thread and is not acted on here.
+
+### Probe extension, registered before any of its sessions (owner, 2026-09-30, verbatim: "Đồng ý A, tiếp tục theo khuyến nghị")
+
+Option A as proposed to the owner: **four more K sessions**, one `bench` call `--branches K --runs 4`, `p4a-php` checked out at the commit that adds this section (a documentation change only; `skills/`, `hooks/`, `agents/`, `scripts/` as at `c0a6e5b`). Go on to the three F calibration sessions and the path the calibration picks if `Rfile` holds in **at least 2 of the 4**; fewer, and `php-01` stops and goes back to the owner. Probe sessions count toward no bar. This loosens the registered stop after it fired, with the owner's approval and before any extension session: 2 of 4 is the bar's proportion ("opened in at least 4 of 8"), but with the first probe counted it is 2 of 6, below half. Each session counts as the scorer reads it, one that errors or times out included; none is re-run. If the runner stops itself on quota before four sessions, the missing ones run after the reset from the same commit. Operating characteristics (binomial, not measured): at a true rate of 10/12 the extension stops in about 2% of cases, at 10/14 in about 7%; at 0.2 it goes on in about 18%.
