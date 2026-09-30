@@ -71,6 +71,15 @@ function checkSources(task, root = ROOT) {
   return problems;
 }
 
+// The kit checkout the run loads as K: branch, commit, and whether the tree had uncommitted changes (a new file that
+// is not ignored counts: the plugin loads it; `_build/` and `evals/results/` are ignored). Two runs of K
+// from different branches (a K-before against a K-after) are told apart by this, not by folder order.
+function kitRevision(root = ROOT) {
+  const git = (...a) => { const r = spawnSync('git', a, { cwd: root, encoding: 'utf8' }); return r.status === 0 ? r.stdout.trim() : null; };
+  const status = git('status', '--porcelain');
+  return { branch: git('rev-parse', '--abbrev-ref', 'HEAD'), commit: git('rev-parse', 'HEAD'), dirty: status === null ? null : status.length > 0 };
+}
+
 // On Windows `claude` resolves through a .cmd shim, so the process started is cmd.exe and the session runs in a child
 // of it: a timeout that kills cmd.exe alone leaves the session alive, still working in the fixture the next session
 // is about to use. The whole tree is killed instead.
@@ -146,7 +155,7 @@ const round3 = (x) => (Number.isInteger(x) ? x : Math.round(x * 1000 + Number.EP
 const fmt = (s) => (s.median === null ? '–' : `${round3(s.median)} (${s.min}–${s.max})`);
 
 function report(task, rows, meta) {
-  const lines = [`# Benchmark ${task.id} · ${meta.date}`, '', `Model ${meta.model || '?'} · profile ${meta.configDir || '?'} · fixture ${meta.fixture || '?'} · limits ${meta.seconds || '?'}s, ${meta.turns || '?'} turns · ${rows.length} sessions${meta.stopped ? ` · stopped early: ${meta.stopped}` : ''}${meta.note ? ` · ${meta.note}` : ''}`, '', '## Per branch (median, min–max)', '', '| Variant | Branch | Sessions | Passed | Defects found | Decoys flagged | Blocked | Tokens total | Tokens fresh | Cost USD | Turns | Seconds |', '|---|---|---|---|---|---|---|---|---|---|---|---|'];
+  const lines = [`# Benchmark ${task.id} · ${meta.date}`, '', `Model ${meta.model || '?'} · profile ${meta.configDir || '?'} · fixture ${meta.fixture || '?'} · limits ${meta.seconds || '?'}s, ${meta.turns || '?'} turns · ${rows.length} sessions${meta.kit ? ` · kit ${meta.kit.branch}@${String(meta.kit.commit || '?').slice(0, 7)}${meta.kit.dirty ? ' (uncommitted changes)' : ''}` : ''}${meta.stopped ? ` · stopped early: ${meta.stopped}` : ''}${meta.note ? ` · ${meta.note}` : ''}`, '', '## Per branch (median, min–max)', '', '| Variant | Branch | Sessions | Passed | Defects found | Decoys flagged | Blocked | Tokens total | Tokens fresh | Cost USD | Turns | Seconds |', '|---|---|---|---|---|---|---|---|---|---|---|---|'];
   for (const variant of [...new Set(rows.map((r) => r.variant))]) {
     for (const branch of [...new Set(rows.map((r) => r.branch))]) {
       const sel = rows.filter((r) => r.variant === variant && r.branch === branch);
@@ -222,7 +231,7 @@ async function run(argv) {
   const date = new Date().toISOString().slice(0, 10);
   const outDir = resultsDir(ROOT, date, task.id, variants, opts.model);
   fs.mkdirSync(outDir, { recursive: true });
-  const meta = { date, ...opts, fixture: builder.DST };
+  const meta = { date, ...opts, fixture: builder.DST, kit: kitRevision() };
   const rows = [];
   let stopped = null;
   let orphaned = false;
@@ -256,4 +265,4 @@ async function run(argv) {
   process.stdout.write(`${stopped ? `stopped: ${stopped}\n` : ''}results: ${path.join(outDir, 'results.md')}\n`);
 }
 
-module.exports = { preflight, loadTask, branchSetup, promptFor, schedule, checkSources, report, rescore, resultsDir, run, runSession };
+module.exports = { kitRevision, preflight, loadTask, branchSetup, promptFor, schedule, checkSources, report, rescore, resultsDir, run, runSession };
