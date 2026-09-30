@@ -56,11 +56,13 @@ Nothing below has run. It runs on the owner's machine, after the merge order abo
 
 **Guard.** Eight K sessions (the probe's two not counted). This change merges only if `sql.md` is opened in **at least 4 of 8**, and `php-01`'s O1 and O2 are each at least 7 of 8, and H at its median is not below `php-01`'s floor calibration median. Reported with no bar: H1, H2, H3 and X per session, split by whether `sql.md` was opened (a lead, not a result); `php-laravel.md` opened; `detect-stack` ran; the skill invoked; the Skill `args` column (handoff 2026-09-28, the `args` turn); cost.
 
+**Against the sources (added 2026-09-30, before any session; owner: "Có, thêm 8 phiên S (Recommended)").** The owner's rule that a sprint changing a skill runs its probe on both sides applies here too, since `bk-build`'s text changes. So the guard is one `bench` call `--branches K,S --runs 8` on `php-01`, K and S interleaved (S as `php-01`'s `task.json` loads it: `fullstack-dev-skills` at `5e8b6b8`). The bar above reads K only. Primary against the sources: H, K against S, exact two-sided permutation test (`permutationTest`); "better than its sources on `php-01`, Sonnet" only at p ≤ 0.05 with K above S, otherwise "no clear difference". Reported with no bar: each hazard, O1, O2, X, and whether a source skill was invoked, per branch. Like every measured branch, it runs from the main checkout `C:\Projects\Bearingkit` with this branch checked out (the measurement profile allows `Read` only under `C:/Projects/Bearingkit/skills/**`; see `docs/specs/2026-09-28-stack-rule-timing.md`, `d45c61b`).
+
 **`build-01` again.** `bk-build`'s text changes, so `build-01`'s guard runs again before merging: eight K sessions, its bar as registered in `docs/specs/2026-09-26-bk-build-design.md` ("The owner's choice after calibration"): O1 8 of 8, O2 and O3 at least 7 of 8, P3 at least 7 of 8. Its profile does not list `sql.md` (no signal in the fixture), so this checks the sentence, not the scan.
 
 **`shell.md`.** Its signal is built and tested here, but its reach cannot be measured until the file exists; the `shell` task's own reach probe (P4b, second half) is that measurement.
 
-**Sessions**: 2 + 8 on `php-01`, 8 on `build-01`, 18 in all. **Budget: not measured** (no session of this change has run; read `get_usage` before each batch, the runner stops at 90%). If the quota does not allow both guards, the change stays on the branch and the owner is asked.
+**Sessions**: 2 + 8 K and 8 S on `php-01`, 8 on `build-01`, 26 in all (18 before the S branch was added). **Budget: not measured** (no session of this change has run; read `get_usage` before each batch, the runner stops at 90%). If the quota does not allow both guards, the change stays on the branch and the owner is asked.
 
 ## Two small fixes carried on this branch
 
