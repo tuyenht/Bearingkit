@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-09-28, sau phiên P4 (Bước 0 và phần dựng `php-laravel`)** (máy owner; không phiên đo nào; ba nhánh chưa merge, chờ đo theo thứ tự: `p4-step0-scope`, `p4a-php`, `p4b-topic-stackfiles` — cái cuối dựng trên cloud). Phiên gần nhất: `docs/handoff/2026-09-28-p4-step0-php-build.md`. Lộ trình: `docs/plans/2026-09-26-v03-roadmap.md`. Lịch sử của file này, nguyên văn tới commit `b89eb36`: `docs/status-history.md`; mọi tham chiếu "status §N" hay "status §7 (xx)" viết trước 2026-09-26 trỏ về đó.
+Cập nhật: **2026-09-30, sau phép đo Bước 0** (máy owner; 48 phiên; sửa `bk-build` không đạt thanh, ở lại nhánh `p4-step0-scope`; chờ đo: `p4a-php`, rồi `p4b-topic-stackfiles`). Phiên gần nhất: `docs/handoff/2026-09-30-p4-step0-measured.md`. Lộ trình: `docs/plans/2026-09-26-v03-roadmap.md`. Lịch sử của file này, nguyên văn tới commit `b89eb36`: `docs/status-history.md`; mọi tham chiếu "status §N" hay "status §7 (xx)" viết trước 2026-09-26 trỏ về đó.
 
 > **File này là bảng điều khiển, không phải nguồn sự thật.** Nó chỉ đếm và trỏ; nội dung thật nằm ở:
 > - thiết kế: `docs/specs/2026-09-11-bearingkit-v2-design.md` (§13 bảng mốc, §15 log quyết định);
@@ -12,7 +12,7 @@ Cập nhật: **2026-09-28, sau phiên P4 (Bước 0 và phần dựng `php-lara
 
 ## 1. Đang ở đâu
 
-Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. `node.md` và `python.md` đã vào `main` (guard: O1/O2 8/8, file được đọc 8/8 và 6/8). So với skill nguồn, tám phiên xen kẽ mỗi bên: **không khác biệt rõ** (`node-01` p = 1,0; `py-01` p = 0,2), kit tốn gấp ~1,4–1,7 lần; hai lần chạy deadline của `node.md` (8/8 rồi 1/8) hoá ra là hai điều kiện phía host khác nhau, không phải hai lần rút (`docs/specs/2026-09-28-stack-rule-timing.md`). Bước 0 (đọc lại 31 phiên): luật stack mất chủ yếu khi file được đọc lúc `bk-spec` và không đọc lại lúc sửa code; sửa `bk-build` đã duyệt, trên nhánh, chờ đo 56 phiên sau reset tuần (2026-09-30). `php-laravel.md` và task `php-01` đã dựng trên nhánh `p4a-php`, chưa đo. Sáu sprint lifecycle đầu đã xong (`bk-review`, test case `bk-audit`/`bk-next`, khung benchmark, `bk-debug`, `bk-test`, `bk-build`); còn `bk-spec` + `bk-plan` (P5), `bk-ship` + `bk-close` (P6), cổng v0.3 (P7).
+Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. `node.md` và `python.md` đã vào `main` (guard: O1/O2 8/8, file được đọc 8/8 và 6/8). So với skill nguồn, tám phiên xen kẽ mỗi bên: **không khác biệt rõ** (`node-01` p = 1,0; `py-01` p = 0,2), kit tốn gấp ~1,4–1,7 lần; hai lần chạy deadline của `node.md` (8/8 rồi 1/8) hoá ra là hai điều kiện phía host khác nhau, không phải hai lần rút (`docs/specs/2026-09-28-stack-rule-timing.md`). Bước 0 đã đo (2026-09-30, 48 phiên): deadline K-mới 9/16, K-cũ 4/16, p = 0,149 → không merge, giữ nhánh; manh mối "luật stack trong code dùng chung" đo riêng ở P5. `php-laravel.md` và task `php-01` đã dựng trên nhánh `p4a-php`, chưa đo. Sáu sprint lifecycle đầu đã xong (`bk-review`, test case `bk-audit`/`bk-next`, khung benchmark, `bk-debug`, `bk-test`, `bk-build`); còn `bk-spec` + `bk-plan` (P5), `bk-ship` + `bk-close` (P6), cổng v0.3 (P7).
 
 | Đếm được hôm nay | Số | Lệnh / nguồn (chạy lại 2026-09-26) |
 |---|---|---|
@@ -22,7 +22,7 @@ Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. `node.md` và `p
 | Nguồn có `derived` (chữ thật đã port) | **4** nguồn, **28** mục dẫn xuất trên **26** file kit | `_build/v03-prep/recount-status-numbers.cjs` |
 | Mục trong `NOTICE` | **3** (anthropics/claude-plugins-official, mattpocock/skills, obra/superpowers) | `grep '^##' NOTICE` |
 | Kiểm kê từng mục (§5.2) | **1.295** mục của **22/22** nguồn: 46 absorb, 610 idea, 639 drop, 0 lệch | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
-| Test | **180/180** xanh trên Windows (chạy lại 2026-09-28; nhánh `p4a-php`: thêm hai test `php-01`) (trên worktree không có `_build/upstream`: 179 + 1 bỏ qua) | `node --test tests/*.test.cjs` |
+| Test | **181/181** xanh trên Windows (chạy lại 2026-09-30, gồm test `kitRevision` của runner; nhánh `p4a-php`: thêm hai test `php-01`) (trên worktree không có `_build/upstream`: 179 + 1 bỏ qua) | `node --test tests/*.test.cjs` |
 | Prompt activation | **96** ở `phase-1.jsonl`, **6** ranh giới, **2** acceptance | `evals/activation/*.jsonl` |
 | Case trong `skills/<name>/tests/` | **17/17** skill, **55** case (`bk-protocol` không cần) | `recount-status-numbers.cjs` |
 | File stack `bk-build/references/stacks/` | **5/8** trên `main` (`typescript-react`, `kotlin`, `sql`, `node`, `python`); `php-laravel` thứ sáu trên nhánh `p4a-php`, chưa đo | `ls` |
