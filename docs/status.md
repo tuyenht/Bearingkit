@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-10-01, sau phép đo P4b (`detect-stack` nêu `sql.md`/`shell.md` theo chủ đề)** (máy owner; 26 phiên; vào `main` ở `5ae2e2a`; tiếp theo: `shell.md`). Phiên gần nhất: `docs/handoff/2026-10-01-p4b-topic-stackfiles.md`. Lộ trình: `docs/plans/2026-09-26-v03-roadmap.md`. Lịch sử của file này, nguyên văn tới commit `b89eb36`: `docs/status-history.md`; mọi tham chiếu "status §N" hay "status §7 (xx)" viết trước 2026-09-26 trỏ về đó.
+Cập nhật: **2026-10-01, sau phép đo `shell-01` (`shell.md`)** (máy owner; 42 phiên; vào `main` ở `ffa9b91`; tiếp theo: hỏi owner về so với nguồn và lặp lại `shell-01`, rồi P5). Phiên gần nhất: `docs/handoff/2026-10-01-p4d-shell.md`. Lộ trình: `docs/plans/2026-09-26-v03-roadmap.md`. Lịch sử của file này, nguyên văn tới commit `b89eb36`: `docs/status-history.md`; mọi tham chiếu "status §N" hay "status §7 (xx)" viết trước 2026-09-26 trỏ về đó.
 
 > **File này là bảng điều khiển, không phải nguồn sự thật.** Nó chỉ đếm và trỏ; nội dung thật nằm ở:
 > - thiết kế: `docs/specs/2026-09-11-bearingkit-v2-design.md` (§13 bảng mốc, §15 log quyết định);
@@ -12,7 +12,7 @@ Cập nhật: **2026-10-01, sau phép đo P4b (`detect-stack` nêu `sql.md`/`she
 
 ## 1. Đang ở đâu
 
-Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. `node.md`, `python.md` và `php-laravel.md` đã vào `main`. So với skill nguồn, tám phiên xen kẽ mỗi bên: **không khác biệt rõ** (`node-01` p = 1,0; `py-01` p = 0,2; `php-01` p = 1,0). `php-laravel.md` trượt guard lần đầu vì không được đọc (0/8): khi `bk-build` là skill vào đầu, phiên ít chạy `detect-stack` và bỏ qua `stackFiles`; bản sửa (bước 1 mới của `bk-build`: chạy `detect-stack`, mở mọi file trong `stackFiles`) đo 2026-10-01: file mở 6/8 so với 1/8, p = 0,041, guard `php-01` và `build-01` đạt → merge (`docs/specs/2026-10-01-bk-build-stack-reach-design.md`). P4b (2026-10-01): `detect-stack` nêu `sql.md` khi cây có `*.sql` hay thư mục migration (và `shell.md` khi file đó được viết); trên `php-01` `sql.md` mở 8/8 (sàn không nêu: 0/8), `build-01` 8/8, so với nguồn không khác biệt rõ (p = 1,0) → merge (`docs/specs/2026-09-28-topic-stackfiles-design.md`). Bước 0 (2026-09-30): không merge, giữ nhánh; manh mối đo riêng ở P5. Sáu sprint lifecycle đầu đã xong (`bk-review`, test case `bk-audit`/`bk-next`, khung benchmark, `bk-debug`, `bk-test`, `bk-build`); còn `bk-spec` + `bk-plan` (P5), `bk-ship` + `bk-close` (P6), cổng v0.3 (P7).
+Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. `node.md`, `python.md`, `php-laravel.md` và `shell.md` đã vào `main`; còn `c-cpp` (hoãn). So với skill nguồn, tám phiên xen kẽ mỗi bên: **không khác biệt rõ** (`node-01` p = 1,0; `py-01` p = 0,2; `php-01` p = 1,0). `php-laravel.md` trượt guard lần đầu vì không được đọc (0/8): khi `bk-build` là skill vào đầu, phiên ít chạy `detect-stack` và bỏ qua `stackFiles`; bản sửa (bước 1 mới của `bk-build`: chạy `detect-stack`, mở mọi file trong `stackFiles`) đo 2026-10-01: file mở 6/8 so với 1/8, p = 0,041, guard `php-01` và `build-01` đạt → merge (`docs/specs/2026-10-01-bk-build-stack-reach-design.md`). P4b (2026-10-01): `detect-stack` nêu `sql.md` khi cây có `*.sql` hay thư mục migration (và `shell.md`); trên `php-01` `sql.md` mở 8/8 (sàn không nêu: 0/8), `build-01` 8/8, so với nguồn không khác biệt rõ (p = 1,0) → merge (`docs/specs/2026-09-28-topic-stackfiles-design.md`). `shell.md` (2026-10-01): task `shell-01` (PowerShell 5.1) là task stack đầu tiên qua hiệu chỉnh (sàn Sonnet 4, 4, 5 trên 6 hazard); kit có file so với kit chưa có: H trung bình 5,75 so với 4,38, p = 0,0016; so với `fullstack-dev-skills` p = 0,0005 (tốt hơn trên task này), **chưa so với nguồn** (Antigravity-Core không cài được làm nhánh); một lần chạy, chưa lặp lại; `detect-stack` giờ trả hồ sơ cho dự án không manifest có script hay SQL (`docs/specs/2026-10-01-stack-shell-design.md`). Bước 0 (2026-09-30): không merge, giữ nhánh; manh mối đo riêng ở P5. Sáu sprint lifecycle đầu đã xong (`bk-review`, test case `bk-audit`/`bk-next`, khung benchmark, `bk-debug`, `bk-test`, `bk-build`); còn `bk-spec` + `bk-plan` (P5), `bk-ship` + `bk-close` (P6), cổng v0.3 (P7).
 
 | Đếm được hôm nay | Số | Lệnh / nguồn (chạy lại 2026-09-26) |
 |---|---|---|
@@ -22,15 +22,15 @@ Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. `node.md`, `pyth
 | Nguồn có `derived` (chữ thật đã port) | **4** nguồn, **28** mục dẫn xuất trên **26** file kit | `_build/v03-prep/recount-status-numbers.cjs` |
 | Mục trong `NOTICE` | **3** (anthropics/claude-plugins-official, mattpocock/skills, obra/superpowers) | `grep '^##' NOTICE` |
 | Kiểm kê từng mục (§5.2) | **1.295** mục của **22/22** nguồn: 46 absorb, 610 idea, 639 drop, 0 lệch | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
-| Test | **187/187** xanh trên Windows (chạy lại 2026-10-01 trên `main` sau merge `5ae2e2a`, gồm bốn test của P4b) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test tests/*.test.cjs` |
+| Test | **191/191** xanh trên Windows (chạy lại 2026-10-01 trên `main` sau merge `ffa9b91`, gồm bốn test của `shell-01` và `detect-stack`; `bench-node-01` từng trượt một lần dưới tải của cả suite, chạy riêng thì xanh) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test tests/*.test.cjs` |
 | Prompt activation | **96** ở `phase-1.jsonl`, **6** ranh giới, **2** acceptance | `evals/activation/*.jsonl` |
 | Case trong `skills/<name>/tests/` | **17/17** skill, **55** case (`bk-protocol` không cần) | `recount-status-numbers.cjs` |
-| File stack `bk-build/references/stacks/` | **6/8** trên `main` (`typescript-react`, `kotlin`, `sql`, `node`, `python`, `php-laravel`) | `ls` |
-| Task benchmark trong `evals/bench/` | **11** trên `main` (`build-01`, `debug-01`, `node-01`, `php-01`, `py-01`, `probe-review-authored`, `review-01`…`04`, `test-01`) | `ls evals/bench/*/task.json` |
+| File stack `bk-build/references/stacks/` | **7/8** trên `main` (`typescript-react`, `kotlin`, `sql`, `node`, `python`, `php-laravel`, `shell`) | `ls` |
+| Task benchmark trong `evals/bench/` | **12** trên `main` (`build-01`, `debug-01`, `node-01`, `php-01`, `py-01`, `shell-01`, `probe-review-authored`, `review-01`…`04`, `test-01`) | `ls evals/bench/*/task.json` |
 | Hàng nguồn trong ma trận | **39** | `grep -c '^\| [0-9]' docs/specs/2026-09-10-coverage-matrix.md` |
 | Host đã qua acceptance | **2/7** (Claude Code, Antigravity; bảy host của `docs/hosts.md`, trong đó Copilot CLI và Factory Droid chung một mục. §2 mục 11 là chỉ số khác: 2/6 host owner thực dùng, câu 8) | `docs/hosts.md` |
 | Bootstrap protocol | **6.485/6.500** ký tự | proxy của `tests/session-start.test.cjs`, đo lại 2026-09-26 |
-| Bản cài hằng ngày | `c412366` ở cả scope user lẫn local (2026-10-01, owner nói có, sau merge P4b); kho Antigravity làm mới từ checkout chính ở `c412366`, `doctor` sáu `ok`, một `skip` | `claude plugin list`, `bearingkit doctor`, 2026-10-01 |
+| Bản cài hằng ngày | `c412366` ở cả scope user lẫn local, **cũ hơn `main`** từ merge `shell.md` (`skills/bk-build`, `scripts/detect-stack.cjs`); kho Antigravity cũng ở `c412366`, nên `doctor` trên `main` bốn `ok`, hai `FAIL` (bản copy `skills/` và script lệch checkout), một `skip`; cập nhật chờ owner nói có | `claude plugin list` (đầu phiên), `bearingkit doctor`, 2026-10-01 |
 
 ## 2. "Hoàn thành" là gì — 12 mục: 2 đạt có phép đo, 1 đạt theo thiết kế, 9 chưa
 
@@ -40,11 +40,11 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 |---|---|---|---|
 | 1 | Catalog đủ skill (v2 §5.1) | 18 | **18/18** |
 | 2 | Mỗi skill đạt cả 5 điều kiện quality bar (v2 §5.3) | 18/18 | **0/18 đủ cả năm; 17 đạt 4/5** (thừa hưởng 2026-09-24). Thiếu chung: **#2**, mỗi dòng luật truy được về nguồn hoặc field lesson |
-| 3 | File stack (v2 §5.5) | 8 | **6/8** trên `main` (`node` P3b, `python` P3c, `php-laravel` 2026-10-01); `shell`, `c-cpp` chưa |
+| 3 | File stack (v2 §5.5) | 8 | **7/8** trên `main` (`node` P3b, `python` P3c, `php-laravel` và `shell` 2026-10-01); `c-cpp` chưa (hoãn, câu 38 (c)) |
 | 4 | Nguồn lấy chữ hoặc lấy ý có quyết định, kèm `NOTICE`/`derived` khi lấy chữ | 11 | **3/11** |
 | 5 | Fixed context ≤5.000 qua `/context` (v1 §17, v2 §12) | 1 số | **Đạt trên Claude Code, ≈4.010** sau `bk-research` (thừa hưởng 2026-09-23, `docs/specs/2026-09-23-bk-research-design.md`); sau `bk-perf` chưa đọc lại bằng `/context` |
 | 6 | Activation precision và recall ≥0,9, cả hai host | 2 host | **Đạt 2/2** (thừa hưởng: Claude Code 2026-09-16 recall 0,958, precision 1,000; Antigravity 2026-09-17 recall và precision 0,979, chấm lại 2026-09-20). Chi tiết: `docs/compat/2026-09-16-daily-driver-gate.md` |
-| 7 | Outcome benchmark 12 task, kit ≥ nguồn về pass rate và ít token hơn | 12 task | **Chưa task nào đạt tiêu chí.** Mọi task Sonnet đến nay không phân biệt được kit với sàn về kết quả; owner chọn đo quy trình và chi phí theo từng sprint (`docs/specs/2026-09-24-benchmark-kit-vs-sources-design.md`). Số so với nguồn: `bk-review` (ngang), `bk-debug` (ngang); `bk-test`, `bk-build` chưa so. Chi phí kit trên Sonnet: khoảng 1,9–2,1 lần sàn trên `debug-01`, `test-01`, `build-01`; khoảng 7 lần sàn trên `review-01` (reviewer Opus) |
+| 7 | Outcome benchmark 12 task, kit ≥ nguồn về pass rate và ít token hơn | 12 task | **Chưa task nào đạt tiêu chí (kit ≥ nguồn và ít token hơn).** Trước `shell-01`, mọi task Sonnet không phân biệt được kit với sàn về kết quả; `shell-01` (2026-10-01) là task đầu tiên phân biệt được, một lần chạy, chưa lặp lại (kit có `shell.md` trên sàn và trên `fullstack-dev-skills`, chưa so với nguồn, chi phí trung vị trên sàn 47%); owner chọn đo quy trình và chi phí theo từng sprint (`docs/specs/2026-09-24-benchmark-kit-vs-sources-design.md`). Số so với nguồn: `bk-review` (ngang), `bk-debug` (ngang); `bk-test`, `bk-build` chưa so. Chi phí kit trên Sonnet: khoảng 1,9–2,1 lần sàn trên `debug-01`, `test-01`, `build-01`; khoảng 7 lần sàn trên `review-01` (reviewer Opus) |
 | 8 | `upstream-watch` báo delta mỗi nguồn, tối thiểu mỗi tháng | 1 lệnh | **chưa có mã** |
 | 9 | Mỗi skill mang provenance và license mode; `NOTICE` đủ | 18 + `NOTICE` | **18/18**, có test canh (`tests/skills.test.cjs`) |
 | 10 | Không file cấu hình kit trong project | 0 | **Đạt theo kiến trúc**; `bearingkit activate` chỉ ghi vào file của chính host |
@@ -57,7 +57,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 |---|---|---|
 | `0.1.0-phase1` | đã phát hành 2026-09-11 | `docs/compat/phase-1-gate.md` |
 | v0.2 | cổng đo đạt từ 2026-09-17; còn hạng mục #11 (các nguồn còn lại); chắt lọc tám skill lifecycle đang làm trong v0.3 | `docs/status-history.md` §4, §5 |
-| **v0.3** | **đang làm**: catalog đủ; sprint lifecycle tới `bk-build` xong; còn hai file stack (`shell`, `c-cpp`), `bk-spec`/`bk-plan`, `bk-ship`/`bk-close`, cổng | `docs/plans/2026-09-26-v03-roadmap.md` |
+| **v0.3** | **đang làm**: catalog đủ; sprint lifecycle tới `bk-build` xong; còn một file stack (`c-cpp`, hoãn), `bk-spec`/`bk-plan`, `bk-ship`/`bk-close`, cổng | `docs/plans/2026-09-26-v03-roadmap.md` |
 | v0.4 | chưa bắt đầu: pack tuỳ chọn, hook push/deploy (Biome/Pint, câu 9), acceptance Gemini CLI / Cursor / Codex | spec §13 |
 | v1.0 | chưa bắt đầu: outcome benchmark đủ 12 task, `upstream-watch`, README EN+VI, CI, marketplace, publish từ history squash | spec §13 |
 
