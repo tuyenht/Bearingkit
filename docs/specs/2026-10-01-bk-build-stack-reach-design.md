@@ -73,3 +73,37 @@ The reviewer changed no file and ran no session. It found the `SKILL.md` diff ex
 | The hook "reach by construction" overstates `docs/hosts.md` | note | Correct | Reworded |
 | "About 16 points" has no source in the repository | note | Correct | Stated as a reading of this session's `get_usage`, not in the repository |
 | Re-review: a `build-01` line logged just before a `STOP` (commit or branch mismatch) would still feed bar B | should-fix | Correct | The tally drops it on `STOP` |
+
+## Results (2026-10-01, owner's machine, Sonnet 5)
+
+Every session `claude-sonnet-5`, `dirty: false`, at the registered commits (K-before `p4a-php@c443d4e`, K-after and S `p4c-build-reach@32d1497`; the driver checked each). Log: `evals/results/reach-log.txt`; tally: `node evals/analysis/reach-tally.cjs`.
+
+**Probe** (`evals/results/2026-10-01-bench-php-01-natural`): both sessions entered through `bk-build` and ran `detect-stack`; K2 opened `php-laravel.md` (after the `bk-build` call), K1 went from `detect-stack` straight to the code. 1 of 2: go on.
+
+**Main run**, four whole rounds, none stopped (`evals/results/2026-10-01-bench-php-01-natural-2` to `-9`):
+
+| | K-before | K-after | S |
+|---|---|---|---|
+| `php-laravel.md` opened | 1 of 8 | **6 of 8** | 0 of 8 |
+| `detect-stack` ran (`Rdetect`) | 5 of 8 | 8 of 8 | 0 of 8 |
+| Entry `bk-build`: opened | 0 of 7 | 5 of 7 | — |
+| Entry `bk-spec`: opened | 1 of 1 | 1 of 1 | — |
+| H per session | 2 ×8 | 2 ×8 | 2 ×8 |
+| H1 / H2 / H3 | 0 / 8 / 8 | 0 / 8 / 8 | 0 / 8 / 8 |
+| H1 class | none 7, some 1 | some 5, none 3 | none 8 |
+| O1 / O2 / X | 8 / 8 / 8 | 8 / 8 / 8 | 8 / 8 / 8 |
+| Answer names the stack list or file | 0 of 8 | 5 of 8 | 0 of 8 |
+| Cost USD, median (range), runner's figure | 0.339 (0.286–0.527) | 0.401 (0.336–0.544) | 0.283 (0.259–0.314) |
+| Tool calls | 16–25 | 19–24 | 15–17 |
+
+**Bars.** **R**: 6 of 8 against 1 of 8, two-sided Fisher p = 0.0406, holds, by a narrow margin (one more K-before session opening the file, 6 against 2, gives 0.13). **G**: opened 6 of 8 (at least 4), O1 8 of 8, O2 8 of 8, H median 2 (not below 2), holds. **B** (`evals/results/2026-10-01-bench-build-01-natural`, eight K-after sessions): O1 8 of 8, O2 8 of 8, O3 8 of 8, P3 8 of 8, holds; P1 8 of 8, P2 6 of 8, P4 0, P5 0, P6 2 of 8, H 0; its own stack file opened in 8 of 8 (after the `bk-build` call), against 6 of 7 given the list on 2026-09-27.
+
+**All three bars hold: by the registration `p4c-build-reach` merges into `main`, carrying `php-laravel.md` and `php-01`.**
+
+**Against the sources**, same sessions: H mean 2.000 for K-after and S, exact two-sided permutation p = 1.0: no clear difference. H2 and H3 saturate on every branch and H1 failed everywhere, so `php-01` cannot show the file's text doing better than the floor or the sources; what it shows is that the file is now read.
+
+**Reported with no bar.**
+- Of the six K-after sessions that read the file, five put `declare(strict_types=1)` in the class file and not in the test file (class `some`), and one (`-5` K1) wrote it nowhere (class `none`); H1 as registered counts every added PHP file, so H1 stayed 0. The file's line 9 reached the class in five of six readers, the tests in none.
+- Cost: K-after's median is about 18% above K-before's (one more command and one file read per session), and about 42% above S's. Tokens are not compared: tool counts differ.
+- Refused commands, read by eye: `php-01` K-before 2 (a compound `find` and a compound `rm -f /tmp/…` smoke test), K-after 0, S 0. `build-01` K-after: 45 in all, in all eight sessions (main session and reviewer agree on the total; a split by kind depends on how a compound line is classed, so none is given) — test runs (`npm test`, `node --test`) through the PowerShell tool, which the registered permissions allow through Bash only, and compound Bash test lines; `rm -rf` and `git rm` of `vendor/datefmt-1`, and `Remove-Item` (outside the permissions); `which node`, `node --version`, `Get-Command` and similar probes; compound `cd` lines. The PowerShell tool was present on 2026-09-27 too (5 calls then, 27 now); every barred score is 8 of 8, so none of it cost a bar, though what the refused runs would have shown is not known.
+- When the file was first opened: after the first `bk-build` call in every K-after reader (`stack-reach-by-entry.cjs --rows`), as step 1 asks.
