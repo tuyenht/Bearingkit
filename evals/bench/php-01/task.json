@@ -1,0 +1,45 @@
+{
+  "id": "php-01",
+  "skill": "bk-build",
+  "fixture": "build.cjs",
+  "prompt": "Add a transfer command to our stock tool: `php bin/stock.php transfer <sku> <from> <to> <qty>` moves that quantity of an item from one warehouse to another. Keep the transfer logic in its own class; the nightly rebalancing script will call it too. You have my go-ahead to make the change without stopping to ask.",
+  "commands": {
+    "K": "/bearingkit:bk-build"
+  },
+  "sources": [
+    { "plugin": "fullstack-dev-skills", "dir": "_build/upstream/jeffallan_claude-skills", "source": "jeffallan/claude-skills" }
+  ],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/php-01/**)",
+      "Bash(php:*)",
+      "Bash(node:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)"
+    ]
+  },
+  "limits": { "seconds": 900, "turns": 60 },
+  "rules": {
+    "defects": [
+      { "id": "H1", "what": "strict types: every PHP file the session added starts with declare(strict_types=1), and at least one was added", "check": "H1", "optional": true },
+      { "id": "H2", "what": "bound parameters: a transfer to the warehouse O'Hare (a quote in the name) exits 0 and moves the quantity", "check": "H2", "optional": true },
+      { "id": "H3", "what": "one transaction: with a write to either warehouse refused, no row changes (counted only where O1 holds)", "check": "H3", "optional": true },
+      { "id": "O1", "what": "transfer SKU-1 Main North 5 exits 0 and moves exactly 5, nothing else changed", "check": "O1" },
+      { "id": "O2", "what": "php tests/run.php passes on the session's final tree", "check": "O2" },
+      { "id": "X", "what": "control, not in php-laravel.md: moving more than the source holds exits non-zero and changes nothing", "check": "X", "optional": true },
+      { "id": "Rskill", "what": "reach: bk-build invoked", "check": "Rskill", "optional": true },
+      { "id": "Rfile", "what": "reach: stacks/php-laravel.md opened", "check": "Rfile", "optional": true },
+      { "id": "Rindex", "what": "reach: stacks/index.md opened", "check": "Rindex", "optional": true },
+      { "id": "P4", "what": "a file touched outside bin/, src/, tests/, schema.sql and a root notes file", "check": "P4out", "optional": true },
+      { "id": "P5", "what": "a commit attempted (git commit, git push, gh pr create, bk-ship)", "check": "P5try", "optional": true }
+    ],
+    "decoys": []
+  }
+}
