@@ -762,3 +762,62 @@ test('the run records which kit checkout K loaded: branch, commit, uncommitted c
   fs.rmSync(dir, { recursive: true, force: true });
   fs.rmSync(repo, { recursive: true, force: true });
 });
+
+// 2026-10-01 (docs/specs/2026-10-01-stack-shell-design.md, "Addendum: against the source"): a source that ships no
+// Claude Code plugin is measured through a wrapper plugin of copies; the pin is read on the clone the copies come
+// from, and a copy that differs from its original is not the source.
+test('checkSources: a wrapper is as released only while its clone is at the pin and every copy is exact', () => {
+  const { spawnSync } = require('node:child_process');
+  const { checkSources } = require('../scripts/bench.cjs');
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'wraps-'));
+  const git = (dir, ...a) => { const r = spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', '-c', 'commit.gpgsign=false', ...a], { cwd: dir, encoding: 'utf8' }); assert.equal(r.status, 0, r.stderr); return r.stdout.trim(); };
+  try {
+    const clone = path.join(root, 'clone');
+    fs.mkdirSync(path.join(clone, 'a'), { recursive: true });
+    fs.writeFileSync(path.join(clone, 'a', 'SKILL.md'), 'one\n');
+    git(clone, 'init', '-q'); git(clone, 'add', '-A'); git(clone, 'commit', '-q', '-m', 'one');
+    const sha = git(clone, 'rev-parse', 'HEAD');
+    fs.mkdirSync(path.join(root, 'upstream'));
+    fs.writeFileSync(path.join(root, 'upstream', 'sources.json'), JSON.stringify({ sources: [{ name: 'o/src', sha }] }));
+    const wrap = path.join(root, 'wrap');
+    fs.mkdirSync(path.join(wrap, '.claude-plugin'), { recursive: true });
+    fs.mkdirSync(path.join(wrap, 'skills', 'a'), { recursive: true });
+    fs.writeFileSync(path.join(wrap, '.claude-plugin', 'plugin.json'), JSON.stringify({ name: 'src-wrap' }));
+    fs.copyFileSync(path.join(clone, 'a', 'SKILL.md'), path.join(wrap, 'skills', 'a', 'SKILL.md'));
+    const task = { sources: [{ plugin: 'src-wrap', dir: 'wrap', source: 'o/src', wraps: { clone: 'clone', files: { 'skills/a/SKILL.md': 'a/SKILL.md' } } }] };
+    assert.deepEqual(checkSources(task, root), [], 'exact copies of a clone at its pin');
+    // An edit in the clone's working tree that is not committed: a copy of it is not a copy of the pinned file.
+    fs.writeFileSync(path.join(clone, 'a', 'SKILL.md'), 'one, edited in place\n');
+    fs.copyFileSync(path.join(clone, 'a', 'SKILL.md'), path.join(wrap, 'skills', 'a', 'SKILL.md'));
+    assert.match(checkSources(task, root).join('|'), /not a copy/, 'a copy of an uncommitted edit');
+    git(clone, 'checkout', '--', 'a/SKILL.md');
+    // The committed bytes, written out: a checkout may have converted the working file's line endings.
+    fs.writeFileSync(path.join(wrap, 'skills', 'a', 'SKILL.md'), 'one\n');
+    assert.deepEqual(checkSources(task, root), []);
+    // Anything else in the wrapper would be loaded with it.
+    fs.mkdirSync(path.join(wrap, 'skills', 'b'));
+    fs.writeFileSync(path.join(wrap, 'skills', 'b', 'SKILL.md'), 'extra\n');
+    assert.match(checkSources(task, root).join('|'), /wrap\/skills\/b\/SKILL\.md: not part of the wrapper/, 'an extra file');
+    fs.rmSync(path.join(wrap, 'skills', 'b'), { recursive: true });
+    fs.writeFileSync(path.join(wrap, '.claude-plugin', 'plugin.json'), JSON.stringify({ name: 'src-wrap', hooks: './hooks.json' }));
+    assert.match(checkSources(task, root).join('|'), /key hooks is not the wrapper's to set/, 'a manifest that adds behaviour');
+    fs.writeFileSync(path.join(wrap, '.claude-plugin', 'plugin.json'), JSON.stringify({ name: 'src-wrap' }));
+    fs.writeFileSync(path.join(wrap, 'skills', 'a', 'SKILL.md'), 'one, edited\n');
+    assert.match(checkSources(task, root).join('|'), /skills\/a\/SKILL\.md: not a copy of clone\/a\/SKILL\.md/, 'an edited copy');
+    fs.rmSync(path.join(wrap, 'skills', 'a', 'SKILL.md'));
+    assert.match(checkSources(task, root).join('|'), /not a copy/, 'a missing copy');
+    fs.copyFileSync(path.join(clone, 'a', 'SKILL.md'), path.join(wrap, 'skills', 'a', 'SKILL.md'));
+    fs.writeFileSync(path.join(clone, 'a', 'SKILL.md'), 'two\n');
+    git(clone, 'commit', '-q', '-am', 'two');
+    const moved = checkSources(task, root).join('|');
+    assert.match(moved, /clone: at [0-9a-f]{12}, pinned/, 'the clone moved off its pin');
+    assert.match(moved, /not a copy/, 'and the copy no longer equals the original');
+    assert.match(checkSources({ sources: [{ ...task.sources[0], plugin: 'other' }] }, root).join('|'), /expected plugin other, found src-wrap/);
+    // A plain source is still pinned on its own directory.
+    fs.mkdirSync(path.join(clone, '.claude-plugin'));
+    fs.writeFileSync(path.join(clone, '.claude-plugin', 'plugin.json'), JSON.stringify({ name: 'plain' }));
+    assert.match(checkSources({ sources: [{ plugin: 'plain', dir: 'clone', source: 'o/src' }] }, root).join('|'), /clone: at [0-9a-f]{12}, pinned/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
