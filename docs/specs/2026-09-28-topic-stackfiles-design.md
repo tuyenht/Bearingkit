@@ -101,3 +101,42 @@ The reviewer changed no file and ran no test, bench or Python. It hand-traced th
 | The widened P6 pattern matched any "go back" ("I'll go back and re-check the diff"), untested and undisclosed | should-fix | Correct | "go back" only as "go back to / means / is"; two negatives and one positive added; the over-count risk stated here and in the `bk-build` spec |
 | A migrations directory or `.sql` reached only through a symbolic link is not seen | nit | Correct, a design choice | Stated under "What the scan skips" |
 | Hidden files are read while hidden directories are skipped | nit | Correct, low impact | Stated; code unchanged |
+
+## Results (2026-10-01, owner's machine, Sonnet 5)
+
+Every session `claude-sonnet-5`, `natural`, run from the main checkout with this branch checked out at `3f343b4` (the merge of `main` at `ebde540`, with the addendum above), tree clean before each call; every `meta.json` reads `kit.branch: p4b-topic-stackfiles`, commit `3f343b4`, `dirty: false`. One `bench` call at a time. The merge and the addendum were reviewed before the commit (Sonnet, read only): no must-fix, one wording note applied and re-reviewed.
+
+**Probe** (`evals/results/2026-10-01-bench-php-01-natural-10`, `--branches K --runs 2`): `sql.md` opened in 2 of 2; both sessions entered through `bk-build` and ran `detect-stack`. K1 opened `sql.md` and not `php-laravel.md`; K2 opened both. At least 1 of 2: go on. One refused command (K1, a compound `sqlite3 --version; php -r …` probe).
+
+**Guard** (`evals/results/2026-10-01-bench-php-01-natural-11`, one call `--branches K,S --runs 8`, interleaved):
+
+| | K | S |
+|---|---|---|
+| `sql.md` opened (`reach(raw, 'sql').file`) | **8 of 8** | 0 of 8 |
+| `php-laravel.md` opened | 8 of 8 | 0 of 8 |
+| `detect-stack` ran | 8 of 8 | 0 of 8 |
+| Skill invoked | `bearingkit:bk-build` 8 of 8, each with `args` | none, 8 of 8 |
+| Entry `bk-build`; file first opened | 8 of 8; after the `bk-build` call in all 8 (`stack-reach-by-entry.cjs --rows`) | — |
+| H per session | 2 ×8 | 2 ×8 |
+| H1 / H2 / H3 | 0 / 8 / 8 | 0 / 8 / 8 |
+| H1 class | some 4, none 4 | none 8 |
+| O1 / O2 / X | 8 / 8 / 8 | 8 / 8 / 8 |
+| P4 / P5 | 0 / 0 | 1 / 0 |
+| Answer names `stackFiles`, `php-laravel.md` or `sql.md` | 6 of 8 | 0 of 8 |
+| Cost USD, median (range), runner's figure | 0.355 (0.339–0.434) | 0.331 (0.284–0.817) |
+| Tokens total, median (range) | 778,945 (622,606–1,088,566) | 771,309 (611,572–2,732,000) |
+| Tool calls (`tool_use` events in the stream) | 18–27 | 15–45 |
+
+**The bar, K:** `sql.md` opened 8 of 8 (at least 4), against a floor of 0 of 8 without the listing (addendum); O1 8 of 8 and O2 8 of 8 (each at least 7); H median 2, not below the floor's calibration median 2. **Holds.**
+
+**Against the sources**, same call: H mean 2.000 for K and for S, exact two-sided permutation p = 1.0: **no clear difference**. H2 and H3 saturate on both branches and H1 fails on both, as in every earlier `php-01` run, so the task still cannot show the kit's text doing better than its sources; it shows that the listed file is read. No source skill was invoked in any S session.
+
+**`build-01`** (`evals/results/2026-10-01-bench-build-01-natural-2`, `--branches K --runs 8`): O1 8 of 8, O2 8 of 8, O3 8 of 8, P3 8 of 8. **Its bar holds.** P1 8 of 8, P2 8 of 8, P4 0, P5 0, H 0; `node.md` opened in 8 of 8, `sql.md` in none (the profile does not list it there), `detect-stack` ran in 8 of 8, `bearingkit:bk-build` invoked with `args` in 8 of 8; cost median 0.585 (0.508–0.743). P6: the scorer's widened pattern counts 4 of 8; read by eye, 2 of 8 state a way back (K2, K4), and two are over-counts (K3 "left undone", K8 "restored the fix" about a test; the fix note warns of the second kind).
+
+**Both guards hold; the registered condition for merging is met.**
+
+**Reported with no bar.**
+- H2 and H3 split by whether `sql.md` was opened: no split exists, all eight K sessions opened it; H2 and H3 were already 8 of 8 without it (stack-reach run), so `sql.md:40` and `:42` cannot be credited with anything here.
+- Cost: K's median is about 7% above S's on these sessions; two S sessions (S6, S8) ran long after refused manual checks. Every session saw 31 tools, so token totals compare: medians within 1%. Against the stack-reach run's K-after (0.401, another call and commit, not interleaved) no comparison is made.
+- Refused commands, read by eye. `php-01` K: 0 in the guard. S: 29 in five of eight sessions (S3 2, S4 4, S5 1, S6 12, S8 10), among them compound smoke tests with `export STOCK_DB=/tmp/…` and `rm -f`, `bash` on scratchpad scripts, PowerShell runs of `php bin/stock.php`, a compound `find … -exec cat`, and clean-up `rm` of files the session made. `build-01` K: 59 in all eight sessions, the kinds of 2026-10-01's earlier run (45), among them: `npm test` and `node --test` through the PowerShell tool, which the registered permissions allow through Bash only; `rm -rf`, `rm -r`, `git rm -r` and `Remove-Item` of `vendor/datefmt-1`; compound `cd … &&` lines; one `npm --version`. Six of the refused `build-01` calls asked for `dangerouslyDisableSandbox` (one more in `php-01` S6). Every barred score is 8 of 8, so none cost a bar; what the refused runs would have shown is not known.
+- **Limits.** One task carries the reach bar, and its floor (0 of 8) comes from an earlier call, not an interleaved branch. `shell.md` is not written, so its signal stays unmeasured. `review-03` and `review-04` now get `sql.md` in their profile; no session of them was run here.
