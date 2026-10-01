@@ -30,7 +30,7 @@ Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. `node.md`, `pyth
 | Hàng nguồn trong ma trận | **39** | `grep -c '^\| [0-9]' docs/specs/2026-09-10-coverage-matrix.md` |
 | Host đã qua acceptance | **2/7** (Claude Code, Antigravity; bảy host của `docs/hosts.md`, trong đó Copilot CLI và Factory Droid chung một mục. §2 mục 11 là chỉ số khác: 2/6 host owner thực dùng, câu 8) | `docs/hosts.md` |
 | Bootstrap protocol | **6.485/6.500** ký tự | proxy của `tests/session-start.test.cjs`, đo lại 2026-09-26 |
-| Bản cài hằng ngày | `868a456` ở cả scope user lẫn local, **cũ hơn `main`** từ merge P4b (`skills/bk-build`, `scripts/detect-stack.cjs`); kho Antigravity cũng ở `868a456`, nên `doctor` trên `main` bốn `ok`, hai `FAIL` (bản copy `skills/` và script lệch checkout), một `skip`; cập nhật chờ owner nói có | `claude plugin list`, `bearingkit doctor`, 2026-10-01 |
+| Bản cài hằng ngày | `c412366` ở cả scope user lẫn local (2026-10-01, owner nói có, sau merge P4b); kho Antigravity làm mới từ checkout chính ở `c412366`, `doctor` sáu `ok`, một `skip` | `claude plugin list`, `bearingkit doctor`, 2026-10-01 |
 
 ## 2. "Hoàn thành" là gì — 12 mục: 2 đạt có phép đo, 1 đạt theo thiết kế, 9 chưa
 
