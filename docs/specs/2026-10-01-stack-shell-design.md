@@ -199,3 +199,26 @@ Owner's decision, verbatim, on the four questions closing the previous block (up
 - **No merge depends on the outcome.** `shell.md` is on `main` by the main run's bars. The branch (runner change, task, this addendum, the result) merges after its review whatever the result says; a result of "worse than its source" is reported to the owner as a finding about `shell.md`, with the hazards where the source did better.
 - **Instruments, written and reviewed before the session**: `evals/analysis/shell-src-tally.cjs <result dir>` computes the primary test and the "source was read" count (an S session counts if a Skill call names the wrapper or one of its two skills, or a `Read`, `Grep` or shell call names a path of the wrapper); it was tried on a directory of the main run before any session of this one (there S is another plugin, so it reads "0 of 2"). The wrapper is built from the files committed at the pin (`git cat-file blob`), and `checkSources` compares with those blobs, not with the clone's working tree, and refuses a wrapper holding any other file or a manifest key beyond `name`, `version`, `description`.
 - **Abnormal sessions**: a session the runner cut at its limits, or that ended in an error, is counted with what it left (the scorer scores the tree as it is) and is named in the result; if the runner stops the call on quota, the whole call re-runs after the reset and the partial directory is reported and not counted.
+
+### Result of the addendum (2026-10-01, owner's machine)
+
+One call, `evals/results/2026-10-01-bench-shell-01-src-natural`, `p4e-shell-source@9bd195b`, `dirty: false`, sixteen sessions, all `claude-sonnet-5`, all ended `success`, none cut. Tally: `node evals/analysis/shell-src-tally.cjs 2026-10-01-bench-shell-01-src-natural`.
+
+| | K (second run) | S2 (the source, as wrapped) |
+|---|---|---|
+| H per session | 5 6 6 5 6 6 6 5 | 6 6 4 4 4 4 4 4 |
+| H mean (median) | 5.625 (6) | 4.500 (4) |
+| H1 / H2 / H3 / H4 / H5 / H6 | 8 / 8 / 5 / 8 / 8 / 8 | 4 / 8 / 2 / 8 / 8 / 6 |
+| O1 / O2 / X | 8 / 8 / 8 | 8 / 8 / 8 |
+| Skill invoked | `bearingkit:bk-build` 8 of 8 | none, 8 of 8 |
+| `shell.md` opened | 8 of 8 | — |
+| Source read (Skill call or a file of the wrapper named) | — | **0 of 8** |
+| Cost USD, median (range) | 0.393 (0.264–0.496) | 0.245 (0.183–0.441) |
+| Refused commands | 9 | 4 |
+
+- **Primary: H, K against S2, exact two-sided permutation test: p = 0.028, K above.**
+- **Whether the source was read: 0 of 8, below the registered 4.** The wrapper was loaded in every S2 session (each session's `init` event lists the plugin `antigravity-core-shell` and its two skills, `antigravity-core-shell:bash-linux` and `:powershell-windows`), and no session invoked either or opened either file.
+- **So, by the registration: the source was installed but not read, and this is not evidence about its text.** What the run does show: a session with the source's two skills installed, as wrapped, and left to itself did not open them on this task, and scored H 4.5 against the kit's 5.6 (p = 0.028, on H alone). This is an install-against-install comparison, not the comparison with the source that the owner's rule asks for: **`shell.md` stays "not compared with its source"**, and no text may say it is better than its source. In effect S2 was an unassisted session: K ran the kit's whole protocol (`bk-build` 8 of 8, `shell.md` opened 8 of 8) and S2 ran no skill, and S2 cannot be told from the floor of the main run (S2 against F, H: permutation p = 0.47; H1 4 of 8 against 1 of 8, Fisher p = 0.28; a comparison across calls, described only). The kit's sessions also cost more: median 0.393 against 0.245 USD, about 1.6 times; tokens were not compared. Why no session opened the source is not known; its two skill descriptions are written in Vietnamese and the prompt in English, which may have played a part, and the stream cannot show it.
+- **Second run of K, described**: H 5 6 6 5 6 6 6 5 (mean 5.625) beside the main run's K-after 6 5 6 5 6 6 6 6 (5.750); H1 8 of 8 both times; H3 5 of 8 and 6 of 8. Same day, a few hours later, another commit of the runner and another task id; consistent with the main run, and not the replication on another day.
+- Reported with no bar: S2 passed H1 in 4 of 8 (the floor 1 of 8 and the other installed set 0 of 8 in the main run: different calls, and against the floor not a clear difference, as above); per hazard against K, post hoc, H1 8 against 4 (Fisher p = 0.08) and H3 5 against 2 (p = 0.31). Refused, read by eye: K 9 (compound Bash lines building a scratch repository under `/tmp`, `rm` of scratch files, `node --version; git --version`, a compound `file …; xxd …` look at the written file, one `powershell -Command` through a compound line), S2 4 (`rm` of temporary files, one compound `cd … && ls … | xargs`); the wrapper's `allowed-tools` front matter never came into play, since neither skill was invoked. Every branch of every run also loads the host's own `agents-md` and `telemetry` plugins (seen in the `init` events of K, S, S2 and F alike).
+- **What stays open**: a comparison of the two texts needs the source to be read — for instance the same task with the source skill invoked by command (the runner's `command` variant) against `/bearingkit:bk-build`; and the K-after against K-before run on another day.
