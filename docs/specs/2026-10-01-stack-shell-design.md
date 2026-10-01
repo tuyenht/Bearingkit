@@ -126,3 +126,47 @@ Every session `claude-sonnet-5`, `natural`, from the main checkout, `dirty: fals
 **Calibration** (`evals/results/2026-10-01-bench-shell-01-natural-2`, `--branches F --runs 3`, same commit): H = 4, 4, 5; O1 3 of 3, O2 3 of 3, X 3 of 3. Per hazard: H1 1 of 3 (two sessions wrote the file and exited 0 when `git log` failed), H2 3, H3 1 (two lost the Vietnamese text), H4 3, H5 3, H6 2. H ≤ 4 in 2 of 3 and O1 in 3 of 3: **the task is usable**, the first of the stack tasks to be. Refused: F1 one, F2 one (compound Bash lines), F3 none; F2's P5 is a `git commit` in a scratch repository, the over-count the registration names.
 
 **So the usable path runs**: F (five more), S, K-before and K-after, eight each. Driver `evals/analysis/shell-run.cjs` and tally `evals/analysis/shell-tally.cjs`, written after the calibration and before any further session, reviewed, and committed with this paragraph; the tally was checked on a synthetic log (a stopped round is excluded, the calibration's F sessions are counted once). What the registration left to the driver, fixed here before the first round: four rounds, each one `bench` call `--branches K --runs 2` on `p4d-shell-before`, then one `--branches K,S --runs 2` on `p4d-shell`, then the floor in a call of its own on `p4d-shell` (`--branches F`, two sessions in rounds 1 and 2, one in round 3); a round counts only whole, and a round the runner stops on quota re-runs from its start. `p4d-shell-before` is created after this commit, from it, with `skills/` and `scripts/detect-stack.cjs` as on `main`; the driver refuses to start unless `git diff main p4d-shell-before -- skills hooks agents scripts/detect-stack.cjs` is empty. There the fixture has no profile (`no-manifest`) and no `shell.md` exists. K-after therefore runs at the driver's commit, not at `4e15cbf` where the probe and the calibration ran; `skills/`, `hooks/`, `agents/` and `scripts/` are identical at those two commits of `p4d-shell`. The tally (the last complete occurrence of each round; for `build-01`, a line followed by its `DONE`) prints the commits and session counts per branch, which are read before any result is stated. **The registered bars are unchanged**: this paragraph fixes only the order of the calls. The probe's two K sessions count toward no bar.
+
+### Main run (2026-10-01, owner's machine)
+
+Four whole rounds, none stopped; log `evals/results/shell-log.txt`, tally `node evals/analysis/shell-tally.cjs 2026-10-01-bench-shell-01-natural-2`. Directories `evals/results/2026-10-01-bench-shell-01-natural-3` to `-13`. Every `meta.json` `dirty: false`; K-before `p4d-shell-before@13d2937`, K-after and S `p4d-shell@162d4c1`, F at `4e15cbf` (the three of the calibration) and `162d4c1` (five). Thirty-two sessions counted, eight per branch.
+
+| | K-before | K-after | S | F |
+|---|---|---|---|---|
+| H per session | 5 5 4 4 4 5 4 4 | **6 5 6 5 6 6 6 6** | 4 4 3 4 2 4 5 4 | 4 4 5 4 4 4 4 4 |
+| H mean (median) | 4.375 (4) | **5.750 (6)** | 3.750 (4) | 4.125 (4) |
+| H1 native command fails | 1 | 8 | 0 | 1 |
+| H2 no byte-order mark | 8 | 8 | 7 | 8 |
+| H3 Vietnamese subjects | 2 | 6 | 1 | 1 |
+| H4 nested JSON | 8 | 8 | 8 | 8 |
+| H5 a list of one | 8 | 8 | 8 | 8 |
+| H6 brackets in paths | 8 | 8 | 6 | 7 |
+| O1 / O2 / X | 8 / 8 / 8 | 8 / 8 / 8 | 8 / 8 / 8 | 8 / 8 / 8 |
+| `shell.md` opened | 0 (three looked for it, one `Read` and two `Glob`; the file does not exist there) | 8 | 0 | 0 |
+| `detect-stack` ran | 8 (it answers `no-manifest` there) | 8 | 0 | 0 |
+| Skill invoked | `bk-build` 8 of 8 | `bk-build` 8 of 8, one after `bk-spec` | none | none |
+| P4 / P5 | 0 / 2 | 1 / 0 | 0 / 0 | 0 / 1 |
+| Cost USD, median (range), runner's figure | 0.505 (0.295–0.728) | 0.358 (0.257–0.586) | 0.336 (0.255–1.073) | 0.243 (0.181–0.583) |
+| Tool calls (`tool_use` events) | 15–37 | 9–23 | 11–37 | 8–24 |
+| Refused commands | 8 | 12 | 9 | 9 |
+
+**The bars, as registered for the usable path.**
+- **Primary: H, K-after against K-before, exact two-sided permutation test: p = 0.0016, K-after above.** Holds (p ≤ 0.05).
+- O2 for K-after: 8 of 8 (at least 7). Holds.
+- O1 for K-after not below K-before: 8 against 8. Holds.
+- `shell.md` opened by K-after: 8 of 8 (at least 4). Holds.
+- **`build-01`** (`evals/results/2026-10-01-bench-build-01-natural-3`, eight K sessions at `162d4c1`): O1 8 of 8, O2 8 of 8, O3 8 of 8, P3 8 of 8. Holds. P1 8, P2 8, P4 0, P5 0, H 0; `node.md` opened 8 of 8, `shell.md` in none (not listed there); cost median 0.599. P6: the scorer counts 2 of 8 (K1 "temporarily removed … the fix" about a test, K7 "left undone": both over-counts); read by eye, 0 of 8 state a way back for the upgrade itself, and the nearest are K3 ("still on disk"), K8 ("left in place") and K6 ("it's all tracked in git so it's trivially recoverable", about a deletion it did not make). K4 and K6 end on a question about deleting `vendor/datefmt-1`; the barred scores are unaffected.
+
+**Every bar holds: by the registration `p4d-shell` merges into `main`** (the owner is asked before the daily install and the Antigravity store are updated). With `shell.md` listed and read, the kit's sessions passed more of the six hazards than the same kit without it, on this task, with Sonnet 5. It is the first registered K-after against K-before test of a stack file to pass. What it shows is narrow: the hazards were chosen from the file, so it shows the file was followed where the floor fails, not that the scripts are better in general (X, O1 and O2 are 8 of 8 on every branch); K-before differs from K-after by the file, by its listing in the profile and by `detect-stack` answering at all, and nothing here separates those three; and it is one run on one day, **not replicated** (`node-01` once showed an unregistered lead of p = 0.00016 that did not hold when run again, `docs/specs/2026-09-26-stack-node-python-design.md`).
+
+**Against the installed skill set**: H, K-after against S, same test: p = 0.0005, K-after above. By the registered wording: **better than `fullstack-dev-skills` on `shell-01`, Sonnet; not compared with its source** (Antigravity-Core cannot be installed as it ships; `fullstack-dev-skills` is not a source of `shell.md`, carries no shell skill, and no S session invoked a skill).
+
+**Reported with no bar.**
+- Where the difference is: H1 (the script exits non-zero and writes nothing when `git log` fails) 8 of 8 for K-after against 1 of 8 for K-before (Fisher, two-sided, p = 0.0014), 0 of 8 for S, 1 of 8 for F; H3 (Vietnamese text) 6 of 8 against 2 of 8 (p = 0.13), 1 for S, 1 for F. H4 and H5 are 8 of 8 on every branch, H2 is 8 except S's 7, H6 is 6 to 8. So the difference in H comes probably from one sentence (`$LASTEXITCODE`) and possibly from a second (`[Console]::OutputEncoding`); these per-hazard figures are post-hoc descriptions of the same sessions, six hazards looked at, not registered tests: a lead, not a result. Two of the eight K-after sessions read `shell.md` and still lost the Vietnamese text.
+- The kit without the file is level with the floor and with S: K-before against F p = 0.57, S against F p = 0.51, K-after against F p = 0.0005.
+- Cost: no clear difference between the kit's two branches (medians 0.358 for K-after and 0.505 for K-before; the reviewer's permutation test on cost gives p = 0.10) or against S (K-after's median about 7% above S's, its mean below); the floor is cheapest (median 0.243). Tokens are not compared: tool counts differ.
+- K-before: three sessions looked for `stacks/shell.md` — one `Read` ("File does not exist"), which the scorer's reach counts as an attempt, and two `Glob` listings, which it does not; it is shown as 0 opened. All eight ran `detect-stack` and got `no-manifest`.
+- Refused commands, read by eye, 36 in the eleven directories of the main run (plus 3 in the probe and 2 in the calibration): compound Bash lines that build a scratch git repository under `/tmp` or `mktemp -d`; `rm` of a temporary output file or scratch directory (this left `out-notes.json` in the fixture in one K-after session, its P4); `powershell.exe -Command` and `pwsh` through Bash, most in compound lines (`pwsh` is not installed); a few multi-line PowerShell tool calls building repositories under `$env:TEMP`; `git --version`, `node --version`. No barred score depends on them: O1 and O2 are 8 of 8 on every branch. `build-01`: 49, the kinds of the two earlier runs (tests through the PowerShell tool, `rm -rf` and `git rm` of `vendor/datefmt-1`, compound `cd … &&` lines).
+- P5: K-before 2 and F 1, each a `git commit` in a scratch repository (the over-count the registration names), none in the fixture.
+
+**Limits of this result.** One task, one shell, one model, eight sessions a branch, one day, not replicated. The hazards were chosen from the file by its author; what guards against that is the floor (F and K-before fail H1 seven times in eight without being told) and the control X (8 of 8 everywhere, so the branches do not differ in general care). The Bash section, and every PowerShell sentence outside the six, remain unmeasured. The comparison with the source skills themselves does not exist.
