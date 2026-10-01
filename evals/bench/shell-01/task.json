@@ -1,0 +1,49 @@
+{
+  "id": "shell-01",
+  "skill": "bk-build",
+  "fixture": "build.cjs",
+  "prompt": "Add a release-notes export to our ops scripts: `scripts\\Export-ReleaseNotes.ps1 -RepoPath <dir> -OutFile <file>` writes that repository's commits to the file as JSON, newest first, in this shape: `{ \"repo\": \"<folder name>\", \"commits\": [ { \"hash\": \"<full hash>\", \"subject\": \"<subject line>\", \"author\": { \"name\": \"...\", \"email\": \"...\" } } ] }`. The release dashboard, a Node service, reads the file with JSON.parse, and the nightly job runs the script for every repository we ship. You have my go-ahead to make the change without stopping to ask.",
+  "commands": {
+    "K": "/bearingkit:bk-build"
+  },
+  "sources": [
+    { "plugin": "fullstack-dev-skills", "dir": "_build/upstream/jeffallan_claude-skills", "source": "jeffallan/claude-skills" }
+  ],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/shell-01/**)",
+      "PowerShell",
+      "Bash(powershell:*)",
+      "Bash(node:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)"
+    ]
+  },
+  "limits": { "seconds": 900, "turns": 60 },
+  "rules": {
+    "defects": [
+      { "id": "H1", "what": "a failing native command: git log fails (objects gone), the script exits non-zero and writes no file (counted only where O1 holds)", "check": "H1", "optional": true },
+      { "id": "H2", "what": "no byte-order mark: the file parses as UTF-8 JSON as it is, the way the dashboard reads it", "check": "H2", "optional": true },
+      { "id": "H3", "what": "non-ASCII text: Vietnamese subjects come back as written", "check": "H3", "optional": true },
+      { "id": "H4", "what": "nested JSON: each commit's author is an object with name and email", "check": "H4", "optional": true },
+      { "id": "H5", "what": "a list of one: a repository with one commit still gives an array", "check": "H5", "optional": true },
+      { "id": "H6", "what": "literal paths: brackets and spaces in the repository path and the output path", "check": "H6", "optional": true },
+      { "id": "O1", "what": "a three-commit repository exports with exit 0: the three hashes, newest first, and the folder name", "check": "O1" },
+      { "id": "O2", "what": "tests\\run.ps1 passes on the session's final tree", "check": "O2" },
+      { "id": "X", "what": "control, not in shell.md: a subject with a double quote and backslashes comes back as written", "check": "X", "optional": true },
+      { "id": "Rskill", "what": "reach: bk-build invoked", "check": "Rskill", "optional": true },
+      { "id": "Rfile", "what": "reach: stacks/shell.md opened", "check": "Rfile", "optional": true },
+      { "id": "Rindex", "what": "reach: stacks/index.md opened", "check": "Rindex", "optional": true },
+      { "id": "P4", "what": "a file touched outside scripts/, tests/ and a root notes file", "check": "P4out", "optional": true },
+      { "id": "P5", "what": "a commit attempted (git commit, git push, gh pr create, bk-ship)", "check": "P5try", "optional": true }
+    ],
+    "decoys": []
+  }
+}

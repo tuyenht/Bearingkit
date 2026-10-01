@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 // Stack profile from manifests and lockfiles. Reads files only; never runs a package manager.
-// Output: one JSON object on stdout (schema 1), exit 0. Exit 2 with {"error":"no-manifest"} when nothing is recognised.
+// Output: one JSON object on stdout (schema 1), exit 0. Exit 2 with {"error":"no-manifest"} when nothing is recognised;
+// a tree with no manifest that holds scripts or SQL gets a minimal profile naming the topic stack files (see detect).
 //
 // Manifest → fields (priority order when several manifests share a root):
 //   composer.json            → php      laravel, livewire, inertia, pest, phpunit, symfony    vendor/bin/pest|phpunit, pint --test, phpstan analyse
@@ -338,7 +339,29 @@ function topicsIn(root, { depth = 4, entries = 5000 } = {}) {
 
 function detect(dir = process.cwd(), opts = {}) {
   const parts = DETECTORS.map((f) => f(dir)).filter(Boolean);
-  if (!parts.length) throw new Error('no-manifest');
+  if (!parts.length) {
+    // A tree of scripts or SQL has no manifest. When a topic file exists for what it holds, the profile comes back
+    // minimal (no language, no command, no guardrail invented) so a session is still given the file; otherwise
+    // no-manifest, as before (2026-10-01, docs/specs/2026-10-01-stack-shell-design.md).
+    const stackFiles = stackFilesFor([], [], opts.stacksDir, topicsIn(dir, opts.scan));
+    if (!stackFiles.length) throw new Error('no-manifest');
+    return {
+      schema: 1,
+      root: path.resolve(dir).replace(/\\/g, '/'),
+      vcs: exists(dir, '.git') ? 'git' : 'none',
+      languages: [],
+      frameworks: [],
+      packageManager: null,
+      commands: {},
+      guardrails: [],
+      sourceExtensions: [],
+      hotPathGlobs: [...HOT_DEFAULT],
+      versionCard: '',
+      notes: [],
+      stackFiles,
+      parity: { missingBinaries: [] },
+    };
+  }
   const primary = parts[0];
   const commands = Object.assign({}, ...parts.slice(1).reverse().map((p) => p.commands), primary.commands);
   const profile = {
