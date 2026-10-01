@@ -65,8 +65,27 @@ function checkSources(task, root = ROOT) {
     let name = null;
     try { name = JSON.parse(fs.readFileSync(path.join(dir, '.claude-plugin', 'plugin.json'), 'utf8')).name; } catch { /* reported below */ }
     if (name !== s.plugin) { problems.push(`${s.dir}: expected plugin ${s.plugin}, found ${name}`); continue; }
-    const head = String(spawnSync('git', ['rev-parse', 'HEAD'], { cwd: dir, encoding: 'utf8' }).stdout || '').trim();
-    if (head !== pins.get(s.source)) problems.push(`${s.dir}: at ${head.slice(0, 12) || '?'}, pinned ${String(pins.get(s.source) || 'none').slice(0, 12)}`);
+    // A source that ships no Claude Code plugin is loaded through a wrapper: a plugin directory holding copies of
+    // files of the pinned clone (`wraps.clone`), each `wraps.files` entry mapping a path in the wrapper to its path
+    // in the clone. The pin is checked on the clone, and every copy must equal its original byte for byte.
+    const pinned = s.wraps ? path.join(root, s.wraps.clone) : dir;
+    const head = String(spawnSync('git', ['rev-parse', 'HEAD'], { cwd: pinned, encoding: 'utf8' }).stdout || '').trim();
+    if (head !== pins.get(s.source)) problems.push(`${s.wraps ? s.wraps.clone : s.dir}: at ${head.slice(0, 12) || '?'}, pinned ${String(pins.get(s.source) || 'none').slice(0, 12)}`);
+    if (!s.wraps) continue;
+    // Each copy equals the committed file at the clone's HEAD (the blob, not the working tree, which an edit or a
+    // line-ending conversion can change), and the wrapper holds nothing but its manifest and those copies.
+    for (const [to, from] of Object.entries(s.wraps.files)) {
+      const blob = spawnSync('git', ['cat-file', 'blob', `HEAD:${from}`], { cwd: pinned, maxBuffer: 1 << 26 });
+      let same = false;
+      try { same = blob.status === 0 && fs.readFileSync(path.join(dir, to)).equals(blob.stdout); } catch { /* reported below */ }
+      if (!same) problems.push(`${s.dir}/${to}: not a copy of ${s.wraps.clone}/${from}`);
+    }
+    const walk = (d, rel = '') => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name), `${rel}${e.name}/`) : [`${rel}${e.name}`]));
+    const expected = new Set(['.claude-plugin/plugin.json', ...Object.keys(s.wraps.files)]);
+    for (const f of walk(dir)) if (!expected.has(f)) problems.push(`${s.dir}/${f}: not part of the wrapper`);
+    let manifest = {};
+    try { manifest = JSON.parse(fs.readFileSync(path.join(dir, '.claude-plugin', 'plugin.json'), 'utf8')); } catch { /* reported above */ }
+    for (const k of Object.keys(manifest)) if (!['name', 'version', 'description'].includes(k)) problems.push(`${s.dir}/.claude-plugin/plugin.json: key ${k} is not the wrapper's to set`);
   }
   return problems;
 }
