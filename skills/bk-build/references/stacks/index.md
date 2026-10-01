@@ -10,17 +10,17 @@
 | `languages: python` | `python.md` | written |
 | `languages: php` (framework `laravel` or none) | `php-laravel.md` | written |
 | `languages: c-cpp` | `c-cpp.md` | **not written yet** |
-| no language: a `.sh`, `.bash` or `.ps1` file in the tree, like `sql.md` below | `shell.md` | **not written yet** |
+| no language: a `.sh`, `.bash` or `.ps1` file in the tree, like `sql.md` below | `shell.md` | written |
 | `languages: java`, `go`, `rust`, `csharp` or `terraform` | — | **no file, none planned yet**: spec §5.5's first eight do not include them. The profile still carries their guardrail commands; say the file is missing rather than borrowing another stack's |
 
-## `sql.md` is reached by what the tree holds
+## `sql.md` and `shell.md` are reached by what the tree holds
 
-No manifest declares SQL (or shell), so it has no language row above. `detect-stack` lists it under `stackFiles` when the tree holds a `.sql` file or a migrations directory (`migrations/`, `db/migrate/`, `alembic/`), skipping dependency, build and hidden directories, down to four levels and a bounded number of entries. A large or deep tree can hide the signal, so it is also opened **by subject matter**: the change touches a query, a migration, a schema, or an index — whatever language the surrounding code is written in. A Kotlin service writing a migration reads `kotlin.md` and `sql.md` both.
+No manifest declares SQL or shell, so neither has a language row above. `detect-stack` lists `sql.md` under `stackFiles` when the tree holds a `.sql` file or a migrations directory (`migrations/`, `db/migrate/`, `alembic/`), and `shell.md` when it holds a script, skipping dependency, build and hidden directories, down to four levels and a bounded number of entries. A tree with no manifest at all still gets a profile when one of the two is listed. A large or deep tree can hide the signal, so `sql.md` is also opened **by subject matter**: the change touches a query, a migration, a schema, or an index — whatever language the surrounding code is written in. A Kotlin service writing a migration reads `kotlin.md` and `sql.md` both; a change that writes or edits a script opens `shell.md` the same way.
 
 ## When a stack has no file
 
-Say so rather than improvising from the nearest one. The gap is a real finding for the session's handoff, and spec §5.5 lists eight stacks as the first set — six exist today. Nothing in the kit pretends a missing file is covered.
+Say so rather than improvising from the nearest one. The gap is a real finding for the session's handoff, and spec §5.5 lists eight stacks as the first set — seven exist today. Nothing in the kit pretends a missing file is covered.
 
 ## Adding one
 
-Each file opens with a version card that states what it was checked against **and what it was not**; `typescript-react.md`, `kotlin.md`, `sql.md`, `python.md` and `php-laravel.md` were cross-checked only against fixtures, because no live project of those stacks exists on the machine that wrote them; `node.md` was checked against this repository, a plain Node project. The first project that uses a file refreshes that line from its own profile output (spec §16).
+Each file opens with a version card that states what it was checked against **and what it was not**; `typescript-react.md`, `kotlin.md`, `sql.md`, `python.md` and `php-laravel.md` were cross-checked only against fixtures, because no live project of those stacks exists on the machine that wrote them; `shell.md` had its PowerShell lines run on that machine and its Bash lines not; `node.md` was checked against this repository, a plain Node project. The first project that uses a file refreshes that line from its own profile output (spec §16).

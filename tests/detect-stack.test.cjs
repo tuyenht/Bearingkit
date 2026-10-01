@@ -174,6 +174,41 @@ test('cli prints JSON and exits 2 without a manifest', () => {
   assert.equal(JSON.parse(bad.stdout).error, 'no-manifest');
 });
 
+// 2026-10-01 (docs/specs/2026-10-01-stack-shell-design.md): a repository of scripts has no manifest, and it is where
+// shell scripts most often live; it threw no-manifest before the tree was read, so no session there was ever given
+// shell.md. With a topic file to list, the profile comes back minimal: every key present, nothing invented.
+test('no manifest but a topic file to list: a minimal profile, not no-manifest', () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const stacks = fs.mkdtempSync(path.join(os.tmpdir(), 'stacks-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'bare-'));
+  try {
+    fs.mkdirSync(path.join(root, 'scripts'));
+    fs.writeFileSync(path.join(root, 'scripts', 'Backup.ps1'), '# x\n');
+    assert.throws(() => detect(root, { stacksDir: stacks }), /no-manifest/, 'a topic whose file is not written yet lists nothing, so nothing changes');
+    fs.writeFileSync(path.join(stacks, 'shell.md'), '#\n');
+    const p = detect(root, { stacksDir: stacks, path: '' });
+    assert.deepEqual(p.stackFiles, [path.join(stacks, 'shell.md').split(path.sep).join('/')]);
+    assert.deepEqual(p.languages, []);
+    assert.deepEqual(p.frameworks, []);
+    assert.equal(p.packageManager, null);
+    assert.deepEqual(p.commands, {});
+    assert.deepEqual(p.guardrails, [], 'no guardrail is invented for a tree with no manifest');
+    assert.deepEqual(p.notes, []);
+    assert.deepEqual(p.parity, { missingBinaries: [] });
+    assert.deepEqual(Object.keys(p).sort(), Object.keys(detect(fx('python'))).sort(), 'the same keys as any profile');
+    assert.ok(p.hotPathGlobs.length > 0, 'the default hot paths still apply');
+    fs.writeFileSync(path.join(root, 'schema.sql'), '-- x\n');
+    fs.writeFileSync(path.join(stacks, 'sql.md'), '#\n');
+    assert.deepEqual(detect(root, { stacksDir: stacks }).stackFiles.map((f) => path.basename(f)), ['sql.md', 'shell.md']);
+    const cli = require('node:child_process').spawnSync(process.execPath, [path.join(__dirname, '..', 'scripts', 'detect-stack.cjs'), fx('empty')], { encoding: 'utf8' });
+    assert.equal(cli.status, 2, 'a tree with nothing to list still exits 2');
+  } finally {
+    fs.rmSync(stacks, { recursive: true, force: true });
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 // stackFiles (2026-09-27, after node-01's guard: node.md opened in 0 of 8 sessions): the profile names the bk-build
 // stack files it maps to, by the table of stacks/index.md, as absolute paths, and only files that exist.
 test('stackFiles: the stack files the profile maps to, only those that exist', () => {
