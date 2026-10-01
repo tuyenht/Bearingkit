@@ -291,7 +291,7 @@ const DETECTORS = [php, gradle, dotnet, go, rust, cmake, python, node, terraform
 // absolute paths; a mapped file that does not exist yet is left out. Added 2026-09-27: in node-01's guard the kit's
 // sessions ran this script 7 times in 8 and never opened the stack file, so the profile now names it.
 const STACKS = path.resolve(__dirname, '..', 'skills', 'bk-build', 'references', 'stacks');
-function stackFilesFor(languages, frameworks, dir = STACKS) {
+function stackFilesFor(languages, frameworks, dir = STACKS, topics = []) {
   const names = new Set(frameworks.map((f) => f.name));
   const files = languages.map((l) => {
     if (l === 'typescript' || l === 'javascript') return names.has('react') || names.has('next') ? 'typescript-react.md' : 'node.md';
@@ -299,7 +299,41 @@ function stackFilesFor(languages, frameworks, dir = STACKS) {
     if (l === 'php') return 'php-laravel.md';
     return null;
   });
-  return uniq(files.filter(Boolean)).filter((f) => exists(dir, f)).map((f) => path.join(dir, f).split(path.sep).join('/'));
+  return uniq([...files, ...topics.map((t) => `${t}.md`)].filter(Boolean)).filter((f) => exists(dir, f)).map((f) => path.join(dir, f).split(path.sep).join('/'));
+}
+
+// Topic files (2026-09-28, question 38 (b); docs/specs/2026-09-28-topic-stackfiles-design.md): no manifest declares
+// SQL or shell, so sql.md and shell.md are listed from what the tree holds. Breadth first, sorted, bounded by depth
+// and by entries read, so a large tree costs the same every run; dependency, build and hidden directories are skipped.
+const TOPIC_SKIP = new Set(['node_modules', 'vendor', 'dist', 'build']);
+const SHELL_EXT = new Set(['.sh', '.bash', '.ps1']);
+function topicsIn(root, { depth = 4, entries = 5000 } = {}) {
+  const found = new Set();
+  let seen = 0;
+  let level = [[root, '']];
+  for (let d = 0; d <= depth && level.length; d++) {
+    const next = [];
+    for (const [dir, parent] of level) {
+      let list;
+      try { list = fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)); } catch { continue; }
+      for (const e of list) {
+        if (++seen > entries) return [...found];
+        const name = e.name.toLowerCase();
+        if (e.isDirectory()) {
+          if (name.startsWith('.') || TOPIC_SKIP.has(name)) continue;
+          if (name === 'migrations' || name === 'alembic' || (name === 'migrate' && parent === 'db')) found.add('sql');
+          next.push([path.join(dir, e.name), name]);
+        } else if (e.isFile()) {
+          const ext = path.extname(name);
+          if (ext === '.sql') found.add('sql');
+          if (SHELL_EXT.has(ext)) found.add('shell');
+        }
+        if (found.size === 2) return ['sql', 'shell'];
+      }
+    }
+    level = next;
+  }
+  return ['sql', 'shell'].filter((t) => found.has(t));
 }
 
 function detect(dir = process.cwd(), opts = {}) {
@@ -322,7 +356,7 @@ function detect(dir = process.cwd(), opts = {}) {
     // Preconditions a guardrail has that its command line cannot say. Empty for most stacks; the key is always there.
     notes: uniq(parts.flatMap((p) => p.notes || [])),
   };
-  profile.stackFiles = stackFilesFor(profile.languages, profile.frameworks, opts.stacksDir);
+  profile.stackFiles = stackFilesFor(profile.languages, profile.frameworks, opts.stacksDir, topicsIn(dir, opts.scan));
   profile.parity = { missingBinaries: missingBinaries(commands, dir, opts.path) };
   return profile;
 }

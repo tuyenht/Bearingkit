@@ -193,3 +193,65 @@ test('stackFiles: the stack files the profile maps to, only those that exist', (
   assert.equal(kit.length, 1);
   assert.match(kit[0], /skills\/bk-build\/references\/stacks\/node\.md$/, 'by default the kit\'s own stack files');
 });
+
+// Topic files (2026-09-28, question 38 (b); docs/specs/2026-09-28-topic-stackfiles-design.md): no manifest declares
+// SQL or shell, so the profile lists sql.md and shell.md from what the tree holds, only files that exist.
+test('stackFiles by topic: sql.md from a .sql file or a migrations directory, shell.md from a script', () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const stacks = fs.mkdtempSync(path.join(os.tmpdir(), 'stacks-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'topic-'));
+  const at = (n) => path.join(stacks, n).split(path.sep).join('/');
+  const tree = (name, files) => {
+    const d = path.join(root, name);
+    for (const f of ['package.json', ...files]) {
+      fs.mkdirSync(path.dirname(path.join(d, f)), { recursive: true });
+      fs.writeFileSync(path.join(d, f), f === 'package.json' ? '{"name":"x"}' : '-- x\n');
+    }
+    return d;
+  };
+  const files = (d, opts = {}) => detect(d, { stacksDir: stacks, ...opts }).stackFiles;
+  try {
+    for (const f of ['node.md', 'sql.md']) fs.writeFileSync(path.join(stacks, f), '#\n');
+    assert.deepEqual(files(tree('plain', ['src/a.js'])), [at('node.md')], 'nothing more without a signal');
+    assert.deepEqual(files(tree('sqlfile', ['db/schema.sql'])), [at('node.md'), at('sql.md')], 'a .sql file');
+    assert.deepEqual(files(tree('upper', ['db/SCHEMA.SQL'])), [at('node.md'), at('sql.md')], 'the extension in any case');
+    for (const m of ['migrations/0001.js', 'database/migrations/2026_01_01_x.php', 'prisma/migrations/x/readme.md', 'db/migrate/001_x.rb', 'alembic/env.py', 'Data/Migrations/Init.cs']) {
+      assert.deepEqual(files(tree(`mig-${m.split('/')[0]}-${m.length}`, [m])), [at('node.md'), at('sql.md')], `a migrations directory: ${m}`);
+    }
+    assert.deepEqual(files(tree('migrate-alone', ['tools/migrate/run.js'])), [at('node.md')], 'migrate counts only under db/');
+    for (const skip of ['node_modules/pg/x.sql', 'vendor/laravel/framework/migrations/a.php', 'dist/x.sql', 'build/x.sql', '.venv/x.sql', '.cache/migrations/a.js', '.git/x.sql']) {
+      assert.deepEqual(files(tree(`skip-${skip.split('/')[0].replace('.', 'dot')}`, [skip])), [at('node.md')], `skipped: ${skip}`);
+    }
+    const sh = tree('shell', ['scripts/deploy.sh', 'tools/setup.ps1']);
+    assert.deepEqual(files(sh), [at('node.md')], 'shell.md is not listed while it does not exist');
+    fs.writeFileSync(path.join(stacks, 'shell.md'), '#\n');
+    assert.deepEqual(files(sh), [at('node.md'), at('shell.md')], 'listed once the file exists');
+    assert.deepEqual(files(tree('bash', ['x.bash'])), [at('node.md'), at('shell.md')], '.bash');
+    assert.deepEqual(files(tree('both', ['a.sql', 'b.sh'])), [at('node.md'), at('sql.md'), at('shell.md')], 'language, then sql, then shell');
+    // The bound: depth 4 below the root, and a count of directory entries read.
+    assert.deepEqual(files(tree('deep4', ['a/b/c/d/x.sql'])), [at('node.md'), at('sql.md')], 'a file in a depth-4 directory is read');
+    assert.deepEqual(files(tree('deep5', ['a/b/c/d/e/x.sql'])), [at('node.md')], 'depth 5 is not');
+    assert.deepEqual(files(tree('mig4', ['packages/api/prisma/migrations/x/m.txt'])), [at('node.md'), at('sql.md')], 'a migrations directory at depth 4');
+    const many = tree('many', [...Array.from({ length: 30 }, (_, i) => `a${String(i).padStart(2, '0')}.txt`), 'z.sql']);
+    assert.deepEqual(files(many), [at('node.md'), at('sql.md')], 'found under the default bound');
+    assert.deepEqual(files(many, { scan: { entries: 20 } }), [at('node.md')], 'the scan stops at its entry bound');
+    assert.deepEqual(files(tree('deep2', ['a/b/x.sql']), { scan: { depth: 1 } }), [at('node.md')], 'and at its depth bound');
+    assert.deepEqual(Object.keys(detect(sh, { stacksDir: stacks })), Object.keys(detect(fx('node-pnpm'))), 'no new key in the profile');
+  } finally {
+    fs.rmSync(stacks, { recursive: true, force: true });
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('stackFiles by topic: no fixture of tests/fixtures/stacks gains a topic file', () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const stacks = fs.mkdtempSync(path.join(os.tmpdir(), 'stacks-'));
+  try {
+    for (const f of ['sql.md', 'shell.md']) fs.writeFileSync(path.join(stacks, f), '#\n');
+    for (const n of fs.readdirSync(path.join(__dirname, 'fixtures', 'stacks')).filter((n) => n !== 'empty')) {
+      assert.deepEqual(detect(fx(n), { stacksDir: stacks }).stackFiles, [], n);
+    }
+  } finally { fs.rmSync(stacks, { recursive: true, force: true }); }
+});
