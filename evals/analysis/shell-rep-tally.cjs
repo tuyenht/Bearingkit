@@ -1,14 +1,17 @@
 // Tally of the second registration of shell-01 (docs/specs/2026-10-01-stack-shell-design.md, "Addendum 2"). Read
-// only. Takes the directories from evals/results/shell-rep-log.txt, written by shell-rep-run.cjs: the last complete
+// only. Takes the directories from the driver's log (evals/results/shell-rep-log.txt, or shell-src-log.txt for the
+// driver's `source` mode), written by shell-rep-run.cjs: the last complete
 // occurrence of each round (a round that stopped part-way and was re-run counts once, from the re-run).
 // Groups: natural K by the kit branch (K-before, K-after); command K and command S (the wrapped source).
-// Usage, from the repository root: node evals/analysis/shell-rep-tally.cjs [resultsDir]
+// Usage, from the repository root: node evals/analysis/shell-rep-tally.cjs [logName=shell-rep-log.txt] [resultsDir]
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
 const { permutationTest, median, events } = require('../../scripts/lib/bench-score.cjs');
-const R = process.argv[2] || path.join(__dirname, '..', 'results');
-const lines = fs.readFileSync(path.join(R, 'shell-rep-log.txt'), 'utf8').split('\n');
+// The log to read: shell-rep-log.txt (mode `replicate` of the driver, the default) or shell-src-log.txt (mode `source`).
+const LOGNAME = process.argv[2] || 'shell-rep-log.txt';
+const R = process.argv[3] || path.join(__dirname, '..', 'results');
+const lines = fs.readFileSync(path.join(R, LOGNAME), 'utf8').split('\n');
 const BEFORE = 'p4d-shell-before';
 const SOURCE_COMMAND = 'antigravity-core-shell:powershell-windows';
 // What the source's own template and tables would leave in a script that followed them (described, no bar).
