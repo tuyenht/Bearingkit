@@ -29,10 +29,12 @@ const read = (dir) => {
   return fs.readdirSync(path.join(R, dir)).filter((n) => n.endsWith('.check.json')).sort().map((f) => {
     const c = JSON.parse(fs.readFileSync(path.join(R, dir, f), 'utf8'));
     const [, variant, b] = f.match(/-(natural|command)-([A-Z])\d+/);
-    const label = variant === 'command' ? (b === 'S' ? 'cmd-S2' : b === 'K' ? 'cmd-K' : 'other') : b !== 'K' ? 'other' : meta.kit.branch === BEFORE ? 'K-before' : 'K-after';
-    let cost = null; let model = '?'; let end = '?'; let tools = 0; let refused = 0; let listed = false; const skills = []; const written = [];
+    const label = variant === 'command' ? (b === 'S' ? 'cmd-S2' : b === 'K' ? 'cmd-K' : 'other') : b === 'S' ? 'base-S2' : b !== 'K' ? 'other' : meta.kit.branch === BEFORE ? 'K-before' : 'K-after';
+    let cost = null; let model = '?'; let end = '?'; let tools = 0; let refused = 0; let listed = false; let firstInput = null; const skills = []; const written = [];
     for (const e of events(fs.readFileSync(path.join(R, dir, f.replace('.check.json', '.raw.jsonl')), 'utf8'))) {
       if (e.type === 'system' && e.subtype === 'init') { model = e.model; listed = (e.slash_commands || []).includes(SOURCE_COMMAND); }
+      // Input of the first assistant turn (fresh, cache-written and cache-read): what the session was given before it acted.
+      if (e.type === 'assistant' && firstInput === null && e.message && e.message.usage && e.message.model !== '<synthetic>') { const u = e.message.usage; firstInput = (u.input_tokens || 0) + (u.cache_creation_input_tokens || 0) + (u.cache_read_input_tokens || 0); }
       if (e.type === 'result') { cost = e.total_cost_usd; end = e.subtype; refused = Array.isArray(e.permission_denials) ? e.permission_denials.length : 0; }
       for (const x of (e.message && Array.isArray(e.message.content) ? e.message.content : [])) {
         if (x.type !== 'tool_use') continue;
@@ -48,7 +50,7 @@ const read = (dir) => {
     let answer = '';
     try { answer = fs.readFileSync(path.join(R, dir, f.replace('.check.json', '.answer.md')), 'utf8'); } catch { /* no answer file */ }
     const named = /powershell-windows/i.test(answer) ? ['names the skill'] : [];
-    return { dir, id: f.replace('.check.json', ''), label, commit: String(meta.kit.commit).slice(0, 7), dirty: meta.kit.dirty, c, H: IDS.filter((k) => c[k]).length, cost, model, end, tools, refused, skills, listed, traces: [...TRACES.filter(([, re]) => re.test(text)).map(([n]) => n), ...named] };
+    return { dir, id: f.replace('.check.json', ''), label, commit: String(meta.kit.commit).slice(0, 7), dirty: meta.kit.dirty, c, H: IDS.filter((k) => c[k]).length, cost, model, end, tools, refused, skills, listed, firstInput, traces: [...TRACES.filter(([, re]) => re.test(text)).map(([n]) => n), ...named] };
   });
 };
 
@@ -66,8 +68,14 @@ for (const label of ['K-before', 'K-after', 'cmd-K', 'cmd-S2']) {
   console.log(`  cost median ${costs.length ? median(costs).toFixed(3) : '?'} (${costs.length ? costs[0].toFixed(3) : '?'}-${costs.length ? costs[costs.length - 1].toFixed(3) : '?'})  tools ${Math.min(...rows.map((s) => s.tools))}-${Math.max(...rows.map((s) => s.tools))}  refused ${rows.reduce((a, s) => a + s.refused, 0)}  Skill calls ${JSON.stringify(rows.map((s) => s.skills.join('+') || '-'))}`);
   // The registered signs are "EAP Continue", "[OK] marker" and "names the skill"; "Out-File -Encoding UTF8" is described only.
   const SIGNS = ['EAP Continue', '[OK] marker', 'names the skill'];
+  // Proposed, pending the owner's yes (spec, "The trial, and an amendment made after it and before any counted
+  // session"): the source counts as loaded in a session whose
+  // first-turn input is at least LOADED tokens; the eight natural S2 sessions of 2026-10-01 had 45,692 to 45,704.
+  const LOADED = 46500;
+  if (label === 'cmd-S2') console.log(`  first-turn input tokens: ${rows.map((s) => s.firstInput).join(' ')}; source loaded (>= ${LOADED}): ${rows.filter((s) => s.firstInput !== null && s.firstInput >= LOADED).length} of ${rows.length}`);
   if (label === 'cmd-S2') console.log(`  source command listed at init: ${rows.filter((s) => s.listed).length} of ${rows.length}; sessions with a registered sign: ${rows.filter((s) => s.traces.some((t) => SIGNS.includes(t))).length} of ${rows.length}; traces of the source in what the session ever wrote toward the script: ${JSON.stringify(rows.map((s) => s.traces.join('+') || '-'))}`);
 }
+if (by('base-S2').length) console.log(`\nbase-S2 (natural, wrapper installed, counted toward no test): first-turn input tokens ${by('base-S2').map((s) => s.firstInput).join(' ')}`);
 const Hs = (label) => by(label).map((s) => s.H);
 const p = (a, b) => (Hs(a).length && Hs(b).length ? permutationTest(Hs(a), Hs(b)) : null);
 console.log(`\nreplication, H K-after vs K-before (natural): p = ${p('K-after', 'K-before')}`);

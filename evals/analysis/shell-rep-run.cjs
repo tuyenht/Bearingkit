@@ -9,6 +9,7 @@
 //     per round: K-before (p4d-shell-before) `shell-01 --branches K --runs 2`,
 //                K-after (main)              `shell-01 --branches K --runs 2`,
 //                both by command (main)      `shell-01-src --variants command --branches K,S --runs 2`
+//     round 1 only: one natural `shell-01-src --branches S --runs 1`, the day's base for "source loaded"
 const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -77,6 +78,9 @@ for (let i = from; i <= rounds; i++) {
   // K-before first in odd rounds, K-after first in even ones, so neither always runs earlier.
   for (const b of i % 2 ? [BEFORE, AFTER] : [AFTER, BEFORE]) call('shell-01', b, 'K', 2);
   call('shell-01-src', AFTER, 'K,S', 2, 'command');
+  // The day's unloaded base for the "source loaded" measure: one natural session with the wrapper installed.
+  // Part of the proposed amendment: delete this line if the owner declines it.
+  if (i === 1) call('shell-01-src', AFTER, 'S', 1);
   log(`${new Date().toISOString()} round ${i} of ${rounds} complete`);
 }
 sh('git', ['switch', '-q', AFTER]);
