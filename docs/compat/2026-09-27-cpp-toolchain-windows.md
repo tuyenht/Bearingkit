@@ -17,7 +17,7 @@ Method: one Sonnet research agent (`bk-researcher`), web and vendor documentatio
 
 ## Installed (2026-10-01, owner's machine)
 
-The owner said yes to question 38 (c) ("Đồng ý cả bốn, tiếp tục theo khuyến nghị.", 2026-10-01) and ran both commands himself.
+The owner said yes to question 38 (c) ("Đồng ý cả bốn, tiếp tục theo khuyến nghị.", 2026-10-01) and ran both commands themselves.
 
 - `winget install --id MSYS2.MSYS2 -e`: MSYS2 20260611 at `C:\msys64` (installer `msys2-x86_64-20260611.exe`, 94,016,640 bytes by its HTTP header); 353 MB on disk after the install.
 - Then, from PowerShell: `C:\msys64\usr\bin\bash.exe -lc "pacman -S --needed mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja"`. `pacman` exists only inside MSYS2: the first instruction given to the owner was the bare `pacman` line in a PowerShell block, which failed with "The term 'pacman' is not recognized"; the wrapped form above is the one that works.
