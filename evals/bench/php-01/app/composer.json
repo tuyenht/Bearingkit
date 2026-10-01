@@ -1,0 +1,17 @@
+{
+    "name": "northwind/stock-tool",
+    "description": "Stock levels per warehouse, kept in SQLite.",
+    "type": "project",
+    "require": {
+        "php": ">=8.2",
+        "ext-pdo_sqlite": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Stock\\": "src/"
+        }
+    },
+    "scripts": {
+        "test": "php tests/run.php"
+    }
+}
