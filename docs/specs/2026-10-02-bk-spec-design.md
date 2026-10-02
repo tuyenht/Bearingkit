@@ -169,6 +169,30 @@ Owner, on the report that closed the design phase (budget question: build now, c
 - Both readers get the same files in the same order, so an effect of a spec's position in its batch is not controlled.
 - Cost, not measured: two gate readings and about six batch readings per run, one of each pair on Opus.
 
+## Calibration on the floor (2026-10-03 local, owner's machine): the task is not usable
+
+Owner, on the question whether to run the three floor sessions now: "Audit kỹ các xử lý ở trên, tiếp tục theo khuyến nghị." (the recommendation was to run them now and leave the main run until after the weekly reset).
+
+One call, `evals/results/2026-10-02-bench-spec-01-natural` (the runner names directories by the UTC date), `p5a-bk-spec@e7f188c`, `dirty: false`, three F sessions (no plugin), all `claude-sonnet-5`, all ended `success`, none cut, no refused command; cost 0.452, 0.440, 0.346 USD. Usage read before: 36% of the five-hour window, 53% of the week.
+
+**The gate of the day**: fresh readers, a new shuffle (seed `gate-2026-10-03-run`, not the registered "`gate-` and the date of the run" to the letter), the rubric with its last H6 clause: reader A 77 of 77 hazard marks, 33 of 33 decoy marks, 22 of 22 form marks, 10 of 11 counts; reader B 77, 33, 22, 11 of 11. **PASS.** Files beside the results: `gate-key.json`, `gate-reading-A.jsonl`, `gate-reading-B.jsonl`. **A departure from the registered order**: the gate readers and the calibration readers (four fresh sub-agents) were started together, not the gate first; had a reader failed the gate, the calibration reading would have been thrown away, which did not arise. **Not recorded**: what the aliases `sonnet` and `opus` resolved to (the Agent tool does not report it to the main session); no reply was rejected. The result directory is not tracked by git; the keys, the four readings and the three specs are copied to `evals/bench/spec-01/calibration-2026-10-03/`.
+
+**The reading** (seed: the result directory's name; `key.json`, `reading-A.jsonl`, `reading-B.jsonl`; `node evals/analysis/spec-tally.cjs --readings …`). Every session sent an `Explore` sub-agent through the repository before writing.
+
+| Session | H (both readers) | Missed | Questions left to the user | O1 / O2 |
+|---|---|---|---|---|
+| F1 | 7 | none | 11 | yes / yes |
+| F2 | 7 | none | 11 | yes / yes |
+| F3 | 6 | H4 (the organisation limit) | 11 (reader A: 10) | yes / yes |
+
+The two readers agree on all 21 hazard marks; they differ on F3's count (10 against 11) and on whether all of F3's questions carry a recommendation. No decoy in any spec. G1 (every question numbered and recommended) 2 of 3; **G2 (at most four questions) 0 of 3**. The specs are 10,000 to 13,000 characters long. The rule-based scorer happens to give the same H here (7, 7, 6) and counts three decoys the readers do not.
+
+**By the registered rule** (usable if H ≤ 5 in at least 2 of 3): **not usable.** Sonnet 5 with no plugin, given this request and this repository, finds the contradiction with the glossary, the purge against the window, the unassigned ticket, the existing reopen and the SLA question by itself. On the seven hazards the floor leaves one point in twenty-one (7, 7, 6): too little headroom for a difference to show with eight sessions a side. Earlier tasks ended the same way on the Sonnet floor (`review-01` to `review-04`, `debug-01`, `test-01`: `docs/status.md` §2 row 7); that these are all tasks "decided by reading or by reflex" is this session's reading of them, as the lesson recorded after `shell-01` was.
+
+**What the floor does not do**: it asks eleven questions in one round where question 33 (a) caps a round at four. G2 is the one registered measure on which the floor fails 3 of 3, and the prompt does not hint it; G1 failed once. G2 measures the form of the round, not whether the spec is better.
+
+**What happens next is the owner's.** The registration's guard path would run K-before, K-after and S, eight each, and could merge the text only if K-after's median H is not below the floor's (7, which is the maximum: at least half of K-after's sessions would have to be marked 7 by both readers), O1 and O2 each hold in at least 7 of 8, the decoys do not rise, G1 and G2 hold in at least 6 of 8, the two references are opened in at least 4 of 8, the readers agree on at least 90% of the hazard marks, and the regression guard holds; its result would say the task does not separate the kit from the floor on the hazards and claim nothing more. The proposal put to the owner said (point 4): if the floor is already near the ceiling, the owner is told before any further measurement. No text of the skill has been written and no further session has run.
+
 ## Done when
 
 This file reviewed and committed on the branch: the end of the design phase, where the session stops and reports the budget to the owner. Then the build phase, in the order fixed above (fixture and scorer; calibration; the text; reach; the run; the guard), each commit after an independent review, the result written here, `docs/status.md` and a handoff. P5b (`bk-plan`) and P5c (the Step-0 line) follow in their own sprints.
