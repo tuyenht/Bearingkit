@@ -244,7 +244,10 @@ function reach(raw) {
 function check(dst = DST, raw = null, opts = {}) {
   const o = { ...DEFAULTS, ...opts };
   const file = path.join(dst, RULES.specPath);
-  const out = score(fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '');
+  const text = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+  const out = score(text);
+  // The spec itself, kept with the scores: the fixture is reset before the next session, and the readers need it.
+  out.spec = text;
   const st = status(dst);
   const outside = st.filter(([, p]) => !/^docs\//.test(p)).map(([, p]) => p);
   // Without the parent's test context: under `node --test` a nested run would otherwise report itself to the parent

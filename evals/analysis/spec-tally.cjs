@@ -9,8 +9,22 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { permutationTest, median, events } = require('../../scripts/lib/bench-score.cjs');
 const R = path.join(__dirname, '..', 'results');
-const dirs = process.argv.slice(2);
-if (!dirs.length) { console.error('usage: spec-tally.cjs <result dir name> [<result dir name> ...]'); process.exit(2); }
+// With `--readings <key file> <reading A> <reading B>` the hazards, the decoys and the form of the questions are the
+// two readers' (spec-readers.cjs: a mark counts when both give it), which is the registered measure; without it they
+// are the rule-based scorer's, a cross-check known to be unreliable. O1, O2 and the reach are the code's either way.
+const argv = process.argv.slice(2);
+const at = argv.indexOf('--readings');
+const readings = at >= 0 ? argv.splice(at, 4).slice(1) : null;
+const dirs = argv;
+if (!dirs.length || (readings && readings.length !== 3)) { console.error('usage: spec-tally.cjs [--readings <key file> <reading A> <reading B>] <result dir name> [...]'); process.exit(2); }
+const merged = {};
+if (readings) {
+  const { reading, both } = require('./spec-readers.cjs');
+  const key = JSON.parse(fs.readFileSync(readings[0], 'utf8'));
+  const [A, B] = [readings[1], readings[2]].map(reading);
+  for (const [name, id] of Object.entries(key)) if (A[name] && B[name]) merged[id] = { ...both(A[name], B[name]), A: A[name], B: B[name] };
+}
+console.log(readings ? 'marks: the two readers (both must give a mark)' : 'marks: the rule-based scorer (cross-check only; not the registered measure)');
 const IDS = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7'];
 const REFS = ['brainstorming', 'domain-language', 'module-design', 'prototyping'];
 // The skills bk-spec was distilled from; a session of S read its source when one of them was launched with its text
@@ -21,6 +35,11 @@ const SOURCE_FILE = /skills\/(brainstorming|productivity\/grilling|engineering\/
 const content = (e) => (e.message && Array.isArray(e.message.content) ? e.message.content : []);
 function session(dir, f, meta) {
   const c = JSON.parse(fs.readFileSync(path.join(R, dir, f), 'utf8'));
+  const m = merged[`${dir}/${f.replace('.check.json', '')}`];
+  // A session with no spec (O1 false) was given to no reader and scores nothing; one with a spec and no reading is
+  // an error of the run, said aloud.
+  if (readings && c.O1 && !m) { console.error(`NOT READ by both readers: ${dir}/${f}; no figure is printed until every spec has two readings`); process.exit(1); }
+  if (readings) Object.assign(c, m ? { H1: m.H1, H2: m.H2, H3: m.H3, H4: m.H4, H5: m.H5, H6: m.H6, H7: m.H7, D: m.D, decoys: ['D1', 'D2', 'D3'].filter((k) => m[k]), questions: m.questions, G1: m.G1, G2: m.G2, disagree: m.disagree, HA: IDS.filter((k) => m.A[k]).length, HB: IDS.filter((k) => m.B[k]).length } : { H1: false, H2: false, H3: false, H4: false, H5: false, H6: false, H7: false, D: 0, decoys: [], questions: 0, G1: false, G2: false, disagree: [], HA: 0, HB: 0 });
   const letter = f.match(/-(?:natural|command)-([A-Z])\d+/)[1];
   const label = letter === 'K' ? (/-before$/.test(String(meta.kit && meta.kit.branch)) ? 'K-before' : 'K-after') : letter;
   const ev = events(fs.readFileSync(path.join(R, dir, f.replace('.check.json', '.raw.jsonl')), 'utf8'));
@@ -81,6 +100,23 @@ for (const label of ['F', 'K-before', 'K-after', 'S']) {
 }
 const H = (label) => by(label).map((s) => s.H);
 const p = (a, b) => (H(a).length && H(b).length ? permutationTest(H(a), H(b)) : null);
+if (readings) {
+  // Each reader alone, for the registered safeguard: the primary test must fall on the same side under either.
+  const alone = (k) => (label) => by(label).map((s) => s.c[k]);
+  const mean = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : NaN);
+  // Met: p <= 0.05 with K-after's mean above. The registered safeguard needs it under each reader alone as well.
+  const met = (a, b) => a.length > 0 && b.length > 0 && permutationTest(a, b) <= 0.05 && mean(a) > mean(b);
+  for (const k of ['HA', 'HB']) { const g = alone(k); const [a, b] = [g('K-after'), g('K-before')]; console.log(`\nreader ${k[1]} alone: K-after ${a.join(' ')} (mean ${mean(a).toFixed(3)}) | K-before ${b.join(' ')} (mean ${mean(b).toFixed(3)}) | p = ${a.length && b.length ? permutationTest(a, b) : null} | ${met(a, b) ? 'met' : 'not met'}`); }
+  console.log(`primary on both readers' marks: ${met(by('K-after').map((s) => s.H), by('K-before').map((s) => s.H)) ? 'met' : 'not met'}; the bar needs all three met`);
+  // Agreement on the hazard marks of the specs that were read (the registered floor is 90%).
+  const read = rows.filter((s) => s.c.O1);
+  const split = read.reduce((a, s) => a + (s.c.disagree || []).filter((k) => IDS.includes(k)).length, 0);
+  const agree = read.length ? 1 - split / (read.length * 7) : 1;
+  console.log(`readers agree on ${read.length * 7 - split} of ${read.length * 7} hazard marks (${(100 * agree).toFixed(1)}%)${agree < 0.9 ? ': BELOW THE REGISTERED 90%, the reading is not to be used' : ''}`);
+  if (agree < 0.9) process.exitCode = 1;
+  const dis = rows.filter((s) => (s.c.disagree || []).length);
+  console.log(`readers disagree in ${dis.length} of ${rows.length} sessions${dis.length ? ': ' + dis.map((s) => `${s.id} (${s.c.disagree.join(' ')})`).join('; ') : ''}`);
+}
 console.log(`\nprimary, H K-after vs K-before: p = ${p('K-after', 'K-before')}`);
 console.log(`sources, H K-after vs S: p = ${p('K-after', 'S')}`);
 console.log(`described, H K-after vs F: p = ${p('K-after', 'F')}   K-before vs F: p = ${p('K-before', 'F')}   (no bar)`);

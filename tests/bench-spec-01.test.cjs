@@ -283,6 +283,9 @@ test('spec-01: the fixture is what the registration says', { timeout: 300000 }, 
     write('docs/glossary.md', read('docs/glossary.md') + '\n**Reopen.** To put a resolved ticket back to open.\n');
     const done = build.check(dst, stream([use('a', 'Skill', { skill: 'bearingkit:bk-spec' })]));
     assert.deepEqual([done.O1, done.H, done.O2, done.glossaryChanged, done.Rskill, done.R_brainstorming, done.P5try], [true, 7, true, true, true, false, false]);
+    // The spec's text is kept with the scores, for the readers; untouched, it is empty.
+    assert.equal(done.spec, reference());
+    assert.equal(bare.spec, '');
     // The spec at another path does not count.
     build.reset({ dst });
     write('docs/reopen-ticket.md', reference());
