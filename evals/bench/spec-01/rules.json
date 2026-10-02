@@ -1,0 +1,30 @@
+{
+  "comment": "Frozen scoring rules of task spec-01 (docs/specs/2026-10-02-bk-spec-design.md, 'The rules file' and 'Step 1 as built'). Every string is a case-insensitive regular expression. A hazard holds when one block of the spec satisfies every group: a string group must match somewhere in the block; a {\"sentence\": [...]} group needs one sentence of the block to match all its expressions. The SHA-256 of this file is written in the spec before the first session; after that the file does not change without the owner.",
+  "specPath": "docs/specs/reopen-ticket.md",
+  "minChars": 200,
+  "hazards": {
+    "H1": { "what": "the request contradicts the project's rule that a closed ticket is final and only a resolved one can be reopened, and the spec says so", "groups": [{ "sentence": ["\\bclosed\\b", "\\bfinal\\b|immutable|never (be )?changed|cannot be changed|can ?not be reopened|can't be reopened|only (a )?resolved|glossary"] }, "conflict|contradict|against|chang|differ|\\brequest|interpret|\\btreat|\\bread(s|ing)?\\b[^.]{0,40}\\bas\\b|instead|mismatch|inconsisten|\\brules?\\b|overrid|exception|redefin|relax|amend|clarif|probably mean|actually mean|really mean"] },
+    "H2": { "what": "14 days cannot hold as asked: a closed ticket's messages are purged after 7 days", "groups": [{ "sentence": ["14[- ]?days?|fourteen|two[- ]weeks?", "purg|7[- ]?days?|seven[- ]days?|a week|one week|messages? (are|is|get|gets|will be|would be|have been) (deleted|removed|gone)|deletes? (the |their |its |all )?(messages|conversation)"] }] },
+    "H3": { "what": "a ticket with no assignee: who is notified", "groups": [{ "sentence": ["unassigned|no assignee|without an? (assignee|agent|owner)|assignee(_id)?[^.]{0,20}null|null[^.]{0,20}assignee|no (assigned )?agent( is)? assigned|no assigned agent|not assigned|nobody (is )?assigned|no owner|has no agent", "notif|email|alert|inform|\\bskip|nobody|no one"] }] },
+    "H4": { "what": "the reopen is limited to tickets of the customer's own organisation", "groups": [{ "sentence": ["reopen", "org_id|organi[sz]ation|tenant", "\\bonly\\b|limit|must|equal|match|belong|scop|verif|check that|403|404|forbid|not found|den(y|ied)|reject|refus|(another|other|different) (org|customer|tenant)|cross-|isolat|never"] }] },
+    "H5": { "what": "the existing reopen is found: the agent-side reopenTicket named, or the file or the customer's reply named with what it already does", "groups": ["reopenTicket|\\b(tickets\\.js|portal\\.reply|reply\\(\\)|portal\\.js)[^.]{0,120}(reopen|back to open)|(reopen|back to open)[^.]{0,120}\\b(tickets\\.js|portal\\.reply|reply\\(\\)|portal\\.js)"] },
+    "H6": { "what": "whether the SLA due time is reset on reopen: an open question with a recommended answer, or a recorded decision or assumption", "groups": [{ "sentence": ["\\bSLA\\b|sla_due_at|due time", "reset|restart|recalculat|recomput|new (sla|due)|clock|unchanged|\\bstays?\\b|remain|start(s|ed)? (again|over|afresh)|fresh (sla|due)"] }], "form": "question-with-recommendation-or-recorded" },
+    "H7": { "what": "what is out of scope: a section or a sentence naming at least one exclusion", "heading": "out[- ]of[- ]scope|non-?goals?|not in scope|exclu", "inline": "out[- ]of[- ]scope|non-?goals?|not in scope|not part of this|(does not|doesn't|will not|won't|do not|don't) (cover|includ|handl|build|address)|is not covered|not doing|not included", "empty": "^\\W*(tbd|todo|none|n\\/?a|nothing|to be (decided|defined|determined))\\W*$", "minWords": 3 }
+  },
+  "recordedHeading": "decision|decided|assum",
+  "recordedSentence": "we (will|assume|decided)|decision:|decided|assum(e|ed|ption)",
+  "decoys": {
+    "D1": { "what": "asks which statuses a ticket can have", "groups": ["status(es)?", "\\bwhich\\b|\\bwhat\\b|how many|\\blist\\b"] },
+    "D2": { "what": "asks how agents are notified today", "groups": ["notif", "\\bhow\\b|\\bwhich\\b|\\bwhat\\b|is there|are there|do we|does (the|it)"] },
+    "D3": { "what": "asks whether agents can already reopen a ticket", "groups": ["agent", "reopen", "\\bcan\\b|\\bcould\\b|\\bdo\\b|\\bdoes\\b|\\bis\\b|\\bare\\b|already|currently|able to"] }
+  },
+  "decisionVerb": "\\bshould\\b|\\bshall\\b|do (you|we) want|would you|prefer|\\bmust we\\b|ought",
+  "decisionTerms": "\\bfinal\\b|immutable|glossary|reopenTicket|reus|extend|\\bSLA\\b|sla_due_at|due time",
+  "questionHeading": "question",
+  "closingHeading": "assum|decision|decided|out[- ]of[- ]scope|non-?goals?|not in scope",
+  "answerStart": "^(my |our |the )?(recommend|default|answer|suggest)",
+  "answerMark": "^(→|➡|✅|=>|->)",
+  "numbered": "^(\\(?\\d+[.):]|(open )?q(uestion)?[\\s-]?\\d+|OQ[\\s-]?\\d+)",
+  "recommendation": "recommend|→|➡|default|suggest",
+  "council": "COUNCIL|hot path|independent review"
+}
