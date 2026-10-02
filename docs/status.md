@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-10-02, sau P4: lặp lại `shell-01` và so với nguồn** (máy owner; 16 phiên lặp lại, hai phiên thử và 16 phiên so với nguồn; P5a: thiết kế `bk-spec` và đăng ký task `spec-01` xong trên nhánh `p5a-bk-spec`, chưa dựng gì; rồi P5b, P5c, `c-cpp`). Phiên gần nhất: `docs/handoff/2026-10-02-p5a-design.md` (đọc cùng `2026-10-02-shell-replicated-source.md`). Lộ trình: `docs/plans/2026-09-26-v03-roadmap.md`. Lịch sử của file này, nguyên văn tới commit `b89eb36`: `docs/status-history.md`; mọi tham chiếu "status §N" hay "status §7 (xx)" viết trước 2026-09-26 trỏ về đó.
+Cập nhật: **2026-10-02, sau P4: lặp lại `shell-01` và so với nguồn** (máy owner; 16 phiên lặp lại, hai phiên thử và 16 phiên so với nguồn; P5a bước 1 dựng dở trên nhánh `p5a-bk-spec`: fixture `spec-01` và bộ chấm theo luật, chưa đóng băng, chưa dùng được (hai vòng rà: 8 rồi 7 + 3 lỗi); chưa phiên đo nào; chờ owner chọn cách chấm; rồi P5b, P5c, `c-cpp`). Phiên gần nhất: `docs/handoff/2026-10-02-p5a-scorer.md` (đọc cùng `2026-10-02-p5a-design.md` và `2026-10-02-shell-replicated-source.md`). Lộ trình: `docs/plans/2026-09-26-v03-roadmap.md`. Lịch sử của file này, nguyên văn tới commit `b89eb36`: `docs/status-history.md`; mọi tham chiếu "status §N" hay "status §7 (xx)" viết trước 2026-09-26 trỏ về đó.
 
 > **File này là bảng điều khiển, không phải nguồn sự thật.** Nó chỉ đếm và trỏ; nội dung thật nằm ở:
 > - thiết kế: `docs/specs/2026-09-11-bearingkit-v2-design.md` (§13 bảng mốc, §15 log quyết định);
