@@ -278,3 +278,26 @@ Asked: how to compare `shell.md` with its source's text (B, a plain sentence tel
 - **Proposal B is chosen; proposal A is dropped** (its token threshold, base session and calibration are not built further; the driver's `source` mode stays unused). B is not yet registered: its addendum (the tests, the three outcomes and the prediction of Addendum 2; "both told to use their skill"; the "source read" rule of the first addendum, at least 4 of 8; the three signs reported as "followed") is written and reviewed before its trial session and before any counted session.
 - **Order: the replication of `shell-01` (registered, mode `replicate`), then the comparison by B, then P5; `c-cpp` after P5.**
 - Nothing was measured between the audit and this decision; the session closed here at the owner's request.
+
+### Result of the replication (2026-10-02, owner's machine)
+
+The run registered in Addendum 2 ("The replication"), by the driver's mode `replicate`: `node evals/analysis/shell-rep-run.cjs replicate`, started 2026-10-02 01:13 UTC (08:13 local), `DONE replicate` at 02:08 UTC, four whole rounds, none stopped, no `STOP` line; log `evals/results/shell-rep-log.txt`, tally `node evals/analysis/shell-rep-tally.cjs`. Directories `evals/results/2026-10-02-bench-shell-01-natural` to `-8`. Every `meta.json` `dirty: false`; K-before `p4d-shell-before@13d2937`, K-after `main@b4fbbc7` (the driver checked `skills/`, `hooks/`, `agents/` and `scripts/detect-stack.cjs` against `fb45272` and `ffa9b91` before the first round). Sixteen sessions, eight per branch, all `claude-sonnet-5`, all ended `success`, none cut. Usage read before the run: 16% of the five-hour window, 38% of the week; after: 24% and 39%.
+
+| | K-before | K-after |
+|---|---|---|
+| H per session | 4 2 4 5 4 4 4 3 | **6 6 6 6 5 6 6 6** |
+| H mean (median) | 3.750 (4) | **5.875 (6)** |
+| H1 / H2 / H3 / H4 / H5 / H6 | 1 / 7 / 0 / 8 / 8 / 6 | 8 / 8 / 7 / 8 / 8 / 8 |
+| O1 / O2 / X | 8 / 8 / 8 | 8 / 8 / 8 |
+| `shell.md` opened | 0 (four looked for it, two `Read` and two `Glob`; the file does not exist there; the tally prints the two `Read` as 2) | 8 |
+| Skill invoked | `bk-build` 8 of 8, one after `bk-spec` | `bk-build` 8 of 8 |
+| P4 / P5 | 0 / 0 | 0 / 0 |
+| Cost USD, median (range), runner's figure | 0.363 (0.293–0.531) | 0.307 (0.200–0.436) |
+| Tool calls | 11–26 | 9–22 |
+| Refused commands | 3 | 12 |
+
+- **Test, as registered: H, K-after against K-before, exact two-sided permutation: p = 0.0003, K-after above. By the registration: replicated.** The first run (2026-10-01) gave 5.750 against 4.375, p = 0.0016; this one, on another day, 5.875 against 3.750. The two days are reported side by side and not pooled, as registered.
+- Reported with no bar, post hoc, as in the first run: H1 8 of 8 against 1 of 8 (Fisher, two-sided, p = 0.0014; the same counts as the first run); H3 7 of 8 against 0 of 8 (p = 0.0014; the first run had 6 against 2, p = 0.13). H4 and H5 are 8 of 8 on both branches; H2 8 against 7; H6 8 against 6. These per-hazard figures are descriptions of the sessions the test already used, not registered tests. One K-after session read `shell.md` and still lost the Vietnamese text.
+- Cost: medians 0.307 for K-after and 0.363 for K-before; no test was registered on cost and none was run. Tokens are not compared: tool counts differ.
+- Refused commands, read by eye (the `permission_denials` of each session's `result` event), 15: K-after 12 — `rm` of scratch output files, alone or in a compound line (ten, in six sessions; two sessions had written the scratch file inside the fixture and then removed it with `Remove-Item` through the PowerShell tool, so P4 is 0 for both), one `node -e` reading a scratch file, one `git -C … status`; K-before 3 — one `rm`, one compound line building a scratch repository under `/tmp`, and one `Glob` of `skills/bk-build/references/stacks/*` under the kit's checkout. No barred score depends on them: O1 and O2 are 8 of 8 on both branches.
+- **What this changes and what it does not.** The first run's limit "one day, not replicated" is lifted: with `shell.md` listed and read, the kit's sessions passed more of the six hazards than the same kit without it, on two days, on this task, with Sonnet 5. The other limits stand: one task, one shell, one model, one machine; the hazards were chosen from the file by its author; K-before differs from K-after by the file, by its listing in the profile and by `detect-stack` answering at all, and nothing here separates those three; the Bash section and every PowerShell sentence outside the six remain unmeasured; and **`shell.md` is still not compared with its source** (the comparison by proposal B is not registered yet).
