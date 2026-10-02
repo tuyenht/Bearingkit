@@ -4,8 +4,8 @@
   "fixture": "build.cjs",
   "prompt": "Add a release-notes export to our ops scripts: `scripts\\Export-ReleaseNotes.ps1 -RepoPath <dir> -OutFile <file>` writes that repository's commits to the file as JSON, newest first, in this shape: `{ \"repo\": \"<folder name>\", \"commits\": [ { \"hash\": \"<full hash>\", \"subject\": \"<subject line>\", \"author\": { \"name\": \"...\", \"email\": \"...\" } } ] }`. The release dashboard, a Node service, reads the file with JSON.parse, and the nightly job runs the script for every repository we ship. You have my go-ahead to make the change without stopping to ask.",
   "commands": {
-    "K": "/bearingkit:bk-build",
-    "S": "/antigravity-core-shell:powershell-windows"
+    "K": "Use the bearingkit:bk-build skill for this task.",
+    "S": "Use the antigravity-core-shell:powershell-windows skill for this task."
   },
   "sources": [
     {

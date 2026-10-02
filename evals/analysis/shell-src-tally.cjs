@@ -1,5 +1,5 @@
-// Tally of the shell-01-src run (docs/specs/2026-10-01-stack-shell-design.md, "Addendum: against the source"): one
-// bench call, K (the kit) and S (the wrapped source of shell.md) interleaved. Read only.
+// Tally of the shell-01-src run (docs/specs/2026-10-01-stack-shell-design.md, "Addendum: against the source" and
+// "Addendum 3"): one bench call, K (the kit) and S (the wrapped source of shell.md) interleaved. Read only.
 // The primary test is H, K against S, exact two-sided permutation. "The source was read" counts the S sessions that
 // invoked a skill of the wrapper through the Skill tool, or named one of its files in a Read, Grep or shell call.
 // Usage, from the repository root: node evals/analysis/shell-src-tally.cjs <result dir name> [resultsDir]
