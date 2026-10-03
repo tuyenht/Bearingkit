@@ -209,7 +209,60 @@ Owner, on the three ways on after the calibration ((a) the registered guard path
 
 The run was to wait for the weekly reset (2026-10-07 10:00 in Vietnam): the owner's instruction at the start of the session of 2026-10-03 ("Lượt đo chỉ chạy từ 2026-10-07 10:00 giờ VN, sau khi get_usage cho thấy hạn mức tuần đã mở lại"). The same day, after the driver was written, reviewed and dry-run, the owner lifted the wait, verbatim: "Tiếp tục xử lý các công việc tiếp theo cho tôi, không đợi đến ngày 07/10 nữa; vẫn còn nhiều dung lượng mà." Nothing else of the registration changes: the bars, the order of the day (reach probe, S trial, the interleaved run, the gate of the day before any reader of the run, the blind reading, the regression guard), the rubric, the brief and the readers stand. Usage read before the first session (`get_usage`, 2026-10-03 08:18 UTC): 36% of the five-hour window, 65% of the week; the runner stops itself at 90% of the five-hour window or 95% of the week (`scripts/bench.cjs:277`), and a call it stops re-runs whole.
 
-**The driver**: `evals/analysis/spec-guard-run.cjs` (reviewed before each commit; `--dry` run clean). Beyond the registered checks it pins K-after to the frozen commit `f2237b0` in every path a session loads (`skills`, `hooks`, `agents`, `scripts`, `bin`, `NOTICE`, `upstream/sources.json`, `evals/bench/spec-01`), not `skills/` alone, calls the runner's `--dry-run` for each branch before the first round, and stops on a check file that holds only an error. Its date refusal was removed with the owner's sentence above. K-after's `meta.json` carries the branch head of the day, not `f2237b0`; the two are equal in those paths, checked by the driver at its start.
+**The driver**: `evals/analysis/spec-guard-run.cjs` (reviewed before each commit; `--dry` run clean). Beyond the registered checks it pins K-after to the frozen commit `f2237b0` in every path a session loads (`skills`, `hooks`, `agents`, `scripts`, `bin`, `NOTICE`, `upstream/sources.json`, `evals/bench/spec-01`), not `skills/` alone, calls the runner's `--dry-run` for each branch before the first round, and stops on a check file that holds only an error. Its date refusal was removed with the owner's sentence above. K-after's `meta.json` carries the branch head of the day, not `f2237b0`; the two are equal in those paths, checked by the driver at its start. (The run of 2026-10-03 was made with the whole of `evals/bench/spec-01` pinned. After it, when the run's evidence was put under `evals/bench/spec-01/guard-2026-10-03/`, the driver's list was narrowed to what is registered as frozen there — `app`, `build.cjs`, `task.json`, `rules.json`, `rubric.md`, `gate`, `mutants.cjs` — so that a record added beside them does not stop a later run.)
+
+## Result of the guard run (2026-10-03): one bar fails, nothing merges
+
+**What ran**, all on 2026-10-03 (UTC and local), Sonnet 5, `natural`, kit `p5a-bk-spec@69debe5` (equal to `f2237b0` in every path a session loads, checked by the driver) and `p5a-bk-spec-before@1951206`, every `meta.json` `dirty: false`, no session cut, none stopped, every session ended `success`.
+- **Reach probe** (`2026-10-03-bench-spec-01-natural`, two K-after sessions, counted toward nothing): `bk-spec` invoked 2 of 2, `brainstorming.md` and `domain-language.md` opened 2 of 2. Go.
+- **S trial** (`…-natural-2`, one session, counted toward nothing): it called `superpowers:brainstorming` through the Skill tool, the host accepted the call and the skill's text arrived (10,464 characters). The S branch ran.
+- **The run**: the driver, rounds 1 to 3 in one call and round 4 in a second (readings of `get_usage` by the main session, kept nowhere but here: the five-hour window stood at 42% before round 1 with the reset 97 minutes away, and at 56% before round 4; the week at 66% and 67%; splitting kept every round whole). Twelve bench calls, twenty-four sessions, directories `…-natural-3` to `…-natural-14`, the order as registered (before, after, S / after, S, before / S, before, after / before, after, S). Log: `evals/bench/spec-01/guard-2026-10-03/spec-guard-log.txt` (a copy; the result directories are not tracked).
+- **The gate of the day**, before any reader of the run started: fresh readers, seed `gate-2026-10-03`: reader A (`sonnet`) and reader B (`opus`) each 77 of 77 hazard marks, 33 of 33 decoy marks, 22 of 22 form marks, 11 of 11 counts; they differ on nothing. **PASS.** **A departure from the registration**, as in the calibration: what the two aliases resolved to is not reported to the main session, so it is not recorded, although the registration says it is. The seed and the order (gate first, readers of the run after) are the main session's account; the files show only the key and the two readings.
+- **The reading**: all 24 sessions left a spec; blinded with seed `2026-10-03-bench-spec-01-natural-3`; two batches of twelve, four fresh readers (A and B per batch), the brief word for word; no reply rejected. Keys, readings and the 24 blinded specs: `evals/bench/spec-01/guard-2026-10-03/`. Tally: `node evals/analysis/spec-tally.cjs --readings <key> <A> <B> <the twelve directories of the log>`.
+- **Not run: the regression guard** (`node-01` eight sessions, the routing prompts). A bar had already failed, so its outcome could not change the decision; it is owed before any merge of this or a later text.
+
+| | K-before | K-after | S |
+|---|---|---|---|
+| H per session (both readers) | 7 6 7 7 7 7 7 7 | 7 7 7 7 7 7 7 6 | 7 7 7 6 7 6 7 7 |
+| H median / mean | 7 / 6.875 | 7 / 6.875 | 7 / 6.750 |
+| Hazard missed | H6 once | H2 once | H2 twice |
+| O1 / O2 | 8 / 8 | 8 / 8 | 8 / 8 |
+| Decoys (sum) | 0 | 0 | 0 |
+| G1 (every question numbered and recommended) | 8 | 8 | 8 |
+| **G2 (at most four questions)** | 0 | **3** | 0 |
+| Questions per spec (the larger count) | 11 9 10 12 14 10 10 11 | 12 8 4 4 5 4 7 5 | 9 11 11 10 10 13 10 10 |
+| G2 by one reader alone | A 0, B 0 | A 4, B 3 | A 0, B 0 |
+| `bk-spec` invoked | 8 | 8 | 0 |
+| `brainstorming.md` / `domain-language.md` opened | 4 / 0 (the file does not exist there) | 7 / 5 | 0 / 0 |
+| `module-design.md` / `prototyping.md` opened | 0 / 0 | 0 / 0 | 0 / 0 |
+| Cost, median USD (range) | 0.367 (0.302–0.484) | 0.390 (0.292–0.476) | 0.283 (0.238–0.409) |
+| Refused commands (all `mkdir` of `docs/specs`) | 2 | 0 | 4 |
+
+The two readers agree on 168 of 168 hazard marks; they differ only on the count of questions, in 12 of 24 sessions, by one or two except one K-after spec (8 against 12: reader B counted four "decisions" the spec leaves for sign-off).
+
+**The bars of the guard path.**
+
+| Bar | Needed | Got | |
+|---|---|---|---|
+| K-after's median H not below the floor's | ≥ 7 | 7 | met |
+| O1, O2 for K-after | ≥ 7 of 8 each | 8, 8 | met |
+| Decoys, K-after not above K-before | ≤ 0 | 0 | met |
+| G1, K-after | ≥ 6 of 8 | 8 | met |
+| **G2, K-after** | **≥ 6 of 8** | **3** | **not met** |
+| `brainstorming.md`, `domain-language.md` opened, K-after | ≥ 4 of 8 each | 7, 5 | met |
+| Readers agree on the hazard marks | ≥ 90% | 100% | met |
+| Regression guard | holds | not run | open |
+
+**By the registered rule: a bar fails, nothing merges, the owner decides.** The text stays on `p5a-bk-spec`.
+
+**What the run says, and no more.**
+- On the hazards the task does not separate the kit from the floor: K-after and K-before are level (H mean 6.875 each; exact permutation p = 1.0, on both readers' marks and on each reader's alone), as the calibration said they would be.
+- K-after's specs leave fewer questions than K-before's (median 5 against 10.5; 3 of 8 specs at or under four against 0 of 8), and not few enough for the bar: five of eight K-after specs still leave more than four questions, two of them by one question (five). The cap of four is the owner's (question 33 (a)); the frozen text does not make a Sonnet session keep it on this request, where the request itself leaves at least five decisions open and tells the writer to "put anything you would ask me in the spec". The difference in G2 between K-after and K-before (3 of 8 against 0 of 8) is a description, not a registered test (Fisher exact, two-sided, would give p = 0.2).
+- **Against the sources: installed but not read; not compared with its sources.** No S session of the run invoked a source skill or read a source `SKILL.md` (0 of 8; the bar for a comparison was 4 of 8), although the trial session before the run did. S's hazards and question counts (H 7 7 7 6 7 6 7 7; about ten questions a spec) are close to those of the three floor sessions of the calibration (H 7, 7, 6; eleven questions); with no skill loaded that is unsurprising, and three floor sessions do not make it a finding. Nothing here says the kit is better or worse than its sources.
+- K-after costs about the same as K-before (median 0.390 against 0.367 USD; tool counts 17–24 against 15–22, so tokens are not compared).
+- `module-design.md` and `prototyping.md` were opened by no session, as expected: no hazard calls for them.
+
+**Ways on, for the owner** (the main session's recommendation first; nothing is done until the owner answers): (a) **a second freeze of the text aimed at the cap alone**, then the guard run again (24 sessions and the readings, about what this run cost) — the cap needs to bite when the request invites more questions: say in step 5 and in `brainstorming.md` that the count is checked before the spec is written, and that a question beyond the fourth becomes a recorded assumption with its default even when the user asked for "anything you would ask"; (b) merge nothing and close P5a with the text kept on the branch; (c) change the bar (accept "at most five", or G2 by one reader): a change of a registered rule after seeing the data, which the main session does not recommend.
 
 ## Done when
 

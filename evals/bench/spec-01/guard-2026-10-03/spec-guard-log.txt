@@ -1,0 +1,22 @@
+2026-10-03T08:32:30.747Z round 1 of 3 start
+2026-10-03T08:39:49.777Z spec-01 natural before p5a-bk-spec-before K runs=2 exit=0 dir=2026-10-03-bench-spec-01-natural-3 kit=p5a-bk-spec-before@1951206 dirty=false
+2026-10-03T08:47:05.020Z spec-01 natural after p5a-bk-spec K runs=2 exit=0 dir=2026-10-03-bench-spec-01-natural-4 kit=p5a-bk-spec@69debe5 dirty=false
+2026-10-03T08:51:21.605Z spec-01 natural S p5a-bk-spec S runs=2 exit=0 dir=2026-10-03-bench-spec-01-natural-5 kit=p5a-bk-spec@69debe5 dirty=false
+2026-10-03T08:51:21.619Z round 1 of 3 complete
+2026-10-03T08:51:21.619Z round 2 of 3 start
+2026-10-03T08:55:56.313Z spec-01 natural after p5a-bk-spec K runs=2 exit=0 dir=2026-10-03-bench-spec-01-natural-6 kit=p5a-bk-spec@69debe5 dirty=false
+2026-10-03T08:59:20.415Z spec-01 natural S p5a-bk-spec S runs=2 exit=0 dir=2026-10-03-bench-spec-01-natural-7 kit=p5a-bk-spec@69debe5 dirty=false
+2026-10-03T09:03:55.322Z spec-01 natural before p5a-bk-spec-before K runs=2 exit=0 dir=2026-10-03-bench-spec-01-natural-8 kit=p5a-bk-spec-before@1951206 dirty=false
+2026-10-03T09:03:55.339Z round 2 of 3 complete
+2026-10-03T09:03:55.340Z round 3 of 3 start
+2026-10-03T09:07:37.281Z spec-01 natural S p5a-bk-spec S runs=2 exit=0 dir=2026-10-03-bench-spec-01-natural-9 kit=p5a-bk-spec@69debe5 dirty=false
+2026-10-03T09:12:37.394Z spec-01 natural before p5a-bk-spec-before K runs=2 exit=0 dir=2026-10-03-bench-spec-01-natural-10 kit=p5a-bk-spec-before@1951206 dirty=false
+2026-10-03T09:18:00.024Z spec-01 natural after p5a-bk-spec K runs=2 exit=0 dir=2026-10-03-bench-spec-01-natural-11 kit=p5a-bk-spec@69debe5 dirty=false
+2026-10-03T09:18:00.037Z round 3 of 3 complete
+2026-10-03T09:18:00.201Z DONE guard
+2026-10-03T09:18:12.173Z round 4 of 4 start
+2026-10-03T09:22:14.808Z spec-01 natural before p5a-bk-spec-before K runs=2 exit=0 dir=2026-10-03-bench-spec-01-natural-12 kit=p5a-bk-spec-before@1951206 dirty=false
+2026-10-03T09:26:31.442Z spec-01 natural after p5a-bk-spec K runs=2 exit=0 dir=2026-10-03-bench-spec-01-natural-13 kit=p5a-bk-spec@69debe5 dirty=false
+2026-10-03T09:31:30.147Z spec-01 natural S p5a-bk-spec S runs=2 exit=0 dir=2026-10-03-bench-spec-01-natural-14 kit=p5a-bk-spec@69debe5 dirty=false
+2026-10-03T09:31:30.163Z round 4 of 4 complete
+2026-10-03T09:31:30.313Z DONE guard

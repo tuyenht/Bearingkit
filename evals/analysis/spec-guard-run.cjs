@@ -44,7 +44,9 @@ const KIT_PATHS = ['skills', 'hooks', 'agents', 'scripts'];
 // K-before and K-after differ in these seven files and, of what a session can reach, in nothing else.
 const TEXT_PATHS = ['skills', 'NOTICE', 'upstream/sources.json'];
 const SEVEN = ['NOTICE', 'skills/bk-spec/SKILL.md', 'skills/bk-spec/references/brainstorming.md', 'skills/bk-spec/references/domain-language.md', 'skills/bk-spec/references/module-design.md', 'skills/bk-spec/references/prototyping.md', 'upstream/sources.json'];
-const SAME_PATHS = ['hooks', 'agents', 'scripts', 'bin', 'evals/bench/spec-01'];
+// Of the task, everything registered as frozen (the fixture, the scoring, the rubric, the gate); the evidence
+// directories beside them (calibration-*, guard-*) are records and may grow after the freeze.
+const SAME_PATHS = ['hooks', 'agents', 'scripts', 'bin', ...['app', 'build.cjs', 'task.json', 'rules.json', 'rubric.md', 'gate', 'mutants.cjs'].map((p) => 'evals/bench/spec-01/' + p)];
 // No date guard: the owner lifted the wait for the weekly reset on 2026-10-03 (the spec records the sentence). The
 // usage is read before the run, and the runner stops itself at 90% of the five-hour window or 95% of the week.
 
