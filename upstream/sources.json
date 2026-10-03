@@ -256,11 +256,37 @@
       "tracked": [
         "skills/engineering/code-review/SKILL.md",
         "skills/engineering/diagnosing-bugs/SKILL.md",
-        "skills/engineering/tdd/SKILL.md"
+        "skills/engineering/tdd/SKILL.md",
+        "skills/productivity/grilling/SKILL.md",
+        "skills/engineering/domain-modeling/SKILL.md",
+        "skills/engineering/domain-modeling/ADR-FORMAT.md",
+        "skills/engineering/domain-modeling/CONTEXT-FORMAT.md",
+        "skills/engineering/codebase-design/SKILL.md",
+        "skills/engineering/codebase-design/DEEPENING.md",
+        "skills/engineering/prototype/SKILL.md",
+        "skills/engineering/prototype/LOGIC.md",
+        "skills/engineering/prototype/UI.md"
       ],
       "derived": {
         "skills/bk-debug/references/feedback-loop.md": [
           "skills/engineering/diagnosing-bugs/SKILL.md"
+        ],
+        "skills/bk-spec/references/brainstorming.md": [
+          "skills/productivity/grilling/SKILL.md"
+        ],
+        "skills/bk-spec/references/domain-language.md": [
+          "skills/engineering/domain-modeling/SKILL.md",
+          "skills/engineering/domain-modeling/ADR-FORMAT.md",
+          "skills/engineering/domain-modeling/CONTEXT-FORMAT.md"
+        ],
+        "skills/bk-spec/references/module-design.md": [
+          "skills/engineering/codebase-design/SKILL.md",
+          "skills/engineering/codebase-design/DEEPENING.md"
+        ],
+        "skills/bk-spec/references/prototyping.md": [
+          "skills/engineering/prototype/SKILL.md",
+          "skills/engineering/prototype/LOGIC.md",
+          "skills/engineering/prototype/UI.md"
         ],
         "skills/bk-test/references/tdd.md": [
           "skills/engineering/tdd/SKILL.md"
