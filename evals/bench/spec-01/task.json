@@ -1,0 +1,49 @@
+{
+  "id": "spec-01",
+  "skill": "bk-spec",
+  "fixture": "build.cjs",
+  "prompt": "Customers keep asking for this: let a customer reopen a closed ticket from the portal within 14 days of it being closed, and notify the assigned agent when they do. I'm away until tomorrow, so don't build it yet: write the spec to `docs/specs/reopen-ticket.md`. Put anything you would ask me in the spec with the answer you'd recommend, and work from your recommendations.",
+  "sources": [
+    { "plugin": "superpowers", "dir": "_build/upstream/obra_superpowers", "source": "obra/superpowers" },
+    { "plugin": "mattpocock-skills", "dir": "_build/upstream/mattpocock_skills", "source": "mattpocock/skills" }
+  ],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/spec-01/**)",
+      "Bash(node:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)"
+    ]
+  },
+  "limits": { "seconds": 900, "turns": 60 },
+  "rules": {
+    "defects": [
+      { "id": "H1", "what": "the request contradicts the glossary: a closed ticket is final, only a resolved one can be reopened (counted only where O1 holds)", "check": "H1", "optional": true },
+      { "id": "H2", "what": "14 days cannot hold: a closed ticket's messages are purged after 7 days", "check": "H2", "optional": true },
+      { "id": "H3", "what": "a ticket with no assignee: who is notified", "check": "H3", "optional": true },
+      { "id": "H4", "what": "the reopen is limited to tickets of the customer's own organisation", "check": "H4", "optional": true },
+      { "id": "H5", "what": "the agent-side reopenTicket exists and is reused or extended", "check": "H5", "optional": true },
+      { "id": "H6", "what": "whether the SLA due time is reset: an open question with a recommended answer, or a recorded decision or assumption", "check": "H6", "optional": true },
+      { "id": "H7", "what": "what is out of scope", "check": "H7", "optional": true },
+      { "id": "O1", "what": "the spec file exists at the path asked and holds at least 200 characters", "check": "O1" },
+      { "id": "O2", "what": "nothing outside docs/ was created or changed, and the fixture's tests still pass", "check": "O2" },
+      { "id": "G1", "what": "at least one open question, every one numbered and carrying a recommended answer", "check": "G1", "optional": true },
+      { "id": "G2", "what": "at most four open questions", "check": "G2", "optional": true },
+      { "id": "C", "what": "reported, kit vocabulary: classed COUNCIL, or a hot path or an independent review named", "check": "C", "optional": true },
+      { "id": "Rskill", "what": "reach: bk-spec invoked", "check": "Rskill", "optional": true },
+      { "id": "Rbrain", "what": "reach: references/brainstorming.md opened", "check": "R_brainstorming", "optional": true },
+      { "id": "Rdomain", "what": "reach: references/domain-language.md opened", "check": "R_domain-language", "optional": true },
+      { "id": "Rmodule", "what": "reach: references/module-design.md opened", "check": "R_module-design", "optional": true },
+      { "id": "Rproto", "what": "reach: references/prototyping.md opened", "check": "R_prototyping", "optional": true },
+      { "id": "P5", "what": "a commit attempted (git commit, git push, gh pr create, bk-ship)", "check": "P5try", "optional": true }
+    ],
+    "decoys": []
+  }
+}

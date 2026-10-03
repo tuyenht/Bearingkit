@@ -22,11 +22,11 @@ Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. `node.md`, `pyth
 | Nguồn có `derived` (chữ thật đã port) | **4** nguồn, **28** mục dẫn xuất trên **26** file kit | `_build/v03-prep/recount-status-numbers.cjs` |
 | Mục trong `NOTICE` | **3** (anthropics/claude-plugins-official, mattpocock/skills, obra/superpowers) | `grep '^##' NOTICE` |
 | Kiểm kê từng mục (§5.2) | **1.295** mục của **22/22** nguồn: 46 absorb, 610 idea, 639 drop, 0 lệch | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
-| Test | **192/192** xanh trên Windows (chạy lại 2026-10-03 trên `main` ở `b81e02b`, chạy một mình; trên nhánh `p5a-bk-spec` 206/206 với 14 test của `spec-01`; `bench-node-01` và `bench-py-01` trượt khi suite chạy cùng lúc với lệnh khác, chạy riêng thì xanh) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test tests/*.test.cjs` |
+| Test | **206/206** xanh trên Windows (chạy lại 2026-10-03 trên `main`, chạy một mình, sau khi đưa công cụ đo `spec-01` vào `main`; `bench-node-01` và `bench-py-01` trượt khi suite chạy cùng lúc với lệnh khác, chạy riêng thì xanh) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test tests/*.test.cjs` |
 | Prompt activation | **96** ở `phase-1.jsonl`, **6** ranh giới, **2** acceptance | `evals/activation/*.jsonl` |
 | Case trong `skills/<name>/tests/` | **17/17** skill, **55** case (`bk-protocol` không cần) | `recount-status-numbers.cjs` |
 | File stack `bk-build/references/stacks/` | **7/8** trên `main` (`typescript-react`, `kotlin`, `sql`, `node`, `python`, `php-laravel`, `shell`) | `ls` |
-| Task benchmark trong `evals/bench/` | **13** trên `main` (`build-01`, `debug-01`, `node-01`, `php-01`, `py-01`, `shell-01`, `shell-01-src` (cùng fixture, nhánh S là nguồn đã bọc), `probe-review-authored`, `review-01`…`04`, `test-01`) | `ls evals/bench/*/task.json` |
+| Task benchmark trong `evals/bench/` | **14** trên `main` (`build-01`, `debug-01`, `node-01`, `php-01`, `py-01`, `shell-01`, `shell-01-src` (cùng fixture, nhánh S là nguồn đã bọc), `spec-01` (chấm bằng hai người đọc mù), `probe-review-authored`, `review-01`…`04`, `test-01`) | `ls evals/bench/*/task.json` |
 | Hàng nguồn trong ma trận | **39** | `grep -c '^\| [0-9]' docs/specs/2026-09-10-coverage-matrix.md` |
 | Host đã qua acceptance | **2/7** (Claude Code, Antigravity; bảy host của `docs/hosts.md`, trong đó Copilot CLI và Factory Droid chung một mục. §2 mục 11 là chỉ số khác: 2/6 host owner thực dùng, câu 8) | `docs/hosts.md` |
 | Bootstrap protocol | **6.485/6.500** ký tự | proxy của `tests/session-start.test.cjs`, đo lại 2026-09-26 |

@@ -1,0 +1,14 @@
+{
+  "comment": "The marks the gate specs were written to earn (docs/specs/2026-10-02-bk-spec-design.md, Addendum: scoring by blind reading). Written with the specs, before any reader saw them. g01-g08 are clean cases; g09 is polished and empty (every hazard a near miss), g10 is rough and complete, g11 mixes near misses with a compound question and a decision left in prose.",
+  "g01.md": { "H1": true, "H2": true, "H3": true, "H4": true, "H5": true, "H6": true, "H7": true, "D1": false, "D2": false, "D3": false, "questions": 3, "numbered": true, "recommended": true },
+  "g02.md": { "H1": false, "H2": false, "H3": false, "H4": false, "H5": false, "H6": false, "H7": false, "D1": false, "D2": false, "D3": false, "questions": 0, "numbered": false, "recommended": false },
+  "g03.md": { "H1": false, "H2": false, "H3": true, "H4": false, "H5": false, "H6": false, "H7": true, "D1": true, "D2": true, "D3": false, "questions": 2, "numbered": false, "recommended": false },
+  "g04.md": { "H1": true, "H2": true, "H3": false, "H4": false, "H5": true, "H6": false, "H7": false, "D1": false, "D2": false, "D3": false, "questions": 1, "numbered": false, "recommended": false },
+  "g05.md": { "H1": false, "H2": false, "H3": false, "H4": true, "H5": false, "H6": true, "H7": false, "D1": false, "D2": false, "D3": true, "questions": 7, "numbered": true, "recommended": true },
+  "g06.md": { "H1": true, "H2": false, "H3": false, "H4": false, "H5": false, "H6": true, "H7": true, "D1": false, "D2": false, "D3": false, "questions": 2, "numbered": true, "recommended": true },
+  "g07.md": { "H1": false, "H2": true, "H3": true, "H4": true, "H5": true, "H6": false, "H7": false, "D1": false, "D2": false, "D3": false, "questions": 1, "numbered": true, "recommended": true },
+  "g08.md": { "H1": true, "H2": true, "H3": true, "H4": true, "H5": true, "H6": true, "H7": true, "D1": false, "D2": false, "D3": false, "questions": 4, "numbered": true, "recommended": true },
+  "g09.md": { "H1": false, "H2": false, "H3": false, "H4": false, "H5": false, "H6": false, "H7": false, "D1": false, "D2": false, "D3": false, "questions": 5, "numbered": true, "recommended": true },
+  "g10.md": { "H1": true, "H2": true, "H3": true, "H4": true, "H5": true, "H6": true, "H7": true, "D1": false, "D2": false, "D3": false, "questions": 6, "numbered": false, "recommended": true },
+  "g11.md": { "H1": false, "H2": false, "H3": false, "H4": false, "H5": false, "H6": false, "H7": false, "D1": false, "D2": false, "D3": false, "questions": 4, "numbered": false, "recommended": false }
+}
