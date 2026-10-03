@@ -20,7 +20,7 @@ description: "Pin down a request before building: restate, edge cases, assumptio
 2. List at least three edge cases with how each is handled (empty input, concurrency, permissions, failure of a dependency, the existing data).
 3. List assumptions, each with a confidence (high, medium, low). A fact is looked up, not assumed or asked. A low-confidence assumption about a technology triggers a documentation check before anything else.
 4. Classify with the gate patterns: ACT or COUNCIL, and whether a hot path is touched.
-5. COUNCIL: fill `bk-protocol/references/rba-lite.md`, present the options, and stop for the decision. ACT: write the requirements as acceptance criteria that a test can check, and one line of what is out of scope. Only where an answer would change the work, questions for the user go in one round of at most four, numbered, each with a recommended answer (`brainstorming.md`); when nobody can answer, they go into the spec as open questions with their recommendations.
+5. COUNCIL: fill `bk-protocol/references/rba-lite.md`, present the options, and stop for the decision. ACT: write the requirements as acceptance criteria that a test can check, and one line of what is out of scope. Only where an answer would change the work, questions for the user go in one round of at most four, numbered, each with a recommended answer (`brainstorming.md`); when nobody can answer, they go into the spec as open questions with their recommendations. Count them before writing, one decision to a question: a fifth is recorded as an assumption with its default and confidence, never listed as a question, and a COUNCIL decision is never the one dropped.
 
 ## Gates
 - An RBA that fails a fail condition goes back for completion; it is never waved through.

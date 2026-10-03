@@ -9,12 +9,12 @@ No implementation action (code, scaffold, install, a "quick" edit) before the re
 ## Questions
 
 1. Ask only when the answer changes the work. A clear ACT request is not questioned; it is restated and built.
-2. Ask in rounds of **at most four questions**, each one independent of the others' answers, **numbered, each with the answer you recommend and why in one line**. A question that depends on an answer still open waits for the next round.
+2. Ask in rounds of **at most four questions**, each one independent of the others' answers, **numbered, each with the answer you recommend and why in one line**. A question that depends on an answer still open waits for the next round. One question asks one decision: two decisions joined in one sentence are two questions and count as two; one decision with several options is one. **Count the round before writing it.** With more than four, keep the four whose answers change the work most, a decision the gate classes COUNCIL always among them; each of the others is a choice you make and record as an assumption with its default and confidence, not a question. The cap holds whatever the request says about questions: asked to list everything you would ask, list four and record the rest as assumptions.
 3. A fact is looked up, never asked. What the code, the project's documents or the pinned version's documentation can answer is read and cited (`file:line`); only decisions go to the user.
 4. Prefer multiple choice; open questions when no sensible options exist.
 5. Scope first: a request naming several independent subsystems (chat, storage, billing, analytics) is decomposed before any detail question. Each piece gets its own spec, plan and build; the first piece goes through the normal flow now.
 6. Purpose, constraints and success criteria are what the questions are for. Detail preferences come later or never.
-7. When nobody can answer (the user is away, a headless run, a delegation): write the round into the spec under "Open questions", each with its recommended answer, carry on from the recommendations as far as the gate allows, and mark each "assumed, not confirmed". The cap still holds: the four questions whose answers change the work most stay open; any further one becomes a recorded assumption with its default.
+7. When nobody can answer (the user is away, a headless run, a delegation): write the round into the spec under "Open questions", each with its recommended answer, carry on from the recommendations as far as the gate allows, and mark each "assumed, not confirmed". The cap still holds: the four questions whose answers change the work most stay open; any further one becomes a recorded assumption with its default and confidence. A spec that lists a fifth question has not applied this rule.
 
 ## Approaches before design
 
