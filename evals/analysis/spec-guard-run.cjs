@@ -37,7 +37,7 @@ const RUNS = 2;
 const BENCH = ['bin/bearingkit.cjs', 'bench', '--task', TASK, '--config-dir', CFG, '--runs', String(RUNS)];
 const BEFORE = 'p5a-bk-spec-before';
 const AFTER = 'p5a-bk-spec';
-// The frozen text (K-after): nothing under skills/ may differ from it.
+// The frozen commit (K-after): nothing a session loads may differ from it (FROZEN_PATHS below).
 const FROZEN = 'f2237b015e0589d5f28116e19611d8782a7e880d';
 // The whole kit directories, not only scripts/detect-stack.cjs as the model checks.
 const KIT_PATHS = ['skills', 'hooks', 'agents', 'scripts'];
@@ -78,8 +78,10 @@ for (const b of [BEFORE, AFTER]) if (!/^[0-9a-f]{40}$/.test(EXPECT[b])) die(`bra
 if (head(FROZEN) !== FROZEN) die(`the frozen commit ${FROZEN} is not in this repository`);
 const seven = diffNames(BEFORE, AFTER, TEXT_PATHS);
 if (seven.join('\n') !== [...SEVEN].sort().join('\n')) die(`${BEFORE} and ${AFTER} differ under ${TEXT_PATHS.join(', ')} in [${seven.join(', ')}], not in the seven registered files`);
-const moved = diffNames(FROZEN, AFTER, ['skills']);
-if (moved.length) die(`${AFTER} differs from the frozen text ${FROZEN.slice(0, 7)} under skills/: ${moved.join(', ')}`);
+// Not skills/ alone: K-after is the frozen commit in everything a session loads, whatever was committed after it.
+const FROZEN_PATHS = [...new Set([...KIT_PATHS, ...TEXT_PATHS, ...SAME_PATHS])];
+const moved = diffNames(FROZEN, AFTER, FROZEN_PATHS);
+if (moved.length) die(`${AFTER} differs from the frozen commit ${FROZEN.slice(0, 7)} under ${FROZEN_PATHS.join(', ')}: ${moved.join(', ')}`);
 const drift = diffNames(BEFORE, AFTER, SAME_PATHS);
 if (drift.length) die(`${BEFORE} and ${AFTER} differ outside the text: ${drift.join(', ')}`);
 
