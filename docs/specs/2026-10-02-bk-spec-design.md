@@ -281,6 +281,59 @@ Owner, on the three ways on put with the result ((a) a second freeze aimed at th
 
 **What a pass would and would not show, said now.** The text was changed after the first run's specs were read, and is measured again on the same request: a pass shows that with these sentences a Sonnet session keeps the cap on this request, where the request itself invites more questions; it does not show the cap is kept elsewhere, and the first run stays in this file as run. A surplus question recorded as an assumption still has to be found by the readers where a hazard depends on it (H6 accepts a recorded assumption; the others do not depend on a question), so the cap is not bought by dropping hazards unseen: the H bar would show it. If G2 fails again, nothing merges and no third freeze is made without the owner.
 
+## Result of the second guard run (2026-10-03): two bars fail, nothing merges
+
+**What ran**, 2026-10-03 10:04 to 11:09 UTC, Sonnet 5, `natural`, K-after-2 `p5a-bk-spec@a025e53` (equal to the second freeze `075b05a` in every path a session loads, checked by the driver), K-before `p5a-bk-spec-before@1951206`; every `meta.json` `dirty: false`, no session cut, none stopped, every session ended `success`. Usage read before (`get_usage`, the main session's reading): 0% of a five-hour window just reopened, 70% of the week; after: 19%, 72%.
+- **Reach probe** (`…-natural-15`, two K-after-2 sessions, counted toward nothing): `bk-spec` invoked 2 of 2 (go); neither opened `brainstorming.md` or `domain-language.md`.
+- **S trial** (`…-natural-16`, counted toward nothing): no Skill call at all, none refused. The S branch ran.
+- **The run**: the driver, four rounds in one call, twelve bench calls, twenty-four sessions, `…-natural-17` to `…-natural-28`, the order as registered. Log: `evals/bench/spec-01/guard-2026-10-03-run2/spec-guard-2-log.txt` (a copy).
+- **The gate of the day**, seed `gate-2026-10-03-2`, fresh readers, before any reader of the run (the main session's account): A 77 of 77, 33 of 33, 22 of 22, counts 10 of 11 (`g11`: 3 for 4, the compound question counted once); B 77, 33, 22, 11 of 11. **PASS.** As before, what the aliases resolved to is not recorded.
+- **The reading**: 24 specs, seed `2026-10-03-bench-spec-01-natural-17`, two batches, four fresh readers, the brief word for word, no reply rejected. Evidence: `evals/bench/spec-01/guard-2026-10-03-run2/`.
+- **Not run: the regression guard** (two bars had failed).
+
+| | K-before | K-after-2 | S |
+|---|---|---|---|
+| H per session (both readers) | 7 7 7 7 7 7 7 7 | 7 7 7 7 7 7 7 7 | 7 7 6 6 7 7 7 7 |
+| O1 / O2 | 8 / 8 | 8 / 8 | 8 / 8 |
+| Decoys (sum) | 0 | 0 | 0 |
+| G1 | 8 | 8 | 8 |
+| **G2 (at most four questions)** | 2 | **4** | 2 |
+| Questions per spec (the larger count) | 7 8 12 9 7 12 4 4 | 7 4 5 5 4 4 4 5 | 9 10 11 12 8 11 4 4 |
+| G2 by one reader alone | A 2, B 2 | A 7, B 4 | A 2, B 2 |
+| `bk-spec` invoked | 8 | 8 | 0 |
+| `brainstorming.md` / `domain-language.md` opened | 6 / 0 (no such file there) | 6 / **0** | 0 / 0 |
+| Cost, median USD (range) | 0.331 (0.309–0.530) | 0.357 (0.267–0.428) | 0.285 (0.230–0.408) |
+| Refused commands | 3 | 1 | 4 |
+
+The readers agree on 168 of 168 hazard marks; they differ on the count of questions in 11 of 24 sessions.
+
+| Bar | Needed | Got | |
+|---|---|---|---|
+| K-after-2's median H | ≥ 7 | 7 | met |
+| O1, O2 | ≥ 7 of 8 each | 8, 8 | met |
+| Decoys not above K-before's | ≤ 0 | 0 | met |
+| G1 | ≥ 6 of 8 | 8 | met |
+| **G2** | **≥ 6 of 8** | **4** | **not met** |
+| `brainstorming.md` opened | ≥ 4 of 8 | 6 | met |
+| **`domain-language.md` opened** | **≥ 4 of 8** | **0** | **not met** |
+| Readers agree on the hazard marks | ≥ 90% | 100% | met |
+| Regression guard | holds | not run | open |
+
+**By the registered rule: nothing merges, and no third freeze is made without the owner.**
+
+**What the two runs say, and no more.**
+- **The cap.** Seven of eight K-after-2 specs list exactly four numbered questions and one lists six: the count before writing is applied. Three of those seven fail the bar because one of the four items still joins two decisions (in two specs a reset of one thing "or" a cap on another; in the third a boundary and its interaction with another rule), which reader B counts as two as the rubric says and reader A counts as one; the spec with six has a joined item too (seven by reader B, the figure in the table), so four of the eight carry one; by reader A alone G2 holds in 7 of 8, by reader B in 4 of 8, and the registered rule takes the larger count. The sentence "two decisions joined in one sentence are two questions" is in the frozen text and was not kept in those three specs. Across the two runs K-after's specs carry fewer questions than K-before's of the same run (medians 5 against 10.5, then 4.5 against 7.5); neither comparison is a registered test.
+- **The floor moved between the runs.** K-before, the same commit in both, left 0 of 8 specs at or under four questions in the first run and 2 of 8 in the second; S went from 0 to 2 of 8. The runs are on one day, the second starting about half an hour after the first ended.
+- **`domain-language.md` stopped being opened; the "Read first" line did not change.** In the first run, on one unchanged text, the first five K-after sessions by clock (ending between 08:43 and 09:15 UTC by their files' times) each read it and the last three (09:17 to 09:26) did not; in the second run no K-after-2 session did (0 of 8, and 0 of 2 in the probe); in each of those sessions the file is named twice in the stream (the skill's own text: its "Read first" line and its `Sources:` line) and never read. The "Read first" lines of `SKILL.md` are the same in both freezes; step 5 and `brainstorming.md` are not, so the second run alone could not tell the text from the hour; the first run, where the text did not change, is what points away from the text. A change by time of day, on the host's or the model's side, fits what is seen; it is not established (a switch of that kind, by time and not by text, was recorded once before: `docs/handoff/2026-09-28-p4-step0-php-build.md`). `brainstorming.md` went from 7 of 8 to 6 of 8.
+- **The hazards**: level in every branch of both runs (K-after-2 and K-before 7 in all sixteen sessions; p = 1.0). The task does not separate the kit from the floor on the hazards.
+- **Against the sources: not compared with its sources.** 3 of 8 S sessions launched `superpowers:brainstorming` with its text; the bar for a comparison is 4 of 8, and under it the registered label is "installed but not read". The printed p = 0.47 for H, K-after-2 against S, is therefore not a comparison with the sources.
+- Cost: K-after-2 about level with K-before (median 0.357 against 0.331 USD; tool counts 14–20 against 17–24, so tokens are not compared).
+
+**Ways on, for the owner** (nothing is done until the owner answers; the main session's recommendation first):
+- (a) **Stop measuring P5a on `spec-01`, keep the text on the branch unmerged, and go on to P5b.** The main session's view, not a finding: two runs on one request have shown about what this task can show: no difference on the hazards, fewer questions with the new text, a cap kept in form but not to the letter of the rubric, and a reference whose reach changed between and within the runs, perhaps with the hour. A third freeze on the same request would fit the text further to one prompt and one reader's way of counting, and the `domain-language.md` bar cannot be met by a change of text while the cause of the drop is not known.
+- (b) A third freeze (the compound question, and a "Read first" line that makes the two references harder to skip), then a third run: about the cost of each run so far (some 20% of a five-hour window and 2 to 4% of the week), with the risks named under (a).
+- (c) Merge on the owner's decision that these bars were the wrong ones (for instance G2 by the more lenient count, "four numbered items", or dropping the reach bar): a change of registered rules after the data, which the main session does not recommend; if the owner takes it, the regression guard runs first and the question on `module-design.md` and `prototyping.md` is put before the merge.
+
 ## Done when
 
 This file reviewed and committed on the branch: the end of the design phase, where the session stops and reports the budget to the owner. Then the build phase, in the order fixed above (fixture and scorer; calibration; the text; reach; the run; the guard), each commit after an independent review, the result written here, `docs/status.md` and a handoff. P5b (`bk-plan`) and P5c (the Step-0 line) follow in their own sprints.
