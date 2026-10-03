@@ -302,6 +302,7 @@ Owner, on the three ways on put with the result ((a) a second freeze aimed at th
 | G2 by one reader alone | A 2, B 2 | A 7, B 4 | A 2, B 2 |
 | `bk-spec` invoked | 8 | 8 | 0 |
 | `brainstorming.md` / `domain-language.md` opened | 6 / 0 (no such file there) | 6 / **0** | 0 / 0 |
+| `module-design.md` / `prototyping.md` opened | 0 / 0 | 0 / 0 | 0 / 0 |
 | Cost, median USD (range) | 0.331 (0.309–0.530) | 0.357 (0.267–0.428) | 0.285 (0.230–0.408) |
 | Refused commands | 3 | 1 | 4 |
 
@@ -333,6 +334,12 @@ The readers agree on 168 of 168 hazard marks; they differ on the count of questi
 - (a) **Stop measuring P5a on `spec-01`, keep the text on the branch unmerged, and go on to P5b.** The main session's view, not a finding: two runs on one request have shown about what this task can show: no difference on the hazards, fewer questions with the new text, a cap kept in form but not to the letter of the rubric, and a reference whose reach changed between and within the runs, perhaps with the hour. A third freeze on the same request would fit the text further to one prompt and one reader's way of counting, and the `domain-language.md` bar cannot be met by a change of text while the cause of the drop is not known.
 - (b) A third freeze (the compound question, and a "Read first" line that makes the two references harder to skip), then a third run: about the cost of each run so far (some 20% of a five-hour window and 2 to 4% of the week), with the risks named under (a).
 - (c) Merge on the owner's decision that these bars were the wrong ones (for instance G2 by the more lenient count, "four numbered items", or dropping the reach bar): a change of registered rules after the data, which the main session does not recommend; if the owner takes it, the regression guard runs first and the question on `module-design.md` and `prototyping.md` is put before the merge.
+
+## P5a closed on `spec-01`, the text kept on the branch (2026-10-03)
+
+Owner, on the three ways on put with the second result ((a) stop measuring P5a on `spec-01`, keep the text on the branch unmerged, go on to P5b, recommended; (b) a third freeze and run; (c) merge by changing the bars): "Audit kỹ các xử lý ở trên, tiếp tục theo khuyến nghị." Taken as (a), a delegation to the recommendation, as before.
+
+**State left by that decision.** No third freeze, no third run. The text of the second freeze (`075b05a`) stays on `p5a-bk-spec` and is **not** in `main`; `main` keeps `bk-spec` as it was at `37c93f5`. Nothing here says the new text is better or worse than the old on the hazards, or than its sources. **Owed before any later merge of this text**: the regression guard (never run); a reason for, or a fresh measurement of, the reach of `domain-language.md`; the question on `module-design.md` and `prototyping.md`, which no session opened in either run. What the two runs leave usable for later sprints: the fixture and its readers' procedure (rubric, gate, blind reading, tally), the driver, and three observations: the Sonnet floor already finds this task's hazards; a cap on questions is kept in form (four numbered items) more readily than to the letter (one decision to an item); a reference's reach can change within a day on unchanged text, so reach is read in clock order.
 
 ## Done when
 
