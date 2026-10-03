@@ -17,7 +17,7 @@
 //     The two numbers are the first and the last round to run (`3 4` runs rounds 3 and 4). A round that stopped
 //     halfway is run again whole when resumed, so its finished calls give extra sessions: which directories count is
 //     then decided from the log and written in the spec, before any spec is read.
-//     Log: evals/results/spec-guard-log.txt. Only the result directories named there go into the tally. A session the
+//     Log: evals/results/spec-guard-2-log.txt. Only the result directories named there go into the tally. A session the
 //     runner cut at its time limit is logged (`cut=`) and counted with what it left, as registered.
 const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
@@ -30,7 +30,7 @@ if (flags.some((f) => f !== '--dry' && f !== '--no-s') || nums.length > 2 || num
 const DRY = flags.includes('--dry');
 const NO_S = flags.includes('--no-s');
 const RESULTS = path.join(ROOT, 'evals', 'results');
-const LOG = path.join(RESULTS, 'spec-guard-log.txt');
+const LOG = path.join(RESULTS, 'spec-guard-2-log.txt');
 const CFG = 'C:/Projects/Bearingkit/_build/profile/claude';
 const TASK = 'spec-01';
 const RUNS = 2;
@@ -38,7 +38,9 @@ const BENCH = ['bin/bearingkit.cjs', 'bench', '--task', TASK, '--config-dir', CF
 const BEFORE = 'p5a-bk-spec-before';
 const AFTER = 'p5a-bk-spec';
 // The frozen commit (K-after): nothing a session loads may differ from it (FROZEN_PATHS below).
-const FROZEN = 'f2237b015e0589d5f28116e19611d8782a7e880d';
+// The second freeze (the first run, of 2026-10-03, was made at f2237b015e0589d5f28116e19611d8782a7e880d and logged
+// to spec-guard-log.txt).
+const FROZEN = '075b05ac66277779cf7db8f03cf9d1b386bc0664';
 // The whole kit directories, not only scripts/detect-stack.cjs as the model checks.
 const KIT_PATHS = ['skills', 'hooks', 'agents', 'scripts'];
 // K-before and K-after differ in these seven files and, of what a session can reach, in nothing else.
