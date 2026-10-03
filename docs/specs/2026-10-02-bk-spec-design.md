@@ -205,6 +205,12 @@ Owner, on the three ways on after the calibration ((a) the registered guard path
 
 **Not done before the run, to do first on the day**: the reach probe; the S trial session; the gate of the day with fresh readers, before any reader of the run starts.
 
+## The guard run, started on 2026-10-03 at the owner's word
+
+The run was to wait for the weekly reset (2026-10-07 10:00 in Vietnam): the owner's instruction at the start of the session of 2026-10-03 ("Lượt đo chỉ chạy từ 2026-10-07 10:00 giờ VN, sau khi get_usage cho thấy hạn mức tuần đã mở lại"). The same day, after the driver was written, reviewed and dry-run, the owner lifted the wait, verbatim: "Tiếp tục xử lý các công việc tiếp theo cho tôi, không đợi đến ngày 07/10 nữa; vẫn còn nhiều dung lượng mà." Nothing else of the registration changes: the bars, the order of the day (reach probe, S trial, the interleaved run, the gate of the day before any reader of the run, the blind reading, the regression guard), the rubric, the brief and the readers stand. Usage read before the first session (`get_usage`, 2026-10-03 08:18 UTC): 36% of the five-hour window, 65% of the week; the runner stops itself at 90% of the five-hour window or 95% of the week (`scripts/bench.cjs:277`), and a call it stops re-runs whole.
+
+**The driver**: `evals/analysis/spec-guard-run.cjs` (reviewed before each commit; `--dry` run clean). Beyond the registered checks it pins K-after to the frozen commit `f2237b0` in every path a session loads (`skills`, `hooks`, `agents`, `scripts`, `bin`, `NOTICE`, `upstream/sources.json`, `evals/bench/spec-01`), not `skills/` alone, calls the runner's `--dry-run` for each branch before the first round, and stops on a check file that holds only an error. Its date refusal was removed with the owner's sentence above. K-after's `meta.json` carries the branch head of the day, not `f2237b0`; the two are equal in those paths, checked by the driver at its start.
+
 ## Done when
 
 This file reviewed and committed on the branch: the end of the design phase, where the session stops and reports the budget to the owner. Then the build phase, in the order fixed above (fixture and scorer; calibration; the text; reach; the run; the guard), each commit after an independent review, the result written here, `docs/status.md` and a handoff. P5b (`bk-plan`) and P5c (the Step-0 line) follow in their own sprints.

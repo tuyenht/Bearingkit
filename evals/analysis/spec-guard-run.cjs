@@ -45,8 +45,8 @@ const KIT_PATHS = ['skills', 'hooks', 'agents', 'scripts'];
 const TEXT_PATHS = ['skills', 'NOTICE', 'upstream/sources.json'];
 const SEVEN = ['NOTICE', 'skills/bk-spec/SKILL.md', 'skills/bk-spec/references/brainstorming.md', 'skills/bk-spec/references/domain-language.md', 'skills/bk-spec/references/module-design.md', 'skills/bk-spec/references/prototyping.md', 'upstream/sources.json'];
 const SAME_PATHS = ['hooks', 'agents', 'scripts', 'bin', 'evals/bench/spec-01'];
-// The owner's decision: the run starts only after the weekly limit reopens, 2026-10-07 10:00 in Vietnam.
-const NOT_BEFORE = '2026-10-07T03:00:00Z';
+// No date guard: the owner lifted the wait for the weekly reset on 2026-10-03 (the spec records the sentence). The
+// usage is read before the run, and the runner stops itself at 90% of the five-hour window or 95% of the week.
 
 const sh = (cmd, args) => spawnSync(cmd, args, { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 26 });
 const log = (s) => { if (!DRY) fs.appendFileSync(LOG, s + '\n'); console.log(s); };
@@ -70,7 +70,6 @@ const diffNames = (a, b, paths) => {
 // Checks made once, before anything is switched.
 const start = sh('git', ['rev-parse', '--abbrev-ref', 'HEAD']).stdout.trim();
 if (start !== AFTER) { console.error(`start this driver from ${AFTER}; the checkout is on ${start}`); process.exit(2); }
-if (!DRY && Date.now() < Date.parse(NOT_BEFORE)) { console.error(`it is ${new Date().toISOString()}, before ${NOT_BEFORE}: the run waits for the weekly limit to reopen (--dry runs the checks only)`); process.exit(2); }
 if (!DRY) fs.mkdirSync(RESULTS, { recursive: true });
 if (!clean()) die('tree not clean at the start');
 const EXPECT = { [BEFORE]: head(BEFORE), [AFTER]: head(AFTER) };
