@@ -1,0 +1,36 @@
+{
+  "id": "plan-01",
+  "skill": "bk-plan",
+  "fixture": "build.cjs",
+  "prompt": "The spec in `docs/specs/csat-rating.md` is approved. Write the implementation plan for it under `docs/plans/`. I'm away until tomorrow, so don't build anything yet; put anything you would ask me in the plan with the answer you'd recommend, and work from your recommendations.",
+  "sources": [
+    { "plugin": "superpowers", "dir": "_build/upstream/obra_superpowers", "source": "obra/superpowers" },
+    { "plugin": "mattpocock-skills", "dir": "_build/upstream/mattpocock_skills", "source": "mattpocock/skills" }
+  ],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/plan-01/**)",
+      "Bash(node:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)"
+    ]
+  },
+  "limits": { "seconds": 900, "turns": 60 },
+  "rules": {
+    "defects": [
+      { "id": "O1", "what": "at least one plan file exists under docs/plans/, 400 characters or more in all", "check": "O1" },
+      { "id": "O2", "what": "nothing outside docs/ was created or changed, and the fixture's tests still pass", "check": "O2" },
+      { "id": "Rskill", "what": "reach: bk-plan invoked", "check": "Rskill", "optional": true },
+      { "id": "Rwriting", "what": "reach: references/writing-plans.md opened", "check": "R_writing-plans", "optional": true },
+      { "id": "Rslices", "what": "reach: references/vertical-slices.md opened", "check": "R_vertical-slices", "optional": true }
+    ],
+    "decoys": []
+  }
+}
