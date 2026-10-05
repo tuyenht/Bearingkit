@@ -82,26 +82,26 @@ test('plan-01: the fixture is what the registration says', { timeout: 300000 }, 
     // O1 can fail: a plan too short, and a plan outside docs/plans/.
     build.reset({ dst });
     write('docs/plans/plan.md', 'x'.repeat(build.MIN_CHARS - 1) + '\n');
-    assert.deepEqual([build.check(dst).O1, build.check(dst).planChars], [false, build.MIN_CHARS - 1]);
+    assert.deepEqual(((c) => [c.O1, c.planChars])(build.check(dst)), [false, build.MIN_CHARS - 1]);
     write('docs/plans/plan.md', 'x'.repeat(build.MIN_CHARS) + '\n');
     assert.equal(build.check(dst).O1, true);
     build.reset({ dst });
     write('docs/csat-plan.md', PLAN);
     write('PLAN.md', PLAN);
-    assert.deepEqual([build.check(dst).O1, build.check(dst).plan, build.check(dst).outside], [false, '', 1]);
+    assert.deepEqual(((c) => [c.O1, c.plan, c.outside])(build.check(dst)), [false, '', 1]);
     // O2 can fail: a file outside docs/, a changed source file, a red suite.
     build.reset({ dst });
     write('docs/plans/plan.md', PLAN);
     write('src/rating.js', "'use strict';\n");
-    assert.deepEqual([build.check(dst).O1, build.check(dst).O2, build.check(dst).outside], [true, false, 1]);
+    assert.deepEqual(((c) => [c.O1, c.O2, c.outside])(build.check(dst)), [true, false, 1]);
     build.reset({ dst });
     write('docs/plans/plan.md', PLAN);
     write('README.md', read('README.md') + '\nA note.\n');
-    assert.deepEqual([build.check(dst).O2, build.check(dst).outside, build.check(dst).suite], [false, 1, true]);
+    assert.deepEqual(((c) => [c.O2, c.outside, c.suite])(build.check(dst)), [false, 1, true]);
     build.reset({ dst });
     write('docs/plans/plan.md', PLAN);
     write('docs/extra.test.js', "require('node:test')('red', () => { throw new Error('red'); });\n");
-    assert.deepEqual([build.check(dst).O2, build.check(dst).suite, build.check(dst).outside], [false, false, 0]);
+    assert.deepEqual(((c) => [c.O2, c.suite, c.outside])(build.check(dst)), [false, false, 0]);
     // A change committed by the session is still a change: the status is clean, O2 is lost.
     build.reset({ dst });
     write('docs/plans/plan.md', PLAN);
@@ -109,7 +109,7 @@ test('plan-01: the fixture is what the registration says', { timeout: 300000 }, 
     const git = (...a) => assert.equal(spawnSync('git', ['-c', 'user.name=x', '-c', 'user.email=x@x.example', '-c', 'commit.gpgsign=false', ...a], { cwd: dst, encoding: 'utf8' }).status, 0, a.join(' '));
     git('add', '-A');
     git('commit', '-q', '-m', 'built');
-    assert.deepEqual([build.check(dst).O1, build.check(dst).O2, build.check(dst).outside], [true, false, 1]);
+    assert.deepEqual(((c) => [c.O1, c.O2, c.outside])(build.check(dst)), [true, false, 1]);
     // A reset brings the fixture back.
     build.reset({ dst });
     assert.equal(fs.existsSync(path.join(dst, 'docs/plans')), false);

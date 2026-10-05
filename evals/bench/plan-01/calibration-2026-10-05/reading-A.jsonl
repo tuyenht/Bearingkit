@@ -1,0 +1,3 @@
+{"plan":"p01.md","P1":true,"P2":true,"P3":false,"P4":false,"P5":false,"C1":false,"questions":10,"numbered":true,"recommended":true,"note":"Units taken as the two commits in Sequencing; P1/P2 depend on that reading. Export row renamed, finance not named."}
+{"plan":"p02.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":6,"numbered":true,"recommended":true,"note":"Step 2 is store layer only (P1 false); Step 5 is tests after the build units (P2 false)."}
+{"plan":"p03.md","P1":true,"P2":true,"P3":false,"P4":false,"P5":false,"C1":false,"questions":11,"numbered":true,"recommended":true,"note":"Used Build order as units (tests paired with rateTicket); Steps view with separate tests step would make P1 and P2 false."}

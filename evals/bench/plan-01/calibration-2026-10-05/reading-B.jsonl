@@ -1,0 +1,3 @@
+{"plan":"p01.md","P1":true,"P2":true,"P3":false,"P4":false,"P5":false,"C1":false,"questions":10,"numbered":true,"recommended":true,"note":"Units taken as the two Sequencing commits; if layer sections are the units, P1 and P2 are false."}
+{"plan":"p02.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":true,"questions":6,"numbered":true,"recommended":true,"note":"C1 rests on the blanket 'run node --test after every step'; not stated per step."}
+{"plan":"p03.md","P1":true,"P2":true,"P3":false,"P4":false,"P5":false,"C1":false,"questions":11,"numbered":true,"recommended":true,"note":"Units taken from Build order (tests paired with behaviour); by Step headings P1, P2 false. Item 11 is a note."}
