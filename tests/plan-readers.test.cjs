@@ -174,8 +174,9 @@ test('the committed gate reading passes the registered rule, with no mark and no
   const g = readers.gate(key, A, B, expected);
   assert.deepEqual([g.A.pass, g.B.pass, g.A.counts, g.B.counts], [true, true, [], []]);
   for (const k of readers.MARKS) assert.deepEqual([g.A.wrong[k], g.B.wrong[k]], [[], []], k);
-  // Every gate plan is in the key, once; and the rule can fail on these very readings: two plans flipped on one item.
-  assert.deepEqual(Object.values(key).sort(), Object.keys(expected).sort());
+  // This is the first gate reading, of the thirteen plans the gate then held (g14 came with the third freeze of the
+  // rubric); each is in the key once. The rule can fail on these very readings: two plans flipped on one item.
+  assert.deepEqual(Object.values(key).sort(), Object.keys(expected).filter((n) => n !== 'g14.md').sort());
   const [n1, n2] = Object.keys(key);
   const flipped = { ...A, [n1]: { ...A[n1], P3: !A[n1].P3 }, [n2]: { ...A[n2], P3: !A[n2].P3 } };
   assert.equal(readers.gate(key, flipped, B, expected).A.pass, false);

@@ -18,6 +18,8 @@ Several items speak of the plan's **units**: the top-level division of the work 
 
 **When a plan divides the work twice**, the units are the division that **holds the work**: the sections where the steps, the files to change and the checks are written out. A short list that only puts those sections, or their pieces, in an order ("Build order", "Sequencing", "Suggested commits", a summary table) is not the units, even when it pairs a test with its behaviour; it can still be where P4's blockers are stated. This holds for every item that speaks of units: P1, P2, P4 and C1. Example: a plan with sections "Schema", "API: `rateTicket`", "Jobs", "Test plan" and, near the end, "Order of work: 1. schema and API with their tests; 2. jobs with their tests" has the sections as its units, so its first building unit is a layer and its tests are a unit at the end.
 
+**A section with no step label** (no "Step", "Phase", "Task" or number) that **names changes to make** (a file or a function to change, a field or a method to add) is a unit like the labelled ones, in the place where it stands. A section that only describes, summarises, lists decisions or questions, or says what is out of scope, and names no change to make, is not a unit. Example: a plan that opens with "Database" (two columns added to `tickets`, one new table) and goes on with "Step 1: API" and "Step 2: job" has three units, and the first of them builds only storage.
+
 A unit that only checks or wraps up (run the whole suite, update the README, a final review) and builds nothing of the feature is still a unit for P4 and C1, and is ignored for P1.
 
 ## Hazards: mark `true` only when the plan shows the thing
