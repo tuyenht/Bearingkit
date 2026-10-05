@@ -9,6 +9,8 @@
 // permutation on P), each reader alone, and the readers' agreement.
 // Usage, from the repository root:
 //   node evals/analysis/plan-tally.cjs --readings <key file> <reading A> <reading B> <result dir name> [...]
+//     --root <dir>  reads the result directories under <dir> instead of evals/results. For the test only: the
+//                   evidence copied into the repository holds no raw stream, so no run is tallied again from it.
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
@@ -78,35 +80,40 @@ function costRatio(medA, medB, toolsA, toolsB) {
   return (medA / medB).toFixed(2);
 }
 
-module.exports = { label, stream, met, mean, costRatio, SOURCE_SKILL, SOURCE_FILE, MIN_PLANS };
-
-if (require.main === module) {
-  const argv = process.argv.slice(2);
+// The main program: prints the tables and returns the exit status (0; 1 when a plan was not read by both readers, a
+// kit branch has too few plans, or the readers agree on under 90%; 2 on a bad command line).
+function main(args) {
+  const argv = args.slice();
+  const rt = argv.indexOf('--root');
+  const root = rt >= 0 ? argv.splice(rt, 2)[1] : R;
+  let code = 0;
   const at = argv.indexOf('--readings');
   const readings = at >= 0 ? argv.splice(at, 4).slice(1) : null;
   const dirs = argv;
-  if (!dirs.length || !readings || readings.length !== 3) { console.error('usage: plan-tally.cjs --readings <key file> <reading A> <reading B> <result dir name> [...]'); process.exit(2); }
+  if (!root || !dirs.length || !readings || readings.length !== 3) { console.error('usage: plan-tally.cjs [--root <dir>] --readings <key file> <reading A> <reading B> <result dir name> [...]'); return 2; }
   const key = JSON.parse(fs.readFileSync(readings[0], 'utf8'));
   const [A, B] = [readings[1], readings[2]].map(reading);
+  // As plan-readers.cjs merge: a reading that marks a plan the key does not hold is refused, not passed over.
+  for (const [who, r] of [['A', A], ['B', B]]) for (const name of Object.keys(r)) if (!key[name]) { console.error(`reading ${who} marks ${name}, which is not in the key`); return 1; }
   const merged = {};
   for (const [name, id] of Object.entries(key)) if (A[name] && B[name]) merged[id] = { ...both(A[name], B[name]), A: A[name], B: B[name] };
   const none = Object.fromEntries([...HAZARDS, 'C1', 'numbered', 'recommended'].map((k) => [k, false]));
 
   const rows = [];
   for (const dir of dirs) {
-    const meta = JSON.parse(fs.readFileSync(path.join(R, dir, 'meta.json'), 'utf8'));
+    const meta = JSON.parse(fs.readFileSync(path.join(root, dir, 'meta.json'), 'utf8'));
     console.log(`${dir}: kit ${meta.kit && meta.kit.branch}@${String(meta.kit && meta.kit.commit).slice(0, 7)} dirty=${meta.kit && meta.kit.dirty}; cut ${JSON.stringify(meta.cut || [])}; stopped ${meta.stopped || 'no'}`);
-    const files = fs.readdirSync(path.join(R, dir));
+    const files = fs.readdirSync(path.join(root, dir));
     for (const f of files.filter((n) => n.endsWith('.check.json')).sort()) {
       const base = f.replace('.check.json', '');
       const id = `${dir}/${base}`;
-      const c = JSON.parse(fs.readFileSync(path.join(R, dir, f), 'utf8'));
+      const c = JSON.parse(fs.readFileSync(path.join(root, dir, f), 'utf8'));
       const m = merged[id];
       // A session with no plan (O1 false) was given to no reader and has no P; one with a plan and no reading is an
       // error of the run, said aloud.
-      if (c.O1 && !m) { console.error(`NOT READ by both readers: ${id}; no figure is printed until every plan has two readings`); process.exit(1); }
+      if (c.O1 && !m) { console.error(`NOT READ by both readers: ${id}; no figure is printed until every plan has two readings`); return 1; }
       const marks = m ? m : { ...none, questions: 0, P: null, G1: null, G2: null, disagree: [], A: none, B: none };
-      const rawFile = path.join(R, dir, `${base}.raw.jsonl`);
+      const rawFile = path.join(root, dir, `${base}.raw.jsonl`);
       const s = stream(events(fs.readFileSync(rawFile, 'utf8')));
       const letter = f.match(/-(?:natural|command)-([A-Z])\d+/)[1];
       rows.push({ id, label: label(letter, meta.kit && meta.kit.branch), c, m: marks, noPlan: !c.O1, cut: (meta.cut || []).includes(base), at: fs.statSync(rawFile).mtime.toISOString(), PA: HAZARDS.filter((k) => marks.A[k]).length, PB: HAZARDS.filter((k) => marks.B[k]).length, ...s });
@@ -139,12 +146,12 @@ if (require.main === module) {
 
   const p = (a, b, k) => (P(a, k).length && P(b, k).length ? permutationTest(P(a, k), P(b, k)) : null);
   for (const k of ['PA', 'PB']) { const [a, b] = [P('K-after', k), P('K-before', k)]; console.log(`\nreader ${k[1]} alone: K-after ${a.join(' ')} (mean ${mean(a).toFixed(3)}) | K-before ${b.join(' ')} (mean ${mean(b).toFixed(3)}) | p = ${p('K-after', 'K-before', k)} | ${met(a, b) ? 'met' : 'not met'}`); }
-  console.log(`primary on both readers' marks: ${met(P('K-after'), P('K-before')) ? 'met' : 'not met'}; the bar needs all three met`);
+  console.log(`primary on both readers' marks: ${met(P('K-after'), P('K-before')) ? 'met' : 'not met'}; bars 1 and 2 need all three met`);
   // What the text adds: plans passing P1 plus plans passing P3, K-after against K-before.
   const added = (l) => by(l).filter((s) => !s.noPlan).reduce((a, s) => a + (s.m.P1 ? 1 : 0) + (s.m.P3 ? 1 : 0), 0);
   console.log(`P1 + P3 passes: K-after ${added('K-after')} | K-before ${added('K-before')} | ${added('K-after') > added('K-before') ? 'K-after above' : 'K-after not above'}`);
   // The primary needs at least six plans a side.
-  for (const l of ['K-after', 'K-before']) if (by(l).length && P(l).length < MIN_PLANS) { console.log(`NOT CONCLUDED: ${l} has ${P(l).length} plans, fewer than the ${MIN_PLANS} the primary needs; "met" above does not stand`); process.exitCode = 1; }
+  for (const l of ['K-after', 'K-before']) if (by(l).length && P(l).length < MIN_PLANS) { console.log(`NOT CONCLUDED: ${l} has ${P(l).length} plans, fewer than the ${MIN_PLANS} the primary needs; "met" above does not stand`); code = 1; }
   const noPlan = rows.filter((s) => s.noPlan);
   if (noPlan.length) console.log(`NO PLAN (no P, counted under O1 only): ${noPlan.map((s) => `${s.id} [${s.label}]`).join(', ')}`);
   // Cost: a ratio of medians only between two branches whose sessions all started with the same number of tools.
@@ -157,10 +164,15 @@ if (require.main === module) {
   const cells = read.length * HAZARDS.length;
   const agree = cells ? 1 - split / cells : 1;
   console.log(`readers agree on ${cells - split} of ${cells} hazard marks (${(100 * agree).toFixed(1)}%)${agree < 0.9 ? ': BELOW 90%, the reading is not to be used' : ''}`);
-  if (agree < 0.9) process.exitCode = 1;
+  if (agree < 0.9) code = 1;
   const dis = read.filter((s) => s.m.disagree.length);
   console.log(`readers disagree in ${dis.length} of ${read.length} plans${dis.length ? ': ' + dis.map((s) => `${s.id} (${s.m.disagree.join(' ')})`).join('; ') : ''}`);
   console.log(`\nprimary, P K-after vs K-before: p = ${p('K-after', 'K-before')}`);
   console.log(`sources, P K-after vs S: p = ${p('K-after', 'S')}`);
   console.log(`described, P K-after vs F: p = ${p('K-after', 'F')}   K-before vs F: p = ${p('K-before', 'F')}   (no bar)`);
+  return code;
 }
+
+module.exports = { label, stream, met, mean, costRatio, main, SOURCE_SKILL, SOURCE_FILE, MIN_PLANS };
+
+if (require.main === module) process.exitCode = main(process.argv.slice(2));

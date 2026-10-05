@@ -36,6 +36,8 @@ const BEFORE = 'p5b-bk-plan-before';
 const AFTER = 'p5b-bk-plan';
 // The frozen commit (K-after): nothing a session loads may differ from it (FROZEN_PATHS below).
 const FROZEN = '789662576f52db8d14ed6f337301f7c35852689b';
+// K-before is the commit just before it; its branch is local only, so the driver holds it to this commit.
+const BEFORE_COMMIT = '531ad2c3fefcf4f516da8ad55d22704fe1622d0d';
 // The whole kit directories, not only scripts/detect-stack.cjs.
 const KIT_PATHS = ['skills', 'hooks', 'agents', 'scripts', '.claude-plugin'];
 // K-before and K-after differ in these seven files and, of what a session can reach, in nothing else.
@@ -44,7 +46,7 @@ const SEVEN = ['NOTICE', 'skills/bk-plan/SKILL.md', 'skills/bk-plan/references/v
 // Of the task, everything registered as frozen: the fixture, its check, the task file, the rubric, the gate's plans
 // and their expected marks. The evidence beside them (keys, readings, calibration-*) is a record and may grow.
 const GATE_FILES = ['expected.json', ...Array.from({ length: 14 }, (_, i) => `g${String(i + 1).padStart(2, '0')}.md`)];
-const SAME_PATHS = ['hooks', 'agents', 'scripts', 'bin', ...['app', 'build.cjs', 'task.json', 'rubric.md', ...GATE_FILES.map((f) => 'gate/' + f)].map((p) => 'evals/bench/plan-01/' + p)];
+const SAME_PATHS = ['hooks', 'agents', 'scripts', '.claude-plugin', 'bin', ...['app', 'build.cjs', 'task.json', 'rubric.md', ...GATE_FILES.map((f) => 'gate/' + f)].map((p) => 'evals/bench/plan-01/' + p)];
 const CALLS = { before: [BEFORE, 'K'], after: [AFTER, 'K'], S: [AFTER, 'S'], F: [AFTER, 'F'] };
 // The registration of the run is PROPOSED in the spec until the owner approves its bars. Until this is set to true
 // in a commit that names the owner's approval, only --dry runs: no session can start by accident.
@@ -57,18 +59,19 @@ function order(i, noS = false) {
   return [...base.slice(k), ...base.slice(0, k)];
 }
 
-// The command line: flags and at most two round numbers; null when it is not one this driver takes.
+// The command line: flags and at most two round numbers, none above the four rounds of the run; null when it is not
+// one this driver takes.
 function parse(argv) {
   const flags = argv.filter((a) => a.startsWith('--'));
   const nums = argv.filter((a) => !a.startsWith('--'));
   if (flags.some((f) => f !== '--dry' && f !== '--no-s') || nums.length > 2 || nums.some((n) => !/^[1-9]\d*$/.test(n))) return null;
   const from = Number(nums[0] || 1);
   const last = Number(nums[1] || 4);
-  if (from > last) return null;
+  if (from > last || last > 4) return null;
   return { dry: flags.includes('--dry'), noS: flags.includes('--no-s'), from, last };
 }
 
-module.exports = { order, parse, CALLS, SEVEN, SAME_PATHS, KIT_PATHS, FROZEN, BEFORE, AFTER, RUNS, BARS_APPROVED };
+module.exports = { order, parse, CALLS, SEVEN, SAME_PATHS, KIT_PATHS, FROZEN, BEFORE_COMMIT, BEFORE, AFTER, RUNS, BARS_APPROVED };
 
 function main(opts) {
   const { dry: DRY, noS: NO_S, from, last: rounds } = opts;
@@ -99,6 +102,7 @@ function main(opts) {
   const EXPECT = { [BEFORE]: head(BEFORE), [AFTER]: head(AFTER) };
   for (const b of [BEFORE, AFTER]) if (!/^[0-9a-f]{40}$/.test(EXPECT[b])) die(`branch ${b} does not exist`);
   if (head(FROZEN) !== FROZEN) die(`the frozen commit ${FROZEN} is not in this repository`);
+  if (EXPECT[BEFORE] !== BEFORE_COMMIT) die(`${BEFORE} is at ${EXPECT[BEFORE]}, not at the registered K-before ${BEFORE_COMMIT}`);
   const seven = diffNames(BEFORE, AFTER, TEXT_PATHS);
   if (seven.join('\n') !== [...SEVEN].sort().join('\n')) die(`${BEFORE} and ${AFTER} differ under ${TEXT_PATHS.join(', ')} in [${seven.join(', ')}], not in the seven registered files`);
   // Not skills/ alone: K-after is the frozen commit in everything a session loads, whatever was committed after it.

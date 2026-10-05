@@ -26,7 +26,8 @@ test('plan-run order: four branches a round, each in every position once over fo
 test('plan-run command line: flags and at most two round numbers, in order', () => {
   assert.deepEqual(run.parse([]), { dry: false, noS: false, from: 1, last: 4 });
   assert.deepEqual(run.parse(['--dry', '--no-s', '3', '4']), { dry: true, noS: true, from: 3, last: 4 });
-  for (const bad of [['--help'], ['0'], ['1', '2', '3'], ['4', '2'], ['x'], ['--dry', '-1']]) assert.equal(run.parse(bad), null, bad.join(' '));
+  for (const bad of [['--help'], ['0'], ['1', '2', '3'], ['4', '2'], ['x'], ['--dry', '-1'], ['1', '5'], ['5']]) assert.equal(run.parse(bad), null, bad.join(' '));
+  assert.deepEqual(run.parse(['4', '4']), { dry: false, noS: false, from: 4, last: 4 });
 });
 
 const DRIVER = path.join(__dirname, '..', 'evals', 'analysis', 'plan-run.cjs');
@@ -53,6 +54,9 @@ test('plan-run pins paths that exist at the frozen commit, and the seven files a
   // The frozen commit changed exactly the seven files, against its parent.
   const changed = git('diff', '--name-only', `${run.FROZEN}^`, run.FROZEN).stdout.split('\n').filter(Boolean).sort();
   assert.deepEqual(changed, [...run.SEVEN].sort());
+  // K-before is that parent, and the plugin manifest is among the paths that must not differ between the two.
+  assert.equal(git('rev-parse', `${run.FROZEN}^`).stdout.trim(), run.BEFORE_COMMIT);
+  assert.ok(run.SAME_PATHS.includes('.claude-plugin'));
   // The evidence beside the gate plans (keys, readings) may grow, so the gate directory as a whole is not pinned;
   // every gate plan and the expected marks are.
   assert.equal(run.SAME_PATHS.includes('evals/bench/plan-01/gate'), false);
