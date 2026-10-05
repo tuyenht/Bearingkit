@@ -42,7 +42,7 @@ Run by the author, fixed inline, no second round:
 2. Placeholder scan for the list above.
 3. Consistency: names, signatures and types used in later tasks match the earlier task that defined them (`clearLayers()` in task 3 and `clearFullLayers()` in task 7 is a bug).
 
-The `bk-plan` body adds the three to eight validation questions and the evidence line per step.
+The `bk-plan` body adds the one round of at most four validation questions and the evidence line per step.
 
 ## Execution handoff
 
