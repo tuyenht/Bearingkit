@@ -1,0 +1,3 @@
+{"plan":"p01.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":10,"numbered":true,"recommended":true,"note":"Count of 10 treats every Decision as a question; some read as settled calls."}
+{"plan":"p02.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":11,"numbered":true,"recommended":true,"note":"P1 false only because the unlabelled 'Data model changes' section counts as a storage-only unit. Q11 is a note, but counted."}
+{"plan":"p03.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":6,"numbered":true,"recommended":true,"note":"Step 2 builds store methods only, so P1 fails; tests sit in a unit at the end."}

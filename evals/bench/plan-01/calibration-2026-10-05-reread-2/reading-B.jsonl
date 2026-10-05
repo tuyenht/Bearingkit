@@ -1,0 +1,3 @@
+{"plan":"p01.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":10,"numbered":true,"recommended":true,"note":"Decision 2 asks two things in one sentence; counted once. Sections taken as units, Sequencing as order only."}
+{"plan":"p02.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":11,"numbered":true,"recommended":true,"note":"Unlabelled 'Data model changes' read as a storage-only unit; item 11 is a note, counted as a question."}
+{"plan":"p03.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":6,"numbered":true,"recommended":true,"note":"C1: 'run node --test after every step' is general, tests only exist from step 5; marked false."}

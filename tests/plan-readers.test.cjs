@@ -181,3 +181,18 @@ test('the committed gate reading passes the registered rule, with no mark and no
   const flipped = { ...A, [n1]: { ...A[n1], P3: !A[n1].P3 }, [n2]: { ...A[n2], P3: !A[n2].P3 } };
   assert.equal(readers.gate(key, flipped, B, expected).A.pass, false);
 });
+
+test('the second committed gate reading (fourteen plans, the third rubric) passes the rule with nothing wrong', () => {
+  const GATE = path.join(__dirname, '..', 'evals', 'bench', 'plan-01', 'gate');
+  const key = JSON.parse(fs.readFileSync(path.join(GATE, 'key-2026-10-05-2.json'), 'utf8'));
+  const expected = JSON.parse(fs.readFileSync(path.join(GATE, 'expected.json'), 'utf8'));
+  const A = readers.reading(path.join(GATE, 'reading-2-A-sonnet.jsonl'));
+  const B = readers.reading(path.join(GATE, 'reading-2-B-opus.jsonl'));
+  const g = readers.gate(key, A, B, expected);
+  assert.deepEqual([g.A.pass, g.B.pass, g.A.counts, g.B.counts], [true, true, [], []]);
+  for (const k of readers.MARKS) assert.deepEqual([g.A.wrong[k], g.B.wrong[k]], [[], []], k);
+  assert.deepEqual(Object.values(key).sort(), Object.keys(expected).sort());
+  // The plan added with the third freeze is read as expected: it fails the slices and nothing else.
+  const g14 = Object.keys(key).find((n) => key[n] === 'g14.md');
+  assert.deepEqual(readers.HAZARDS.filter((k) => !A[g14][k] || !B[g14][k]), ['P1']);
+});
