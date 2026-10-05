@@ -50,7 +50,7 @@ const SAME_PATHS = ['hooks', 'agents', 'scripts', '.claude-plugin', 'bin', ...['
 const CALLS = { before: [BEFORE, 'K'], after: [AFTER, 'K'], S: [AFTER, 'S'], F: [AFTER, 'F'] };
 // The registration of the run is PROPOSED in the spec until the owner approves its bars. Until this is set to true
 // in a commit that names the owner's approval, only --dry runs: no session can start by accident.
-const BARS_APPROVED = false;
+const BARS_APPROVED = true;
 
 // Round i starts one place further along, so no branch always runs first.
 function order(i, noS = false) {
