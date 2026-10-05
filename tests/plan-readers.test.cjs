@@ -115,3 +115,52 @@ test('plans and merge: the check file gives the plan, O1 and O2; the meta gives 
     fs.rmSync(root, { recursive: true, force: true });
   }
 });
+
+test('gate: one plan wrong per item passes, two on the same item fail, C1 is not gated, a plan not read fails', () => {
+  const key = { 'p01.md': 'g01.md', 'p02.md': 'g02.md', 'p03.md': 'g03.md' };
+  const expected = { 'g01.md': mark({ P1: true, C1: true, questions: 2 }), 'g02.md': mark({ P1: true }), 'g03.md': mark() };
+  const right = { 'p01.md': expected['g01.md'], 'p02.md': expected['g02.md'], 'p03.md': expected['g03.md'] };
+  const g0 = readers.gate(key, right, right, expected);
+  assert.deepEqual([g0.A.pass, g0.B.pass, g0.A.counts], [true, true, []]);
+  const oneOff = { ...right, 'p01.md': mark({ P1: false, C1: true, questions: 2 }) };
+  assert.equal(readers.gate(key, oneOff, right, expected).A.pass, true);
+  const twoOff = { ...oneOff, 'p02.md': mark({ P1: false }) };
+  const g = readers.gate(key, twoOff, right, expected);
+  assert.deepEqual([g.A.pass, g.A.wrong.P1, g.B.pass], [false, ['g01.md', 'g02.md'], true]);
+  // A form item is gated like a hazard.
+  const form = { 'p01.md': mark({ P1: true, C1: true, questions: 2, numbered: true }), 'p02.md': mark({ P1: true, numbered: true }), 'p03.md': mark() };
+  assert.deepEqual([readers.gate(key, form, right, expected).A.pass, readers.gate(key, form, right, expected).A.wrong.numbered], [false, ['g01.md', 'g02.md']]);
+  // C1 wrong on every plan is reported and does not fail the gate.
+  const c1 = { 'p01.md': mark({ P1: true, questions: 2 }), 'p02.md': mark({ P1: true, C1: true }), 'p03.md': mark({ C1: true }) };
+  const gc = readers.gate(key, c1, right, expected);
+  assert.deepEqual([gc.A.pass, gc.A.wrong.C1], [true, ['g01.md', 'g02.md', 'g03.md']]);
+  // The count of questions: two plans off pass, three fail.
+  const counts = (n) => Object.fromEntries(Object.entries(right).map(([name, m], i) => [name, i < n ? { ...m, questions: 9 } : m]));
+  assert.deepEqual([readers.gate(key, counts(2), right, expected).A.pass, readers.gate(key, counts(3), right, expected).A.pass], [true, false]);
+  const missing = { 'p01.md': right['p01.md'] };
+  assert.deepEqual([readers.gate(key, missing, right, expected).A.pass, readers.gate(key, missing, right, expected).A.missing], [false, ['p02.md', 'p03.md']]);
+});
+
+test('the gate plans: each has its expected marks, the reference passes all, and each one-hazard variant drops only its own', () => {
+  const GATE = path.join(__dirname, '..', 'evals', 'bench', 'plan-01', 'gate');
+  const expected = JSON.parse(fs.readFileSync(path.join(GATE, 'expected.json'), 'utf8'));
+  const items = readers.gatePlans();
+  assert.deepEqual(items.map((i) => i.id), Object.keys(expected));
+  assert.ok(items.length >= 10);
+  for (const [name, e] of Object.entries(expected)) {
+    for (const k of readers.MARKS) assert.equal(typeof e[k], 'boolean', `${name} ${k}`);
+    assert.ok(Number.isInteger(e.questions) && e.questions >= 0, name);
+    assert.equal('plan' in e || 'note' in e, false, name);
+  }
+  const P = (e) => readers.HAZARDS.filter((k) => e[k]).join(' ');
+  assert.equal(P(expected['g01.md']), 'P1 P2 P3 P4 P5');
+  // g02 to g06 each drop one hazard, in order; every hazard is failed by at least two plans and passed by at least two.
+  readers.HAZARDS.forEach((k, i) => assert.equal(P(expected[`g0${i + 2}.md`]), readers.HAZARDS.filter((h) => h !== k).join(' '), k));
+  for (const k of [...readers.HAZARDS, ...readers.FORM]) {
+    const marks = Object.values(expected).map((e) => e[k]);
+    assert.ok(marks.filter(Boolean).length >= 2 && marks.filter((m) => !m).length >= 2, k);
+  }
+  // No gate plan is a copy of another, and none carries the word that would name it to a reader.
+  assert.equal(new Set(items.map((i) => i.text)).size, items.length);
+  for (const i of items) assert.doesNotMatch(i.text, /gate|rubric|hazard|near miss|\bP[1-5]\b/i, i.id);
+});

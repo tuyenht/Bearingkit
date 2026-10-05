@@ -110,6 +110,20 @@ test('plan-01: the fixture is what the registration says', { timeout: 300000 }, 
     git('add', '-A');
     git('commit', '-q', '-m', 'built');
     assert.deepEqual(((c) => [c.O1, c.O2, c.outside])(build.check(dst)), [true, false, 1]);
+    // What counts as changed, without running the suite: a staged move of a source file into docs/ names the path
+    // it left as well as the one it reached; a name outside ASCII or with a space is listed as it is, so one under
+    // docs/ is not taken for a file outside; a committed move is seen the same way.
+    build.reset({ dst });
+    assert.deepEqual(build.changed(dst), []);
+    git('mv', 'src/notify.js', 'docs/notify.js');
+    write('docs/plans/kế hoạch 1.md', PLAN);
+    assert.deepEqual(build.changed(dst).sort(), ['docs/notify.js', 'docs/plans/kế hoạch 1.md', 'src/notify.js']);
+    git('add', '-A');
+    git('commit', '-q', '-m', 'moved');
+    assert.deepEqual(build.changed(dst).sort(), ['docs/notify.js', 'docs/plans/kế hoạch 1.md', 'src/notify.js']);
+    // A listing git cannot give is an error, not an empty list.
+    const bareDir = fs.mkdtempSync(path.join(os.tmpdir(), 'plan01-norepo-'));
+    try { assert.throws(() => build.changed(bareDir), /git status/); } finally { fs.rmSync(bareDir, { recursive: true, force: true }); }
     // A reset brings the fixture back.
     build.reset({ dst });
     assert.equal(fs.existsSync(path.join(dst, 'docs/plans')), false);

@@ -1,6 +1,12 @@
 // Readers of plan-01 (docs/specs/2026-10-03-bk-plan-design.md, "Calibration"). The readers are sub-agents; this
 // script only prepares what they read and compares what they return. spec-readers.cjs is bound to spec-01 and stays
 // as it is; this file is its counterpart for plans.
+//   blind-gate  node evals/analysis/plan-readers.cjs blind-gate <out dir> <key file> <seed>
+//           copies the gate plans (evals/bench/plan-01/gate/g*.md) and the rubric to <out dir>, the plans under
+//           neutral names in an order shuffled by the seed, and writes the key (neutral name -> gate file).
+//   gate    node evals/analysis/plan-readers.cjs gate <key file> <reading A .jsonl> <reading B .jsonl>
+//           compares two readings of the gate plans with expected.json and with each other, and says PASS or FAIL by
+//           the registered rule. There is no rule-based scorer for plan-01 to print beside them.
 //   blind   node evals/analysis/plan-readers.cjs blind <out dir> <key file> <seed> <result dir name> [...]
 //           copies each session's plan (the `plan` field of its check file, where O1 holds) and the rubric to
 //           <out dir>, the plans under neutral names (p01.md, …) in an order shuffled by the seed, and writes the key
@@ -20,6 +26,11 @@ const HAZARDS = ['P1', 'P2', 'P3', 'P4', 'P5'];
 const REPORTED = ['C1'];
 const FORM = ['numbered', 'recommended'];
 const MARKS = [...HAZARDS, ...REPORTED, ...FORM];
+const GATE = path.join(TASK, 'gate');
+// The gate's rule, per reader (registered in the spec, "Step 3", before any gate reading): at most one plan marked
+// wrong on any one hazard or form item across the gate plans, and the count of questions exact on all but two plans.
+const GATED = [...HAZARDS, ...FORM];
+const GATE_RULE = { perItem: 1, countMisses: 2 };
 
 // A reading: one JSON object per line, keyed by the plan's file name. A line that is not JSON, lacks a key or marks a
 // plan a second time is refused, not skipped.
@@ -118,17 +129,61 @@ function merge(key, A, B, root = R) {
   return { rows, agreement: { same, cells, rate: cells ? same / cells : null } };
 }
 
-module.exports = { reading, both, shuffle, plans, writeBlind, merge, HAZARDS, REPORTED, FORM, MARKS };
+// The gate plans (evals/bench/plan-01/gate/g*.md), as items for writeBlind.
+function gatePlans(dir = GATE) {
+  return fs.readdirSync(dir).filter((n) => /^g\d+\.md$/.test(n)).sort().map((n) => ({ id: n, text: fs.readFileSync(path.join(dir, n), 'utf8') }));
+}
+
+// The gate: each reading against the expected marks, by the rule above. `key` maps the neutral names to gate files.
+// C1 is reported in the expected marks and is not part of the rule.
+function gate(key, A, B, expected, rule = GATE_RULE) {
+  const names = Object.keys(key);
+  const report = (r) => {
+    const missing = names.filter((n) => !r[n]);
+    if (missing.length) return { pass: false, missing, wrong: {}, counts: [] };
+    const wrong = {};
+    for (const k of MARKS) wrong[k] = names.filter((n) => r[n][k] !== expected[key[n]][k]).map((n) => key[n]);
+    const counts = names.filter((n) => r[n].questions !== expected[key[n]].questions).map((n) => key[n]);
+    return { pass: GATED.every((k) => wrong[k].length <= rule.perItem) && counts.length <= rule.countMisses, missing, wrong, counts };
+  };
+  return { A: report(A), B: report(B) };
+}
+
+module.exports = { reading, both, shuffle, plans, writeBlind, merge, gatePlans, gate, GATE_RULE, GATED, HAZARDS, REPORTED, FORM, MARKS };
 
 if (require.main === module) {
   const [cmd, ...args] = process.argv.slice(2);
-  const usage = () => { console.error('usage: plan-readers.cjs blind <out dir> <key file> <seed> <result dir name> [...] | merge <key file> <A> <B>'); process.exit(2); };
+  const usage = () => { console.error('usage: plan-readers.cjs blind-gate <out dir> <key file> <seed> | gate <key file> <A> <B> | blind <out dir> <key file> <seed> <result dir name> [...] | merge <key file> <A> <B>'); process.exit(2); };
   if (cmd === 'blind') {
     const [outDir, keyFile, seed, ...dirs] = args;
     if (!outDir || !keyFile || !seed || !dirs.length) usage();
     const items = plans(dirs);
     writeBlind(outDir, keyFile, seed, items);
     console.log(`${items.length} plans and the rubric written to ${outDir}; key at ${keyFile}`);
+  } else if (cmd === 'blind-gate') {
+    const [outDir, keyFile, seed] = args;
+    if (!outDir || !keyFile || !seed) usage();
+    const items = gatePlans();
+    writeBlind(outDir, keyFile, seed, items);
+    console.log(`${items.length} gate plans and the rubric written to ${outDir}; key at ${keyFile}`);
+  } else if (cmd === 'gate') {
+    const [keyFile, a, b] = args;
+    if (!keyFile || !a || !b) usage();
+    const key = JSON.parse(fs.readFileSync(keyFile, 'utf8'));
+    const expected = JSON.parse(fs.readFileSync(path.join(GATE, 'expected.json'), 'utf8'));
+    const [A, B] = [a, b].map(reading);
+    const g = gate(key, A, B, expected);
+    const names = Object.keys(key);
+    for (const [who, r, mine] of [['A', g.A, A], ['B', g.B, B]]) {
+      const n = (ks) => ks.reduce((s, k) => s + (r.wrong[k] || []).length, 0);
+      console.log(`reader ${who}: ${r.pass ? 'PASS' : 'FAIL'}; hazard marks ${names.length * HAZARDS.length - n(HAZARDS)} of ${names.length * HAZARDS.length}, form marks ${names.length * FORM.length - n(FORM)} of ${names.length * FORM.length}, question counts ${names.length - r.counts.length} of ${names.length}, C1 (not gated) ${names.length - n(REPORTED)} of ${names.length}${r.missing.length ? `; NOT READ: ${r.missing.join(' ')}` : ''}`);
+      for (const k of MARKS) if ((r.wrong[k] || []).length) console.log(`  ${k} wrong on ${r.wrong[k].join(' ')}`);
+      if (r.counts.length) console.log(`  question count differs on ${r.counts.map((f) => `${f} (${mine[names.find((x) => key[x] === f)].questions}, expected ${expected[f].questions})`).join(' ')}`);
+    }
+    const dis = names.filter((nm) => A[nm] && B[nm] && both(A[nm], B[nm]).disagree.length).map((nm) => `${key[nm]} (${both(A[nm], B[nm]).disagree.join(' ')})`);
+    console.log(`the readers disagree on ${dis.length ? dis.join('; ') : 'nothing'}`);
+    console.log(`gate: ${g.A.pass && g.B.pass ? 'PASS' : 'FAIL'}`);
+    if (!(g.A.pass && g.B.pass)) process.exitCode = 1;
   } else if (cmd === 'merge') {
     const [keyFile, a, b] = args;
     if (!keyFile || !a || !b) usage();

@@ -45,10 +45,19 @@ function reset({ dst = DST } = {}) {
   return { dst, head: git('rev-parse', '--short', 'HEAD') };
 }
 
-// What the session left, from git: [status, path] relative to the fixture root.
-function status(dst) {
-  const r = spawnSync('git', ['status', '--porcelain', '-uall'], { cwd: dst, encoding: 'utf8' });
-  return r.stdout.split('\n').filter(Boolean).map((l) => [l.slice(0, 2), l.slice(3).replace(/^"|"$/g, '').split(' -> ').pop()]);
+// The entries of a git listing asked with -z: separated by NUL, names as they are (no quoting, any character).
+function listing(dst, args) {
+  const r = spawnSync('git', args, { cwd: dst, encoding: 'utf8' });
+  if (r.status !== 0) throw new Error(`git ${args.join(' ')}: ${r.stderr || r.error}`);
+  return r.stdout.split('\0').filter(Boolean);
+}
+
+// Every path the session left changed, relative to the fixture root: uncommitted (a move counts as the path it left
+// and the path it reached), and anything committed on top of the fixture's own commit.
+function changed(dst) {
+  const uncommitted = listing(dst, ['status', '--porcelain', '-uall', '--no-renames', '-z']).map((l) => l.slice(3));
+  const committed = listing(dst, ['diff', '--name-only', '--no-renames', '-z', TAG, 'HEAD']);
+  return [...new Set([...uncommitted, ...committed])];
 }
 
 // Every file under docs/plans/, as paths relative to the fixture root with forward slashes, in path order.
@@ -95,9 +104,7 @@ function check(dst = DST, raw = null, opts = {}) {
   const out = { O1: p.files.length > 0 && p.chars >= MIN_CHARS, planFiles: p.files, planChars: p.chars };
   // The plan itself, kept with the checks: the fixture is reset before the next session, and the readers need it.
   out.plan = p.plan;
-  // Uncommitted changes, and anything a session committed on top of the fixture's own commit.
-  const committed = spawnSync('git', ['diff', '--name-only', '--no-renames', TAG, 'HEAD'], { cwd: dst, encoding: 'utf8' }).stdout.split('\n').filter(Boolean);
-  const outside = [...new Set([...status(dst).map(([, f]) => f), ...committed])].filter((f) => !/^docs\//.test(f));
+  const outside = changed(dst).filter((f) => !/^docs\//.test(f));
   // Without the parent's test context: under `node --test` a nested run would otherwise report itself to the parent
   // and exit 0 whatever the fixture's tests do.
   const env = { ...process.env };
@@ -114,7 +121,7 @@ function check(dst = DST, raw = null, opts = {}) {
   return out;
 }
 
-module.exports = { build, reset, check, planFiles, planText, reach, DST, TAG, PLANS, MIN_CHARS, REFERENCES };
+module.exports = { build, reset, check, changed, planFiles, planText, reach, DST, TAG, PLANS, MIN_CHARS, REFERENCES };
 
 if (require.main === module) {
   const args = process.argv.slice(2);
