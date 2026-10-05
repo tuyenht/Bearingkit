@@ -1,0 +1,13 @@
+{"plan":"p01.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Phase 3 is notification plumbing nothing calls yet: a layer."}
+{"plan":"p02.md","P1":true,"P2":false,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Phase 5 writes all tests at the end; P1 (a) judged on behaviour without the test."}
+{"plan":"p03.md","P1":false,"P2":false,"P3":true,"P4":false,"P5":true,"C1":false,"questions":4,"numbered":true,"recommended":true,"note":"Units are Steps 1-6, not the Build order; step 1 is data model, step 6 is tests."}
+{"plan":"p04.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Export renamed to owner_id; finance never named."}
+{"plan":"p05.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Old key removal set by end of quarter, no wait on finance."}
+{"plan":"p06.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":""}
+{"plan":"p07.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":0,"numbered":false,"recommended":false,"note":"Prose with no units; says no open questions."}
+{"plan":"p08.md","P1":true,"P2":true,"P3":true,"P4":false,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Only 'phases are done in the order given'; no blockers per phase."}
+{"plan":"p09.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":2,"numbered":true,"recommended":true,"note":"Failing-test and make-pass tasks paired as units; task 3 drop waits on finance, last rename step."}
+{"plan":"p10.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":false,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Org check described and tested, no independent review asked."}
+{"plan":"p11.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Phase 2 titled end to end but builds only the store; portal function is phase 3."}
+{"plan":"p12.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":6,"numbered":false,"recommended":false,"note":"Six bulleted questions, unnumbered; the last two have no recommended answer."}
+{"plan":"p13.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Export renamed now; finance only given a heads-up, no wait."}

@@ -164,3 +164,19 @@ test('the gate plans: each has its expected marks, the reference passes all, and
   assert.equal(new Set(items.map((i) => i.text)).size, items.length);
   for (const i of items) assert.doesNotMatch(i.text, /gate|rubric|hazard|near miss|\bP[1-5]\b/i, i.id);
 });
+
+test('the committed gate reading passes the registered rule, with no mark and no count wrong', () => {
+  const GATE = path.join(__dirname, '..', 'evals', 'bench', 'plan-01', 'gate');
+  const key = JSON.parse(fs.readFileSync(path.join(GATE, 'key-2026-10-05.json'), 'utf8'));
+  const expected = JSON.parse(fs.readFileSync(path.join(GATE, 'expected.json'), 'utf8'));
+  const A = readers.reading(path.join(GATE, 'reading-A-sonnet.jsonl'));
+  const B = readers.reading(path.join(GATE, 'reading-B-opus.jsonl'));
+  const g = readers.gate(key, A, B, expected);
+  assert.deepEqual([g.A.pass, g.B.pass, g.A.counts, g.B.counts], [true, true, [], []]);
+  for (const k of readers.MARKS) assert.deepEqual([g.A.wrong[k], g.B.wrong[k]], [[], []], k);
+  // Every gate plan is in the key, once; and the rule can fail on these very readings: two plans flipped on one item.
+  assert.deepEqual(Object.values(key).sort(), Object.keys(expected).sort());
+  const [n1, n2] = Object.keys(key);
+  const flipped = { ...A, [n1]: { ...A[n1], P3: !A[n1].P3 }, [n2]: { ...A[n2], P3: !A[n2].P3 } };
+  assert.equal(readers.gate(key, flipped, B, expected).A.pass, false);
+});
