@@ -317,7 +317,7 @@ Run after the approval commit `d22b6aa`, from `p5b-bk-plan` with a clean tree, b
 
 **Review of this commit** (a fresh Sonnet reviewer, read-only, told not to run anything): the driver's diff is the one line of the flag, false before it; no test can start a run with the flag true (the only bare spawn of the driver is inside `if (!run.BARS_APPROVED)`); the owner's sentence and point 4 are verbatim; the reading claims no more than point 4; every number and line reference of "Step 6, registered" checked, nothing added, loosened or tightened against the proposal; bars 1 to 5 untouched; the session's three earlier commits touch only what their subjects say and nothing frozen. One must-fix, corrected as it worded it: three sentences of "Step 5" still said in the present tense that the run was not allowed. Its remark on the reading, kept here: taking the sentence as the word to run is the one real interpretive step, stated and open to the owner's overrule.
 
-**The commit that sets the flag**: written here by the commit after it.
+**The commit that sets the flag**: `1716c673fc004d560d1054acc079fe9ac75e06a7` on `p5b-bk-plan`. It is the state of the instruments the run uses: `plan-run.cjs`, `plan-tally.cjs` and `plan-readers.cjs` do not change after it. (This line is written by the commit after it, which changes this file only; the driver pins the kit's text to `7896625` and checks the tree before each call, so a commit that touches only this file does not change what a session loads.)
 
 ## Step 6, registered (2026-10-06): the regression guard, before any plan of the run is read; not yet allowed to run
 
