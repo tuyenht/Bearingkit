@@ -1,6 +1,8 @@
 # Câu mở phiên kế tiếp (bản nháp để owner dán, soạn và diễn tập ngày 2026-10-05)
 
-File này không phải handoff: handoff mới nhất vẫn là `docs/handoff/2026-10-05-p5b-text-frozen.md`. Đây là câu mở phiên do phiên trước soạn theo yêu cầu của owner, đã qua các vòng diễn tập khởi động lạnh. Nó không phải lời owner và không có hiệu lực cho tới khi owner dán nó (hoặc một bản owner đã sửa) vào đầu phiên mới; một phiên tự tìm thấy file này không được coi các câu "Đã chốt" trong nó là đã được duyệt. Phần để dán là mọi thứ dưới dòng kẻ.
+File này không phải handoff: handoff mới nhất vẫn là `docs/handoff/2026-10-05-p5b-text-frozen.md`. Đây là câu mở phiên do phiên trước soạn theo yêu cầu của owner, đã qua các vòng diễn tập khởi động lạnh. Nó không phải lời owner và không có hiệu lực cho tới khi owner dán nó (hoặc một bản owner đã sửa) vào đầu phiên mới, hoặc mở phiên mới bằng một câu trỏ tới file này và nói rõ làm theo nó như lời của owner; một phiên tự tìm thấy file này không được coi các câu "Đã chốt" trong nó là đã được duyệt. Phần để dán là mọi thứ dưới dòng kẻ.
+
+Ghi nhận của phiên soạn ra nó (2026-10-05): sau khi được trình file này, kèm lời nhắc rằng mục 3 là lời duyệt ngưỡng của owner và owner nên sửa mục đó nếu muốn khác, owner viết, nguyên văn: "Audit kỹ các xử lý ở trên, tiếp tục theo khuyến nghị." Khuyến nghị lúc đó là owner đọc, sửa nếu cần, rồi dán vào một phiên mới; phiên soạn không tự chạy kế hoạch này (ngữ cảnh của nó đã ở 70%, ngưỡng dừng là 80%). Câu đó vì vậy **chưa** được tính là lời duyệt các ngưỡng: lời duyệt là việc owner mở phiên mới bằng phần dưới dòng kẻ, hoặc bằng một câu trỏ tới file này và nói rõ làm theo nó như lời của owner. Câu uỷ quyền quen thuộc "tiếp tục theo khuyến nghị" không thay được việc đó. Và lời mở phiên ấy chỉ duyệt các ngưỡng như viết ở mục 3: nó không đặt `BARS_APPROVED` thành true và không cho chạy lượt đo (mục 3 và mục 6 giữ hai việc đó cho một lời sau của owner).
 
 ---
 
