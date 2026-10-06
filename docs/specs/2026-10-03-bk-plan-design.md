@@ -334,3 +334,33 @@ Approved by the owner's word above, as proposed at the stop. Registered now so t
 - **Not run**: the routing prompts. The description of `bk-plan`, the router and the protocol did not change ("Design" 4), so nothing in this change can move routing.
 - **What this guard can and cannot show, said before its data**: a `build-01` session enters through `bk-build`; a `node-01` session entered through `bk-spec` in 8 of 8 at its last guard (`docs/specs/2026-09-26-stack-node-python-design.md` line 252), and `bk-spec` hands on to `bk-plan` "when COUNCIL or more than three files" (`skills/bk-spec/SKILL.md:29`). Whether any session of either task loads one of the seven changed files has not been measured, so how sensitive the guard is to this change is not known; it shows that these two tasks still hold with the text in the checkout, no more.
 - **The guard holds when both tasks hold.** Either missed: nothing merges, and the owner is told.
+
+## Step 5, the run's sessions (2026-10-06): the sixteen counted directories, written before any plan is read
+
+The four rounds ran on 2026-10-06, one driver command a round (`plan-run.cjs 1 1`, `2 2`, `3 3`, `4 4`), each in the background, the checkout left alone meanwhile, with `get_usage` read and no bench process alive before each. Every call of the four rounds: `exit=0`, `dirty=false`, K-before at `p5b-bk-plan-before@531ad2c`, the three other branches at `p5b-bk-plan@8887c4e` (no commit was made on the branch between the start of round 1 and the end of round 4); every round's last lines are `round i of i complete` and `DONE plan-run`. Rounds took 48, 52, 79 and 108 minutes. Usage by `get_usage` (this and the process checks are the session's own notes, not in the log): five-hour window 3% and week 14% before round 1; 9% and 15% before round 2; 15% and 17% before round 3; 20% and 18% before round 4; after round 4 the window had reopened (4%), week 19%. **No plan has been read, and no check file, stream or answer file opened**: what is below comes from `evals/results/plan-run-log.txt` and the Windows System log.
+
+**The counted directories, in the order of the log** (all under `evals/results/`, ignored by git, on the owner's machine; the first is the seed of `blind`, and they are given to `blind` and to the tally in this order):
+
+| # | Round | Call | Directory | Cut |
+|---|---|---|---|---|
+| 1 | 1 | K-before | `2026-10-06-bench-plan-01-natural` | |
+| 2 | 1 | K-after | `2026-10-06-bench-plan-01-natural-2` | |
+| 3 | 1 | S | `2026-10-06-bench-plan-01-natural-3` | |
+| 4 | 1 | F | `2026-10-06-bench-plan-01-natural-4` | |
+| 5 | 2 | K-after | `2026-10-06-bench-plan-01-natural-5` | |
+| 6 | 2 | S | `2026-10-06-bench-plan-01-natural-6` | |
+| 7 | 2 | F | `2026-10-06-bench-plan-01-natural-7` | |
+| 8 | 2 | K-before | `2026-10-06-bench-plan-01-natural-8` | |
+| 9 | 3 | S | `2026-10-06-bench-plan-01-natural-9` | |
+| 10 | 3 | F | `2026-10-06-bench-plan-01-natural-10` | `02-natural-F2` |
+| 11 | 3 | K-before | `2026-10-06-bench-plan-01-natural-11` | |
+| 12 | 3 | K-after | `2026-10-06-bench-plan-01-natural-12` | |
+| 13 | 4 | F | `2026-10-06-bench-plan-01-natural-13` | `01-natural-F1` |
+| 14 | 4 | K-before | `2026-10-06-bench-plan-01-natural-14` | |
+| 15 | 4 | K-after | `2026-10-06-bench-plan-01-natural-15` | |
+| 16 | 4 | S | `2026-10-06-bench-plan-01-natural-16` | `02-natural-S2` |
+
+- The rotation is the registered one: round 1 `before, after, S, F`; round 2 `after, S, F, before`; round 3 `S, F, before, after`; round 4 `F, before, after, S`.
+- **Not tallied, named**: `2026-10-05-bench-plan-01-natural-4` and `2026-10-05-bench-plan-01-natural-5`, of the first start of round 1 that the machine's sleep broke off (above): the call's line of the first (17:20 UTC on 2026-10-05) is followed in the log by `round 1 of 1 start`, which is not another call's line, a `round … complete` line or `DONE`, so it did not complete under the rule; the second is not in the log at all (it is the interrupted K-after call's directory, named in the note on that break). The probe's and the trial's directories (`2026-10-05-bench-plan-01-natural-2`, `-3`) and the calibration's (`2026-10-05-bench-plan-01-natural`) are not part of the run.
+- **Three sessions the runner cut at its time limit**, each counted with what it left and named, as registered: `02-natural-F2` of directory 10, `01-natural-F1` of directory 13, `02-natural-S2` of directory 16. None is a K session.
+- **The machine slept inside round 4**: the System log shows it entering sleep at 12:13 local and waking at 12:56, while the first call of that round (F, directory 13) was running; the driver and the runner survived and went on after the wake, and the call was logged at 13:01 local with `exit=0` and `cut=01-natural-F1`. So that session's cut is, as far as the times show, an effect of the sleep and not of the session; the second session of that call and the three calls after it ran after the wake. No sleep event falls inside rounds 1, 2 or 3. The session had written, after the first break, that a round with a sleep event would be treated as that one was, so it reported to the owner before going on. The owner chose, by its label: "Tính vòng 4 như nó là (Recommended)". This sets aside, for round 4 only, the session's own sentence above that a round with a sleep event is treated as the first start was; the other registered rules (what completed, what is counted, cut sessions counted and named) are unchanged and decide the directories. No bar, number or registered rule of the run is changed; only the session's own note on sleep events is set aside, for round 4. The cut session is counted with what it left and named; its cause, as far as the times show, is the sleep. F is described and carries no bar. Said as a limit: one of the eight F sessions was cut, as far as the times show by the machine's sleep and not by its own length, and the F call of round 4 ran across a 43-minute pause.
