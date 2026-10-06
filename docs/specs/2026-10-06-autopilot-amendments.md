@@ -1,6 +1,6 @@
 # Autopilot: proposed amendments to the design of 2026-10-06 · 2026-10-06
 
-Status: **proposal, nothing applied.** It changes no file but itself. Each item says who commits it: **owner** (the sections the spec keeps for the owner, the caps, `AGENTS.md`) or **gate** (a later session, through the gate of `docs/specs/2026-10-06-autopilot-design.md` and its advisor question). Where an item is an owner's, a session never commits it. Item numbers are used by the handoff and the log.
+Status: **proposal, nothing applied, except C, decided by the owner on 2026-10-07.** It changes no file but itself. Each item says who commits it: **owner** (the sections the spec keeps for the owner, the caps, `AGENTS.md`) or **gate** (a later session, through the gate of `docs/specs/2026-10-06-autopilot-design.md` and its advisor question). Where an item is an owner's, a session never commits it. Item numbers are used by the handoff and the log.
 
 Sources: the three points the spec names under change 5; the three points round 6 left open (`docs/autopilot/decisions.md`, entry 5); the advisor's reading of the spec in session 2 (the advisor, Fable, read it once, as entry 7 planned); the result of step 2 below.
 
@@ -27,7 +27,7 @@ Sources: the three points the spec names under change 5; the three points round 
 
 ### C. Does the pilot (step 4) wait for the scheduled-task check (step 3)?
 
-The spec lists step 4 after step 3, and step 3 needs change 5; entry 7 of the log postponed change 5 until the pilot has run well over several sessions. Read to the letter, the pilot can never start. **Khuyến nghị: step 4 needs step 2 and change 6, not step 3; step 3 moves after the pilot.** Rejected: leaving it (a contradiction, so the pilot waits for nothing the owner can supply); asking for change 5 now (entry 7 says not yet). Step 2 has a caveat now (see the result above), but it is not a reason to hold the pilot: the pilot runs with the owner's session open and the turn kept alive as the spec says. **Commits: owner** (it changes what may start and when; the advisor would not be asked to widen it).
+The spec lists step 4 after step 3, and step 3 needs change 5; entry 7 of the log postponed change 5 until the pilot has run well over several sessions. Read to the letter, the pilot can never start. **Khuyến nghị: step 4 needs step 2 and change 6, not step 3; step 3 moves after the pilot.** Rejected: leaving it (a contradiction, so the pilot waits for nothing the owner can supply); asking for change 5 now (entry 7 says not yet). Step 2 has a caveat now (see the result above), but it is not a reason to hold the pilot: the pilot runs with the owner's session open and the turn kept alive as the spec says. **Commits: owner** (it changes what may start and when; the advisor would not be asked to widen it). **Decided by the owner on 2026-10-07** (verbatim in `docs/specs/2026-10-06-autopilot-design.md`, "The owner's confirmation of change 6"): the pilot does not wait for step 3; the spec's Steps now say so, copied in as the owner's word, not as a session's choice.
 
 ### D. From the advisor's reading
 
@@ -53,6 +53,6 @@ What it drops from the current line, each held by the spec: the exception for th
 
 ## Order, if the owner accepts
 
-1. Owner commits: A1, A3, B3 (or A1 alone), C, D1, D4, E.
+1. Owner commits: A1, A3, B3 (or A1 alone), D1, D4, E. (C is decided and applied, by the owner's word of 2026-10-07.)
 2. A later session, through the gate: A2, B1/B2 (one log entry), D2, D5; each with a fresh reviewer, and the advisor for the spec edits among them.
 3. Only then does anything wait on change 5.
