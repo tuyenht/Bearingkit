@@ -478,3 +478,33 @@ Run after the registration commit `47d2de4`, from `p5b-bk-plan` with a clean tre
 - The three sessions took 109 to 191 seconds each (the first run's probe: 398 and 451); no cause is known and none is claimed. Usage after the three: five-hour window 16%, week 3%.
 
 With the probe passed and the trial accepted the run starts, round by round, as registered above.
+
+## The second run's sessions (2026-10-07): the sixteen counted directories, written before any plan is read
+
+The four rounds ran on 2026-10-07, one driver command a round (`plan-run.cjs 1 1`, `2 2`, `3 3`, `4 4`), each with the session's turn kept alive while it ran, the checkout left alone meanwhile, with `get_usage` read and no bench process alive before each. Every call of the four rounds: `exit=0`, `dirty=false`, no `cut=`, no `STOPPED=`; K-before at `p5b-bk-plan-before@531ad2c`, the three other branches at `p5b-bk-plan@00a5276` (no commit was made on the branch between the start of round 1 and the end of round 4); every round's last lines are `round i of i complete` and `DONE plan-run`. The log, `evals/results/plan-run-2-log.txt`, holds 28 lines and no `STOP`. Rounds ran 07:07 to 07:22, 07:22 to 07:38, 07:38 to 07:57 and 07:57 to 08:15 UTC. Usage by `get_usage` (the session's own notes, not in the log): five-hour window 16% and week 3% before round 1 (the window reopened at 07:10 UTC, inside round 1); 1% and 4% before round 2; 2% and 4% before round 3; 4% and 5% before round 4; 5% and 5% after it. **No plan has been read, and no check file, stream or answer file opened**: what is below comes from the log, from the `kit`, `cut` and `stopped` fields of each directory's `meta.json` (taken by a search that prints only those fields), a count of the check and stream files of each directory, and the Windows System log.
+
+**The counted directories, in the order of the log** (all under `evals/results/`, ignored by git, on the owner's machine; the first is the seed of `blind`, and they are given to `blind` and to the tally in this order):
+
+| # | Round | Call | Directory | Cut |
+|---|---|---|---|---|
+| 1 | 1 | K-before | `2026-10-07-bench-plan-01-natural-3` | |
+| 2 | 1 | K-after | `2026-10-07-bench-plan-01-natural-4` | |
+| 3 | 1 | S | `2026-10-07-bench-plan-01-natural-5` | |
+| 4 | 1 | F | `2026-10-07-bench-plan-01-natural-6` | |
+| 5 | 2 | K-after | `2026-10-07-bench-plan-01-natural-7` | |
+| 6 | 2 | S | `2026-10-07-bench-plan-01-natural-8` | |
+| 7 | 2 | F | `2026-10-07-bench-plan-01-natural-9` | |
+| 8 | 2 | K-before | `2026-10-07-bench-plan-01-natural-10` | |
+| 9 | 3 | S | `2026-10-07-bench-plan-01-natural-11` | |
+| 10 | 3 | F | `2026-10-07-bench-plan-01-natural-12` | |
+| 11 | 3 | K-before | `2026-10-07-bench-plan-01-natural-13` | |
+| 12 | 3 | K-after | `2026-10-07-bench-plan-01-natural-14` | |
+| 13 | 4 | F | `2026-10-07-bench-plan-01-natural-15` | |
+| 14 | 4 | K-before | `2026-10-07-bench-plan-01-natural-16` | |
+| 15 | 4 | K-after | `2026-10-07-bench-plan-01-natural-17` | |
+| 16 | 4 | S | `2026-10-07-bench-plan-01-natural-18` | |
+
+- The rotation is the registered one: round 1 `before, after, S, F`; round 2 `after, S, F, before`; round 3 `S, F, before, after`; round 4 `F, before, after, S`.
+- Each of the sixteen is named in the second run's log, and its `meta.json` records the kit branch and commit of its line of the log (`p5b-bk-plan-before` at `531ad2c3…` for the four K-before directories, `p5b-bk-plan` at `00a52762…` for the twelve others), `dirty: false`, `cut` empty and no `stopped`; each holds two check files and two streams. Every slot has one directory: no round was run again.
+- **Not part of the run, named**: `2026-10-07-bench-plan-01-natural` (the reach probe) and `2026-10-07-bench-plan-01-natural-2` (the S trial), neither in the log. No directory of the first run is in this log.
+- **No session was cut by the runner, and no sleep event falls inside any round**: the Windows System log (Kernel-Power 42 and 107) read after each round shows none after 03:43 UTC of the day, more than three hours before round 1; that event of 03:43 is also the positive control that the query finds such events.
