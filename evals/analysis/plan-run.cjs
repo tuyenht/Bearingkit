@@ -18,8 +18,9 @@
 //     The two numbers are the first and the last round to run. A round that stopped halfway is run again whole when
 //     resumed, so its finished calls give extra sessions: which directories count is then decided from the log and
 //     written in the spec, before any plan is read.
-//     Log: evals/results/plan-run-log.txt. Only the result directories named there go into the tally. A session the
-//     runner cut at its time limit is logged (`cut=`).
+//     Log: evals/results/plan-run-2-log.txt, the second run's own (the first run's is evals/results/plan-run-log.txt,
+//     copied to evals/bench/plan-01/run-2026-10-06/). Only the result directories named there go into the tally. A
+//     session the runner cut at its time limit is logged (`cut=`).
 'use strict';
 const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
@@ -27,7 +28,7 @@ const path = require('node:path');
 const ROOT = path.resolve(__dirname, '..', '..');
 const USAGE = 'usage: plan-run.cjs [--dry] [--no-s] [fromRound=1] [lastRound=4]';
 const RESULTS = path.join(ROOT, 'evals', 'results');
-const LOG = path.join(RESULTS, 'plan-run-log.txt');
+const LOG = path.join(RESULTS, 'plan-run-2-log.txt');
 const CFG = 'C:/Projects/Bearingkit/_build/profile/claude';
 const TASK = 'plan-01';
 const RUNS = 2;
@@ -35,8 +36,14 @@ const BENCH = ['bin/bearingkit.cjs', 'bench', '--task', TASK, '--config-dir', CF
 const BEFORE = 'p5b-bk-plan-before';
 const AFTER = 'p5b-bk-plan';
 // The frozen commit (K-after): nothing a session loads may differ from it (FROZEN_PATHS below).
-const FROZEN = '789662576f52db8d14ed6f337301f7c35852689b';
-// K-before is the commit just before it; its branch is local only, so the driver holds it to this commit.
+// The second freeze of the text (the spec, "Second freeze of the text"); the second run measures it.
+const FROZEN = 'afa1a463bc8986e797f13455202c19c4e89eec0f';
+// The first freeze, which the first run measured. The second differs from it, in everything a session loads, in the
+// one file the second freeze edited: the fixture, the rubric, the gate's plans and the kit's code are the first run's.
+const FIRST_FROZEN = '789662576f52db8d14ed6f337301f7c35852689b';
+const SECOND_FREEZE = ['skills/bk-plan/SKILL.md'];
+// K-before is the parent of the first freeze, the same commit as in the first run; its branch is local only, so the
+// driver holds it to this commit.
 const BEFORE_COMMIT = '531ad2c3fefcf4f516da8ad55d22704fe1622d0d';
 // The whole kit directories, not only scripts/detect-stack.cjs.
 const KIT_PATHS = ['skills', 'hooks', 'agents', 'scripts', '.claude-plugin'];
@@ -71,7 +78,7 @@ function parse(argv) {
   return { dry: flags.includes('--dry'), noS: flags.includes('--no-s'), from, last };
 }
 
-module.exports = { order, parse, CALLS, SEVEN, SAME_PATHS, KIT_PATHS, FROZEN, BEFORE_COMMIT, BEFORE, AFTER, RUNS, BARS_APPROVED };
+module.exports = { order, parse, CALLS, SEVEN, SAME_PATHS, KIT_PATHS, FROZEN, FIRST_FROZEN, SECOND_FREEZE, BEFORE_COMMIT, BEFORE, AFTER, RUNS, BARS_APPROVED };
 
 function main(opts) {
   const { dry: DRY, noS: NO_S, from, last: rounds } = opts;
@@ -109,6 +116,9 @@ function main(opts) {
   const FROZEN_PATHS = [...new Set([...KIT_PATHS, ...TEXT_PATHS, ...SAME_PATHS])];
   const moved = diffNames(FROZEN, AFTER, FROZEN_PATHS);
   if (moved.length) die(`${AFTER} differs from the frozen commit ${FROZEN.slice(0, 7)} under ${FROZEN_PATHS.join(', ')}: ${moved.join(', ')}`);
+  if (head(FIRST_FROZEN) !== FIRST_FROZEN) die(`the first frozen commit ${FIRST_FROZEN} is not in this repository`);
+  const second = diffNames(FIRST_FROZEN, FROZEN, FROZEN_PATHS);
+  if (second.join('\n') !== [...SECOND_FREEZE].sort().join('\n')) die(`the second freeze ${FROZEN.slice(0, 7)} differs from the first ${FIRST_FROZEN.slice(0, 7)} in [${second.join(', ')}], not in ${SECOND_FREEZE.join(', ')} alone`);
   const drift = diffNames(BEFORE, AFTER, SAME_PATHS);
   if (drift.length) die(`${BEFORE} and ${AFTER} differ outside the text: ${drift.join(', ')}`);
 

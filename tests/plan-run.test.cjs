@@ -47,15 +47,26 @@ test('plan-run starts no session while the bars are not approved, and refuses a 
   }
 });
 
-test('plan-run pins paths that exist at the frozen commit, and the seven files are what that commit changed', () => {
+test('plan-run pins paths that exist at the frozen commit; the seven files are what it changed against K-before, and one file against the first freeze', () => {
   assert.equal(git('cat-file', '-e', `${run.FROZEN}^{commit}`).status, 0, 'the frozen commit is in this repository');
   // A pathspec that matches nothing would pass every diff in silence: each pinned path exists at the frozen commit.
   for (const p of [...run.SAME_PATHS, ...run.KIT_PATHS, ...run.SEVEN]) assert.equal(git('cat-file', '-e', `${run.FROZEN}:${p}`).status, 0, p);
-  // The frozen commit changed exactly the seven files, against its parent.
-  const changed = git('diff', '--name-only', `${run.FROZEN}^`, run.FROZEN).stdout.split('\n').filter(Boolean).sort();
-  assert.deepEqual(changed, [...run.SEVEN].sort());
-  // K-before is that parent, and the plugin manifest is among the paths that must not differ between the two.
-  assert.equal(git('rev-parse', `${run.FROZEN}^`).stdout.trim(), run.BEFORE_COMMIT);
+  // The first freeze changed exactly the seven files, against its parent, and K-before is that parent: the same
+  // K-before as in the first run.
+  const names = (...args) => git('diff', '--name-only', ...args).stdout.split('\n').filter(Boolean).sort();
+  assert.equal(git('cat-file', '-e', `${run.FIRST_FROZEN}^{commit}`).status, 0, 'the first frozen commit is in this repository');
+  assert.deepEqual(names(`${run.FIRST_FROZEN}^`, run.FIRST_FROZEN), [...run.SEVEN].sort());
+  assert.equal(git('rev-parse', `${run.FIRST_FROZEN}^`).stdout.trim(), run.BEFORE_COMMIT);
+  // The frozen commit (the second freeze) is not the first, follows it, and still differs from K-before, in what a
+  // session can reach of the text, in the seven files only.
+  assert.notEqual(run.FROZEN, run.FIRST_FROZEN);
+  assert.equal(git('merge-base', '--is-ancestor', run.FIRST_FROZEN, run.FROZEN).status, 0, 'the second freeze follows the first');
+  assert.deepEqual(names(run.BEFORE_COMMIT, run.FROZEN, '--', 'skills', 'NOTICE', 'upstream/sources.json'), [...run.SEVEN].sort());
+  // Against the first freeze it changed, of everything the driver pins, the one file of the second freeze: the
+  // fixture, the rubric, the gate's plans and the kit's code are the first run's.
+  assert.deepEqual(names(run.FIRST_FROZEN, run.FROZEN, '--', ...new Set([...run.KIT_PATHS, 'skills', 'NOTICE', 'upstream/sources.json', ...run.SAME_PATHS])), run.SECOND_FREEZE);
+  assert.deepEqual(run.SECOND_FREEZE, ['skills/bk-plan/SKILL.md']);
+  // The plugin manifest is among the paths that must not differ between the two kit branches.
   assert.ok(run.SAME_PATHS.includes('.claude-plugin'));
   // The evidence beside the gate plans (keys, readings) may grow, so the gate directory as a whole is not pinned;
   // every gate plan and the expected marks are.
