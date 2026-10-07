@@ -1,0 +1,14 @@
+{"plan":"p01.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"P3: export drop set for end of quarter, no wait on finance, so (c) fails."}
+{"plan":"p02.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":false,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"P5: org check goes through getMyTicket, but no independent review is asked."}
+{"plan":"p03.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Phase 2 is titled end to end but builds only the store, so it is a layer."}
+{"plan":"p04.md","P1":true,"P2":true,"P3":true,"P4":false,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"P4: only says the phases are done in order; no blockers are stated."}
+{"plan":"p05.md","P1":true,"P2":false,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Phase 5 is a tests unit at the end; P1 (a) judged on the behaviour alone."}
+{"plan":"p06.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":2,"numbered":true,"recommended":true,"note":"Flat tasks; each test and make-pass pair counts as one unit; the table covers every task."}
+{"plan":"p07.md","P1":false,"P2":false,"P3":true,"P4":false,"P5":true,"C1":false,"questions":4,"numbered":true,"recommended":true,"note":"Step 1 is a data-model layer; Step 6 tests are at the end; the build order does not count as units."}
+{"plan":"p08.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Phase 3 is notification plumbing with nothing calling it yet, so it is a layer."}
+{"plan":"p09.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Export is renamed and finance is only sent a heads-up, which is telling, not waiting."}
+{"plan":"p10.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":6,"numbered":false,"recommended":false,"note":"Six items under 'Things to settle'; the last two have no recommendation and none is numbered."}
+{"plan":"p11.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":0,"numbered":false,"recommended":false,"note":"Undivided prose with no units; it states 'No open questions'."}
+{"plan":"p12.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":""}
+{"plan":"p13.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"The 'Store' section names changes and builds only storage, so it is a layer unit."}
+{"plan":"p14.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Export key renamed to owner_id and finance is never named."}

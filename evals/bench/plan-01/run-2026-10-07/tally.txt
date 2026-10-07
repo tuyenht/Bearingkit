@@ -1,0 +1,66 @@
+2026-10-07-bench-plan-01-natural-3: kit p5b-bk-plan-before@531ad2c dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-4: kit p5b-bk-plan@00a5276 dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-5: kit p5b-bk-plan@00a5276 dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-6: kit p5b-bk-plan@00a5276 dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-7: kit p5b-bk-plan@00a5276 dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-8: kit p5b-bk-plan@00a5276 dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-9: kit p5b-bk-plan@00a5276 dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-10: kit p5b-bk-plan-before@531ad2c dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-11: kit p5b-bk-plan@00a5276 dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-12: kit p5b-bk-plan@00a5276 dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-13: kit p5b-bk-plan-before@531ad2c dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-14: kit p5b-bk-plan@00a5276 dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-15: kit p5b-bk-plan@00a5276 dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-16: kit p5b-bk-plan-before@531ad2c dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-17: kit p5b-bk-plan@00a5276 dirty=false; cut []; stopped no
+2026-10-07-bench-plan-01-natural-18: kit p5b-bk-plan@00a5276 dirty=false; cut []; stopped no
+
+F: 8 sessions (8 with a plan); models claude-sonnet-5-5; ends success
+  P per session: 2 1 1 1 1 1 2 3  median 1  mean 1.500
+  P1 2  P2 2  P3 8  P4 0  P5 0  |  C1 5  |  O1 8  O2 8  |  G1 6 (no question: 0)  G2 0
+  questions per plan [7,8,10,11,12,12,9,9]
+  reach: bk-plan 0  writing-plans 0  vertical-slices 0
+  reach in clock order: 07:21Z ---  07:22Z ---  07:32Z ---  07:33Z ---  07:45Z ---  07:46Z ---  07:58Z ---  08:00Z ---
+  cost median 0.203 (0.169-0.251, 8 sessions)  tool calls 5-22  tools in init 31  refused 9
+  skills ["-","-","-","-","-","-","-","-"]
+
+K-before: 8 sessions (8 with a plan); models claude-sonnet-5-5; ends success
+  P per session: 4 4 4 3 4 4 3 4  median 4  mean 3.750
+  P1 8  P2 8  P3 7  P4 0  P5 7  |  C1 8  |  O1 8  O2 8  |  G1 5 (no question: 0)  G2 0
+  questions per plan [9,8,8,9,13,12,8,9]
+  reach: bk-plan 8  writing-plans 8  vertical-slices 0
+  reach in clock order: 07:09Z SW-  07:11Z SW-  07:35Z SW-  07:38Z SW-  07:48Z SW-  07:51Z SW-  08:02Z SW-  08:05Z SW-
+  cost median 0.483 (0.397-0.567, 8 sessions)  tool calls 11-29  tools in init 31  refused 17
+  skills ["bearingkit:bk-plan","bearingkit:bk-plan","bearingkit:bk-plan","bearingkit:bk-plan","bearingkit:bk-plan","bearingkit:bk-plan","bearingkit:bk-plan","bearingkit:bk-plan"]
+
+K-after: 8 sessions (8 with a plan); models claude-sonnet-5-5; ends success
+  P per session: 5 5 5 5 5 5 5 5  median 5  mean 5.000
+  P1 8  P2 8  P3 8  P4 8  P5 8  |  C1 7  |  O1 8  O2 8  |  G1 8 (no question: 0)  G2 8
+  questions per plan [4,4,4,4,4,4,4,4]
+  reach: bk-plan 8  writing-plans 6  vertical-slices 6
+  reach in clock order: 07:13Z S--  07:16Z SWV  07:24Z S--  07:27Z SWV  07:54Z SWV  07:57Z SWV  08:08Z SWV  08:11Z SWV
+  cost median 0.539 (0.297-0.630, 8 sessions)  tool calls 18-38  tools in init 31  refused 25
+  skills ["bearingkit:bk-plan","bearingkit:bk-plan","bearingkit:bk-plan","bearingkit:bk-plan","bearingkit:bk-plan","bearingkit:bk-plan","bearingkit:bk-plan","bearingkit:bk-plan"]
+
+S: 8 sessions (8 with a plan); models claude-sonnet-5-5; ends success
+  P per session: 2 2 2 2 2 2 2 3  median 2  mean 2.125
+  P1 1  P2 8  P3 8  P4 0  P5 0  |  C1 5  |  O1 8  O2 8  |  G1 6 (no question: 0)  G2 0
+  questions per plan [10,12,8,9,12,11,7,11]
+  reach: bk-plan 0  writing-plans 0  vertical-slices 0
+  reach in clock order: 07:18Z ---  07:20Z ---  07:29Z ---  07:31Z ---  07:41Z ---  07:43Z ---  08:14Z ---  08:15Z ---
+  cost median 0.424 (0.306-0.499, 8 sessions)  tool calls 8-27  tools in init 31  refused 11
+  skills ["superpowers:writing-plans","superpowers:writing-plans","superpowers:writing-plans","superpowers:writing-plans","superpowers:writing-plans","superpowers:writing-plans","superpowers:writing-plans","superpowers:writing-plans"]
+  source read: 8 of 8 (a source skill launched with its text 8, a source SKILL.md read 0); Skill calls refused in 0 sessions
+
+reader A alone: K-after 5 5 5 5 5 5 5 5 (mean 5.000) | K-before 4 4 4 3 4 4 3 4 (mean 3.750) | p = 0.0001554001554001554 | met
+
+reader B alone: K-after 5 5 5 5 5 5 5 5 (mean 5.000) | K-before 4 4 4 3 4 4 4 4 (mean 3.875) | p = 0.0001554001554001554 | met
+primary on both readers' marks: met; bars 1 and 2 need all three met
+P1 + P3 passes: K-after 16 | K-before 15 | K-after above
+cost: K-after / K-before 1.11   K-after / F 2.65   K-after / S 1.27
+readers agree on 159 of 160 hazard marks (99.4%)
+readers disagree in 10 of 32 plans: 2026-10-07-bench-plan-01-natural-3/01-natural-K1 (questions); 2026-10-07-bench-plan-01-natural-5/01-natural-S1 (recommended questions); 2026-10-07-bench-plan-01-natural-5/02-natural-S2 (questions); 2026-10-07-bench-plan-01-natural-10/02-natural-K2 (questions); 2026-10-07-bench-plan-01-natural-12/01-natural-F1 (recommended questions); 2026-10-07-bench-plan-01-natural-12/02-natural-F2 (C1 recommended questions); 2026-10-07-bench-plan-01-natural-13/02-natural-K2 (recommended); 2026-10-07-bench-plan-01-natural-15/01-natural-F1 (questions); 2026-10-07-bench-plan-01-natural-16/01-natural-K1 (P3); 2026-10-07-bench-plan-01-natural-16/02-natural-K2 (numbered recommended questions)
+
+primary, P K-after vs K-before: p = 0.0001554001554001554
+sources, P K-after vs S: p = 0.0001554001554001554
+described, P K-after vs F: p = 0.0001554001554001554   K-before vs F: p = 0.0004662004662004662   (no bar)
