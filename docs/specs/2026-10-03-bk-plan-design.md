@@ -451,3 +451,30 @@ Every counted directory is named in `plan-run-2-log.txt`, and before any plan is
 **The flag.** `BARS_APPROVED` stays true: the bars are the ones the owner approved for the first run, to the number; the heavy-step reviewer of this commit is asked, bar by bar, whether each is at least as strict as the first run's, and its answer is logged verbatim in `docs/autopilot/decisions.md`, and the autopilot rules (change 1) take a registration's bars as approved once it has passed the gate with its heavy-step review, where that reviewer finds each bar at least as strict as the last owner-approved registration of that kind. From the commit that records this section the driver can start the second run; it is started only after the dry run and the probe above.
 
 **After the result**, by the rules fixed before the data. Every bar held: nothing merges by rule, since a text that passes only on its second run is the owner's to merge; the guard's tasks and numbers are unchanged; on the text frozen at `afa1a46` it runs only on the owner's word. A bar missed: the measurement closes, the text stays on this branch unmerged. Either way what the run shows is said "on this task", and the report says, where it presents the primary, that a P5 gain comes from edit 2 of the second freeze (above). A case the registration has no rule for is handled as the autopilot rules say ("An incident a registration has no rule for").
+
+## The second run, before the run (2026-10-07): the dry run passed, the reach probe passed, the S trial is accepted
+
+Run after the registration commit `47d2de4`, from `p5b-bk-plan` with a clean tree. **None of these three sessions counts in the run, and nobody has read a plan they wrote**: every figure below was taken by the searches registered under "Step 5" ("How they are run") and from `meta.json` and `results.md`, except the one added search named below, the same one the first run added.
+
+**The dry run**: `node evals/analysis/plan-run.cjs --dry` at `47d2de4`, exit 0: K-before `p5b-bk-plan-before@531ad2c`, K-after `p5b-bk-plan@47d2de4` with the text frozen at `afa1a46`; all sixteen calls of the four rounds "clean, kit dirs equal"; the rotation printed as `before, after, S, F` / `after, S, F, before` / `S, F, before, after` / `F, before, after, S`; no log file written; the checkout back on `p5b-bk-plan`, clean. Before the probe: no bench or driver process alive; usage by `get_usage` five-hour window 15%, week 3%.
+
+**Reach probe**: `node bin/bearingkit.cjs bench --task plan-01 --config-dir C:/Projects/Bearingkit/_build/profile/claude --branches K --runs 2`, exit 0, directory `evals/results/2026-10-07-bench-plan-01-natural` (ignored by git, on the owner's machine only). `meta.json`: kit `p5b-bk-plan` at `47d2de4c5de26fedd93daee9d6282735c6c506a9`, `dirty: false`, no `stopped`, `cut` empty.
+
+| Session | O1 | O2 | `Rskill` | `writing-plans.md` | `vertical-slices.md` | Refused calls | Invoked | Seconds | Cost USD |
+|---|---|---|---|---|---|---|---|---|---|
+| K1 | yes | yes | yes | yes | yes | at least one, the first of a Bash call (the added search); no `Skill` call refused | skill:bearingkit:bk-plan | 138 | 0.446 |
+| K2 | yes | yes | yes | yes | yes | at least one, the first of a Bash call (the added search); no `Skill` call refused | skill:bearingkit:bk-plan | 191 | 0.507 |
+
+- For both sessions the two registered patterns printed nothing, so, as registered, the presence of the field was checked (`"permission_denials":[` is there, once in each stream): refusals of other tools only. The added search `"permission_denials":\[\{"tool_name":"[A-Za-z_]+"` prints the name of the first refused tool and nothing of the session's text: `Bash` in both.
+- **Both conditions hold**: `bk-plan` invoked in 2 of 2 (needed: at least one), with no refused `Skill` call in either session; `references/vertical-slices.md` opened in 2 of 2 (needed: at least one). **The probe passed.**
+
+**S trial**: the same command with `--branches S --runs 1`, exit 0 (the runner started the branch), directory `evals/results/2026-10-07-bench-plan-01-natural-2`. `meta.json`: kit `p5b-bk-plan` at `47d2de4…`, `dirty: false`, no `stopped`, `cut` empty.
+
+| Session | O1 | O2 | `Rskill` | Refused calls | Invoked | Seconds | Cost USD |
+|---|---|---|---|---|---|---|---|
+| S1 | yes | yes | no | at least one, the first of a Bash call (the added search); no `Skill` call refused (the pattern `"tool_name":"Skill"` prints nothing) | skill:superpowers:writing-plans | 109 | 0.393 |
+
+- **Accepted** by the registered definition: the runner started the branch, and the session's result lists no permission denial for a `Skill` call. The run keeps its S branch (32 sessions, no `--no-s`).
+- The three sessions took 109 to 191 seconds each (the first run's probe: 398 and 451); no cause is known and none is claimed. Usage after the three: five-hour window 16%, week 3%.
+
+With the probe passed and the trial accepted the run starts, round by round, as registered above.
