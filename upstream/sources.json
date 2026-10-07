@@ -256,9 +256,13 @@
       "tracked": [
         "skills/engineering/code-review/SKILL.md",
         "skills/engineering/diagnosing-bugs/SKILL.md",
-        "skills/engineering/tdd/SKILL.md"
+        "skills/engineering/tdd/SKILL.md",
+        "skills/engineering/to-tickets/SKILL.md"
       ],
       "derived": {
+        "skills/bk-plan/references/vertical-slices.md": [
+          "skills/engineering/to-tickets/SKILL.md"
+        ],
         "skills/bk-debug/references/feedback-loop.md": [
           "skills/engineering/diagnosing-bugs/SKILL.md"
         ],
