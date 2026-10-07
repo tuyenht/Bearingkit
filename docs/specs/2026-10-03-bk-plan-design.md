@@ -600,3 +600,40 @@ The reviewer names C as least favourable to the kit. With the figures above: und
 **How it is run.** The switch on `main` reads `PAUSE`; the guard runs on the owner's word in this session, not under autopilot. Each call is run once; a call that does not complete, or a `meta.json` that does not match the recorded branch and head, is counted as a miss for the missing sessions and named (in the median of N a missing session counts as N 0; every session of a directory whose `meta.json` does not match is missing); node-01 runs whatever build-01 shows on the bars, but not after a build-01 session names another model ('The model', above, rules that case). This section is committed and pushed before the first call. One call a task, each with the session's turn kept alive while it runs; usage read and no bench process alive before each; no call started above 80% of the five-hour window (it waits until the window reopens); the Windows System log read after each call for a sleep event inside it, and one found is named with the result. No commit is made on this branch between the start of the first call and the end of the second.
 
 **After the result.** The guard held: the gate's heavy-step review of the record, then nothing more by rule: a merge of a text that passed only on its second run is the owner's, and before any merge the autopilot rules ask for the advisor and for an audit session. The guard missed: nothing merges, and the owner is told.
+
+## Step 6 result (2026-10-07): on `claude-sonnet-5-5` both tasks hold, so the guard holds; no session of it loaded the changed text; nothing merges by rule
+
+**Verdict by the registered bars, read as "Step 6: the owner's word to run the guard" fixed before the data: the guard holds, on `claude-sonnet-5-5`.** Every one of the sixteen sessions names that model, so the rule for another model does not apply. No merge follows from this by rule: the merge of a text that passed only on its second run is the owner's.
+
+**How it ran.** After the commit `a469cda` (the word to run, pushed before the first call), from `p5b-bk-plan` with a clean tree; `git diff --name-only afa1a46 HEAD -- skills hooks agents scripts .claude-plugin NOTICE upstream bin evals/bench/build-01 evals/bench/node-01 evals/fixtures` run again before the first call: nothing. One call a task, each run once, with the session's turn kept alive; no bench process alive before each; no commit on the branch between the calls. `build-01`: 13:12:22 to 13:18:54 UTC, exit 0, directory `evals/results/2026-10-07-bench-build-01-natural`. `node-01`: 13:22:38 to 13:37:47 UTC, exit 0, directory `evals/results/2026-10-07-bench-node-01-natural`. Both `meta.json`: kit `p5b-bk-plan` at `a469cda31ff8940af32b182418e99ea188b92fa4`, `dirty: false`, `cut` empty, no `stopped`; each directory holds eight check files and eight streams. Every session ended `success`; none was cut. The Windows System log read after each call: no sleep event inside either (the newest of the day is 10:54 UTC). Usage by `get_usage`: five-hour window 2% and week 8% before the first call; **for the second call the reading was taken just after its start, not before it** (3% and 8%), a slip of the session against "usage read before each", with the window far below 80%.
+
+**The model.** The `init` event of each of the sixteen streams, read by a search that prints only the field: `"model":"claude-sonnet-5-5"`, one `init` event a stream.
+
+**`build-01`: holds.**
+
+| Bar | Registered | Figure |
+|---|---|---|
+| O1 | 8 of 8 | 8 of 8 |
+| O2 | at least 7 of 8 | 8 of 8 |
+| O3 | at least 7 of 8 | 8 of 8 |
+| P3 | at least 7 of 8 | 8 of 8 |
+
+Also in `results.md`, no bar: P1 8 of 8, P2 8 of 8, P6 8 of 8, P4, P5 and H 0 of 8 (P4, P5 and H are process events the rubric counts — files touched outside scope, commit attempts, a stop to ask — and none occurred). Launched in each session: `bearingkit:bk-build`. Sessions took 40 to 55 seconds and cost 0.237 to 0.306 USD.
+
+**`node-01`: holds.**
+
+| Bar | Registered | Figure |
+|---|---|---|
+| O1 | at least 7 of 8 | 8 of 8 |
+| O2 | at least 7 of 8 | 8 of 8 |
+| Median of N | not below 2 | 2.5 (N per session, K1 to K8: 3, 3, 2, 2, 3, 3, 2, 2) |
+
+Reported, no bar: N1 8 of 8, N2 8 of 8, N3 4 of 8, X 8 of 8. `node.md` opened in 4 of 8: K1, K2, K5 and K6 (their streams were last written at 13:23, 13:25, 13:31 and 13:32 UTC; K3 and K4 at 13:26 and 13:28, K7 and K8 at 13:33 and 13:36: no stop midway); `stacks/index.md` opened in 0 of 8. Launched: `bearingkit:bk-spec` in 8 of 8, with `bearingkit:bk-build` after it in K1 only (`Rskill` 1 of 8). Sessions took 41 to 69 seconds and cost 0.17 to 0.28 USD.
+
+**What this guard does not show, and the registration said so beforehand.** **No session of either task launched `bk-plan` or opened one of its files.** A search of the sixteen streams for a `Skill` call naming `bk-plan` and for a path under `bk-plan/` (`SKILL.md` or `references/`) prints nothing; the positive control is that the same streams do contain the string `bearingkit:bk-plan`, in the list of skills of each session's `init` event. So the changed text was in the checkout and was read by no session: the guard shows that these two tasks still hold with it there, on this model, and nothing about the text itself. "Step 6, registered" named this limit ("how sensitive the guard is to this change is not known"); the answer on this run is that it was not exercised at all. `node-01` sessions entered through `bk-spec` and none was handed on to `bk-plan`.
+
+**Other limits.** The two tasks' bars were registered with those tasks' own earlier runs, which named `claude-sonnet-5`; the figures here are on `claude-sonnet-5-5` and, as fixed before the data, are not set against those earlier guards as a result. Counts against fixed numbers depend on the model's level (the caution of the verdict above applies here too). `node.md` was opened in 4 of 8 `node-01` sessions; that task's own registration had a reach condition on `node.md` (at least 4 of 8), reported here and no bar, and it stands at exactly 4 of 8. `bk-build` was launched in 1 of 8.
+
+**Evidence** in `evals/bench/plan-01/guard-2026-10-07/`: for each of the two directories `meta.json`, `results.md` and the eight check files. The raw streams stay under `evals/results/` on the owner's machine, so the model, the clock times, the cost and the search for `bk-plan` cannot be recomputed from the repository.
+
+**Where P5b stands, for the owner.** For the text frozen at `afa1a46`: bars 1 to 5 met on its second run and bar 6 held, though no session of the guard loaded the changed text, so it says nothing about the text itself, all on `claude-sonnet-5-5` and on these tasks, under the handling the owner chose; the first run of the earlier text, on `claude-sonnet-5`, missed. Nothing merges by rule. A merge is the owner's decision, and before any merge into `main` the autopilot rules ask for the gate's heavy-step review, the advisor and an audit session. The other way is to close P5b with the text left on this branch.
