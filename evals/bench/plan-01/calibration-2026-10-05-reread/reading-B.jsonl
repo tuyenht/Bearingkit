@@ -1,0 +1,3 @@
+{"plan":"p01.md","P1":true,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":10,"numbered":true,"recommended":true,"note":"P1: 'Data model changes' section taken as summary, not a unit. Questions: item 11 read as note, not question."}
+{"plan":"p02.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":6,"numbered":true,"recommended":true,"note":"P1 false: Step 2 is store-only layer. P4: only Step 1 says independent."}
+{"plan":"p03.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":10,"numbered":true,"recommended":true,"note":"Units taken as the sections (data model, new behavior, tests); Sequencing treated as an order list only."}

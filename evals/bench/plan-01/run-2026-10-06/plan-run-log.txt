@@ -1,0 +1,30 @@
+2026-10-05T17:08:00.159Z round 1 of 1 start
+2026-10-05T17:20:02.120Z plan-01 natural before p5b-bk-plan-before K runs=2 exit=0 dir=2026-10-05-bench-plan-01-natural-4 kit=p5b-bk-plan-before@531ad2c dirty=false
+2026-10-06T02:09:16.035Z round 1 of 1 start
+2026-10-06T02:21:01.431Z plan-01 natural before p5b-bk-plan-before K runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural kit=p5b-bk-plan-before@531ad2c dirty=false
+2026-10-06T02:33:30.094Z plan-01 natural after p5b-bk-plan K runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-2 kit=p5b-bk-plan@8887c4e dirty=false
+2026-10-06T02:48:49.040Z plan-01 natural S p5b-bk-plan S runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-3 kit=p5b-bk-plan@8887c4e dirty=false
+2026-10-06T02:57:50.843Z plan-01 natural F p5b-bk-plan F runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-4 kit=p5b-bk-plan@8887c4e dirty=false
+2026-10-06T02:57:50.859Z round 1 of 1 complete
+2026-10-06T02:57:51.018Z DONE plan-run
+2026-10-06T02:58:08.738Z round 2 of 2 start
+2026-10-06T03:13:39.817Z plan-01 natural after p5b-bk-plan K runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-5 kit=p5b-bk-plan@8887c4e dirty=false
+2026-10-06T03:30:49.587Z plan-01 natural S p5b-bk-plan S runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-6 kit=p5b-bk-plan@8887c4e dirty=false
+2026-10-06T03:38:08.542Z plan-01 natural F p5b-bk-plan F runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-7 kit=p5b-bk-plan@8887c4e dirty=false
+2026-10-06T03:50:13.626Z plan-01 natural before p5b-bk-plan-before K runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-8 kit=p5b-bk-plan-before@531ad2c dirty=false
+2026-10-06T03:50:13.645Z round 2 of 2 complete
+2026-10-06T03:50:13.867Z DONE plan-run
+2026-10-06T03:50:30.038Z round 3 of 3 start
+2026-10-06T04:05:25.401Z plan-01 natural S p5b-bk-plan S runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-9 kit=p5b-bk-plan@8887c4e dirty=false
+2026-10-06T04:28:16.535Z plan-01 natural F p5b-bk-plan F runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-10 kit=p5b-bk-plan@8887c4e dirty=false cut=02-natural-F2
+2026-10-06T04:50:15.398Z plan-01 natural before p5b-bk-plan-before K runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-11 kit=p5b-bk-plan-before@531ad2c dirty=false
+2026-10-06T05:09:46.307Z plan-01 natural after p5b-bk-plan K runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-12 kit=p5b-bk-plan@8887c4e dirty=false
+2026-10-06T05:09:46.331Z round 3 of 3 complete
+2026-10-06T05:09:46.571Z DONE plan-run
+2026-10-06T05:10:05.930Z round 4 of 4 start
+2026-10-06T06:01:56.472Z plan-01 natural F p5b-bk-plan F runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-13 kit=p5b-bk-plan@8887c4e dirty=false cut=01-natural-F1
+2026-10-06T06:20:46.735Z plan-01 natural before p5b-bk-plan-before K runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-14 kit=p5b-bk-plan-before@531ad2c dirty=false
+2026-10-06T06:35:30.084Z plan-01 natural after p5b-bk-plan K runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-15 kit=p5b-bk-plan@8887c4e dirty=false
+2026-10-06T06:58:19.885Z plan-01 natural S p5b-bk-plan S runs=2 exit=0 dir=2026-10-06-bench-plan-01-natural-16 kit=p5b-bk-plan@8887c4e dirty=false cut=02-natural-S2
+2026-10-06T06:58:19.944Z round 4 of 4 complete
+2026-10-06T06:58:20.303Z DONE plan-run

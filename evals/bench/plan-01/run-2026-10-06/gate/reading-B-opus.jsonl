@@ -1,0 +1,14 @@
+{"plan":"p01.md","P1":true,"P2":false,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Tests are a unit at the end (phase 5); P1 (a) judged on behaviour alone."}
+{"plan":"p02.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":2,"numbered":true,"recommended":true,"note":"Failing-test and make-pass tasks paired as one unit; task 3 drop waits on finance."}
+{"plan":"p03.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Unlabelled Store section counted as first unit: storage layer only."}
+{"plan":"p04.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Export drop set by end of quarter, no wait on finance."}
+{"plan":"p05.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":6,"numbered":false,"recommended":false,"note":"Questions are unnumbered bullets; last two carry no recommendation."}
+{"plan":"p06.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":0,"numbered":false,"recommended":false,"note":"Prose only, no units."}
+{"plan":"p07.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":""}
+{"plan":"p08.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Export renamed outright; finance never named."}
+{"plan":"p09.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Phase 3 is notification plumbing nothing calls yet: a layer."}
+{"plan":"p10.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Export renamed now; finance only given a heads-up."}
+{"plan":"p11.md","P1":false,"P2":false,"P3":true,"P4":false,"P5":true,"C1":false,"questions":4,"numbered":true,"recommended":true,"note":"Steps are the units, not Build order; step 1 data model, step 6 tests; no blockers stated."}
+{"plan":"p12.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Phase 2 titled end to end but builds only the store; portal comes in phase 3."}
+{"plan":"p13.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":false,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Org check described and tested, no independent review asked."}
+{"plan":"p14.md","P1":true,"P2":true,"P3":true,"P4":false,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Only 'phases are done in the order given'; no per-unit blockers."}

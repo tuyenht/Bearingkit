@@ -1,0 +1,14 @@
+{"plan":"p01.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Unlabelled 'Store' section names changes, so it is a unit and a storage layer; P1 false."}
+{"plan":"p02.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Phase 3 is notification plumbing nothing calls yet: a layer."}
+{"plan":"p03.md","P1":false,"P2":false,"P3":true,"P4":false,"P5":true,"C1":false,"questions":4,"numbered":true,"recommended":true,"note":"Units are Steps 1-6, not 'Build order'; step 1 is data model, step 6 is tests."}
+{"plan":"p04.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":0,"numbered":false,"recommended":false,"note":"Prose, no units, no questions."}
+{"plan":"p05.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":false,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Org check described and tested, no independent review asked."}
+{"plan":"p06.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Phase 2 titled 'end to end' builds only the store; portal function comes in phase 3."}
+{"plan":"p07.md","P1":true,"P2":false,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Tests are a unit at the end; P1(a) judged on behaviour alone. C1: commands named though tests come later."}
+{"plan":"p08.md","P1":true,"P2":true,"P3":true,"P4":false,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Only 'phases are done in the order given'; no blockers per unit."}
+{"plan":"p09.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":6,"numbered":false,"recommended":false,"note":"Six bulleted questions without numbers; the last two have no recommended answer."}
+{"plan":"p10.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Export key renamed now; finance only given a heads-up."}
+{"plan":"p11.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":2,"numbered":true,"recommended":true,"note":"Failing-test and make-pass task pairs read as one unit; task 3 drop waits on finance confirmation."}
+{"plan":"p12.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Export renamed like everywhere else; no reader named."}
+{"plan":"p13.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":""}
+{"plan":"p14.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"Old key kept for finance, but removal set by end of quarter, not by finance's confirmation."}

@@ -1,0 +1,8 @@
+{"plan":"p25.md","P1":true,"P2":true,"P3":true,"P4":false,"P5":true,"C1":true,"questions":13,"numbered":false,"recommended":false,"note":"P4: phases 1, 2 state no blocker. Questions: D1-D11 plus two unnumbered 'Not decided here, for you' items."}
+{"plan":"p26.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":""}
+{"plan":"p27.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"P3: alias comment mentions a removal date, but phase 5 is blocked on finance's confirmation."}
+{"plan":"p28.md","P1":false,"P2":true,"P3":true,"P4":false,"P5":false,"C1":true,"questions":7,"numbered":true,"recommended":true,"note":"Units are Steps 1-5; step 2 adds fields only. C1 rests on blanket 'each step ends with node --test'."}
+{"plan":"p29.md","P1":false,"P2":true,"P3":true,"P4":false,"P5":false,"C1":true,"questions":12,"numbered":false,"recommended":false,"note":"Questions: D1-D11 plus the unnumbered rollout choice ('your call'), which has no recommendation."}
+{"plan":"p30.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":""}
+{"plan":"p31.md","P1":true,"P2":true,"P3":true,"P4":false,"P5":true,"C1":true,"questions":9,"numbered":false,"recommended":false,"note":"P4: phase 1 never says none. Ninth question: unnumbered 'ask the owner for the list' of outside readers."}
+{"plan":"p32.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":false,"questions":4,"numbered":true,"recommended":true,"note":"Phase 05 (schema proposal) treated as building nothing, ignored for P1; it names no runnable command, so C1 false."}

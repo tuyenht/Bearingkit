@@ -1,0 +1,14 @@
+{"plan":"p01.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"P3: export drop set by end of quarter, a date, not a wait on finance."}
+{"plan":"p02.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":false,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"P5: org check described and tested, no independent review asked."}
+{"plan":"p03.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"P1: phase 2 builds only the store despite its title."}
+{"plan":"p04.md","P1":true,"P2":true,"P3":true,"P4":false,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"P4: only 'phases are done in the order given'."}
+{"plan":"p05.md","P1":true,"P2":false,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"P2: phase 5 writes all tests; P1 judged on behaviour without the test."}
+{"plan":"p06.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":2,"numbered":true,"recommended":true,"note":"Test/pass task pairs read as one unit; task 3 drop waits on finance's confirmation."}
+{"plan":"p07.md","P1":false,"P2":false,"P3":true,"P4":false,"P5":true,"C1":false,"questions":4,"numbered":true,"recommended":true,"note":"Steps are the units, not the build order; build order gives order only, no blockers."}
+{"plan":"p08.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"P1: phase 3 is notification plumbing nothing calls yet."}
+{"plan":"p09.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"P3: export renamed, finance only given a heads-up."}
+{"plan":"p10.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":6,"numbered":false,"recommended":false,"note":"Questions are unnumbered bullets; the last two carry no recommended answer."}
+{"plan":"p11.md","P1":false,"P2":false,"P3":false,"P4":false,"P5":false,"C1":false,"questions":0,"numbered":false,"recommended":false,"note":"Prose with no units; tests added afterwards; no questions."}
+{"plan":"p12.md","P1":true,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":""}
+{"plan":"p13.md","P1":false,"P2":true,"P3":true,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"P1: unlabelled 'Store' section counted as a unit building storage only; table covers all five parts."}
+{"plan":"p14.md","P1":true,"P2":true,"P3":false,"P4":true,"P5":true,"C1":true,"questions":4,"numbered":true,"recommended":true,"note":"P3: export renamed like everywhere else, no reader named."}
