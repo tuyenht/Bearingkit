@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bearingkit — a working discipline for coding agents</title>
+<meta name="description" content="Bearingkit is an open-source protocol and skill set for Claude Code and other agent hosts: classify the request, plan, prove before claiming, hand off cleanly. MIT licensed.">
+<link rel="canonical" href="https://bearingkit.dev/">
+<meta property="og:title" content="Bearingkit">
+<meta property="og:description" content="A protocol and skill set that makes a coding agent work like a disciplined senior team. Built for Claude Code. MIT.">
+<meta property="og:url" content="https://bearingkit.dev/">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23c2410c' stroke-width='3'/%3E%3Cpath d='M16 6 L19 16 L16 26 L13 16 Z' fill='%23c2410c'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f7f5f0; --surface:#ffffff; --ink:#1c1a17; --muted:#5f5a52; --line:#e3ded4;
+  --accent:#c2410c; --accent-soft:#fbe9df; --ok:#2f6f3e; --ok-soft:#e3f1e5; --wait:#8a6a12; --wait-soft:#f6edcf;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#141311; --surface:#1d1b18; --ink:#ece8e0; --muted:#a39d92; --line:#302d28;
+    --accent:#f08a54; --accent-soft:#3a2418; --ok:#7cc48b; --ok-soft:#1c2e20; --wait:#e2c062; --wait-soft:#33290f;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans)}
+a{color:var(--accent);text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header.top{border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em;color:var(--ink);text-decoration:none}
+.brand svg{width:22px;height:22px}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;margin-left:18px}
+nav a:hover{color:var(--ink)}
+.hero{padding:72px 0 48px}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:clamp(34px,5.4vw,56px);line-height:1.05;letter-spacing:-.025em;margin:16px 0 20px;max-width:16ch}
+.lede{font-size:19px;color:var(--muted);max-width:60ch;margin:0 0 28px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:8px;font-weight:600;font-size:15px;text-decoration:none;border:1px solid var(--line);color:var(--ink);background:var(--surface)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+section{padding:56px 0;border-top:1px solid var(--line)}
+h2{font-size:28px;letter-spacing:-.015em;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;max-width:66ch}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px}
+.card h3{margin:0 0 6px;font-size:17px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.tag{display:inline-block;font:600 11px/1 var(--mono);padding:5px 7px;border-radius:5px;letter-spacing:.04em}
+.tag.act{background:var(--ok-soft);color:var(--ok)}
+.tag.council{background:var(--accent-soft);color:var(--accent)}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font:500 14px var(--mono);margin:4px 0 0}
+.flow span{background:var(--surface);border:1px solid var(--line);padding:6px 10px;border-radius:6px}
+.flow i{color:var(--muted);font-style:normal}
+.skills{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.skill{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--surface)}
+.skill code{font:600 14px var(--mono);color:var(--accent)}
+.skill div{color:var(--muted);font-size:14px;margin-top:3px}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:15px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+.st{font:600 12px var(--mono);padding:3px 7px;border-radius:5px;white-space:nowrap}
+.st.ok{background:var(--ok-soft);color:var(--ok)}
+.st.wait{background:var(--wait-soft);color:var(--wait)}
+.table-scroll{overflow-x:auto}
+pre{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;font:14px/1.6 var(--mono);margin:0}
+pre .c{color:var(--muted)}
+.note{font-size:14px;color:var(--muted);margin-top:12px}
+.honest{border-left:3px solid var(--accent);padding:4px 0 4px 16px;margin:24px 0 0;color:var(--ink);max-width:70ch}
+footer{border-top:1px solid var(--line);padding:32px 0 48px;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+@media (max-width:600px){nav a:not(.gh){display:none}.hero{padding:48px 0 32px}section{padding:44px 0}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 6 L19 16 L16 26 L13 16 Z" fill="#c2410c"/></svg>
+      Bearingkit
+    </a>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#skills">Skills</a>
+      <a href="#status">Status</a>
+      <a href="#install">Install</a>
+      <a class="gh" href="https://github.com/tuyenht/Bearingkit">GitHub →</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap hero">
+  <div class="eyebrow">Open source · MIT · Built for Claude Code</div>
+  <h1>A working discipline for coding agents.</h1>
+  <p class="lede">Bearingkit is a protocol and skill set that makes an AI coding agent work like a disciplined senior team: classify the request before acting, propose only when the blast radius demands it, prove before claiming, and hand off cleanly at the end of every session.</p>
+  <div class="cta">
+    <a class="btn primary" href="#install">Install for Claude Code</a>
+    <a class="btn" href="https://github.com/tuyenht/Bearingkit">View the source</a>
+  </div>
+</div>
+
+<section id="why">
+  <div class="wrap">
+    <h2>The problem it solves</h2>
+    <p class="sub">A capable agent left on defaults fails in a few predictable ways. Each one has a counterpart in the kit.</p>
+    <div class="grid g2">
+      <div class="card"><h3>It edits before it understands</h3><p>The protocol's router names the intent first and sends the request to the matching skill before any code is read or changed.</p></div>
+      <div class="card"><h3>It says “done” without proof</h3><p>Evidence rules: a skill pastes the command, test or measurement that shows the result, or says plainly that it was not measured.</p></div>
+      <div class="card"><h3>It takes risky actions unasked</h3><p>The autonomy gate splits work into ACT and COUNCIL; schema, auth, payments, data deletion and production stay behind a human decision.</p></div>
+      <div class="card"><h3>It forgets between sessions</h3><p><code>bk-close</code> writes a handoff in two blocks, verified against git, so the next session starts from the record, not from memory.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <p class="sub">One protocol loaded at session start, a set of focused skills it routes to, and agents for independent review.</p>
+    <div class="grid g2">
+      <div class="card">
+        <h3>The autonomy gate</h3>
+        <p style="margin-bottom:12px">Every request is classified before anything happens.</p>
+        <p><span class="tag act">ACT</span>&nbsp; tests, refactors, docs, app-layer fixes, small changes inside an approved plan: do it, then report.</p>
+        <p style="margin-top:10px"><span class="tag council">COUNCIL</span>&nbsp; migrations, auth, payments, data deletion, multi-module contracts, remote systems: propose, then wait.</p>
+      </div>
+      <div class="card">
+        <h3>A lifecycle with gates</h3>
+        <p style="margin-bottom:12px">Each step has its own skill and the evidence it must show.</p>
+        <div class="flow"><span>spec</span><i>→</i><span>plan</span><i>→</i><span>build</span><i>→</i><span>test</span><i>→</i><span>review</span><i>→</i><span>ship</span><i>→</i><span>close</span></div>
+        <p style="margin-top:12px">Hot paths get an independent reviewer agent before merge.</p>
+      </div>
+      <div class="card">
+        <h3>Installed once, active where you say</h3>
+        <p>Install per machine, activate per project. A project you have not activated sees nothing of the kit: no protocol, no skill in the listing, no hook. Activation writes one entry in the host's own config file and nothing else.</p>
+      </div>
+      <div class="card">
+        <h3>One source, several hosts</h3>
+        <p>Skills are written once in the Agent Skills format and installed into each host with that host's own command. Plain-language triggers work in English and Vietnamese.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <h2>The skills</h2>
+    <p class="sub">Seventeen skills plus the protocol. Each is a short body with gates and the evidence it must paste, and references it reads only when needed.</p>
+    <div class="skills">
+      <div class="skill"><code>bk-spec</code><div>Pin a request down before building: restate, edge cases, assumptions, requirements</div></div>
+      <div class="skill"><code>bk-plan</code><div>A phased plan with exit criteria and the evidence each phase must show</div></div>
+      <div class="skill"><code>bk-build</code><div>Execute a plan or a small change: scout first, minimal touch, migration safety</div></div>
+      <div class="skill"><code>bk-test</code><div>Tests as the contract, TDD by default, rendered checks for UI</div></div>
+      <div class="skill"><code>bk-debug</code><div>Root cause before any fix; council after three failed attempts</div></div>
+      <div class="skill"><code>bk-review</code><div>Review a diff before push: bugs, hot-path risk, untested claims</div></div>
+      <div class="skill"><code>bk-ship</code><div>Finish done work: guardrails, secret scan, conventional commit, PR body</div></div>
+      <div class="skill"><code>bk-close</code><div>End a session with a handoff verified against git</div></div>
+      <div class="skill"><code>bk-audit</code><div>An investigation that ends in one verdict and the options rejected</div></div>
+      <div class="skill"><code>bk-next</code><div>The next step, from the real repository state: git, plans, handoff</div></div>
+      <div class="skill"><code>bk-design</code><div>Design with a point of view, critiqued before it is built</div></div>
+      <div class="skill"><code>bk-setup</code><div>Make a project ready for agents on every host the owner uses</div></div>
+      <div class="skill"><code>bk-ops</code><div>Deploys and infrastructure with a way back; incidents read-only first</div></div>
+      <div class="skill"><code>bk-db</code><div>Database performance from the query plan; index changes with a way back</div></div>
+      <div class="skill"><code>bk-perf</code><div>Measure, then optimize: every number with its method</div></div>
+      <div class="skill"><code>bk-map</code><div>Map a codebase with file:line anchors: entry points, flows, rules, risks</div></div>
+      <div class="skill"><code>bk-research</code><div>Outside sources and tool choices, every claim cited with a confidence</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="status">
+  <div class="wrap">
+    <h2>Status</h2>
+    <p class="sub">Pre-release, started September 2026, developed in the open. The full dashboard, with how each figure was measured, is <a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/status.md">docs/status.md</a>.</p>
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th>Item</th><th>State</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr><td>Skill catalog</td><td><span class="st ok">18 / 18</span></td><td>17 skills plus the protocol</td></tr>
+        <tr><td>Claude Code</td><td><span class="st ok">accepted</span></td><td>Installs as a plugin from the repository's marketplace</td></tr>
+        <tr><td>Antigravity (2.0 app and IDE)</td><td><span class="st ok">accepted</span></td><td>Per-project activation measured 2026-09-20</td></tr>
+        <tr><td>Gemini CLI, Cursor, Codex</td><td><span class="st wait">pending</span></td><td>Manifests in place; listed as supported after their acceptance test</td></tr>
+        <tr><td>Skill activation (EN + VI prompts)</td><td><span class="st ok">≥ 0.9</span></td><td>Precision and recall on both accepted hosts; Claude Code 2026-09-16: recall 0.958, precision 1.000</td></tr>
+        <tr><td>Outcome benchmark vs. source skills</td><td><span class="st wait">in progress</span></td><td>No task yet meets the v1.0 bar (kit ≥ source on pass rate and fewer tokens)</td></tr>
+        <tr><td>npm package · Claude Marketplace listing</td><td><span class="st wait">planned</span></td><td>Next publication step</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="honest"><strong>How claims are made.</strong> Each skill is distilled from named open-source skills and judged against those sources — the same task, fixture, model and host, run with the kit and with the sources as they ship. Where that comparison has not been run, nothing here says the kit is better. Results that did not replicate are recorded as such.</p>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Install</h2>
+    <p class="sub">Claude Code installs the kit as a plugin, once per machine; then you switch it on per project.</p>
+<pre><span class="c"># Claude Code: add the marketplace and install the plugin</span>
+claude plugin marketplace add https://github.com/tuyenht/Bearingkit
+claude plugin install bearingkit@bearingkit
+
+<span class="c"># From a checkout: activate in a project, check what is on</span>
+cd &lt;your project&gt;
+node &lt;checkout&gt;/bin/bearingkit.cjs activate
+node &lt;checkout&gt;/bin/bearingkit.cjs status</pre>
+    <p class="note">The npm package is not published yet, so the command is the checkout's own entry point for now. Antigravity, uninstall and the per-host details: <a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/hosts.md">docs/hosts.md</a>.</p>
+  </div>
+</section>
+
+<section id="roadmap">
+  <div class="wrap">
+    <h2>Roadmap</h2>
+    <div class="grid g3">
+      <div class="card"><h3>v0.3 · now</h3><p>The remaining lifecycle skills distilled and measured against their sources; the last stack file; the v0.3 gate.</p></div>
+      <div class="card"><h3>Publication</h3><p>npm package, a Claude Marketplace listing, README in English and Vietnamese, CI.</p></div>
+      <div class="card"><h3>v1.0</h3><p>A 12-task outcome benchmark against the source skills, upstream change tracking, acceptance on the remaining hosts.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <h2>About</h2>
+    <p class="sub" style="margin-bottom:0">Bearingkit is built by a solo developer in Hanoi, Vietnam, who runs a small software practice with AI agents doing most of the hands-on work and uses the kit on that work every day. Provenance for every adapted source is in <a href="https://github.com/tuyenht/Bearingkit/blob/main/NOTICE">NOTICE</a>. Contact: <a href="mailto:hello@bearingkit.dev">hello@bearingkit.dev</a>.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Bearingkit contributors · MIT License</span>
+    <span><a href="https://github.com/tuyenht/Bearingkit">GitHub</a> · <a href="mailto:hello@bearingkit.dev">hello@bearingkit.dev</a></span>
+  </div>
+</footer>
+</body>
+</html>
