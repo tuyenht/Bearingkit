@@ -4,6 +4,9 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 
 ## Unreleased
 
+### Changed (2026-10-08, positioning)
+- README, `README.vi.md` (new) and the site (`site/index.html`, new `site/vi/index.html`, shared `site/style.css`) lead with "one kit instead of a stack": plain-language routing in Vietnamese and English with real prompts from `evals/activation/phase-1.jsonl`, the handoff chain and its stop points, the curation figures from `upstream/sources.json` and the item inventory, and a status section that states the measured results with their limits (no clear difference on most compared tasks, about 1–3× the sources' cost, no task at the v1.0 bar) and names the next three measurements. Every claim was checked against the repository by an independent reviewer in two rounds before publishing.
+
 ### Added (2026-10-08, public presentation)
 - `site/index.html`: a one-page site for https://bearingkit.dev (what the kit is, the autonomy gate, the lifecycle, the 17 skills with their own descriptions, status figures copied from `docs/status.md`, install, roadmap); `site/CNAME`; `.github/workflows/pages.yml` deploys `site/` to GitHub Pages on a push to `main` that touches it.
 - README: sections "Why it exists", "Status" and "Roadmap"; the line saying `bk-perf` arrives with v0.3 is corrected (it is in the catalog).
