@@ -9,7 +9,7 @@
 | `languages: kotlin` | `kotlin.md` | written |
 | `languages: python` | `python.md` | written |
 | `languages: php` (framework `laravel` or none) | `php-laravel.md` | written |
-| `languages: c-cpp` | `c-cpp.md` | written |
+| `languages: c-cpp` | `c-cpp.md` | **not written yet** |
 | no language: a `.sh`, `.bash` or `.ps1` file in the tree, like `sql.md` below | `shell.md` | written |
 | `languages: java`, `go`, `rust`, `csharp` or `terraform` | — | **no file, none planned yet**: spec §5.5's first eight do not include them. The profile still carries their guardrail commands; say the file is missing rather than borrowing another stack's |
 
@@ -19,7 +19,7 @@ No manifest declares SQL or shell, so neither has a language row above. `detect-
 
 ## When a stack has no file
 
-Say so rather than improvising from the nearest one. The gap is a real finding for the session's handoff, and spec §5.5 lists eight stacks as the first set — all eight exist today. Nothing in the kit pretends a missing file is covered.
+Say so rather than improvising from the nearest one. The gap is a real finding for the session's handoff, and spec §5.5 lists eight stacks as the first set — seven exist today. Nothing in the kit pretends a missing file is covered.
 
 ## Adding one
 
