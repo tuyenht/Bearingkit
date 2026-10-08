@@ -40,7 +40,7 @@ nav .lang{color:var(--ink);border:1px solid var(--line-strong);border-radius:999
 
 /* hero */
 .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding:80px 24px 72px}
-h1{font-size:clamp(40px,6vw,68px);line-height:1.02;letter-spacing:-.035em;font-weight:700;margin:0 0 22px}
+h1{text-wrap:balance;font-size:clamp(40px,6vw,68px);line-height:1.02;letter-spacing:-.035em;font-weight:700;margin:0 0 22px}
 .lede{font-size:19px;line-height:1.6;color:var(--muted);margin:0 0 30px;max-width:56ch}
 .cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .btn{display:inline-flex;align-items:center;padding:12px 20px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;border:1px solid var(--line-strong);color:var(--ink);background:transparent}
@@ -61,7 +61,7 @@ figcaption{margin-top:10px;font-size:13.5px;color:var(--muted)}
 
 /* sections */
 section{padding:76px 0;border-top:1px solid var(--line)}
-h2{font-size:clamp(28px,3.6vw,38px);line-height:1.12;letter-spacing:-.025em;font-weight:700;margin:0 0 12px;max-width:24ch}
+h2{text-wrap:balance;font-size:clamp(28px,3.6vw,38px);line-height:1.12;letter-spacing:-.025em;font-weight:700;margin:0 0 12px;max-width:24ch}
 h3{font-size:17px;line-height:1.35;font-weight:600;letter-spacing:-.01em;margin:0 0 6px}
 .sub{font-size:17.5px;color:var(--muted);margin:0 0 36px;max-width:66ch}
 .note{font-size:14.5px;color:var(--muted);margin:14px 0 0;max-width:80ch}
@@ -166,3 +166,5 @@ footer a{color:var(--muted)}
 .wants li{padding:14px 0 14px 28px;border-top:1px solid var(--line);position:relative;font-size:17px}
 .wants li::before{content:"";position:absolute;left:4px;top:24px;width:10px;height:2px;background:var(--bearing)}
 .wants li b{font-weight:600}
+
+.lede,.sub,.story p,.wants li{text-wrap:pretty}
