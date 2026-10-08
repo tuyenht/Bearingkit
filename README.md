@@ -10,7 +10,7 @@ Stop stacking plugins. Bearingkit is one open-source kit for **one-person softwa
 
 The usual setup is a pile — a workflow pack, a review pack, a TDD pack, the vendor's official plugins. Each is good alone. Together they compete for the same requests, carry overlapping rules, all load before you type, and stay behind when you switch tools. Bearingkit is that pile, read item by item and being distilled into one system:
 
-- **23 sources studied, 17 of them open-source** (Superpowers, Anthropic's official plugins, mattpocock/skills, spec-kit and more; full list in `upstream/sources.json`). **1,295 source items** (skills, commands, agents, rule files) inventoried one by one: 46 to adapt, 610 kept as ideas, 639 dropped. Every adapted file names its sources; licences are carried in [`NOTICE`](NOTICE). What is borrowed and what is ours, component by component: [`PROVENANCE.md`](PROVENANCE.md).
+- **23 sources studied, 17 of them open-source** (Superpowers, Anthropic's official plugins, mattpocock/skills, spec-kit and more; full list in `upstream/sources.json`). **1,295 source items** from 22 of them (skills, commands, agents, rule files) inventoried one by one: 46 to adapt, 610 kept as ideas, 639 dropped. Every adapted file names its sources; licences are carried in [`NOTICE`](NOTICE). What is borrowed and what is ours, component by component: [`PROVENANCE.md`](PROVENANCE.md).
 - **One router.** The protocol names the intent first, then opens one skill — instead of several packs competing for the same request.
 - **A small footprint.** Fixed context about 4,000 tokens on Claude Code, against a budget of 5,000 (measured 2026-09-23, before the 17th skill).
 - **Per-project activation.** Installed once per machine; a project you have not activated sees nothing of it — on both accepted hosts.
@@ -46,8 +46,8 @@ Skills hand off in a fixed chain — **spec → plan → build → test → revi
 | Skills | 17 skills plus the protocol; `bk-build` opens stack rules for TypeScript/React, Kotlin, SQL, Node, Python, PHP/Laravel, Shell |
 | Hosts | Accepted: Claude Code, Antigravity 2.0 app. Loads per project, full acceptance pending: Antigravity IDE. Manifests in place: Gemini CLI, Cursor, Codex |
 | Plain-language routing | EN + VI; precision and recall ≥ 0.9 on the 60-prompt core set, both accepted hosts |
-| Against the source skills | compared so far: `bk-review`, `bk-debug`, `bk-plan` and four stack files. Most showed no clear difference (small samples; on most, neither side could be told apart from no skill at all); one planning task with one model favoured the kit; on PowerShell the kit beat the no-skill floor and a pack with no shell skill, not its own source. The kit costs about 1–3× what its sources cost per task, so **no task yet meets the v1.0 bar** (at least the sources' pass rate *and* fewer tokens) |
-| npm package, Claude Marketplace listing | not yet |
+| Against the source skills | compared so far: `bk-review`, `bk-debug`, `bk-plan` and four stack files. Most showed no clear difference (small samples; on most, neither side could be told apart from no skill at all); one planning task with one model favoured the kit; on PowerShell the kit beat the no-skill floor and a pack with no shell skill, not its own source. Where cost was recorded, the kit cost about 1.3–3× what its sources did per task (per-task figures in `docs/specs`), so **no task yet meets the v1.0 bar** (at least the sources' pass rate *and* fewer tokens) |
+| npm package, marketplace listings | not yet |
 
 **How claims are made.** Each skill is to be judged against the sources it was distilled from — same task, fixture, model and host, once with the kit and once with the sources. Until that comparison exists for a skill, it is "not compared"; results that did not replicate are recorded as such.
 
@@ -63,7 +63,7 @@ Skills hand off in a fixed chain — **spec → plan → build → test → revi
 
 - **v0.3** (current): the remaining lifecycle skills distilled and measured (`bk-spec`, `bk-ship`, `bk-close`), the last stack file, the v0.3 gate.
 - **v0.4**: optional packs, push and deploy hooks, acceptance on Gemini CLI, Cursor and Codex.
-- **v1.0**: a 12-task outcome benchmark against the sources, `upstream-watch` to report changes in each source; publication — npm package, Claude Marketplace listing, full documentation in English and Vietnamese, CI.
+- **v1.0**: a 12-task outcome benchmark against the sources, `upstream-watch` to report changes in each source; publication: marketplace listings, README in English and Vietnamese, CI, and a squashed public history.
 
 Detailed plan: [`docs/plans/2026-09-26-v03-roadmap.md`](docs/plans/2026-09-26-v03-roadmap.md). MIT today and tomorrow; help adopting it in a team: [hello@bearingkit.dev](mailto:hello@bearingkit.dev).
 

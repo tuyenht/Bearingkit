@@ -16,7 +16,7 @@ These were counted on 2026-10-08 from this repository. The commands are at the e
 |---|---|
 | Sources studied (`upstream/sources.json`) | 23: 5 adapt, 6 ideas-only, 12 reference |
 | Sources whose text appears in the kit, with a notice | 3: obra/superpowers (MIT), anthropics/claude-plugins-official (Apache-2.0), mattpocock/skills (MIT) |
-| Source items inventoried one by one, each with a decision and a reason (`docs/specs/2026-09-18-item-inventory.md`) | 1,295: 46 to adapt, 610 ideas, 639 dropped |
+| Source items inventoried one by one, each with a decision and a reason (`docs/specs/2026-09-18-item-inventory.md`) | 1,295 from 22 of the sources: 46 to adapt, 610 ideas, 639 dropped |
 | Markdown files in `skills/` | 117 |
 | …that carry adapted text | 19 `references/` files. They hold about a third of the words in `skills/`, all rewritten in the kit's form |
 | Components with no adapted text | 8 of 18 |
@@ -58,7 +58,7 @@ The exact source paths and commits are in `NOTICE` and `upstream/sources.json`, 
 
 ## Is it actually better than the sources?
 
-That has not been shown yet, and the kit does not claim it. On most of the tasks compared so far, the kit and its sources could not be told apart, and the kit costs about 1–3× what its sources cost per task. The full record is in [`docs/status.md`](docs/status.md).
+That has not been shown yet, and the kit does not claim it. On most of the tasks compared so far, the kit and its sources could not be told apart, and where cost was recorded the kit cost about 1.3–3× what its sources did per task (per-task figures in `docs/specs`). The full record is in [`docs/status.md`](docs/status.md).
 
 What the kit offers today is one coherent, gated system in place of a stack of packs that you would otherwise assemble, reconcile and maintain yourself. Whether that system beats such a stack on outcome and cost is the next measurement, proposed in [`docs/specs/2026-10-08-kit-vs-stack-proposal.md`](docs/specs/2026-10-08-kit-vs-stack-proposal.md).
 

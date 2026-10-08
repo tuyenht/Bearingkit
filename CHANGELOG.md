@@ -4,6 +4,17 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 
 ## Unreleased
 
+### Changed (2026-10-09, site rewrite)
+- The site is rewritten in the author's own first-person voice, with an English-only page and a Vietnamese-only page (proper names, commands and verbatim test prompts excepted). Type is Be Vietnam Pro, which has full Vietnamese glyph coverage, with JetBrains Mono for code. The palette is chart-paper and navy, with teal for ACT and red for COUNCIL stops.
+- Three reviews used different models: English voice, Vietnamese voice, and facts plus technical checks. Fixes:
+  - The hero had no side padding.
+  - The cost range now traces to the design files (about 1.3–3× the sources where cost was recorded).
+  - The v1.0 roadmap matches the spec.
+  - The bk-ship trigger, the bk-build stack-file reading and the reference-file wording now match the skills.
+  - The item inventory is described as covering 22 sources.
+  - Responsive and keyboard fixes: anchor offset, handoff-chain wrapping, tables on narrow screens, and row headers.
+- README and PROVENANCE use the same cost and roadmap wording.
+
 ### Added (2026-10-08, provenance and the stack measurement)
 - `PROVENANCE.md`: what is borrowed and what the kit adds, component by component, with counts and the commands that reproduce them (19 `references/` files in ten components carry adapted text; eight of eighteen components carry none). `NOTICE`, both READMEs and both site pages link to it.
 - `docs/specs/2026-10-08-kit-vs-stack-proposal.md` (PROPOSED): the kit against a stack of whole packs loaded together — fixed context, activation on the 96 prompts, outcome and cost on existing tasks, and a later gate task; bars registered before data, five questions for the owner.

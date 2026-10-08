@@ -10,7 +10,7 @@ Thôi cài chồng cả đống plugin. Bearingkit là một bộ công cụ mã
 
 Cách thường gặp là cài cả đống: gói quy trình, gói rà code, gói TDD, thêm plugin chính hãng. Từng gói đều tốt. Gộp lại thì chúng giành nhau cùng một yêu cầu, chồng chéo quy tắc, cùng nạp vào context trước khi bạn gõ, và nằm lại khi bạn đổi công cụ. Bearingkit là đống đó, được đọc từng mục và đang được chắt lọc thành một hệ thống:
 
-- **23 nguồn đã nghiên cứu, 17 trong số đó là mã nguồn mở** (Superpowers, plugin chính hãng của Anthropic, mattpocock/skills, spec-kit…; danh sách đủ ở `upstream/sources.json`). **1.295 mục nguồn** (skill, lệnh, agent, file quy tắc) đã kiểm kê từng cái: 46 sẽ chuyển thể, 610 giữ làm ý tưởng, 639 loại bỏ. Mọi file chuyển thể đều ghi nguồn; giấy phép nằm trong [`NOTICE`](NOTICE). Phần nào vay mượn, phần nào của riêng dự án, theo từng thành phần: [`PROVENANCE.md`](PROVENANCE.md) (tiếng Anh).
+- **23 nguồn đã nghiên cứu, 17 trong số đó là mã nguồn mở** (Superpowers, plugin chính thức của Anthropic, mattpocock/skills, spec-kit…; danh sách đủ ở `upstream/sources.json`). **1.295 mục nguồn** từ 22 nguồn (skill, lệnh, agent, file quy tắc) đã kiểm kê từng cái: 46 sẽ chuyển thể, 610 giữ làm ý tưởng, 639 loại bỏ. Mọi file chuyển thể đều ghi nguồn; giấy phép nằm trong [`NOTICE`](NOTICE). Phần nào vay mượn, phần nào của riêng dự án, theo từng thành phần: [`PROVENANCE.md`](PROVENANCE.md) (tiếng Anh).
 - **Một bộ điều hướng.** Protocol gọi tên ý định trước, rồi mở một skill — thay vì nhiều gói cùng giành một yêu cầu.
 - **Nhẹ.** Context cố định khoảng 4.000 token trên Claude Code, ngân sách 5.000 (đo ngày 23/09/2026, trước skill thứ 17).
 - **Bật theo từng dự án.** Cài một lần cho máy; dự án chưa bật thì không thấy gì — trên cả hai host đã nghiệm thu.
@@ -46,8 +46,8 @@ Các skill chuyển giao cho nhau theo chuỗi cố định — **spec → plan 
 | Skill | 17 skill cùng protocol; `bk-build` mở quy tắc stack cho TypeScript/React, Kotlin, SQL, Node, Python, PHP/Laravel, Shell |
 | Host | Đã nghiệm thu: Claude Code, Antigravity app 2.0. Nạp theo dự án, chưa nghiệm thu đủ: Antigravity IDE. Đã có manifest: Gemini CLI, Cursor, Codex |
 | Điều hướng bằng ngôn ngữ tự nhiên | Việt + Anh; precision và recall ≥ 0,9 trên bộ lõi 60 câu, cả hai host đã nghiệm thu |
-| So với skill nguồn | đã so: `bk-review`, `bk-debug`, `bk-plan` và bốn file stack. Phần lớn không khác biệt rõ (mẫu nhỏ; ở phần lớn task, cả hai bên chưa tách được khỏi việc không dùng skill); một task lập kế hoạch với một model nghiêng về kit; với PowerShell, kit vượt mức sàn và một gói không có skill shell, nhưng không vượt nguồn của chính nó. Chi phí mỗi task của kit gấp khoảng 1–3 lần nguồn, nên **chưa task nào đạt chuẩn v1.0** (tỷ lệ đạt ít nhất bằng nguồn *và* ít token hơn) |
-| Gói npm, listing Claude Marketplace | chưa có |
+| So với skill nguồn | đã so: `bk-review`, `bk-debug`, `bk-plan` và bốn file stack. Phần lớn không khác biệt rõ (mẫu nhỏ; ở phần lớn task, cả hai bên chưa tách được khỏi việc không dùng skill); một task lập kế hoạch với một model nghiêng về kit; với PowerShell, kit vượt mức sàn và một gói không có skill shell, nhưng không vượt nguồn của chính nó. Ở những task có ghi chi phí, kit tốn khoảng 1,3–3 lần nguồn (số liệu từng task trong `docs/specs`), nên **chưa task nào đạt chuẩn v1.0** (tỷ lệ đạt ít nhất bằng nguồn *và* ít token hơn) |
+| Gói npm, có mặt trên các marketplace | chưa có |
 
 **Cách đưa ra tuyên bố.** Mỗi skill sẽ được đánh giá so với chính các nguồn nó chắt lọc từ — cùng task, fixture, model và host, một lần có kit và một lần với nguồn. Khi chưa có phép so đó, skill được ghi là "chưa so"; kết quả không lặp lại được cũng được ghi lại.
 
@@ -63,7 +63,7 @@ Các skill chuyển giao cho nhau theo chuỗi cố định — **spec → plan 
 
 - **v0.3** (hiện tại): chắt lọc và đo các skill vòng đời còn lại (`bk-spec`, `bk-ship`, `bk-close`), file stack cuối cùng, cổng v0.3.
 - **v0.4**: gói tuỳ chọn, hook cho push và deploy, nghiệm thu trên Gemini CLI, Cursor và Codex.
-- **v1.0**: benchmark kết quả 12 task so với nguồn, `upstream-watch` báo thay đổi của từng nguồn; phát hành — gói npm, listing Claude Marketplace, tài liệu đầy đủ tiếng Anh và tiếng Việt, CI.
+- **v1.0**: benchmark kết quả 12 task so với nguồn, `upstream-watch` báo thay đổi của từng nguồn; phát hành: có mặt trên các marketplace, README tiếng Anh và tiếng Việt, CI, và lịch sử công khai đã gộp gọn.
 
 Kế hoạch chi tiết: [`docs/plans/2026-09-26-v03-roadmap.md`](docs/plans/2026-09-26-v03-roadmap.md).
 
