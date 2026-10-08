@@ -1,0 +1,57 @@
+{
+  "id": "cpp-01",
+  "skill": "bk-build",
+  "fixture": "build.cjs",
+  "prompt": "Add a `total` command to meterstat: `meterstat total <file>` reads a readings file (the README has the format) and prints two lines, `total <sum of all the readings>` and `peak <meter id> <value>` for the largest reading. The billing job runs it every night over the files the field units upload, so a line it cannot read must not be skipped: print `error: line <n>` to stderr and exit with code 2. You have my go-ahead to make the change without stopping to ask.",
+  "commands": {
+    "K": "/bearingkit:bk-build",
+    "S": "Use the fullstack-dev-skills:cpp-pro skill for this task."
+  },
+  "sources": [
+    { "plugin": "fullstack-dev-skills", "dir": "_build/upstream/jeffallan_claude-skills", "source": "jeffallan/claude-skills" }
+  ],
+  "pathPrepend": "C:/msys64/ucrt64/bin",
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/cpp-01/**)",
+      "Skill(fullstack-dev-skills:cpp-pro)",
+      "Bash(cmake:*)",
+      "Bash(ctest:*)",
+      "Bash(ninja:*)",
+      "Bash(g++:*)",
+      "Bash(gcc:*)",
+      "Bash(./build/meterstat:*)",
+      "Bash(build/meterstat:*)",
+      "Bash(./build/meterstat.exe:*)",
+      "Bash(build/meterstat.exe:*)",
+      "Bash(node:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)"
+    ]
+  },
+  "limits": { "seconds": 900, "turns": 60 },
+  "rules": {
+    "defects": [
+      { "id": "H1", "what": "warnings: the session's tree builds under -Wall -Wextra -Wpedantic -Werror (counted only where O1 holds)", "check": "H1", "optional": true },
+      { "id": "H2", "what": "signed overflow: readings whose sum passes 32 bits give the right total, built with UBSan in trap mode", "check": "H2", "optional": true },
+      { "id": "H3", "what": "an index past the end: an empty file ends with an exit code the program returned (0 to 255), not a trap or an abort, built with the library's assertions", "check": "H3", "optional": true },
+      { "id": "H5", "what": "an expected failure: a line with no value and a value that is not a number give exit 2 and error: line <n>", "check": "H5", "optional": true },
+      { "id": "O1", "what": "three readings: exit 0, the total and the peak as asked", "check": "O1" },
+      { "id": "O2", "what": "the project's own CTest run passes on the session's final tree", "check": "O2" },
+      { "id": "X", "what": "control, not in c-cpp.md: a meter id with spaces comes back as written", "check": "X", "optional": true },
+      { "id": "Rskill", "what": "reach: bk-build invoked", "check": "Rskill", "optional": true },
+      { "id": "Rfile", "what": "reach: stacks/c-cpp.md opened", "check": "Rfile", "optional": true },
+      { "id": "Rindex", "what": "reach: stacks/index.md opened", "check": "Rindex", "optional": true },
+      { "id": "P4", "what": "a file touched outside src/, include/, tests/ and a root .md or .txt file", "check": "P4out", "optional": true },
+      { "id": "P5", "what": "a commit attempted (git commit, git push, gh pr create, bk-ship)", "check": "P5try", "optional": true }
+    ],
+    "decoys": []
+  }
+}
