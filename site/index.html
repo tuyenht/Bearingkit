@@ -4,33 +4,39 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bearingkit — one install, a whole team's discipline</title>
-<meta name="description" content="Stop stacking plugins. Bearingkit is one open-source kit for one-person software companies: ask in plain Vietnamese or English, and it routes your AI coding agent to the right step and is built to carry the work from spec to ship and stop for you before risky changes. Claude Code and Antigravity today. MIT.">
+<meta name="description" content="Stop stacking plugins. Bearingkit is one open-source kit for one-person software companies: ask in plain English or Vietnamese, and it routes your AI coding agent to the right step and is built to carry the work from spec to ship and stop for you before risky changes. Claude Code and Antigravity today. MIT.">
 <link rel="canonical" href="https://bearingkit.dev/">
-<link rel="alternate" hreflang="vi" href="https://bearingkit.dev/vi/">
 <link rel="alternate" hreflang="en" href="https://bearingkit.dev/">
+<link rel="alternate" hreflang="vi" href="https://bearingkit.dev/vi/">
+<link rel="alternate" hreflang="x-default" href="https://bearingkit.dev/">
 <meta property="og:title" content="Bearingkit — one install, a whole team's discipline">
-<meta property="og:description" content="One kit instead of a stack of plugins. Plain-language requests in Vietnamese or English, a lifecycle that hands off step to step with safety stops, evidence before claims. MIT.">
+<meta property="og:description" content="One kit instead of a stack of plugins: plain-language requests, a lifecycle that hands off step to step with safety stops, evidence before claims. MIT.">
 <meta property="og:url" content="https://bearingkit.dev/">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
 <meta name="color-scheme" content="light dark">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23c2410c' stroke-width='3'/%3E%3Cpath d='M16 6 L19 16 L16 26 L13 16 Z' fill='%23c2410c'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#13202b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13.5' fill='none' stroke='%2313202b' stroke-width='2.5'/%3E%3Cpath d='M16 5 L19.2 16 L12.8 16 Z' fill='%23b42318'/%3E%3Cpath d='M16 27 L12.8 16 L19.2 16 Z' fill='%230b6e69'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="/">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 6 L19 16 L16 26 L13 16 Z" fill="#c2410c"/></svg>
+    <a class="brand" href="/" aria-label="Bearingkit home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13.5" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 5 L19.2 16 L12.8 16 Z" fill="#b42318"/><path d="M16 27 L12.8 16 L19.2 16 Z" fill="#0b6e69"/></svg>
       Bearingkit
     </a>
-    <nav>
+    <nav aria-label="Main">
       <a href="#why">Why one kit</a>
       <a href="#language">Plain language</a>
-      <a href="#flow">Flow</a>
+      <a href="#flow">How it works</a>
       <a href="#status">Status</a>
       <a href="#install">Install</a>
-      <a class="lang" href="/vi/" hreflang="vi">VI</a>
-      <a class="gh" href="https://github.com/tuyenht/Bearingkit">GitHub →</a>
+      <a href="https://github.com/tuyenht/Bearingkit">GitHub</a>
+      <a class="lang" href="/vi/" hreflang="vi" lang="vi">Tiếng Việt</a>
     </nav>
   </div>
 </header>
@@ -38,33 +44,32 @@
 <main>
 <div class="wrap hero">
   <div>
-    <div class="eyebrow">Open source · MIT · in active development</div>
     <h1>One install.<br>A whole team's discipline.</h1>
-    <p class="lede">Stop stacking plugins. Bearingkit is one kit for one-person software companies. Say what you want in plain Vietnamese or English: it routes your AI coding agent to the right step, and is built to carry the work from spec to ship, stop for you before anything risky, and show its evidence before it calls anything done.</p>
+    <p class="lede">Stop stacking plugins. Bearingkit is one kit for one-person software companies. Say what you want in plain English or Vietnamese: it routes your AI coding agent to the right step, and is built to carry the work from spec to ship, stop for you before anything risky, and show its evidence before it calls anything done.</p>
     <div class="cta">
       <a class="btn primary" href="#install">Install</a>
       <a class="btn" href="#why">Why not just stack plugins?</a>
     </div>
+    <p class="fineprint">Open source under MIT. Pre-release, built in the open.</p>
   </div>
   <figure style="margin:0">
-    <div class="term" role="img" aria-label="Illustration of a session routed by Bearingkit">
-      <div class="bar"><i></i><i></i><i></i></div>
-      <div class="you">Làm tính năng đăng nhập hai lớp bằng TOTP</div>
-      <div class="sys">  intent: feature → <span class="sk">bk-spec</span></div>
-      <div class="sys">  restate · edge cases · assumptions</div>
-      <div class="stop">  auth is a COUNCIL area → proposal written, waiting for you</div>
+    <div class="console" role="img" aria-label="Illustration of a session routed by Bearingkit">
+      <div class="row you">Implement two-factor login with TOTP.</div>
+      <div class="row dim">intent: feature, so <span class="sk">bk-spec</span></div>
+      <div class="row dim">restate, edge cases, assumptions</div>
+      <div class="row stop">auth is a COUNCIL area: proposal written, waiting for you</div>
       <div class="gap"></div>
-      <div class="you">Đồng ý, làm đi</div>
-      <div class="sys">  <span class="sk">bk-plan</span> → <span class="sk">bk-build</span> → <span class="sk">bk-test</span> → <span class="sk">bk-review</span></div>
-      <div class="sys">  hot path → independent review before push</div>
+      <div class="row you">Approved, go ahead.</div>
+      <div class="row dim"><span class="sk">bk-plan</span>, then <span class="sk">bk-build</span>, <span class="sk">bk-test</span>, <span class="sk">bk-review</span></div>
+      <div class="row dim">hot path: independent review before push</div>
       <div class="gap"></div>
-      <div class="you">Xong rồi ship đi</div>
-      <div class="sys">  <span class="sk">bk-ship</span>: guardrails ran, output pasted · secret scan</div>
+      <div class="row you">Run the checks and push.</div>
+      <div class="row dim"><span class="sk">bk-ship</span>: guardrails ran, output pasted, secrets scanned</div>
       <div class="gap"></div>
-      <div class="you">Kết phiên giúp tôi</div>
-      <div class="sys">  <span class="sk">bk-close</span>: handoff written, checked against git</div>
+      <div class="row you">Wrap up the session.</div>
+      <div class="row dim"><span class="sk">bk-close</span>: handoff written, checked against git</div>
     </div>
-    <figcaption class="note">An illustration of how the protocol routes a request, not a recorded session.</figcaption>
+    <figcaption>An illustration of how the protocol routes a request, not a recorded session.</figcaption>
   </figure>
 </div>
 
@@ -72,20 +77,20 @@
   <div class="wrap">
     <h2>Why one kit instead of a stack</h2>
     <p class="sub">The usual setup is a pile: a workflow pack, a review pack, a TDD pack, the vendor's official plugins. Each is good on its own. Together they compete for the same requests, carry overlapping rules, all load into context before you type, and stay behind when you switch tools. Bearingkit is that pile, read item by item and being distilled into one coherent system.</p>
-    <div class="grid g4" style="margin-bottom:28px">
-      <div class="stat"><b>23</b><span>sources studied, 17 of them open-source — Superpowers, Anthropic's official plugins, mattpocock/skills, spec-kit and more</span></div>
-      <div class="stat"><b>1,295</b><span>source items (skills, commands, agents, rule files) inventoried one by one: 46 to adapt, 610 kept as ideas, 639 dropped</span></div>
-      <div class="stat"><b>1</b><span>router that names the intent and opens one skill first, instead of several packs competing for the same request</span></div>
-      <div class="stat"><b>≈4k</b><span>tokens of fixed context on Claude Code, against a budget of 5,000 (measured 2026-09-23, before the 17th skill)</span></div>
+    <div class="figures">
+      <div><b>23</b><span>sources studied, 17 of them open source: Superpowers, Anthropic's official plugins, mattpocock/skills, spec-kit and more</span></div>
+      <div><b>1,295</b><span>source items (skills, commands, agents, rule files) inventoried one by one: 46 to adapt, 610 kept as ideas, 639 dropped</span></div>
+      <div><b>1</b><span>router that names the intent and opens one skill first, instead of several packs competing for the same request</span></div>
+      <div><b>≈4k</b><span>tokens of fixed context on Claude Code, against a budget of 5,000 (measured 2026-09-23, before the 17th skill)</span></div>
     </div>
     <div class="table-scroll">
     <table>
-      <thead><tr><th style="width:24%">Question</th><th style="width:38%">A hand-assembled stack</th><th>Bearingkit is designed to</th></tr></thead>
+      <thead><tr><th style="width:22%">Question</th><th style="width:36%">A hand-assembled stack</th><th>Bearingkit is designed to</th></tr></thead>
       <tbody>
         <tr><td>Who decides what runs?</td><td>Several packs' descriptions compete for the model's choice</td><td class="us">Name the intent through one router, then open one skill first</td></tr>
         <tr><td>Overlapping advice</td><td>Reconciling it is left to you</td><td class="us">Resolve overlaps once, at distillation; every adapted file names its sources</td></tr>
-        <tr><td>Risky changes</td><td>Varies from pack to pack</td><td class="us">Apply one autonomy gate: migrations, auth, payments, deletion, production are proposed, then wait for you</td></tr>
-        <tr><td>"Done"</td><td>Varies — some packs ship good verification rules (the kit adapted them)</td><td class="us">Hold one definition of done: guardrail output pasted, no test means not done, UI checked rendered</td></tr>
+        <tr><td>Risky changes</td><td>Varies from pack to pack</td><td class="us">Apply one autonomy gate: migrations, auth, payments, deletion and production are proposed, then wait for you</td></tr>
+        <tr><td>"Done"</td><td>Varies; some packs ship good verification rules (the kit adapted them)</td><td class="us">Hold one definition of done: guardrail output pasted, no test means not done, UI checked rendered</td></tr>
         <tr><td>Switching to another agent</td><td>Depends on each pack's host coverage</td><td class="us">Keep one skills source across hosts; Claude Code and Antigravity accepted</td></tr>
         <tr><td>Projects that don't want it</td><td>Up to each host's own settings, pack by pack</td><td class="us">Switch on per project with one command, on both accepted hosts</td></tr>
       </tbody>
@@ -99,22 +104,22 @@
   <div class="wrap">
     <h2>Say it the way you'd say it to a colleague</h2>
     <p class="sub">No slash commands to memorise. Every skill carries trigger phrases in English and Vietnamese, and the protocol routes plain requests to the right one. These are real prompts from the kit's activation test set, with the skill each is expected to open.</p>
-    <div class="say">
-      <div><q>Thêm xuất CSV cho trang hóa đơn.</q><code>bk-spec</code></div>
-      <div><q>Form đăng nhập báo lỗi 500 sau khi đổi mật khẩu.</q><code>bk-debug</code></div>
-      <div><q>Soi giúp diff này trước khi tôi đẩy.</q><code>bk-review</code></div>
-      <div><q>Nhánh này merge được chưa?</q><code>bk-review</code></div>
-      <div><q>Viết test cho trường hợp upload file lớn.</q><code>bk-test</code></div>
-      <div><q>Xong phần xuất hóa đơn rồi, ship đi.</q><code>bk-ship</code></div>
-      <div><q>Có nên tách phần upload ra service riêng không? Đánh giá các phương án giúp tôi.</q><code>bk-audit</code></div>
-      <div><q>Tiếp theo làm gì? Tôi đang dở việc gì trong repo này?</q><code>bk-next</code></div>
-      <div><q>Tại sao Postgres bỏ qua index trên cột status mà tôi mới thêm?</q><code>bk-db</code></div>
-      <div><q>Kết phiên giúp tôi, ghi bàn giao để phiên sau đọc.</q><code>bk-close</code></div>
-    </div>
-    <div class="grid g3" style="margin-top:24px">
-      <div class="stat"><b>44 / 96</b><span>prompts in today's activation test set are written in Vietnamese</span></div>
-      <div class="stat"><b>≥ 0.9</b><span>precision and recall on the 60-prompt core set, on Claude Code and Antigravity 2.0 (Claude Code: recall 0.958, precision 1.000; 2026-09-16)</span></div>
-      <div class="stat"><b>0</b><span>commands to learn — though each skill can still be called by name</span></div>
+    <ul class="prompts">
+      <li><q>Add CSV export to the invoices page.</q><code>bk-spec</code></li>
+      <li><q>The login form shows a 500 after a password reset.</q><code>bk-debug</code></li>
+      <li><q>Review this diff before I push.</q><code>bk-review</code></li>
+      <li><q>Is this branch safe to merge?</q><code>bk-review</code></li>
+      <li><q>Uploads over 5 MB silently disappear.</q><code>bk-debug</code></li>
+      <li><q>Ship the invoice export.</q><code>bk-ship</code></li>
+      <li><q>Break the invoice export work into phases with exit criteria before we touch code.</q><code>bk-plan</code></li>
+      <li><q>Where were we, and what should I pick up next?</q><code>bk-next</code></li>
+      <li><q>The error-rate alert on checkout fired ten minutes ago. Find out what is going on.</q><code>bk-ops</code></li>
+      <li><q>Wrap up the session and write the handoff for the next one.</q><code>bk-close</code></li>
+    </ul>
+    <div class="pairs">
+      <div><b>96 prompts</b><span>in today's activation test set; 44 of them are written in Vietnamese, the rest in English</span></div>
+      <div><b>≥ 0.9</b><span>precision and recall on the 60-prompt core set, on Claude Code and Antigravity 2.0 (Claude Code: recall 0.958, precision 1.000; 2026-09-16)</span></div>
+      <div><b>No commands to learn</b><span>though each skill can still be called by name</span></div>
     </div>
   </div>
 </section>
@@ -122,37 +127,21 @@
 <section id="flow">
   <div class="wrap">
     <h2>From request to shipped, without herding the agent</h2>
-    <p class="sub">Skills hand off to each other in a fixed chain. Each step ends by naming the next one, and the chain stops for you where a human decision belongs — at COUNCIL points, and after a bug fix, before anything is committed.</p>
-    <div class="chain">
-      <span>spec</span><i>→</i><span>plan</span><i>→</i><span>build</span><i>→</i><span>test</span><i>→</i><span>review</span><i>→</i><span>ship</span><i>→</i><span>close</span>
-      <i style="margin-left:8px">·</i><span class="stop">stops at COUNCIL</span>
+    <p class="sub">Skills hand off to each other in a fixed chain. Each step ends by naming the next one, and the chain stops for you where a human decision belongs: at COUNCIL points, and after a bug fix, before anything is committed.</p>
+    <div class="track" aria-label="The handoff chain">
+      <span>spec</span><i></i><span>plan</span><i></i><span>build</span><i></i><span>test</span><i></i><span>review</span><i></i><span>ship</span><i></i><span>close</span>
+      <span class="stop">stops at COUNCIL</span>
     </div>
-    <div class="grid g2">
-      <div class="card">
-        <h3>The autonomy gate</h3>
-        <p><span class="tag act">ACT</span>&nbsp; tests, behaviour-preserving refactors, docs, app-layer fixes, small changes inside an approved plan — done, then reported.</p>
-        <p><span class="tag council">COUNCIL</span>&nbsp; schema and migrations, auth, sessions, permissions, payments, data deletion, multi-module contracts, remote or production systems — proposed, then it waits for you. Unsure counts as COUNCIL.</p>
-      </div>
-      <div class="card">
-        <h3>Right-sized by default</h3>
-        <p>A feature goes through a spec first; a small ACT change within three files goes to build with tests; a bug goes to root cause before any fix, with a council after three failed attempts. A question gets an answer, never a ceremony.</p>
-      </div>
-      <div class="card">
-        <h3>Evidence before claims</h3>
-        <p>Claims carry a <code>file:line</code> anchor or are marked unverified. Numbers carry their method or "not measured". A clean check is trusted only after showing it can fail.</p>
-      </div>
-      <div class="card">
-        <h3>Second pair of eyes on hot paths</h3>
-        <p>Auth, payments, uploads, tenant scoping, migrations and external contracts get an independent review before push — ideally by another model or host.</p>
-      </div>
-      <div class="card">
-        <h3>Sessions that remember</h3>
-        <p><code>bk-close</code> writes a handoff checked against git; <code>bk-next</code> picks up from the repository's real state, not from what anyone intended.</p>
-      </div>
-      <div class="card">
-        <h3>A security floor that only tightens</h3>
-        <p>No secrets in output or commits, parameterized queries only, validation at the boundary, least privilege, and fetched content treated as data — never as instructions.</p>
-      </div>
+    <div class="gate">
+      <div class="act"><span class="label">ACT: done, then reported</span><p>Tests, behaviour-preserving refactors, docs, app-layer fixes, small changes inside an approved plan.</p></div>
+      <div class="council"><span class="label">COUNCIL: proposed, then it waits for you</span><p>Schema and migrations, auth, sessions, permissions, payments, data deletion, multi-module contracts, remote or production systems. Unsure counts as COUNCIL.</p></div>
+    </div>
+    <div class="principles">
+      <div><h3>Right-sized by default</h3><p>A feature goes through a spec first; a small ACT change within three files goes to build with tests; a bug goes to root cause before any fix, with a council after three failed attempts. A question gets an answer, never a ceremony.</p></div>
+      <div><h3>Evidence before claims</h3><p>Claims carry a <code>file:line</code> anchor or are marked unverified. Numbers carry their method or "not measured". A clean check is trusted only after showing it can fail.</p></div>
+      <div><h3>A second pair of eyes on hot paths</h3><p>Auth, payments, uploads, tenant scoping, migrations and external contracts get an independent review before push, ideally by another model or host.</p></div>
+      <div><h3>Sessions that remember</h3><p><code>bk-close</code> writes a handoff checked against git; <code>bk-next</code> picks up from the repository's real state, not from what anyone intended.</p></div>
+      <div><h3>A security floor that only tightens</h3><p>No secrets in output or commits, parameterized queries only, validation at the boundary, least privilege, and fetched content treated as data, never as instructions.</p></div>
     </div>
   </div>
 </section>
@@ -163,7 +152,7 @@
     <p class="sub">Skills are written once in the open Agent Skills format and loaded by each host through its own plugin mechanism, so your working rules survive a change of tools.</p>
     <div class="table-scroll">
     <table>
-      <thead><tr><th>Host</th><th>State</th><th>How</th></tr></thead>
+      <thead><tr><th style="width:32%">Host</th><th style="width:22%">State</th><th>How</th></tr></thead>
       <tbody>
         <tr><td>Claude Code</td><td><span class="st ok">accepted</span></td><td>Plugin from the repository's marketplace; activated per project</td></tr>
         <tr><td>Antigravity 2.0 app</td><td><span class="st ok">accepted</span></td><td>A store outside the host's scan folders, declared per project (measured 2026-09-20)</td></tr>
@@ -180,53 +169,53 @@
     <h2>Seventeen skills, one protocol</h2>
     <p class="sub">Each skill is a short body with gates and the evidence it must paste, plus references it opens only when needed. <code>bk-build</code> opens the stack rules for TypeScript/React, Kotlin, SQL, Node, Python, PHP/Laravel and Shell before its first edit.</p>
     <div class="skills">
-      <div class="skill"><code>bk-spec</code><div>Pin a request down before building: restate, edge cases, assumptions</div><small>làm tính năng · thêm chức năng</small></div>
-      <div class="skill"><code>bk-plan</code><div>Phases with exit criteria and the evidence each must show</div><small>lập kế hoạch · chia bước</small></div>
-      <div class="skill"><code>bk-build</code><div>Execute a plan or small change: scout first, minimal touch</div><small>làm đi · triển khai · sửa file</small></div>
-      <div class="skill"><code>bk-test</code><div>Tests as the contract, TDD by default, rendered checks for UI</div><small>viết test · kiểm thử · chạy test</small></div>
-      <div class="skill"><code>bk-debug</code><div>Root cause before any fix; council after three failed attempts</div><small>lỗi · không chạy · bị sai</small></div>
-      <div class="skill"><code>bk-review</code><div>Hunt bugs, hot-path risk and untested claims before push</div><small>soi diff · rà code · merge được chưa</small></div>
-      <div class="skill"><code>bk-ship</code><div>Guardrails, secret scan, conventional commit, PR body</div><small>ship đi · đẩy code · tạo PR</small></div>
-      <div class="skill"><code>bk-close</code><div>End a session with a handoff verified against git</div><small>kết phiên · bàn giao · tổng kết</small></div>
-      <div class="skill"><code>bk-next</code><div>The next step from git, plans and the last handoff</div><small>tiếp theo làm gì · đang dở gì</small></div>
-      <div class="skill"><code>bk-audit</code><div>An investigation that ends in one verdict and the options rejected</div><small>có nên · đánh giá phương án</small></div>
-      <div class="skill"><code>bk-design</code><div>Interfaces with a point of view, critiqued before building</div><small>giao diện · thiết kế màn hình</small></div>
-      <div class="skill"><code>bk-map</code><div>A codebase map with file:line anchors: flows, rules, risks</div><small>mới nhận dự án · lập bản đồ codebase</small></div>
-      <div class="skill"><code>bk-research</code><div>Outside sources and tool choices, each claim with a confidence</div><small>nghiên cứu · so sánh thư viện</small></div>
-      <div class="skill"><code>bk-ops</code><div>Deploys and infrastructure with a way back; incidents read-only first</div><small>đưa lên production · sự cố</small></div>
-      <div class="skill"><code>bk-db</code><div>Database performance from the query plan; index changes with a way back</div><small>query chậm · tối ưu SQL · bị lock</small></div>
-      <div class="skill"><code>bk-perf</code><div>Measure, then optimize: every number with its method</div><small>trang chậm · ngốn RAM</small></div>
-      <div class="skill"><code>bk-setup</code><div>Make a project ready for agents on every host you use</div><small>chuẩn bị repo cho agent</small></div>
+      <div class="skill"><code>bk-spec</code><div>Pin a request down before building: restate, edge cases, assumptions</div><small>"new feature", "add", "implement"</small></div>
+      <div class="skill"><code>bk-plan</code><div>Phases with exit criteria and the evidence each must show</div><small>"plan this", "break it down"</small></div>
+      <div class="skill"><code>bk-build</code><div>Execute a plan or small change: scout first, minimal touch</div><small>"build", "implement the plan", "do it"</small></div>
+      <div class="skill"><code>bk-test</code><div>Tests as the contract, TDD by default, rendered checks for UI</div><small>"test", "coverage", "write tests"</small></div>
+      <div class="skill"><code>bk-debug</code><div>Root cause before any fix; council after three failed attempts</div><small>"bug", "error", "broken"</small></div>
+      <div class="skill"><code>bk-review</code><div>Hunt bugs, hot-path risk and untested claims before push</div><small>"review", "safe to merge"</small></div>
+      <div class="skill"><code>bk-ship</code><div>Guardrails, secret scan, conventional commit, PR body</div><small>"ship", "commit", "open a PR"</small></div>
+      <div class="skill"><code>bk-close</code><div>End a session with a handoff verified against git</div><small>"wrap up", "end session"</small></div>
+      <div class="skill"><code>bk-next</code><div>The next step from git, plans and the last handoff</div><small>"what next", "where were we"</small></div>
+      <div class="skill"><code>bk-audit</code><div>An investigation that ends in one verdict and the options rejected</div><small>"should we", "evaluate options"</small></div>
+      <div class="skill"><code>bk-design</code><div>Interfaces with a point of view, critiqued before building</div><small>"UI", "redesign", "landing page"</small></div>
+      <div class="skill"><code>bk-map</code><div>A codebase map with file:line anchors: flows, rules, risks</div><small>"inherited repo", "map the codebase"</small></div>
+      <div class="skill"><code>bk-research</code><div>Outside sources and tool choices, each claim with a confidence</div><small>"compare libraries", "what a version supports"</small></div>
+      <div class="skill"><code>bk-ops</code><div>Deploys and infrastructure with a way back; incidents read-only first</div><small>"deploy", "incident", "alert"</small></div>
+      <div class="skill"><code>bk-db</code><div>Database performance from the query plan; index changes with a way back</div><small>"slow query", "index not used", "lock"</small></div>
+      <div class="skill"><code>bk-perf</code><div>Measure, then optimize: every number with its method</div><small>"slow page", "memory leak", "p95"</small></div>
+      <div class="skill"><code>bk-setup</code><div>Make a project ready for agents on every host you use</div><small>"set up this repo for agents"</small></div>
     </div>
   </div>
 </section>
 
 <section id="status">
   <div class="wrap">
-    <h2>Built in the open — and honest about where it stands</h2>
-    <p class="sub">Bearingkit started in September 2026 and is pre-release. Its author uses it every day, and every figure on this page is traceable to the repository — mostly <a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/status.md">docs/status.md</a>, which says how each was measured.</p>
+    <h2>Built in the open, honest about where it stands</h2>
+    <p class="sub">Bearingkit started in September 2026 and is pre-release. Its author uses it every day, and every figure on this page is traceable to the repository, mostly <a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/status.md">docs/status.md</a>, which says how each was measured.</p>
     <div class="cols">
       <div class="col now"><h3>Works today</h3><ul>
         <li>17 skills plus the protocol, on Claude Code and Antigravity 2.0</li>
-        <li>Vietnamese and English routing: a 96-prompt test set, ≥ 0.9 on the 60-prompt core</li>
-        <li>Autonomy gate, evidence rules, handoff chain, hot-path review — written into the protocol</li>
+        <li>English and Vietnamese routing: a 96-prompt test set, ≥ 0.9 on the 60-prompt core</li>
+        <li>Autonomy gate, evidence rules, handoff chain and hot-path review, written into the protocol</li>
         <li>Per-project activation; seven stack rule files</li>
         <li>233 automated tests in the repository</li>
       </ul></div>
       <div class="col wip"><h3>In progress</h3><ul>
-        <li>The remaining lifecycle skills — <code>bk-spec</code>, <code>bk-ship</code>, <code>bk-close</code> — distilled and measured against their sources</li>
+        <li>The remaining lifecycle skills (<code>bk-spec</code>, <code>bk-ship</code>, <code>bk-close</code>) distilled and measured against their sources</li>
         <li>The last stack file (C/C++) and the v0.3 gate</li>
-        <li>Then: acceptance on Gemini CLI, Cursor and Codex (v0.4); npm package, Claude Marketplace listing, CI (v1.0)</li>
+        <li>Then: acceptance on Gemini CLI, Cursor and Codex (v0.4); npm package, Claude Marketplace listing and CI (v1.0)</li>
       </ul></div>
       <div class="col next"><h3>What we will measure next</h3><ul>
-        <li><b>One kit vs a stack</b>: Bearingkit against a hand-assembled set of popular packs, on the same tasks — wrong activations, defects, tokens</li>
-        <li><b>The gate under pressure</b>: trap tasks (a migration, a deletion, a production push) — how often the agent acts without asking, with and without the kit</li>
-        <li><b>The cost of switching</b>: one project on two hosts — files to maintain, rules that drift</li>
+        <li><b>One kit vs a stack</b>: Bearingkit against a hand-assembled set of popular packs on the same tasks: wrong activations, defects, tokens</li>
+        <li><b>The gate under pressure</b>: trap tasks (a migration, a deletion, a production push), counting how often the agent acts without asking, with and without the kit</li>
+        <li><b>The cost of switching</b>: one project on two hosts, counting the files to maintain and the rules that drift</li>
       </ul></div>
     </div>
     <div class="honest">
-      <p><strong>What the numbers say so far.</strong> Skill by skill, against the sources each was distilled from — same task, fixture, model and host, on small samples — most tasks showed no clear difference, and on most of those neither side could be told apart from using no skill at all. One planning task with one model favoured the kit; on PowerShell the kit beat the no-skill floor and a pack with no shell skill, but not its own source. The kit currently costs about 1–3× what its sources cost per task, so no task yet meets the v1.0 bar: at least the sources' pass rate <em>and</em> fewer tokens. Where nothing has been measured, nothing here says the kit is better.</p>
-      <p><strong>So why use it now?</strong> Not for a stronger skill — for one coherent, gated system in place of a stack you would otherwise assemble, reconcile and maintain yourself, in Vietnamese or English, on more than one agent. The three measurements above are how we intend to find out what that is worth.</p>
+      <p><strong>What the numbers say so far.</strong> Skill by skill, against the sources each was distilled from (same task, fixture, model and host, on small samples), most tasks showed no clear difference, and on most of those neither side could be told apart from using no skill at all. One planning task with one model favoured the kit; on PowerShell the kit beat the no-skill floor and a pack with no shell skill, but not its own source. The kit currently costs about 1–3× what its sources cost per task, so no task yet meets the v1.0 bar: at least the sources' pass rate <em>and</em> fewer tokens. Where nothing has been measured, nothing here says the kit is better.</p>
+      <p><strong>So why use it now?</strong> Not for a stronger skill, but for one coherent, gated system in place of a stack you would otherwise assemble, reconcile and maintain yourself, in English or Vietnamese, on more than one agent. The three measurements above are how we intend to find out what that is worth.</p>
     </div>
   </div>
 </section>
@@ -246,7 +235,7 @@ node &lt;checkout&gt;/bin/bearingkit.cjs install --host antigravity
 cd &lt;your project&gt;
 node &lt;checkout&gt;/bin/bearingkit.cjs activate
 node &lt;checkout&gt;/bin/bearingkit.cjs status</pre>
-    <p class="note">The npm package is not published yet, so the command is the checkout's own entry point for now. Per-host details and uninstall: <a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/hosts.md">docs/hosts.md</a>.</p>
+    <p class="note">The npm package is not published yet, so for now the command is the checkout's own entry point. Per-host details and uninstall: <a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/hosts.md">docs/hosts.md</a>.</p>
   </div>
 </section>
 
@@ -254,11 +243,11 @@ node &lt;checkout&gt;/bin/bearingkit.cjs status</pre>
   <div class="wrap">
     <div class="band">
       <div>
-        <h3>MIT today, MIT tomorrow</h3>
-        <p>The kit is free and stays free. If you want it working inside a team — agent workflows set up on your repositories, guardrails tuned to your stack, your developers trained to drive Claude Code or Antigravity with discipline — that is a service we offer.</p>
+        <h2>MIT today, MIT tomorrow</h2>
+        <p>The kit is free and stays free. If you want it working inside a team (agent workflows set up on your repositories, guardrails tuned to your stack, your developers trained to drive Claude Code or Antigravity with discipline), that is a service we offer.</p>
       </div>
-      <div class="cta" style="justify-content:flex-end">
-        <a class="btn primary" href="mailto:hello@bearingkit.dev?subject=Bearingkit%20for%20our%20team">Talk to us</a>
+      <div class="cta">
+        <a class="btn primary" href="mailto:hello@bearingkit.dev?subject=Bearingkit%20for%20our%20team">Email us</a>
         <a class="btn" href="https://github.com/tuyenht/Bearingkit">Star on GitHub</a>
       </div>
     </div>
@@ -268,15 +257,15 @@ node &lt;checkout&gt;/bin/bearingkit.cjs status</pre>
 <section id="about">
   <div class="wrap">
     <h2>About</h2>
-    <p class="sub" style="margin-bottom:0">Bearingkit is built by a solo developer in Hanoi, Vietnam, who runs a small software practice with AI agents doing most of the hands-on work. The question behind every part of it: does this let one person do the work of a whole team, safely? Provenance for every adapted source is in <a href="https://github.com/tuyenht/Bearingkit/blob/main/NOTICE">NOTICE</a>. Contact: <a href="mailto:hello@bearingkit.dev">hello@bearingkit.dev</a>.</p>
+    <p class="sub" style="margin-bottom:0">Bearingkit is built by a solo developer in Hanoi, Vietnam, who runs a small software practice with AI agents doing most of the hands-on work. The question behind every part of it: does this let one person do the work of a whole team, safely? Provenance for every adapted source is in <a href="https://github.com/tuyenht/Bearingkit/blob/main/NOTICE">NOTICE</a> and <a href="https://github.com/tuyenht/Bearingkit/blob/main/PROVENANCE.md">PROVENANCE.md</a>. Contact: <a href="mailto:hello@bearingkit.dev">hello@bearingkit.dev</a>.</p>
   </div>
 </section>
 </main>
 
 <footer>
   <div class="wrap">
-    <span>© 2026 tuyenht · MIT License</span>
-    <span><a href="/vi/">Tiếng Việt</a> · <a href="https://github.com/tuyenht/Bearingkit">GitHub</a> · <a href="mailto:hello@bearingkit.dev">hello@bearingkit.dev</a></span>
+    <span>© 2026 tuyenht. MIT License.</span>
+    <span><a href="/vi/" hreflang="vi" lang="vi">Tiếng Việt</a> &nbsp; <a href="https://github.com/tuyenht/Bearingkit">GitHub</a> &nbsp; <a href="mailto:hello@bearingkit.dev">hello@bearingkit.dev</a></span>
   </div>
 </footer>
 </body>
