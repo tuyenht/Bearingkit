@@ -41,7 +41,7 @@ h1{font-size:clamp(36px,5.6vw,60px);line-height:1.03;letter-spacing:-.03em;margi
 .term .you{color:var(--term-ink)}
 .term .you::before{content:"› ";color:#f08a54}
 .term .sys{color:var(--term-muted)}
-.term .skill{color:#7cc48b}
+.term .sk{color:#7cc48b}
 .term .stop{color:#f0b354}
 .term .gap{height:10px}
 section{padding:64px 0;border-top:1px solid var(--line)}
