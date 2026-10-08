@@ -4,6 +4,31 @@ All notable changes to Bearingkit. The format follows Keep a Changelog; versions
 
 ## Unreleased
 
+### Changed (2026-10-09, site rewrite)
+- The site is rewritten in the author's own first-person voice, with an English-only page and a Vietnamese-only page (proper names, commands and verbatim test prompts excepted). Type is Be Vietnam Pro, which has full Vietnamese glyph coverage, with JetBrains Mono for code. The palette is chart-paper and navy, with teal for ACT and red for COUNCIL stops.
+- Three reviews used different models: English voice, Vietnamese voice, and facts plus technical checks. Fixes:
+  - The hero had no side padding.
+  - The cost range now traces to the design files (about 1.3–3× the sources where cost was recorded).
+  - The v1.0 roadmap matches the spec.
+  - The bk-ship trigger, the bk-build stack-file reading and the reference-file wording now match the skills.
+  - The item inventory is described as covering 22 sources.
+  - Responsive and keyboard fixes: anchor offset, handoff-chain wrapping, tables on narrow screens, and row headers.
+- README and PROVENANCE use the same cost and roadmap wording.
+
+### Added (2026-10-08, provenance and the stack measurement)
+- `PROVENANCE.md`: what is borrowed and what the kit adds, component by component, with counts and the commands that reproduce them (19 `references/` files in ten components carry adapted text; eight of eighteen components carry none). `NOTICE`, both READMEs and both site pages link to it.
+- `docs/specs/2026-10-08-kit-vs-stack-proposal.md` (PROPOSED): the kit against a stack of whole packs loaded together — fixed context, activation on the 96 prompts, outcome and cost on existing tasks, and a later gate task; bars registered before data, five questions for the owner.
+- README host table: the Antigravity IDE row says the full acceptance test has not run, matching `docs/hosts.md`.
+- Site: terminal skill names no longer pick up the skill-card style.
+
+### Changed (2026-10-08, positioning)
+- README, `README.vi.md` (new) and the site (`site/index.html`, new `site/vi/index.html`, shared `site/style.css`) lead with "one kit instead of a stack": plain-language routing in Vietnamese and English with real prompts from `evals/activation/phase-1.jsonl`, the handoff chain and its stop points, the curation figures from `upstream/sources.json` and the item inventory, and a status section that states the measured results with their limits (no clear difference on most compared tasks, about 1–3× the sources' cost, no task at the v1.0 bar) and names the next three measurements. Every claim was checked against the repository by an independent reviewer in two rounds before publishing.
+
+### Added (2026-10-08, public presentation)
+- `site/index.html`: a one-page site for https://bearingkit.dev (what the kit is, the autonomy gate, the lifecycle, the 17 skills with their own descriptions, status figures copied from `docs/status.md`, install, roadmap); `site/CNAME`; `.github/workflows/pages.yml` deploys `site/` to GitHub Pages on a push to `main` that touches it.
+- README: sections "Why it exists", "Status" and "Roadmap"; the line saying `bk-perf` arrives with v0.3 is corrected (it is in the catalog).
+- `package.json` gains `homepage`, `bugs`, `keywords` and `author`; `.claude-plugin/plugin.json` points `homepage` at https://bearingkit.dev and adds the keywords `claude-code`, `agent-skills`, `handoff`.
+
 ### Added (2026-09-26 – 2026-09-27, stack files `node` and `python`)
 - `bk-build/references/stacks/node.md` and `python.md`: stack-wide rules written from pinned sources, every sentence with its source line (`docs/specs/2026-09-26-stack-node-python-design.md`); five of the eight stack files now exist.
 - `detect-stack` lists `stackFiles`, the bk-build stack files the profile maps to that exist; `bk-build` reads them before the first edit and `bk-spec` reads them for its requirements. Before this, `node.md` was opened in 0 of 8 measured sessions; after it, 8 of 8.

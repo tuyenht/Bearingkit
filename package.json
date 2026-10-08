@@ -1,7 +1,22 @@
 {
   "name": "bearingkit",
   "version": "0.1.0",
-  "description": "A protocol and skill set for AI-assisted software work; one skills/ source installed into each host with the host's own command (Claude Code, Antigravity, Gemini CLI, Cursor, Codex)",
+  "description": "An operating protocol and skill set for one-person software companies: makes Claude Code, Antigravity and other AI coding agents work like a disciplined team. One skills/ source, installed into each host with its own command.",
+  "homepage": "https://bearingkit.dev",
+  "bugs": {
+    "url": "https://github.com/tuyenht/Bearingkit/issues"
+  },
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "agent-skills",
+    "ai-coding-agent",
+    "antigravity",
+    "code-review",
+    "tdd",
+    "developer-tools"
+  ],
+  "author": "tuyenht (https://bearingkit.dev)",
   "license": "MIT",
   "repository": "github:tuyenht/Bearingkit",
   "bin": {

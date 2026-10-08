@@ -2,9 +2,9 @@
   "name": "bearingkit",
   "description": "Bearingkit: a protocol and skill set for AI-assisted software work. Autonomy gate, evidence rules, spec → plan → build → test → review → ship → close, independent review for hot paths, session handoffs.",
   "author": { "name": "tuyenht" },
-  "homepage": "https://github.com/tuyenht/Bearingkit",
+  "homepage": "https://bearingkit.dev",
   "repository": "https://github.com/tuyenht/Bearingkit",
   "license": "MIT",
   "defaultEnabled": false,
-  "keywords": ["skills", "protocol", "tdd", "debugging", "code-review", "workflow"]
+  "keywords": ["claude-code", "agent-skills", "protocol", "tdd", "debugging", "code-review", "workflow", "handoff"]
 }
