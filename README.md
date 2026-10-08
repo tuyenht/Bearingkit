@@ -1,6 +1,8 @@
 # Bearingkit
 
-A protocol and skill set that makes an AI coding agent work like a disciplined senior team: classify the request before acting, propose only when the blast radius demands it, prove before claiming, hand off cleanly. One `skills/` source in the Agent Skills format, installed into each host with the host's own command. Built first for **Claude Code**, where it ships as a plugin; Antigravity is the second host that has passed acceptance.
+An operating protocol and skill set for **one-person software companies**: it makes the AI coding agent you already use work like a disciplined senior team — classify the request before acting, propose only when the blast radius demands it, prove before claiming, hand off cleanly.
+
+It is **not tied to one tool**. One `skills/` source in the open Agent Skills format is installed into each host with that host's own command. **Claude Code** (as a plugin) and **Antigravity** (2.0 app and IDE) have passed acceptance; **Gemini CLI, Cursor and Codex** have their manifests in place and are listed as supported once their acceptance test passes.
 
 ## Why it exists
 
@@ -10,8 +12,9 @@ A capable coding agent left on defaults tends to fail in the same few ways: it e
 - **Evidence before claims.** A skill does not report success without pasting the command, test or measurement that shows it.
 - **A lifecycle.** spec → plan → build → test → review → ship → close, with an independent reviewer on hot paths and a written handoff at the end of every session.
 - **Loaded only where you turn it on.** Installed once per machine, activated per project; a project you have not activated sees nothing of it.
+- **The same discipline on every host.** Switching between Claude Code and Antigravity — or adding another agent later — does not mean rewriting your rules: the protocol and skills are one source, and each host gets them through its own native mechanism.
 
-It is written by a solo developer who runs a small software practice with AI agents doing most of the hands-on work, and it is used daily on that work. The kit is the discipline that makes that arrangement safe.
+It is written by a solo developer who runs a small software practice with AI agents doing most of the hands-on work, and it is used daily on that work. The question behind every part of it: *does this let one person do the work of a whole team, safely?*
 
 ## Status
 

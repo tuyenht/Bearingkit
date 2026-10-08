@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bearingkit — a working discipline for coding agents</title>
-<meta name="description" content="Bearingkit is an open-source protocol and skill set for Claude Code and other agent hosts: classify the request, plan, prove before claiming, hand off cleanly. MIT licensed.">
+<title>Bearingkit — one developer, working like a disciplined team</title>
+<meta name="description" content="Bearingkit is an open-source operating protocol and skill set for one-person software companies. It makes Claude Code, Antigravity and other AI coding agents work like a disciplined team: classify, plan, prove before claiming, hand off cleanly. MIT.">
 <link rel="canonical" href="https://bearingkit.dev/">
 <meta property="og:title" content="Bearingkit">
-<meta property="og:description" content="A protocol and skill set that makes a coding agent work like a disciplined senior team. Built for Claude Code. MIT.">
+<meta property="og:description" content="An operating protocol and skill set for one-person software companies, across Claude Code, Antigravity and other AI coding agents. MIT.">
 <meta property="og:url" content="https://bearingkit.dev/">
 <meta property="og:type" content="website">
 <meta name="color-scheme" content="light dark">
@@ -100,11 +100,12 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 
 <main>
 <div class="wrap hero">
-  <div class="eyebrow">Open source · MIT · Built for Claude Code</div>
-  <h1>A working discipline for coding agents.</h1>
-  <p class="lede">Bearingkit is a protocol and skill set that makes an AI coding agent work like a disciplined senior team: classify the request before acting, propose only when the blast radius demands it, prove before claiming, and hand off cleanly at the end of every session.</p>
+  <div class="eyebrow">Open source · MIT · Claude Code · Antigravity · more hosts coming</div>
+  <h1>One developer, working like a disciplined team.</h1>
+  <p class="lede">Bearingkit is an operating protocol and skill set for one-person software companies. It makes the AI coding agent you already use — Claude Code, Antigravity, and more hosts as they pass acceptance — work like a disciplined senior team: classify the request before acting, propose only when the blast radius demands it, prove before claiming, and hand off cleanly at the end of every session.</p>
   <div class="cta">
-    <a class="btn primary" href="#install">Install for Claude Code</a>
+    <a class="btn primary" href="#install">Install</a>
+    <a class="btn" href="#hosts">Supported hosts</a>
     <a class="btn" href="https://github.com/tuyenht/Bearingkit">View the source</a>
   </div>
 </div>
@@ -143,9 +144,9 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
         <h3>Installed once, active where you say</h3>
         <p>Install per machine, activate per project. A project you have not activated sees nothing of the kit: no protocol, no skill in the listing, no hook. Activation writes one entry in the host's own config file and nothing else.</p>
       </div>
-      <div class="card">
+      <div class="card" id="hosts">
         <h3>One source, several hosts</h3>
-        <p>Skills are written once in the Agent Skills format and installed into each host with that host's own command. Plain-language triggers work in English and Vietnamese.</p>
+        <p>Skills are written once in the open Agent Skills format and installed into each host with that host's own command, so your rules do not change when your tool does. Accepted today: Claude Code and Antigravity. Manifests in place: Gemini CLI, Cursor, Codex. Plain-language triggers work in English and Vietnamese.</p>
       </div>
     </div>
   </div>
@@ -202,12 +203,15 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 <section id="install">
   <div class="wrap">
     <h2>Install</h2>
-    <p class="sub">Claude Code installs the kit as a plugin, once per machine; then you switch it on per project.</p>
+    <p class="sub">Install once per machine, then switch it on per project. Claude Code installs it as a plugin; Antigravity gets a store outside its scan folders that a project declares.</p>
 <pre><span class="c"># Claude Code: add the marketplace and install the plugin</span>
 claude plugin marketplace add https://github.com/tuyenht/Bearingkit
 claude plugin install bearingkit@bearingkit
 
-<span class="c"># From a checkout: activate in a project, check what is on</span>
+<span class="c"># Antigravity: write the store once per machine</span>
+node &lt;checkout&gt;/bin/bearingkit.cjs install --host antigravity
+
+<span class="c"># Any host: activate in a project, check what is on</span>
 cd &lt;your project&gt;
 node &lt;checkout&gt;/bin/bearingkit.cjs activate
 node &lt;checkout&gt;/bin/bearingkit.cjs status</pre>
@@ -229,7 +233,7 @@ node &lt;checkout&gt;/bin/bearingkit.cjs status</pre>
 <section id="about">
   <div class="wrap">
     <h2>About</h2>
-    <p class="sub" style="margin-bottom:0">Bearingkit is built by a solo developer in Hanoi, Vietnam, who runs a small software practice with AI agents doing most of the hands-on work and uses the kit on that work every day. Provenance for every adapted source is in <a href="https://github.com/tuyenht/Bearingkit/blob/main/NOTICE">NOTICE</a>. Contact: <a href="mailto:hello@bearingkit.dev">hello@bearingkit.dev</a>.</p>
+    <p class="sub" style="margin-bottom:0">Bearingkit is built by a solo developer in Hanoi, Vietnam, who runs a small software practice with AI agents doing most of the hands-on work and uses the kit on that work every day. The test behind every part of it: does this let one person do the work of a whole team, safely? Provenance for every adapted source is in <a href="https://github.com/tuyenht/Bearingkit/blob/main/NOTICE">NOTICE</a>. Contact: <a href="mailto:hello@bearingkit.dev">hello@bearingkit.dev</a>.</p>
   </div>
 </section>
 </main>
