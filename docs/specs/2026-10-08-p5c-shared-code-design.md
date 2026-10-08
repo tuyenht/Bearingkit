@@ -1,6 +1,6 @@
 # P5c: the Step 0 line "a stack rule lives in shared code if it has to", measured on its own · design proposal and planned registration · 2026-10-08
 
-Status: **STAGE 1 REGISTERED: approved by the owner on 2026-10-08, by label (see "Stage 1 registered" at the end); stage 2 PROPOSED, not approved. The one uncounted session has run; the loaded-sign it found was approved by the owner with a stop on the host version (see the last two sections). At the commit of that approval no counted session has run.** What follows down to "Revision after the audit" is the proposal as revised on 2026-10-08, kept as written; where it says nothing is approved or built, or that a script exists only on a branch, the last three sections say what has changed since. This file is a design proposal with the registration it plans; it changes no skill, no task and no runner. It waits for the owner (COUNCIL: it concerns text the model reads and a measurement). Until the owner approves a registration by name, no branch is cut, no driver is written with its bars approved, and no session of it runs. Written in session 5 on the owner's opening message (verbatim in `docs/handoff/2026-10-08-p5c-proposal.md`): "Viết đề xuất thiết kế kèm bản đăng ký dự kiến (tên model đầy đủ, kiểm init, guard chạm tới bản chữ), commit thành spec ghi rõ PROPOSED, rồi dừng trình tôi."
+Status: **CLOSED BY THE REGISTERED RULE (2026-10-08): stage 1 ran its sixteen counted sessions; the gate's items 1 to 3 hold and item 4 does not ("read and lost" in 1 of 16, against at least 5); the Step 0 line is not merged and is "not compared on `claude-sonnet-5-5`"; stage 2 was never approved and does not run (see "Stage 1 result" at the end).** Before that: stage 1 was approved by the owner on 2026-10-08, by label; one uncounted session ran; the loaded-sign it found was approved by the owner with a stop on the host version. What follows down to "Revision after the audit" is the proposal as revised on 2026-10-08, kept as written; where it says nothing is approved or built, or that a script exists only on a branch, the last four sections say what has changed since. This file is a design proposal with the registration it plans; it changes no skill, no task and no runner. It waits for the owner (COUNCIL: it concerns text the model reads and a measurement). Until the owner approves a registration by name, no branch is cut, no driver is written with its bars approved, and no session of it runs. Written in session 5 on the owner's opening message (verbatim in `docs/handoff/2026-10-08-p5c-proposal.md`): "Viết đề xuất thiết kế kèm bản đăng ký dự kiến (tên model đầy đủ, kiểm init, guard chạm tới bản chữ), commit thành spec ghi rõ PROPOSED, rồi dừng trình tôi."
 
 ## What P5c is
 
@@ -208,3 +208,86 @@ All sixteen sessions of 2026-10-07 name host `2.1.291`, the host of the uncounte
 6. The folders, by the runner's naming rule, if both calls run on 2026-10-08 (UTC; the date is part of the name): the two counted folders are `2026-10-08-bench-node-01-command-claude-sonnet-5-5-2` and `2026-10-08-bench-py-01-command-claude-sonnet-5-5`; the unsuffixed `node-01` folder is the uncounted session's and is not copied or counted; a call made on a later UTC date gets that date in its name.
 
 Points 4 to 6 were added on the adversarial reviewer's reading of this section, before any counted session; 4 and 5 are its own words. Nothing else of the registration changes: the gate's other items, its thresholds, the tasks, the model, the commands, the order, the checks before and after each call, and what follows each outcome are as registered. Stage 2 is not approved. **What runs now**: the two counted calls, `node-01` then `py-01`, eight sessions each, and nothing more; then the result is recorded and put to the owner.
+
+## Stage 1 result (2026-10-08): items 1 to 3 hold, item 4 does not; by the registered rule P5c closes; the line is not compared
+
+**The two counted folders**, named in the section above before any session (gitignored, owner's machine): `evals/results/2026-10-08-bench-node-01-command-claude-sonnet-5-5-2` and `evals/results/2026-10-08-bench-py-01-command-claude-sonnet-5-5`. Eight sessions each, sixteen counted. Nothing was written to a tracked file between the two calls.
+
+**How it ran.** After the commit of the approval (`8ee3af6`, pushed), from the main checkout. Before each call: tree clean, `git diff 3faebb4 -- skills hooks agents scripts bin .claude-plugin evals/bench evals/fixtures` empty, `get_usage` 49% and then 54% of the five-hour window. The registered commands, each once: `node-01` 04:50:55Z to 05:03:06Z, `py-01` 05:03:24Z to 05:17:03Z, both exit 0, never two at once, the turn kept alive. Both `meta.json` record `main` at `8ee3af6` (whose diff to `3faebb4` over the registered paths is empty), `dirty: false`, model `claude-sonnet-5-5`, nothing cut. No session was re-run. The Windows System log holds no Kernel-Power 42 or 107 event inside either call (the same query over seven days finds 18).
+
+**Every session's `init`**: one `init` event in each of the sixteen streams, each naming model `claude-sonnet-5-5` and host `2.1.291`. So item 1 holds and the host stop is not met.
+
+**The loaded-sign**, run on each folder right after its call (`node evals/analysis/skill-loaded.cjs <folder>`):
+
+```
+2026-10-08-bench-node-01-command-claude-sonnet-5-5-2
+session              model                 host      loaded
+01-command-K1        claude-sonnet-5-5     2.1.291   yes
+02-command-K2        claude-sonnet-5-5     2.1.291   yes
+03-command-K3        claude-sonnet-5-5     2.1.291   yes
+04-command-K4        claude-sonnet-5-5     2.1.291   yes
+05-command-K5        claude-sonnet-5-5     2.1.291   yes
+06-command-K6        claude-sonnet-5-5     2.1.291   yes
+07-command-K7        claude-sonnet-5-5     2.1.291   yes
+08-command-K8        claude-sonnet-5-5     2.1.291   yes
+bk-build: loaded in 8 of 8; unknown 0
+
+2026-10-08-bench-py-01-command-claude-sonnet-5-5
+01-command-K1 to 08-command-K8: claude-sonnet-5-5, 2.1.291, loaded yes, each
+bk-build: loaded in 8 of 8; unknown 0
+```
+
+(The transcript file names the script prints are left out here; the `py-01` rows are given in one line, each of the eight reads as the `node-01` rows do.)
+
+**From each session's `check.json`**:
+
+| Task | Deadline hazard | O1 | O2 | `Rfile` |
+|---|---|---|---|---|
+| `node-01` | N3 7 of 8 (K4 missed) | 8 of 8 | 8 of 8 | 8 of 8 |
+| `py-01` | Y2 8 of 8 | 8 of 8 | 8 of 8 | 8 of 8 |
+
+**The copy and the client-edit script.** The two counted folders were copied into a new empty `evals/results/p5c-stage1/`: 26 files each, 26 in each copy, every file's SHA-256 equal to its original's. `node evals/analysis/stack-rule-timing.cjs evals/results/p5c-stage1` lists all sixteen sessions (each opened its stack file). Its rows, the columns that count here (`client` = the shared client edited, `DL` = the deadline hazard passed; `y` yes, `.` no):
+
+```
+session                              client  DL
+node-01-command-claude-sonnet-5-5-2 K1  y    y
+node-01-command-claude-sonnet-5-5-2 K2  y    y
+node-01-command-claude-sonnet-5-5-2 K3  y    y
+node-01-command-claude-sonnet-5-5-2 K4  .    .
+node-01-command-claude-sonnet-5-5-2 K5  y    y
+node-01-command-claude-sonnet-5-5-2 K6  y    y
+node-01-command-claude-sonnet-5-5-2 K7  y    y
+node-01-command-claude-sonnet-5-5-2 K8  y    y
+py-01-command-claude-sonnet-5-5 K1      .    y
+py-01-command-claude-sonnet-5-5 K2      .    y
+py-01-command-claude-sonnet-5-5 K3      .    y
+py-01-command-claude-sonnet-5-5 K4      y    y
+py-01-command-claude-sonnet-5-5 K5      .    y
+py-01-command-claude-sonnet-5-5 K6      .    y
+py-01-command-claude-sonnet-5-5 K7      .    y
+py-01-command-claude-sonnet-5-5 K8      .    y
+```
+
+The tally, by hand from these rows as the registration says: "read and lost" is `DL` = '.' and `client` = '.': **one session, `node-01` K4.**
+
+**The gate.**
+
+| Item | Registered | Figure | |
+|---|---|---|---|
+| 1 | every `init` names `claude-sonnet-5-5` (and, by the host stop, host `2.1.291`) | 16 of 16 | holds |
+| 2 | `bk-build`'s text loaded in at least 14 of 16 | 16 of 16, unknown 0 | holds |
+| 3 | O1 in at least 14 of 16 | 16 of 16 | holds |
+| 4 | "read and lost" in at least 5 of 16 | **1 of 16** | **does not hold** |
+
+Deadline passes: 15 of 16.
+
+**What follows, as registered before the data**: "Any one of items 2 to 4 fails: **P5c closes.** The line stays on `p4-step0-scope`, nothing merges, no stage 2 runs, and the only thing said of the line is "not compared on `claude-sonnet-5-5`"". So: **P5c is closed.** The Step 0 line is not merged and not compared; stage 2 does not run; no branch was cut. A close is not a finding that the line does nothing. The count of deadline passes under `command` was 15 of 16, on these two tasks. This session's own reading, not a registered conclusion: with so few misses, a rise of 0.30 looks out of reach on these fixtures. Opening another registration for the line later is the owner's.
+
+**Reported with no bar.**
+- The one "read and lost" session, `node-01` K4, wrote in its answer that it "did not touch `src/client.cjs`" and named, as an open point, "No request timeout: `getItem` has no deadline, so a hung API connection would hang the nightly job." That is the pattern the line was written for, seen once in sixteen. The script's `scope` column (a sentence calling the deadline pre-existing or out of scope) reads no for all sixteen. K4's answer does give an out-of-scope-type reason ("would also change `show`, so I didn't do it here"). The regex (`out of scope|pre-existing`) misses it.
+- On `node-01` the seven sessions that passed the deadline all edited the shared client; on `py-01` seven of the eight that passed left it unedited and one edited it.
+- Other hazards: `node-01` N1 and N2 8 of 8, X 8 of 8; `py-01` Y1 and Y3 8 of 8, X 0 of 8. `Rskill` 0 of 16, as expected with no `Skill` call.
+- Cost and time per session, from each folder's `results.md`: `node-01` median 0.228 USD (0.189 to 0.249), 55.5 seconds (51 to 67); `py-01` median 0.216 USD (0.184 to 0.244), 58.5 seconds (50 to 72).
+- Beside the figures of 2026-10-07, not as a comparison and not a result (another prompt, another entry path, eight sessions, read after the fact): the plain `node-01` sessions passed the deadline in 4 of 8 with the stack file opened in 4 of 8; here, entered through `bk-build`, the file was opened in 8 of 8 on `node-01` and 16 of 16 over both tasks. This is about the plain-words path and `bk-spec`, not about the Step 0 line.
+
+**Limits.** Sixteen sessions on one day, one host version, two small fixtures. The gate was noisy by design and said so; here the figure (1 of 16) is far from its threshold (5 of 16), not near it. The client-edit count is the script's, mechanical and imperfect as stated before the data.
