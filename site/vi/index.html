@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bearingkit: một bộ quy tắc chung cho AI agent lập trình</title>
-<meta name="description" content="Một giao thức và 17 skill cho Claude Code và Antigravity. Agent tự chọn đúng bước, hỏi trước khi làm việc rủi ro, đưa kết quả test ra rồi mới báo xong. Mã nguồn mở, bản tiền phát hành.">
+<title>Bearingkit: workflow mã nguồn mở cho AI coding agent</title>
+<meta name="description" content="Một giao thức và 17 skill cho Claude Code và Antigravity: chọn đúng bước, hỏi trước khi làm việc rủi ro, có kết quả test rồi mới báo xong. Mã nguồn mở, pre-release.">
 <link rel="canonical" href="https://bearingkit.dev/vi/">
 <link rel="alternate" hreflang="en" href="https://bearingkit.dev/">
 <link rel="alternate" hreflang="vi" href="https://bearingkit.dev/vi/">
 <link rel="alternate" hreflang="x-default" href="https://bearingkit.dev/">
 <meta property="og:site_name" content="Bearingkit">
-<meta property="og:title" content="Bearingkit: một bộ quy tắc chung cho AI agent lập trình">
-<meta property="og:description" content="Một giao thức và 17 skill cho Claude Code và Antigravity. Agent tự chọn đúng bước, hỏi trước khi làm việc rủi ro, đưa kết quả test ra rồi mới báo xong. Mã nguồn mở, bản tiền phát hành.">
+<meta property="og:title" content="Bearingkit: workflow mã nguồn mở cho AI coding agent">
+<meta property="og:description" content="Một giao thức và 17 skill cho Claude Code và Antigravity: chọn đúng bước, hỏi trước khi làm việc rủi ro, có kết quả test rồi mới báo xong. Mã nguồn mở, pre-release.">
 <meta property="og:url" content="https://bearingkit.dev/vi/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="vi_VN">
@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="/style.css?v=20261009">
+<link rel="stylesheet" href="/style.css?v=20261009b">
 </head>
 <body>
 <header class="top">
@@ -36,7 +36,7 @@
     <nav aria-label="Điều hướng chính">
       <a href="#why">Vì sao</a>
       <a href="#flow">Cách hoạt động</a>
-      <a href="#status">Hiện trạng</a>
+      <a href="#status">Hiện tại</a>
       <a href="#install">Cài đặt</a>
       <a href="https://github.com/tuyenht/Bearingkit">GitHub</a>
       <a class="lang" href="/" hreflang="en" lang="en">English</a>
@@ -47,155 +47,110 @@
 <main>
 <div class="wrap hero">
   <div>
-    <h1>Một bộ quy tắc chung cho các agent lập trình của&nbsp;tôi</h1>
-    <p class="lede">Bearingkit gồm một giao thức và 17 skill cho Claude Code và Antigravity. Khi đã cài, agent tự xác định yêu cầu thuộc bước nào, hỏi tôi trước khi động vào migration, xác thực, thanh toán hay production, và đưa kết quả test ra trước khi báo xong việc. Tôi viết nó cho chính công việc của mình, và nó hiểu yêu cầu bằng cả tiếng Việt lẫn tiếng Anh.</p>
+    <h1>Làm việc với AI coding agent theo một quy trình rõ&nbsp;ràng</h1>
+    <p class="lede">Bearingkit là bộ workflow mã nguồn mở cho AI coding agent, gồm một giao thức và 17 skill. Nó giúp agent biết một yêu cầu thuộc bước nào, dừng lại hỏi trước khi động vào migration, xác thực, thanh toán hay production, và đưa kết quả test ra trước khi báo xong. Hiện chạy trên Claude Code và Antigravity, hiểu yêu cầu bằng cả tiếng Việt lẫn tiếng Anh.</p>
     <div class="cta">
       <a class="btn primary" href="https://github.com/tuyenht/Bearingkit">Xem trên GitHub</a>
       <a class="btn" href="#install">Cài đặt</a>
     </div>
-    <p class="fineprint">Mã nguồn mở, giấy phép MIT. Bản tiền phát hành. Chưa chứng minh được là tốt hơn các gói skill mà nó tổng hợp từ đó; số liệu ở mục <a href="#status">Hiện trạng</a>.</p>
+    <p class="fineprint">Mã nguồn mở, giấy phép MIT · Pre-release, đang phát triển · Chưa chứng minh được là tốt hơn các skill nguồn, chi tiết ở phần <a href="#status">Hiện tại</a>.</p>
   </div>
   <figure style="margin:0">
     <div class="console" role="img" aria-label="Minh họa một phiên làm việc được Bearingkit điều hướng">
       <div class="row you">Làm đăng nhập hai lớp bằng TOTP.</div>
       <div class="row dim">ý định: tính năng mới, mở <span class="sk">bk-spec</span></div>
-      <div class="row dim">diễn đạt lại, trường hợp biên, giả định</div>
-      <div class="row stop">xác thực phải hỏi trước (COUNCIL): đã viết đề xuất, đang chờ</div>
+      <div class="row dim">nhắc lại yêu cầu, edge case, giả định</div>
+      <div class="row stop">xác thực phải hỏi trước (COUNCIL): đã viết đề xuất, chờ duyệt</div>
       <div class="gap"></div>
       <div class="row you">Duyệt, làm đi.</div>
       <div class="row dim"><span class="sk">bk-plan</span>, rồi <span class="sk">bk-build</span>, <span class="sk">bk-test</span>, <span class="sk">bk-review</span></div>
-      <div class="row dim">xác thực là chỗ rủi ro cao: rà soát độc lập trước khi đẩy code</div>
+      <div class="row dim">xác thực là chỗ rủi ro cao: review độc lập trước khi đẩy code</div>
       <div class="gap"></div>
-      <div class="row you">Chạy kiểm tra rồi đẩy lên.</div>
-      <div class="row dim"><span class="sk">bk-ship</span>: đã chạy kiểm tra, dán kết quả, quét bí mật</div>
+      <div class="row you">Chạy test rồi push.</div>
+      <div class="row dim"><span class="sk">bk-ship</span>: đã chạy check, dán output, quét secret</div>
       <div class="gap"></div>
-      <div class="row you">Kết phiên giúp tôi.</div>
+      <div class="row you">Kết thúc phiên giúp tôi.</div>
       <div class="row dim"><span class="sk">bk-close</span>: đã ghi bàn giao, đối chiếu với git</div>
     </div>
-    <figcaption>Minh họa cách điều hướng, không phải bản ghi một phiên thật.</figcaption>
+    <figcaption>Minh họa, không phải bản ghi một phiên thật.</figcaption>
   </figure>
 </div>
 
 <section id="why">
   <div class="wrap">
-    <h2>Vì sao tôi làm</h2>
+    <h2>Vì sao tôi làm Bearingkit</h2>
     <div class="story">
-      <p>Có thời gian tôi cài cùng lúc mấy gói skill: Superpowers, các plugin chính thức của Anthropic, một gói TDD, một gói rà soát code. Gói nào cũng tốt ở một việc, nhưng cài chung thì vướng nhau. Hai skill cùng nhận một yêu cầu, mỗi cái một quy tắc. Mô tả của tất cả đã chiếm chỗ trong context trước khi tôi kịp gõ gì. Chuyển dự án sang Antigravity thì phải dựng lại từ đầu.</p>
-      <p>Nên tôi ngồi đọc kỹ từng thứ, phần lớn việc đọc do agent làm cùng. Tổng cộng 23 nguồn; từ 22 nguồn trong đó, tôi liệt kê 1.295 skill, lệnh, agent và file quy tắc, rồi với từng cái chọn: dùng lại có chỉnh sửa, chỉ giữ ý, hoặc bỏ. Hai nguồn nói ngược nhau thì tôi chọn một quy tắc và ghi lại lý do. Kết quả là một giao thức nạp ở mọi phiên và 17 skill mà nó điều hướng tới.</p>
-      <p class="muted">File nào dùng lại từ nguồn khác đều ghi nguồn, còn phần nào mượn, phần nào tự viết thì có trong <a href="https://github.com/tuyenht/Bearingkit/blob/main/PROVENANCE.md">PROVENANCE.md</a> (tiếng Anh). Bearingkit là dự án độc lập, không liên kết với Anthropic hay Google và không được hai công ty này bảo trợ.</p>
+      <p>Tôi từng cài cùng lúc mấy gói skill: Superpowers, các plugin chính thức của Anthropic, một gói TDD, một gói review. Gói nào cũng tốt ở một việc. Cài chung thì bắt đầu vướng:</p>
+    </div>
+    <ul class="wants">
+      <li>Hai skill cùng nhận một yêu cầu, mỗi cái theo một quy tắc.</li>
+      <li>Instruction của các gói chồng lên nhau, có chỗ ngược nhau, và người ngồi gỡ là tôi.</li>
+      <li>Mô tả của tất cả đã chiếm chỗ trong context trước khi tôi gõ chữ nào.</li>
+      <li>Không có chỗ nào quy định chung việc nào agent được tự làm, việc nào phải hỏi, và thế nào mới được gọi là xong.</li>
+      <li>Chuyển dự án sang Antigravity thì phải dựng lại từ đầu.</li>
+    </ul>
+    <div class="story">
+      <p>Nên tôi ngồi đọc kỹ từng nguồn, phần lớn việc đọc do agent làm cùng. Tôi đọc 23 nguồn, trong đó 22 nguồn được kiểm kê từng mục: 1.295 skill, lệnh, agent và file quy tắc. Mục nào cũng được chọn: dùng lại có chỉnh sửa, chỉ giữ ý, hoặc bỏ. Chỗ nào hai nguồn nói ngược nhau, tôi giữ một quy tắc và ghi lại lý do.</p>
     </div>
   </div>
 </section>
 
 <section id="flow">
   <div class="wrap">
-    <h2>Khi nào agent tự làm, khi nào phải hỏi</h2>
-    <p class="sub">Mỗi skill làm xong thì chuyển cho skill sau. Gặp thay đổi cần tôi quyết, chuỗi dừng lại.</p>
-    <div class="track" role="img" aria-label="Chuỗi chuyển giao: spec, plan, build, test, review, ship, close. Dừng ở các điểm phải hỏi trước.">
-      <span>spec</span><i></i><span>plan</span><i></i><span>build</span><i></i><span>test</span><i></i><span>review</span><i></i><span>ship</span><i></i><span>close</span>
-      <span class="stop">dừng ở điểm phải hỏi</span>
-    </div>
-    <div class="gate">
-      <div class="act"><span class="label">Tự làm (ACT): làm xong rồi báo</span><p>Viết test, refactor giữ nguyên hành vi, tài liệu, sửa lỗi ở tầng ứng dụng, thay đổi nhỏ nằm trong kế hoạch tôi đã duyệt.</p></div>
-      <div class="council"><span class="label">Hỏi trước (COUNCIL): đề xuất rồi chờ</span><p>Schema và migration, xác thực, phân quyền, thanh toán, xóa dữ liệu, hợp đồng interface giữa các module, hệ thống từ xa hoặc production. Không chắc một thay đổi thuộc bên nào thì agent coi như phải hỏi.</p></div>
-    </div>
-    <div class="principles">
-      <div><h3>Có bằng chứng mới báo xong</h3><p>Khẳng định nào cũng kèm <code>file:dòng</code>, không thì ghi là chưa kiểm chứng; con số nào cũng kèm cách đo, không thì ghi “chưa đo”. Kiểm tra báo đạt chỉ đáng tin khi đã thấy nó từng báo trượt.</p></div>
-      <div><h3>Gặp lỗi</h3><p>Tìm ra nguyên nhân gốc rồi mới sửa. Sửa ba lần không được thì agent dừng lại hỏi.</p></div>
-      <div><h3>Chỗ rủi ro cao thì có bên thứ hai rà lại</h3><p>Xác thực, thanh toán, upload file, tách dữ liệu giữa các khách hàng, migration và API bên ngoài đều được review độc lập trước khi đẩy code, tốt nhất là do một model khác làm.</p></div>
-      <div><h3>Bàn giao giữa các phiên</h3><p><code>bk-close</code> ghi bàn giao và đối chiếu với git. Phiên sau, <code>bk-next</code> dựa vào git và bản bàn giao đó để làm tiếp, không dựa vào trí nhớ.</p></div>
+    <h2>Bearingkit lo ba việc</h2>
+    <div class="three">
+      <div><h3>Chọn đúng bước</h3><p>Trước khi đọc code, agent xác định yêu cầu là tính năng mới, lỗi, review hay chỉ là câu hỏi, rồi mở đúng một skill cho việc đó.</p></div>
+      <div class="stopper"><h3>Dừng lại khi cần người quyết</h3><p>Viết test, refactor giữ nguyên hành vi, sửa tài liệu, sửa lỗi ở tầng ứng dụng: agent tự làm rồi báo. Schema và migration, xác thực, phân quyền, thanh toán, xoá dữ liệu, hệ thống từ xa hay production: agent viết đề xuất rồi chờ. Không chắc thuộc bên nào thì coi như phải hỏi.</p></div>
+      <div><h3>Có kiểm chứng mới báo xong</h3><p>Muốn báo xong thì phải dán output các lệnh test và check của dự án; chưa có test là chưa xong. Khẳng định nào cũng kèm <code>file:dòng</code>, không thì ghi “chưa kiểm chứng”. Con số nào cũng kèm cách đo.</p></div>
     </div>
   </div>
 </section>
 
-<section id="language">
+<section id="steps" class="minor">
   <div class="wrap">
-    <h2>Nói với nó thế nào</h2>
-    <p class="sub">Cứ nói bình thường. Các câu dưới đây lấy từ bộ test kích hoạt, kèm skill mà câu đó phải mở. Muốn gọi đích danh một skill thì vẫn gọi được.</p>
-    <ul class="prompts">
-      <li><q>Thêm xuất CSV cho trang hóa đơn.</q><code>bk-spec</code></li>
-      <li><q>Form đăng nhập báo lỗi 500 sau khi đổi mật khẩu.</q><code>bk-debug</code></li>
-      <li><q>Nhánh này merge được chưa?</q><code>bk-review</code></li>
-      <li><q>Tại sao Postgres bỏ qua index trên cột status mà tôi mới thêm?</q><code>bk-db</code></li>
-      <li><q>Tiếp theo làm gì? Tôi đang dở việc gì trong repo này?</q><code>bk-next</code></li>
-      <li><q>Kết phiên giúp tôi, ghi bàn giao để phiên sau đọc.</q><code>bk-close</code></li>
-    </ul>
-    <p class="note">Bộ test có 96 câu, 44 câu tiếng Việt. Trên bộ lõi 60 câu, precision và recall đều từ 0,9 trở lên trên cả Claude Code và Antigravity 2.0 (Claude Code, ngày 16/09/2026: recall 0,958, precision 1,000). Con số này chỉ cho biết agent có mở đúng skill hay không. Chất lượng code làm ra sau đó thì tôi chưa đo.</p>
-  </div>
-</section>
-
-<section id="hosts">
-  <div class="wrap">
-    <h2>Các agent</h2>
-    <p class="sub">Skill viết một lần, mỗi agent nạp qua cơ chế plugin của riêng nó. “Đã nghiệm thu” nghĩa là agent đó đã qua bài kiểm tra nghiệm thu của bộ này.</p>
-    <div class="table-scroll" tabindex="0" role="region" aria-label="Các agent được hỗ trợ">
-    <table>
-      <thead><tr><th scope="col" style="width:32%">Agent</th><th scope="col" style="width:22%">Trạng thái</th><th scope="col">Cách nạp</th></tr></thead>
-      <tbody>
-        <tr><th scope="row">Claude Code</th><td><span class="st ok">đã nghiệm thu</span></td><td>Plugin từ marketplace của repo, bật theo từng dự án</td></tr>
-        <tr><th scope="row">Ứng dụng Antigravity 2.0</th><td><span class="st ok">đã nghiệm thu</span></td><td>Kho skill đặt ngoài các thư mục agent tự quét, khai báo theo từng dự án</td></tr>
-        <tr><th scope="row">Antigravity IDE</th><td><span class="st wait">nạp được, chưa nghiệm thu</span></td><td>Skill nạp theo từng dự án; bài nghiệm thu đầy đủ chưa chạy</td></tr>
-        <tr><th scope="row">Gemini CLI, Cursor, Codex</th><td><span class="st wait">mới có file khai báo</span></td><td>Qua bài nghiệm thu rồi mới ghi là hỗ trợ</td></tr>
-      </tbody>
-    </table>
+    <h2>Một yêu cầu đi qua những bước nào</h2>
+    <p class="chain" role="img" aria-label="Chuỗi bước: phân loại, spec, plan, build, test, review, ship, kết phiên. Dừng ở mọi điểm phải hỏi.">phân loại <span class="arrow">→</span> spec <span class="arrow">→</span> plan <span class="arrow">→</span> build <span class="arrow">→</span> test <span class="arrow">→</span> review <span class="arrow">→</span> ship <span class="arrow">→</span> kết phiên &nbsp; <span class="halt">dừng ở mọi điểm phải hỏi</span></p>
+    <div class="story">
+      <p>Việc nhỏ trong phạm vi ba file, không thuộc diện phải hỏi, thì đi thẳng tới build, kèm test. Lỗi thì tìm nguyên nhân gốc trước; sửa ba lần không được thì agent dừng lại hỏi. Code ở chỗ rủi ro cao (xác thực, thanh toán, upload, migration, API bên ngoài) được review độc lập trước khi đẩy lên, tốt nhất là bằng một model khác. Hết phiên, <code>bk-close</code> ghi bàn giao và đối chiếu với git; phiên sau <code>bk-next</code> đọc lại để làm tiếp, không dựa vào trí nhớ.</p>
     </div>
-  </div>
-</section>
-
-<section id="skills">
-  <div class="wrap">
-    <h2>17 skill</h2>
-    <p class="sub">Mỗi skill là một file chỉ dẫn ngắn, phần lớn kèm tài liệu tham khảo chỉ mở khi cần. Trước lần sửa đầu tiên, <code>bk-build</code> còn đọc file quy tắc theo stack của dự án: TypeScript/React, Kotlin, SQL, Node, Python, PHP/Laravel hoặc Shell.</p>
-    <div class="skills">
-      <div class="skill"><code>bk-spec</code><div>Chốt yêu cầu: diễn đạt lại, tìm trường hợp biên, ghi giả định</div></div>
-      <div class="skill"><code>bk-plan</code><div>Chia giai đoạn, giai đoạn nào cũng có tiêu chí xong và bằng chứng phải có</div></div>
-      <div class="skill"><code>bk-build</code><div>Làm theo kế hoạch hoặc sửa nhỏ, động vào càng ít càng tốt</div></div>
-      <div class="skill"><code>bk-test</code><div>Mặc định viết test trước; giao diện thì kiểm trên bản hiển thị thật</div></div>
-      <div class="skill"><code>bk-debug</code><div>Tìm nguyên nhân gốc rồi mới sửa; ba lần không được thì hỏi</div></div>
-      <div class="skill"><code>bk-review</code><div>Soát lỗi, rủi ro ở chỗ rủi ro cao và khẳng định chưa kiểm chứng trước khi đẩy code</div></div>
-      <div class="skill"><code>bk-ship</code><div>Chạy kiểm tra và quét bí mật, rồi viết commit và mô tả PR</div></div>
-      <div class="skill"><code>bk-close</code><div>Kết phiên bằng bản bàn giao đã đối chiếu với git</div></div>
-      <div class="skill"><code>bk-next</code><div>Chọn bước tiếp theo từ git, kế hoạch và bản bàn giao gần nhất</div></div>
-      <div class="skill"><code>bk-audit</code><div>Điều tra, rồi đưa một kết luận kèm các phương án đã loại</div></div>
-      <div class="skill"><code>bk-design</code><div>Thiết kế giao diện và tự phản biện trước khi dựng</div></div>
-      <div class="skill"><code>bk-map</code><div>Lập bản đồ một codebase lạ, có mốc file:dòng</div></div>
-      <div class="skill"><code>bk-research</code><div>Tra nguồn bên ngoài, chọn công cụ, mỗi kết luận kèm độ tin cậy</div></div>
-      <div class="skill"><code>bk-ops</code><div>Triển khai và đổi hạ tầng luôn có đường lùi; có sự cố thì chỉ đọc trước</div></div>
-      <div class="skill"><code>bk-db</code><div>Chẩn đoán hiệu năng cơ sở dữ liệu từ kế hoạch truy vấn; đổi index có đường lùi</div></div>
-      <div class="skill"><code>bk-perf</code><div>Đo trước, tối ưu sau, con số nào cũng kèm cách đo</div></div>
-      <div class="skill"><code>bk-setup</code><div>Chuẩn bị repo cho agent trên mọi công cụ bạn dùng</div></div>
-    </div>
+    <p class="skill-line">17 skill: <code>bk-spec</code> · <code>bk-plan</code> · <code>bk-build</code> · <code>bk-test</code> · <code>bk-debug</code> · <code>bk-review</code> · <code>bk-ship</code> · <code>bk-close</code> · <code>bk-next</code> · <code>bk-audit</code> · <code>bk-design</code> · <code>bk-map</code> · <code>bk-research</code> · <code>bk-ops</code> · <code>bk-db</code> · <code>bk-perf</code> · <code>bk-setup</code>. Mô tả từng skill có trong <a href="https://github.com/tuyenht/Bearingkit/blob/main/README.vi.md">README</a>.</p>
   </div>
 </section>
 
 <section id="status">
   <div class="wrap">
-    <h2>Hiện trạng</h2>
+    <h2>Hiện tại đang ở đâu</h2>
     <div class="story">
-      <p>Bắt đầu từ tháng 9/2026. Bản tiền phát hành, phát triển công khai. Số liệu ở đây lấy từ <a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/status.md">docs/status.md</a> và các file thiết kế trong <code>docs/specs</code>, nơi ghi cách đo từng con số.</p>
+      <p>Bearingkit đang ở giai đoạn pre-release, phát triển công khai từ tháng 9/2026. Dùng được, nhưng chưa có gì chứng minh nó hơn các gói skill mà nó tổng hợp từ đó.</p>
     </div>
-    <div class="cols" style="margin-top:28px">
-      <div class="col now"><h3>Đã chạy được</h3><ul>
-        <li>17 skill cùng giao thức, trên Claude Code và Antigravity 2.0</li>
-        <li>Điều hướng bằng tiếng Việt và tiếng Anh, số đo ở trên</li>
-        <li>Bật theo từng dự án, bảy file quy tắc theo stack</li>
-        <li>233 bài test tự động trong repo</li>
-      </ul></div>
-      <div class="col wip"><h3>Chưa chứng minh</h3><ul>
-        <li>Tốt hơn nguồn. Tôi so từng skill với gói mà nó tổng hợp từ đó (cùng bài, cùng code ban đầu, cùng model, cùng agent; mẫu nhỏ). Phần lớn không thấy khác biệt rõ; một bài lập kế hoạch với một model nghiêng về bộ này.</li>
-        <li>Tiết kiệm token. Ở những bài có ghi chi phí, bộ này tốn khoảng 1,3 đến 3 lần nguồn.</li>
-        <li>Có ai ngoài tôi thấy nó hữu ích hay không.</li>
-      </ul></div>
-      <div class="col next"><h3>Sắp đo</h3><ul>
-        <li>So bộ này với một tổ hợp gói tự ghép trên cùng bài: kích hoạt sai, lỗi, token (<a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/specs/2026-10-08-kit-vs-stack-proposal.md">đề xuất</a>, chưa chạy)</li>
-        <li>Bài có bẫy (migration, xóa dữ liệu, đẩy lên production): agent tự làm mà không hỏi bao nhiêu lần, có và không có bộ này</li>
-        <li>Nghiệm thu trên Gemini CLI, Cursor và Codex</li>
-      </ul></div>
+    <div class="facts">
+      <div><b>17</b><span>skill và một giao thức</span></div>
+      <div><b>2</b><span>agent đã nghiệm thu: Claude Code, Antigravity 2.0</span></div>
+      <div><b>96</b><span>prompt kiểm thử routing, 44 câu tiếng Việt</span></div>
+      <div><b>233</b><span>test tự động trong repository</span></div>
     </div>
+    <h3>Những gì đã đo được</h3>
+    <div class="story">
+      <p>Phép đo hiện có chủ yếu kiểm tra routing, tức là một yêu cầu có mở đúng skill hay không. Trên bộ lõi 60 câu, precision và recall đều từ 0,9 trở lên trên cả Claude Code và Antigravity 2.0. Riêng Claude Code, đo ngày 16/09/2026: recall 0,958, precision 1,000. Vài câu trong bộ test:</p>
+    </div>
+    <ul class="prompts">
+      <li><q>Thêm xuất CSV cho trang hóa đơn.</q><code>bk-spec</code></li>
+      <li><q>Form đăng nhập báo lỗi 500 sau khi đổi mật khẩu.</q><code>bk-debug</code></li>
+      <li><q>Nhánh này merge được chưa?</q><code>bk-review</code></li>
+      <li><q>Tại sao Postgres bỏ qua index trên cột status mà tôi mới thêm?</q><code>bk-db</code></li>
+    </ul>
+    <div class="story">
+      <p>Tôi cũng so từng skill với chính gói nguồn của nó: cùng bài, cùng code ban đầu, cùng model và agent, mẫu còn nhỏ. Phần lớn không thấy khác biệt rõ; một bài lập kế hoạch với một model nghiêng về Bearingkit. Ở những bài có ghi chi phí, Bearingkit tốn khoảng 1,3 đến 3 lần token so với nguồn.</p>
+    </div>
+    <div class="callout">
+      <h3>Chưa chứng minh được</h3>
+      <p>Đến giờ chưa có bằng chứng Bearingkit cho ra phần mềm tốt hơn, hay tốn ít token hơn các skill nguồn. Đó là phần tôi đo tiếp: so Bearingkit với một tổ hợp gói tự ghép trên cùng bài (<a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/specs/2026-10-08-kit-vs-stack-proposal.md">đề xuất</a>), và đếm số lần agent tự làm mà không hỏi ở những bài có bẫy như migration, xoá dữ liệu, đẩy lên production.</p>
+    </div>
+    <p class="note">Antigravity IDE nạp được skill nhưng chưa qua bài nghiệm thu. Gemini CLI, Cursor và Codex mới có file khai báo. Cách đo từng con số: <a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/status.md">docs/status.md</a> và các file thiết kế trong <code>docs/specs</code>.</p>
   </div>
 </section>
 
-<section id="install">
+<section id="install" class="minor">
   <div class="wrap">
     <h2>Cài đặt</h2>
     <p class="sub">Cài một lần trên mỗi máy, rồi bật trong từng dự án cần dùng.</p>
@@ -203,24 +158,25 @@
 claude plugin marketplace add https://github.com/tuyenht/Bearingkit
 claude plugin install bearingkit@bearingkit
 
-<span class="c"># Antigravity: cài một lần cho mỗi máy (chạy từ bản sao repo)</span>
+<span class="c"># Antigravity: cài một lần trên mỗi máy (chạy từ bản clone repository)</span>
 node &lt;thư-mục-bearingkit&gt;/bin/bearingkit.cjs install --host antigravity
 
 <span class="c"># Mọi agent: bật trong dự án, rồi xem những gì đang bật</span>
 cd &lt;dự-án-của-bạn&gt;
 node &lt;thư-mục-bearingkit&gt;/bin/bearingkit.cjs activate
 node &lt;thư-mục-bearingkit&gt;/bin/bearingkit.cjs status</pre>
-    <p class="note">Chưa có gói npm nên tạm thời chạy lệnh từ bản sao repo trên máy. Chi tiết từng agent và cách gỡ: <a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/hosts.md">docs/hosts.md</a> (tiếng Anh).</p>
+    <p class="note">Chưa có gói npm nên tạm thời chạy lệnh từ bản clone repository trên máy.</p>
   </div>
 </section>
 
-<section id="about">
+<section id="open" class="minor">
   <div class="wrap">
-    <h2>Ai làm</h2>
+    <h2>Phát triển công khai</h2>
     <div class="story">
-      <p>Tôi là lập trình viên ở Hà Nội (<a href="https://github.com/tuyenht">@tuyenht</a>), một mình vận hành một công ty phần mềm nhỏ, phần lớn việc thực thi do AI agent làm. Bearingkit là cách làm việc tôi đang dùng cho chuyện đó.</p>
-      <p class="muted">Có câu hỏi, hoặc cần người giúp cài cho cả đội: <a href="mailto:hello@bearingkit.dev">hello@bearingkit.dev</a>.</p>
+      <p>Mã nguồn, giấy phép MIT, nguồn gốc từng phần (<a href="https://github.com/tuyenht/Bearingkit/blob/main/PROVENANCE.md">PROVENANCE.md</a>), số liệu đo và các giới hạn đều nằm trên GitHub. Bearingkit là dự án độc lập, không phải sản phẩm của Anthropic hay Google.</p>
+      <p>Tôi là lập trình viên ở Hà Nội (<a href="https://github.com/tuyenht">@tuyenht</a>), một mình vận hành một công ty phần mềm nhỏ, phần lớn việc thực thi do AI agent làm. Bearingkit là cách làm việc tôi dùng cho chuyện đó. Nếu anh chị cũng đang làm với AI coding agent và muốn thử, tôi rất muốn nghe góp ý, nhất là những chỗ nó làm sai.</p>
     </div>
+    <p class="links"><a href="https://github.com/tuyenht/Bearingkit">GitHub</a> <a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/hosts.md">Hướng dẫn cài theo từng agent</a> <a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/status.md">Số liệu đo</a> <a href="mailto:hello@bearingkit.dev">hello@bearingkit.dev</a></p>
   </div>
 </section>
 </main>
