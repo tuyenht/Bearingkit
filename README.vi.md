@@ -10,7 +10,7 @@ Thôi cài chồng cả đống plugin. Bearingkit là một bộ công cụ mã
 
 Cách thường gặp là cài cả đống: gói quy trình, gói rà code, gói TDD, thêm plugin chính hãng. Từng gói đều tốt. Gộp lại thì chúng giành nhau cùng một yêu cầu, chồng chéo quy tắc, cùng nạp vào context trước khi bạn gõ, và nằm lại khi bạn đổi công cụ. Bearingkit là đống đó, được đọc từng mục và đang được chắt lọc thành một hệ thống:
 
-- **23 nguồn đã nghiên cứu, 17 trong số đó là mã nguồn mở** (Superpowers, plugin chính hãng của Anthropic, mattpocock/skills, spec-kit…; danh sách đủ ở `upstream/sources.json`). **1.295 mục nguồn** (skill, lệnh, agent, file quy tắc) đã kiểm kê từng cái: 46 sẽ chuyển thể, 610 giữ làm ý tưởng, 639 loại bỏ. Mọi file chuyển thể đều ghi nguồn; giấy phép nằm trong [`NOTICE`](NOTICE).
+- **23 nguồn đã nghiên cứu, 17 trong số đó là mã nguồn mở** (Superpowers, plugin chính hãng của Anthropic, mattpocock/skills, spec-kit…; danh sách đủ ở `upstream/sources.json`). **1.295 mục nguồn** (skill, lệnh, agent, file quy tắc) đã kiểm kê từng cái: 46 sẽ chuyển thể, 610 giữ làm ý tưởng, 639 loại bỏ. Mọi file chuyển thể đều ghi nguồn; giấy phép nằm trong [`NOTICE`](NOTICE). Phần nào vay mượn, phần nào của riêng dự án, theo từng thành phần: [`PROVENANCE.md`](PROVENANCE.md) (tiếng Anh).
 - **Một bộ điều hướng.** Protocol gọi tên ý định trước, rồi mở một skill — thay vì nhiều gói cùng giành một yêu cầu.
 - **Nhẹ.** Context cố định khoảng 4.000 token trên Claude Code, ngân sách 5.000 (đo ngày 23/09/2026, trước skill thứ 17).
 - **Bật theo từng dự án.** Cài một lần cho máy; dự án chưa bật thì không thấy gì — trên cả hai host đã nghiệm thu.
@@ -55,7 +55,7 @@ Các skill chuyển giao cho nhau theo chuỗi cố định — **spec → plan 
 
 **Sẽ đo tiếp**
 
-1. **Một bộ đấu với cả chồng** — Bearingkit so với tổ hợp các gói phổ biến tự ráp, trên cùng task: kích hoạt sai, lỗi, token.
+1. **Một bộ đấu với cả chồng** — Bearingkit so với tổ hợp các gói phổ biến tự ráp, trên cùng task: kích hoạt sai, lỗi, token ([thiết kế đề xuất](docs/specs/2026-10-08-kit-vs-stack-proposal.md)).
 2. **Cổng an toàn khi bị thử thách** — task có bẫy (migration, xoá dữ liệu, đẩy production): agent tự làm mà không hỏi bao nhiêu lần, có kit và không kit.
 3. **Cái giá của việc đổi công cụ** — một dự án trên hai host: số file phải duy trì, quy tắc bị lệch.
 

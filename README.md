@@ -10,7 +10,7 @@ Stop stacking plugins. Bearingkit is one open-source kit for **one-person softwa
 
 The usual setup is a pile — a workflow pack, a review pack, a TDD pack, the vendor's official plugins. Each is good alone. Together they compete for the same requests, carry overlapping rules, all load before you type, and stay behind when you switch tools. Bearingkit is that pile, read item by item and being distilled into one system:
 
-- **23 sources studied, 17 of them open-source** (Superpowers, Anthropic's official plugins, mattpocock/skills, spec-kit and more; full list in `upstream/sources.json`). **1,295 source items** (skills, commands, agents, rule files) inventoried one by one: 46 to adapt, 610 kept as ideas, 639 dropped. Every adapted file names its sources; licences are carried in [`NOTICE`](NOTICE).
+- **23 sources studied, 17 of them open-source** (Superpowers, Anthropic's official plugins, mattpocock/skills, spec-kit and more; full list in `upstream/sources.json`). **1,295 source items** (skills, commands, agents, rule files) inventoried one by one: 46 to adapt, 610 kept as ideas, 639 dropped. Every adapted file names its sources; licences are carried in [`NOTICE`](NOTICE). What is borrowed and what is ours, component by component: [`PROVENANCE.md`](PROVENANCE.md).
 - **One router.** The protocol names the intent first, then opens one skill — instead of several packs competing for the same request.
 - **A small footprint.** Fixed context about 4,000 tokens on Claude Code, against a budget of 5,000 (measured 2026-09-23, before the 17th skill).
 - **Per-project activation.** Installed once per machine; a project you have not activated sees nothing of it — on both accepted hosts.
@@ -55,7 +55,7 @@ Skills hand off in a fixed chain — **spec → plan → build → test → revi
 
 **What we will measure next**
 
-1. **One kit vs a stack** — Bearingkit against a hand-assembled set of popular packs on the same tasks: wrong activations, defects, tokens.
+1. **One kit vs a stack** — Bearingkit against a hand-assembled set of popular packs on the same tasks: wrong activations, defects, tokens ([proposed design](docs/specs/2026-10-08-kit-vs-stack-proposal.md)).
 2. **The gate under pressure** — trap tasks (a migration, a deletion, a production push): how often the agent acts without asking, with and without the kit.
 3. **The cost of switching** — one project on two hosts: files to maintain, rules that drift.
 
@@ -93,7 +93,7 @@ After publication: `pnpm add -g bearingkit` (or `npm i -g bearingkit`) and then 
 |---|---|
 | Claude Code | acceptance passed; install with `claude plugin marketplace add <repository URL>` (not a development checkout: the install copies untracked files too, `docs/hosts.md`) then `claude plugin install bearingkit@bearingkit`, activate per project as above; development: `claude --plugin-dir <checkout>` |
 | Antigravity 2.0 | acceptance passed; `bearingkit install` writes the store, `bearingkit activate` declares it in a project. Measured on the app 2026-09-20: an activated project lists the kit's skills and runs its hooks, a project without the entry lists none of them ([docs/compat/2026-09-19-per-project-activation.md](docs/compat/2026-09-19-per-project-activation.md)) |
-| Antigravity IDE | acceptance passed; it honours a project's `.agents/plugins.json` exactly as 2.0 does (measured 2026-09-20: the activated folder lists the kit's skills, and a running IDE picks the declaration up when the folder is opened) |
+| Antigravity IDE | loads the kit per project (full acceptance test not yet run); it honours a project's `.agents/plugins.json` exactly as 2.0 does (measured 2026-09-20: the activated folder lists the kit's skills, and a running IDE picks the declaration up when the folder is opened) |
 | Gemini CLI | `gemini extensions install https://github.com/tuyenht/Bearingkit`; acceptance pending |
 | Cursor, Codex, Copilot CLI, Factory Droid | manifests are in place; listed as supported after their acceptance test |
 

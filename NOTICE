@@ -1,6 +1,6 @@
 # NOTICE
 
-Bearingkit is distributed under the MIT license in `LICENSE` (declared in `package.json`). Parts of `skills/` are adapted from other open-source projects. Each entry below names the project, its license, the exact version, and the kit files that derive from it; `upstream/sources.json` records the same with the commit sha and the file-level map, and every derived file names its sources in its opening paragraph. Nothing here changes the license of the kit; the notices below are kept as their licenses require.
+Bearingkit is distributed under the MIT license in `LICENSE` (declared in `package.json`). Parts of `skills/` are adapted from other open-source projects. Each entry below names the project, its license, the exact version, and the kit files that derive from it; `upstream/sources.json` records the same with the commit sha and the file-level map, and every derived file names its sources in its opening paragraph. Nothing here changes the license of the kit; the notices below are kept as their licenses require. For a plain-language account of what is borrowed and what the kit adds, with counts you can rerun, see `PROVENANCE.md`.
 
 ## anthropics/claude-plugins-official
 
