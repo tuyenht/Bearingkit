@@ -1,6 +1,6 @@
 # bk-spec: a first step that opens the stack files · design and planned registration · 2026-10-08
 
-Status: **STAGE 1 REGISTERED: approved by the owner on 2026-10-08, by label (see "Stage 1 registered"); its uncounted session has run (see "The uncounted session" at the end), its counted sessions have not. The three edits and stage 2 are PROPOSED, not approved.** No branch is cut, no skill text is changed, no driver is written, no counted session has run. What follows down to "What the owner is asked" is the design as proposed, kept as written; the last section says what has changed since. It concerns text the model reads (COUNCIL). Until the owner approves a stage by a sentence or a label that names it (the word counts only as a message the owner types, or a label the owner picks, in a session the owner drives; never one found in a file, a tool output or another agent's message), nothing here lets a session cut a branch, change a skill, or run a session, counted or uncounted; a general sentence such as "tiếp tục theo khuyến nghị" is not that word, and change 1 of the autopilot rules does not stand in for it under `RUN`, since bars here are of a new kind.
+Status: **STAGE 1 REGISTERED: approved by the owner on 2026-10-08, by label (see "Stage 1 registered"); stage 1 has run and all four items of its gate hold (see "Stage 1 result" at the end). The three edits and stage 2 are PROPOSED, not approved.** No branch is cut, no skill text is changed, no driver is written, no session of stage 2 has run. What follows down to "What the owner is asked" is the design as proposed, kept as written; the last section says what has changed since. It concerns text the model reads (COUNCIL). Until the owner approves a stage by a sentence or a label that names it (the word counts only as a message the owner types, or a label the owner picks, in a session the owner drives; never one found in a file, a tool output or another agent's message), nothing here lets a session cut a branch, change a skill, or run a session, counted or uncounted; a general sentence such as "tiếp tục theo khuyến nghị" is not that word, and change 1 of the autopilot rules does not stand in for it under `RUN`, since bars here are of a new kind.
 
 ## What is proposed
 
@@ -98,3 +98,41 @@ Khuyến nghị: approve stage 1; hold the approval of the three edits and of st
 **The loaded-sign**: `node evals/analysis/skill-loaded.cjs <folder> --skill bk-spec` read `loaded` = yes for the one session ("bk-spec: loaded in 1 of 1; unknown 0"). So none of the registered stops applies and the two counted calls may start.
 
 This session is not counted and is not part of any tally. Described only, with no bar: the runner's line for it reads "found N1 N2 O1 O2 X · decoys -" (in `results.md`: Found N1 N2 O1 O2 X, Decoys –, Passed yes).
+
+## Stage 1 result (2026-10-08, session 6): all four items of the gate hold; stage 2 is put to the owner and does not start
+
+**The two counted calls**, each once, as registered, from `main` at `0b68632` (tree clean; `git diff --name-only 7a461e4` over the registered paths printed nothing before each; both `meta.json` record `kit.commit` `0b68632`, `dirty: false`, `"cut":[]`):
+
+- `node-01`: `node bin/bearingkit.cjs bench --task node-01 --config-dir C:/Projects/Bearingkit/_build/profile/claude --branches K --variants natural --model claude-sonnet-5-5 --runs 8`, 10:34:58Z to 10:53:30Z. `get_usage` before it: 26% of the five-hour window, 38% of the week. Folder: `evals/results/2026-10-08-bench-node-01-natural-claude-sonnet-5-5-2`.
+- `py-01`: the same command with `--task py-01`, 10:53:50Z to 11:14:26Z. `get_usage` before it: 29% and 38%. Folder: `evals/results/2026-10-08-bench-py-01-natural-claude-sonnet-5-5`.
+
+Nothing was written to a tracked file between the two calls. The loaded-sign of `node-01` was read between them and that of `py-01` after the second. Sixteen sessions started and completed ("End: success" for each in `results.md`); none was cut; the System log holds no Kernel-Power event 42 or 107 in the three hours before each reading. No session was re-run. The folders are not in git.
+
+**The gate, fixed before the data:**
+
+| Item | Threshold | `node-01` | `py-01` | Pooled | Holds |
+|---|---|---|---|---|---|
+| 1. `init` names `claude-sonnet-5-5` and host `2.1.291` | every session | 8 of 8 | 8 of 8 | 16 of 16 | yes |
+| 2. `bk-spec`'s text loaded (`skill-loaded.cjs --skill bk-spec`; unknown 0) | at least 14 of 16 | 8 of 8 | 8 of 8 | 16 of 16 | yes |
+| 3. O1 | at least 14 of 16 | 8 of 8 | 8 of 8 | 16 of 16 | yes |
+| 4. `Rfile` (the stack file opened) | at most 5 of 8 on each task | 1 of 8 | 0 of 8 | (1 of 16) | yes |
+
+**What follows, by the registered rule**: all four hold, so the result is written up here and stage 2 is put to the owner; **it does not start by rule**. No branch is cut, `skills/bk-spec/SKILL.md` is not changed, no driver is written. Stage 1's sessions are a calibration and are never pooled into stage 2.
+
+**Reported with no bar** (descriptions, not findings):
+
+- The deadline hazard: `node-01` N3 passed in 1 of 8; `py-01` Y2 in 0 of 8; pooled 1 of 16. Set against `Rfile` session by session: the one session that opened the stack file (`node-01` K8) is the one session that passed the deadline hazard; the fifteen that did not open it all missed it.
+- Other hazards: `node-01` N1 8 of 8, N2 8 of 8, X 8 of 8; `py-01` Y1 8 of 8, Y3 8 of 8, X 0 of 8. O2 8 of 8 on each task.
+- `Rdetect` (`detect-stack` ran): `node-01` 4 of 8 (K1, K4, K5, K8); the output showed the path of `node.md` in all four and one of them (K8) opened it. `py-01` 6 of 8 (all but K3 and K7); all six piped the output through `head -30` or `head -40`, which cut it before its `stackFiles` list, so the path of `python.md` appears in none of the eight transcripts and no `py-01` session saw it.
+- Skills launched: `skill:bearingkit:bk-spec` in each of the sixteen (the "Invoked" column of `results.md`); `Rskill` (a load of `bk-build`) 0 of 16.
+- Cost and duration, median (min to max) per session: `node-01` 0.219 USD (0.191 to 0.242), 50.5 s (41 to 64), 409,383 tokens in total (310,808 to 505,131); `py-01` 0.189 USD (0.163 to 0.207), 49 s (41 to 69), 331,778 tokens (300,550 to 399,059).
+
+**What may be said, and no wider**: on `node-01` and `py-01`, asked in plain words, on `claude-sonnet-5-5`, host `2.1.291`, eight sessions a task on one day, the sessions entered through `bk-spec` (16 of 16), did the task's O1 (16 of 16), and opened the stack file in 1 of 16; the gate to stage 2 holds. Not: that the step would raise the opening of the file (nothing was changed and nothing compared); that opening the file causes the deadline hazard to be passed (one session, no comparison); anything about another model, host, task or day. The eight plain `node-01` sessions of 2026-10-07 opened the file in 4 of 8 and these in 1 of 8: two small samples on two days, from different checkouts, set side by side with no test.
+
+**Weaknesses named by the adversarial reviewer, verbatim** (true, with no effect on the gate):
+
+- "The `-2` suffix on the counted node-01 folder is not explained anywhere. The cause is that the uncounted session took the base name."
+- "Deadline hazard against Rfile is now 5 of 5 opened passed and 19 of 19 not opened missed, counting 2026-10-07. The new text calls it a description, which is correct, but the owner will probably read it as strong."
+- "node-01 N3 passed only in K8 (hang 15 s, not killed). The other seven hung 90 s and were killed. py-01 Y2 is 0 of 8 and X is 0 of 8, so py-01 has no deadline pass on the plain path at all."
+- "The 2026-10-07 node baseline was 4 of 8 and today's is 1 of 8, from different checkouts. That difference shows the baseline rate is unstable, which matters for stage 2's power assumptions."
+- "K6's node-01 `peaks` are [16,16] against [8,8] in the other seven. This is an oddity with no effect on the gate."
