@@ -13,15 +13,9 @@ function binom(n, k, p) {
   if (p >= 1) return k === n ? 1 : 0;
   return Math.exp(lc(n, k) + k * Math.log(p) + (n - k) * Math.log(1 - p));
 }
-// Two-sided p of a passes in n against b passes in n: the sum of the tables no more likely than the one seen.
-function fisher(a, b, n) {
-  const m = a + b;
-  const pr = (x) => Math.exp(lc(n, x) + lc(n, m - x) - lc(2 * n, m));
-  const seen = pr(a);
-  let p = 0;
-  for (let x = Math.max(0, m - n); x <= Math.min(n, m); x++) if (pr(x) <= seen * (1 + 1e-9)) p += pr(x);
-  return p;
-}
+// Two-sided p of a passes in n against b passes in n, by the runner's own function (tested in tests/bench.test.cjs).
+const { fisherExact } = require('../../scripts/lib/bench-score.cjs');
+const fisher = (a, b, n) => fisherExact(a, n - a, b, n - b);
 function power(n, before, after) {
   let w = 0;
   for (let a = 0; a <= n; a++) for (let b = 0; b <= n; b++) if (a > b && fisher(a, b, n) <= 0.05) w += binom(n, a, after) * binom(n, b, before);

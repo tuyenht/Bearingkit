@@ -8,7 +8,7 @@ Why they are stale (the audit of entry 17 named both): the spec's Status still s
 
 Replace the text from "Status:" up to and including "steps 2 to 4 not started.**" with the text below; the rest of the paragraph ("This file governs how sessions work…") stays as it is.
 
-> Status: **APPROVED by the owner on 2026-10-06 as read below; changes 1 to 3 in force; change 6 confirmed by the owner on 2026-10-07 (see "The owner's word"), so in force; changes 4 and 5 wait for the owner's one-line confirmation (see "What this changes"). Steps: step 1 (this file, the switch, the log) built on 2026-10-06; step 2 (the keep-alive check) run on 2026-10-06: no sleep event inside it, which, with the idle sleep timeout of this machine at 0, shows nothing about the keep-alive design (`docs/specs/2026-10-06-autopilot-amendments.md`, "Result of step 2"); step 3 (the scheduled-task check) not started: it needs change 5; step 4 (the pilot, P5b's way on) run on 2026-10-07 and closed by the owner's word, not "with no question asked" as the step describes it: one second freeze (`afa1a46`), a second run, a `PAUSE` on an incident the registration had no rule for, a verdict under the handling the owner afterwards chose by name, the guard, and the merge of the text into `main` on the owner's word and not by rule (`8a74217`); the record is `docs/autopilot/decisions.md`, entries 9 to 18. The audit the step asks for was read inside session 4, in two readings (entries 17 and 18), and not as a session of its own; the owner reads them as the audit owed (entry 19: the counter is 1). The switch has been at `PAUSE` since `4bb6fa2` (2026-10-07).**
+> Status: **APPROVED by the owner on 2026-10-06 as read below; changes 1 to 3 in force; change 6 confirmed by the owner on 2026-10-07 (see "The owner's word"), so in force; changes 4 and 5 wait for the owner's one-line confirmation (see "What this changes"). Steps: step 1 (this file, the switch, the log) built on 2026-10-06; step 2 (the keep-alive check) run on 2026-10-06: no sleep event inside it, which, with the idle sleep timeout of this machine at 0, shows nothing about the keep-alive design (`docs/specs/2026-10-06-autopilot-amendments.md`, "Result of step 2"); step 3 (the scheduled-task check) not started: it needs change 5; step 4 (the pilot, P5b's way on) run on 2026-10-07 and closed by the owner's word, not "with no question asked" as the step describes it: one second freeze (`afa1a46`), a second run, a `PAUSE` on an incident the registration had no rule for, a verdict under the handling the owner afterwards chose by name, the guard, and the merge of the text into `main` on the owner's word and not by rule (`8a74217`); the record is `docs/autopilot/decisions.md`, entries 9 to 18. The audit the step asks for was read inside session 4, in two readings (entries 17 and 18), and not as a session of its own; the owner's word of 2026-10-08 gives the audit counter as 1 (entry 19).**
 
 ## 2. Line 19 of `AGENTS.md` (the line that begins "- Autopilot (owner's decision, 2026-10-06")
 
@@ -25,6 +25,12 @@ with:
 For item E's shorter line, the corresponding sentence would read:
 
 > Change 6 of that file is in force (confirmed 2026-10-07); changes 4 and 5 are not until the owner confirms them as it says.
+
+## Two places looked at and left alone
+
+Point 6 of "What this changes" still carries "*(waits for confirmation)*", and "What stays the owner's" still says "until confirmed, everything changes 4, 5 and 6 would allow". Point 6's marker is covered by the spec's rule (line 60). The phrase in 'What stays the owner's' is not named by it; with changes 4 and 5 unconfirmed it can be read either way for 'none opens P5c'. A session under `RUN` should take the stricter reading; the owner may want it plainer. Both sections are the owner's, and no text is proposed for them.
+
+The replacement above no longer names the commit since which the switch reads `PAUSE`: that sentence would be stale the day the owner writes `RUN`.
 
 ## What this file does not do
 
