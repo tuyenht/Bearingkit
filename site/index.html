@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="/style.css?v=20261009b">
+<link rel="stylesheet" href="/style.css?v=20261009c">
 </head>
 <body>
 <header class="top">
@@ -53,7 +53,7 @@
       <a class="btn primary" href="https://github.com/tuyenht/Bearingkit">View on GitHub</a>
       <a class="btn" href="#install">Install</a>
     </div>
-    <p class="fineprint">MIT licensed · Pre-release, in active development · Not yet shown to beat the skills it was built from; see <a href="#status">Status</a>.</p>
+    <p class="fineprint">MIT licensed · Pre-release · Developed in the open. Routing has been measured; overall quality and cost are still being tested. Numbers and limits under <a href="#status">Status</a>.</p>
   </div>
   <figure style="margin:0">
     <div class="console" role="img" aria-label="Illustration of a session routed by Bearingkit">
@@ -103,17 +103,16 @@
       <div class="stopper"><h3>Stops for a decision</h3><p>Tests, behavior-preserving refactors, docs and app-layer fixes: the agent does them and reports. Schema and migrations, auth, permissions, payments, deleting data, remote or production systems: it writes a proposal and waits. If it isn't sure which side a change is on, it asks.</p></div>
       <div><h3>Proves it before “done”</h3><p>To call a job done, the agent pastes the project's check output; no test means not done. Every claim carries a <code>file:line</code> or is marked unverified, and every number carries its method.</p></div>
     </div>
-  </div>
-</section>
-
-<section id="steps" class="minor">
-  <div class="wrap">
-    <h2>How a request moves</h2>
-    <p class="chain" role="img" aria-label="Steps: classify, spec, plan, build, test, review, ship, close. It stops wherever a decision is needed.">classify <span class="arrow">→</span> spec <span class="arrow">→</span> plan <span class="arrow">→</span> build <span class="arrow">→</span> test <span class="arrow">→</span> review <span class="arrow">→</span> ship <span class="arrow">→</span> close &nbsp; <span class="halt">stops wherever a decision is needed</span></p>
-    <div class="story">
-      <p>A small change within three files, outside those risky areas, goes straight to build, with tests. A bug gets a root cause before any fix, and after three failed attempts the agent stops and asks. Code on hot paths (auth, payments, uploads, migrations, outside APIs) gets an independent review before push, ideally by a different model. At the end of a session, <code>bk-close</code> writes a handoff and checks it against git; next time, <code>bk-next</code> picks up from there instead of from memory.</p>
+    <div class="around">
+      <p class="label-sm">Around those three</p>
+      <ul>
+        <li><b>The chain:</b> classify → spec → plan → build → test → review → ship → close. A small change within three files, outside the risky areas, goes straight to build with tests.</li>
+        <li><b>Bugs:</b> root cause before any fix; after three failed attempts the agent stops and brings the evidence back for a decision.</li>
+        <li><b>Hot paths:</b> auth, payments, uploads, migrations and outside APIs get an independent review before push, ideally by a different model.</li>
+        <li><b>Handoffs:</b> <code>bk-close</code> writes a handoff checked against git; <code>bk-next</code> starts the next session from it, not from memory.</li>
+      </ul>
+      <p class="skill-line">17 skills: <code>bk-spec</code> · <code>bk-plan</code> · <code>bk-build</code> · <code>bk-test</code> · <code>bk-debug</code> · <code>bk-review</code> · <code>bk-ship</code> · <code>bk-close</code> · <code>bk-next</code> · <code>bk-audit</code> · <code>bk-design</code> · <code>bk-map</code> · <code>bk-research</code> · <code>bk-ops</code> · <code>bk-db</code> · <code>bk-perf</code> · <code>bk-setup</code>. Each is described in the <a href="https://github.com/tuyenht/Bearingkit#readme">README</a>.</p>
     </div>
-    <p class="skill-line">17 skills: <code>bk-spec</code> · <code>bk-plan</code> · <code>bk-build</code> · <code>bk-test</code> · <code>bk-debug</code> · <code>bk-review</code> · <code>bk-ship</code> · <code>bk-close</code> · <code>bk-next</code> · <code>bk-audit</code> · <code>bk-design</code> · <code>bk-map</code> · <code>bk-research</code> · <code>bk-ops</code> · <code>bk-db</code> · <code>bk-perf</code> · <code>bk-setup</code>. Each is described in the <a href="https://github.com/tuyenht/Bearingkit#readme">README</a>.</p>
   </div>
 </section>
 
@@ -131,16 +130,16 @@
     </div>
     <h3>What has been measured</h3>
     <div class="story">
-      <p>Most of the measurement so far checks routing: whether a request opens the right skill. On the 60-prompt core set, precision and recall are both at least 0.9 on Claude Code and on Antigravity 2.0. For Claude Code, measured on 2026-09-16: recall 0.958, precision 1.000. A few prompts from the set:</p>
+      <p>What has been measured is routing: whether a request opens the right skill. The core set is 60 prompts across six kinds of request (question, small change, feature, bug, review, ship), measured on 2026-09-16 and 17: precision and recall at least 0.9 on both agents; on Claude Code, recall 0.958 and precision 1.000. That run predates <code>bk-db</code>, <code>bk-ops</code>, <code>bk-map</code>, <code>bk-research</code> and <code>bk-perf</code>; prompts for the newer skills are in the 96-prompt set but have not been re-run. Routing correctly says nothing yet about the code that follows. Prompts from the measured set:</p>
     </div>
     <ul class="prompts">
       <li><q>Add CSV export to the invoices page.</q><code>bk-spec</code></li>
-      <li><q>Uploads over 5 MB silently disappear.</q><code>bk-debug</code></li>
+      <li><q>The login form shows a 500 after a password reset.</q><code>bk-debug</code></li>
       <li><q>Is this branch safe to merge?</q><code>bk-review</code></li>
-      <li><q>The error-rate alert on checkout fired ten minutes ago. Find out what is going on.</q><code>bk-ops</code></li>
+      <li><q>Ship the invoice export.</q><code>bk-ship</code></li>
     </ul>
     <div class="story">
-      <p>I also compared skills one at a time with the packs they came from: same task, starting code, model and agent, with small samples. Most showed no clear difference; one planning task with one model favored Bearingkit. Where I recorded cost, Bearingkit used about 1.3 to 3 times the tokens of its sources.</p>
+      <p>I also compared skills one at a time with the packs they came from: same task, starting code, model and agent, with small samples. Most showed no clear difference; one planning task with one model favored Bearingkit. Where I recorded cost, Bearingkit used about 1.3 to 3 times the tokens of its sources. Against using no skill at all, it cost about 1.9 to 2.1 times on three tasks with Sonnet, and about 7 times on one review task with an Opus reviewer.</p>
     </div>
     <div class="callout">
       <h3>Not shown yet</h3>
@@ -154,18 +153,21 @@
   <div class="wrap">
     <h2>Install</h2>
     <p class="sub">Once per machine, then activate it in each project that should use it.</p>
-<pre tabindex="0" aria-label="Install commands"><span class="c"># Claude Code: add the marketplace and install the plugin</span>
+<pre tabindex="0" aria-label="Install commands"><span class="c"># Once per machine: clone the repository (no npm package yet)</span>
+git clone https://github.com/tuyenht/Bearingkit.git $HOME/bearingkit
+
+<span class="c"># Claude Code: add the marketplace and install the plugin</span>
 claude plugin marketplace add https://github.com/tuyenht/Bearingkit
 claude plugin install bearingkit@bearingkit
 
-<span class="c"># Antigravity: install once per machine (run from a clone of the repo)</span>
-node &lt;checkout&gt;/bin/bearingkit.cjs install --host antigravity
+<span class="c"># Antigravity only: install the skills store</span>
+node $HOME/bearingkit/bin/bearingkit.cjs install --host antigravity
 
-<span class="c"># Any agent: activate in a project, then check what is active</span>
-cd &lt;your project&gt;
-node &lt;checkout&gt;/bin/bearingkit.cjs activate
-node &lt;checkout&gt;/bin/bearingkit.cjs status</pre>
-    <p class="note">There is no npm package yet, so the command line runs from a local clone of the repository.</p>
+<span class="c"># In each project that should use it</span>
+cd path/to/your-project
+node $HOME/bearingkit/bin/bearingkit.cjs activate
+node $HOME/bearingkit/bin/bearingkit.cjs status</pre>
+    <p class="note"><code>$HOME</code> expands in both bash and PowerShell. Per-agent details and uninstalling: <a href="https://github.com/tuyenht/Bearingkit/blob/main/docs/hosts.md">docs/hosts.md</a>.</p>
   </div>
 </section>
 

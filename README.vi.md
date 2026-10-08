@@ -1,10 +1,10 @@
 # Bearingkit
 
-**Cài một lần. Có kỷ luật của cả một đội.** · [bearingkit.dev/vi](https://bearingkit.dev/vi/) · [English](README.md)
+**Workflow mã nguồn mở cho AI coding agent.** · [bearingkit.dev/vi](https://bearingkit.dev/vi/) · [English](README.md)
 
-Thôi cài chồng cả đống plugin. Bearingkit là một bộ công cụ mã nguồn mở duy nhất cho **công ty phần mềm một người**. Bạn nói điều mình muốn bằng **tiếng Việt hoặc tiếng Anh tự nhiên**: bộ công cụ điều hướng AI agent tới đúng bước, và được thiết kế để đưa việc đi từ đặc tả tới phát hành, dừng lại chờ bạn trước mọi thay đổi rủi ro, và trình bằng chứng trước khi nói là xong. Hiện chạy trên **Claude Code** và **Antigravity** app 2.0 từ cùng một nguồn skill; Gemini CLI, Cursor và Codex đã có manifest và sẽ được ghi là hỗ trợ khi qua bài nghiệm thu.
+Bearingkit gồm một giao thức và 17 skill, thay cho cả chồng plugin chồng chéo nhau. Bạn nói điều mình muốn bằng **tiếng Việt hoặc tiếng Anh tự nhiên**: bộ công cụ điều hướng AI agent tới đúng bước, và được thiết kế để đưa việc đi từ đặc tả tới phát hành, dừng lại chờ bạn trước mọi thay đổi rủi ro, và trình bằng chứng trước khi nói là xong. Hiện chạy trên **Claude Code** và **Antigravity** app 2.0 từ cùng một nguồn skill; Gemini CLI, Cursor và Codex đã có manifest và sẽ được ghi là hỗ trợ khi qua bài nghiệm thu.
 
-> Chưa phát hành chính thức, đang phát triển tích cực. Mọi con số dưới đây đều truy được về repo — phần lớn ở [`docs/status.md`](docs/status.md), nơi ghi rõ cách đo.
+> Pre-release, đang phát triển: chưa có bản phát hành công khai và chưa có gói npm (package version 0.1.0, đang hướng tới v0.3). Bearingkit là dự án độc lập, không liên kết với Anthropic hay Google. Mọi con số dưới đây đều truy được về repo — phần lớn ở [`docs/status.md`](docs/status.md), nơi ghi rõ cách đo.
 
 ## Vì sao một bộ thay cho cả chồng plugin
 
@@ -18,7 +18,7 @@ Cách thường gặp là cài cả đống: gói quy trình, gói rà code, gó
 
 ## Nói như nói với đồng nghiệp
 
-Không phải nhớ lệnh gạch chéo. Mỗi skill có cụm từ kích hoạt bằng tiếng Việt và tiếng Anh. 44 trên 96 câu trong bộ test kích hoạt hiện nay là tiếng Việt; trên bộ lõi 60 câu, điều hướng đạt precision và recall ≥ 0,9 trên Claude Code và Antigravity 2.0 (Claude Code ngày 16/09/2026: recall 0,958, precision 1,000). Câu thật trong bộ test:
+Không phải nhớ lệnh gạch chéo. Mỗi skill có cụm từ kích hoạt bằng tiếng Việt và tiếng Anh. 44 trên 96 câu trong bộ test kích hoạt hiện nay là tiếng Việt; trên bộ lõi 60 câu (sáu loại yêu cầu: câu hỏi, sửa nhỏ, tính năng, lỗi, review, ship), điều hướng đạt precision và recall ≥ 0,9 trên Claude Code và Antigravity 2.0, đo ngày 16–17/09/2026 (Claude Code: recall 0,958, precision 1,000). Lần đo đó có trước `bk-db`, `bk-ops`, `bk-map`, `bk-research` và `bk-perf`; câu cho các skill này đã có trong bộ test nhưng chưa đo lại. Routing không phải thước đo chất lượng code. Câu thật trong bộ test:
 
 | Bạn nói | Skill được mở |
 |---|---|
@@ -45,7 +45,7 @@ Các skill chuyển giao cho nhau theo chuỗi cố định — **spec → plan 
 |---|---|
 | Skill | 17 skill cùng protocol; `bk-build` mở quy tắc stack cho TypeScript/React, Kotlin, SQL, Node, Python, PHP/Laravel, Shell |
 | Host | Đã nghiệm thu: Claude Code, Antigravity app 2.0. Nạp theo dự án, chưa nghiệm thu đủ: Antigravity IDE. Đã có manifest: Gemini CLI, Cursor, Codex |
-| Điều hướng bằng ngôn ngữ tự nhiên | Việt + Anh; precision và recall ≥ 0,9 trên bộ lõi 60 câu, cả hai host đã nghiệm thu |
+| Điều hướng bằng ngôn ngữ tự nhiên | Việt + Anh; precision và recall ≥ 0,9 trên bộ lõi 60 câu, cả hai host đã nghiệm thu (đo 16–17/09/2026, trước năm skill mới nhất) |
 | So với skill nguồn | đã so: `bk-review`, `bk-debug`, `bk-plan` và bốn file stack. Phần lớn không khác biệt rõ (mẫu nhỏ; ở phần lớn task, cả hai bên chưa tách được khỏi việc không dùng skill); một task lập kế hoạch với một model nghiêng về kit; với PowerShell, kit vượt mức sàn và một gói không có skill shell, nhưng không vượt nguồn của chính nó. Ở những task có ghi chi phí, kit tốn khoảng 1,3–3 lần nguồn (số liệu từng task trong `docs/specs`), nên **chưa task nào đạt chuẩn v1.0** (tỷ lệ đạt ít nhất bằng nguồn *và* ít token hơn) |
 | Gói npm, có mặt trên các marketplace | chưa có |
 
@@ -61,7 +61,7 @@ Các skill chuyển giao cho nhau theo chuỗi cố định — **spec → plan 
 
 ## Lộ trình
 
-- **v0.3** (hiện tại): chắt lọc và đo các skill vòng đời còn lại (`bk-spec`, `bk-ship`, `bk-close`), file stack cuối cùng, cổng v0.3.
+- **v0.3** (đang làm): chắt lọc và đo các skill vòng đời còn lại (`bk-spec`, `bk-ship`, `bk-close`), file stack cuối cùng, cổng v0.3.
 - **v0.4**: gói tuỳ chọn, hook cho push và deploy, nghiệm thu trên Gemini CLI, Cursor và Codex.
 - **v1.0**: benchmark kết quả 12 task so với nguồn, `upstream-watch` báo thay đổi của từng nguồn; phát hành: có mặt trên các marketplace, README tiếng Anh và tiếng Việt, CI, và lịch sử công khai đã gộp gọn.
 

@@ -1,7 +1,7 @@
 {
   "name": "bearingkit",
   "version": "0.1.0",
-  "description": "An operating protocol and skill set for one-person software companies: makes Claude Code, Antigravity and other AI coding agents work like a disciplined team. One skills/ source, installed into each host with its own command.",
+  "description": "An open-source workflow for AI coding agents: routes each request to the right step, stops for approval before risky changes, and shows evidence before claiming done. One skills/ source for Claude Code, Antigravity and other hosts.",
   "homepage": "https://bearingkit.dev",
   "bugs": {
     "url": "https://github.com/tuyenht/Bearingkit/issues"
