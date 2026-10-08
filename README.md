@@ -1,6 +1,39 @@
 # Bearingkit
 
-A protocol and skill set that makes an AI coding agent work like a disciplined senior team: classify the request before acting, propose only when the blast radius demands it, prove before claiming, hand off cleanly. One `skills/` source in the Agent Skills format, installed into each host with the host's own command.
+A protocol and skill set that makes an AI coding agent work like a disciplined senior team: classify the request before acting, propose only when the blast radius demands it, prove before claiming, hand off cleanly. One `skills/` source in the Agent Skills format, installed into each host with the host's own command. Built first for **Claude Code**, where it ships as a plugin; Antigravity is the second host that has passed acceptance.
+
+## Why it exists
+
+A capable coding agent left on defaults tends to fail in the same few ways: it edits before it understands the request, claims "done" without evidence, makes risky changes without asking, and loses the thread between sessions. Bearingkit is a small operating protocol plus a set of focused skills that close those gaps:
+
+- **An autonomy gate.** Every request is classified first. Low-risk work inside the project is ACT (do it, then report); anything with a wide blast radius — design changes, data, servers, other repositories — is COUNCIL (propose, then wait for a human).
+- **Evidence before claims.** A skill does not report success without pasting the command, test or measurement that shows it.
+- **A lifecycle.** spec → plan → build → test → review → ship → close, with an independent reviewer on hot paths and a written handoff at the end of every session.
+- **Loaded only where you turn it on.** Installed once per machine, activated per project; a project you have not activated sees nothing of it.
+
+It is written by a solo developer who runs a small software practice with AI agents doing most of the hands-on work, and it is used daily on that work. The kit is the discipline that makes that arrangement safe.
+
+## Status
+
+Pre-release (`0.1.0-phase1`, tagged 2026-09-11; working towards v0.3). Started September 2026; MIT licensed. Figures below are as recorded in [`docs/status.md`](docs/status.md), which says how each was measured.
+
+| | Today |
+|---|---|
+| Skills in the catalog | 18 of 18 (17 skills plus the protocol) |
+| Hosts that passed acceptance | Claude Code, Antigravity (2.0 app and IDE); Gemini CLI, Cursor, Codex pending |
+| Skill activation from plain-language prompts (EN and VI) | precision and recall ≥ 0.9 on both accepted hosts (Claude Code 2026-09-16: recall 0.958, precision 1.000) |
+| Outcome benchmark against the source skills | in progress — **no task yet meets the v1.0 bar** (kit ≥ source on pass rate *and* fewer tokens); where a comparison has not been run, no text claims the kit is better |
+| npm package, Claude Marketplace listing | not yet |
+
+**How claims are made here.** Each skill is distilled from named open-source skills (see [`NOTICE`](NOTICE) and `upstream/sources.json`) and is judged against those sources — same task, fixture, model and host, run with the kit and with the source skills as they ship — not only against its own previous version. Results that did not replicate are recorded as such.
+
+## Roadmap
+
+- **v0.3** (current): the remaining lifecycle skills distilled and measured (`bk-spec`, `bk-ship`, `bk-close`), the last stack file, the v0.3 gate.
+- **Publication**: npm package (`bearingkit`), a listing on the Claude Marketplace, README in English and Vietnamese, CI.
+- **v1.0**: an outcome benchmark of 12 tasks against the source skills, `upstream-watch` to report changes in each source, acceptance on the remaining hosts.
+
+The detailed plan is [`docs/plans/2026-09-26-v03-roadmap.md`](docs/plans/2026-09-26-v03-roadmap.md).
 
 ## Install once, use where you say
 
@@ -37,7 +70,7 @@ Details, uninstall and the acceptance status per host: [docs/hosts.md](docs/host
 ## What you get
 
 - **The protocol** (`skills/bk-protocol/SKILL.md`), loaded at session start: the autonomy gate (ACT acts and reports; COUNCIL proposes and waits), a router from intent to skill, evidence rules, the council format, the definition of done, hot-path review, a security baseline.
-- **Skills**, invoked by the router from plain language in English or Vietnamese: `bk-spec`, `bk-plan`, `bk-build`, `bk-test`, `bk-debug`, `bk-review`, `bk-ship`, `bk-close`, `bk-audit`, `bk-next`, `bk-design`, `bk-setup`, `bk-ops`, `bk-db`, `bk-map`, `bk-research`; the last core skill, `bk-perf`, arrives with v0.3. Each skill is a short body with gates and the evidence it must paste, plus references read on demand.
+- **Skills**, invoked by the router from plain language in English or Vietnamese: `bk-spec`, `bk-plan`, `bk-build`, `bk-test`, `bk-debug`, `bk-review`, `bk-ship`, `bk-close`, `bk-audit`, `bk-next`, `bk-design`, `bk-setup`, `bk-ops`, `bk-db`, `bk-map`, `bk-research`, `bk-perf`. Each skill is a short body with gates and the evidence it must paste, plus references read on demand.
 - **Agents** for hosts that define them: an independent reviewer, a researcher, a query optimizer, a design critic.
 - **Provenance**: every adapted source is named in `NOTICE` and `upstream/sources.json`.
 

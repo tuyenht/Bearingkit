@@ -6,5 +6,5 @@
   "repository": "https://github.com/tuyenht/Bearingkit",
   "license": "MIT",
   "defaultEnabled": false,
-  "keywords": ["skills", "protocol", "tdd", "debugging", "code-review", "workflow"]
+  "keywords": ["claude-code", "agent-skills", "protocol", "tdd", "debugging", "code-review", "workflow", "handoff"]
 }
