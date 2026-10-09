@@ -2,7 +2,7 @@
 
 **Workflow mã nguồn mở cho AI coding agent.** · [bearingkit.dev/vi](https://bearingkit.dev/vi/) · [English](README.md)
 
-Bearingkit gồm một giao thức và 17 skill, thay cho cả chồng plugin chồng chéo nhau. Bạn nói điều mình muốn bằng **tiếng Việt hoặc tiếng Anh tự nhiên**: bộ công cụ điều hướng AI agent tới đúng bước, và được thiết kế để đưa việc đi từ đặc tả tới phát hành, dừng lại chờ bạn trước mọi thay đổi rủi ro, và trình bằng chứng trước khi nói là xong. Hiện chạy trên **Claude Code** và **Antigravity** app 2.0 từ cùng một nguồn skill; Gemini CLI, Cursor và Codex đã có manifest và sẽ được ghi là hỗ trợ khi qua bài nghiệm thu.
+Bearingkit gồm một giao thức và 17 skill, thay cho cả chồng plugin chồng chéo nhau. Bạn nói điều mình muốn bằng **tiếng Việt hoặc tiếng Anh tự nhiên**: bộ công cụ điều hướng AI agent tới đúng bước, và được thiết kế để đưa việc đi từ đặc tả tới phát hành, dừng lại chờ bạn trước mọi thay đổi rủi ro, và trình bằng chứng trước khi nói là xong. Hiện chạy trên **Claude Code** và **Antigravity** app 2.0 từ cùng một nguồn skill; Gemini CLI, Cursor, Codex, Copilot CLI và Factory Droid đã có manifest và sẽ được ghi là hỗ trợ khi qua bài nghiệm thu.
 
 > Pre-release, đang phát triển: chưa có bản phát hành công khai và chưa có gói npm (package version 0.1.0, đang hướng tới v0.3). Bearingkit là dự án độc lập, không liên kết với Anthropic hay Google. Mọi con số dưới đây đều truy được về repo — phần lớn ở [`docs/status.md`](docs/status.md), nơi ghi rõ cách đo.
 
@@ -43,10 +43,10 @@ Các skill chuyển giao cho nhau theo chuỗi cố định — **spec → plan 
 
 | | Hôm nay |
 |---|---|
-| Skill | 17 skill cùng protocol; `bk-build` mở quy tắc stack cho TypeScript/React, Kotlin, SQL, Node, Python, PHP/Laravel, Shell |
-| Host | Đã nghiệm thu: Claude Code, Antigravity app 2.0. Nạp theo dự án, chưa nghiệm thu đủ: Antigravity IDE. Đã có manifest: Gemini CLI, Cursor, Codex |
+| Skill | 17 skill cùng protocol; `bk-build` mở quy tắc stack cho TypeScript/React, Kotlin, SQL, Node, Python, PHP/Laravel, Shell, C/C++ |
+| Host | Đã nghiệm thu: Claude Code, Antigravity app 2.0. Nạp theo dự án, chưa nghiệm thu đủ: Antigravity IDE. Đã có manifest: Gemini CLI, Cursor, Codex, Copilot CLI, Factory Droid |
 | Điều hướng bằng ngôn ngữ tự nhiên | Việt + Anh; precision và recall ≥ 0,9 trên bộ lõi 60 câu, cả hai host đã nghiệm thu (đo 16–17/09/2026, trước năm skill mới nhất) |
-| So với skill nguồn | đã so: `bk-review`, `bk-debug`, `bk-plan` và bốn file stack. Phần lớn không khác biệt rõ (mẫu nhỏ; ở phần lớn task, cả hai bên chưa tách được khỏi việc không dùng skill); một task lập kế hoạch với một model nghiêng về kit; với PowerShell, kit vượt mức sàn và một gói không có skill shell, nhưng không vượt nguồn của chính nó. Ở những task có ghi chi phí, kit tốn khoảng 1,3–3 lần nguồn (số liệu từng task trong `docs/specs`), nên **chưa task nào đạt chuẩn v1.0** (tỷ lệ đạt ít nhất bằng nguồn *và* ít token hơn) |
+| So với skill nguồn | đã so: `bk-review`, `bk-debug`, `bk-plan` và năm file stack. Phần lớn không khác biệt rõ (mẫu nhỏ; ở phần lớn task, cả hai bên chưa tách được khỏi việc không dùng skill); một task lập kế hoạch với một model nghiêng về kit; với PowerShell, kit vượt mức sàn và một gói không có skill shell, nhưng không vượt nguồn của chính nó. Ở những task có ghi chi phí, kit tốn khoảng 1,3–3 lần nguồn (số liệu từng task trong `docs/specs`), nên **chưa task nào đạt chuẩn v1.0** (tỷ lệ đạt ít nhất bằng nguồn *và* ít token hơn) |
 | Gói npm, có mặt trên các marketplace | chưa có |
 
 **Cách đưa ra tuyên bố.** Mỗi skill sẽ được đánh giá so với chính các nguồn nó chắt lọc từ — cùng task, fixture, model và host, một lần có kit và một lần với nguồn. Khi chưa có phép so đó, skill được ghi là "chưa so"; kết quả không lặp lại được cũng được ghi lại.
@@ -61,7 +61,7 @@ Các skill chuyển giao cho nhau theo chuỗi cố định — **spec → plan 
 
 ## Lộ trình
 
-- **v0.3** (đang làm): chắt lọc và đo các skill vòng đời còn lại (`bk-spec`, `bk-ship`, `bk-close`), file stack cuối cùng, cổng v0.3.
+- **v0.3** (đang làm): chắt lọc và đo các skill vòng đời còn lại (`bk-spec`, `bk-ship`, `bk-close`), cổng v0.3.
 - **v0.4**: gói tuỳ chọn, hook cho push và deploy, nghiệm thu trên Gemini CLI, Cursor và Codex.
 - **v1.0**: benchmark kết quả 12 task so với nguồn, `upstream-watch` báo thay đổi của từng nguồn; phát hành: có mặt trên các marketplace, README tiếng Anh và tiếng Việt, CI, và lịch sử công khai đã gộp gọn.
 
