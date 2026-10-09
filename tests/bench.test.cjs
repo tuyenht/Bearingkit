@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect } = require('../scripts/lib/bench-score.cjs');
-const { loadTask, branchSetup, promptFor, schedule, preflight, rescore, runSession } = require('../scripts/bench.cjs');
+const { loadTask, branchSetup, promptFor, schedule, preflight, rescore, runSession, withPath } = require('../scripts/bench.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const RULES = {
@@ -539,6 +539,31 @@ const sleeper = () => {
 };
 const sessionOpts = (bin, extra) => ({ bin, turns: 1, model: 'x', configDir: os.tmpdir(), cwd: os.tmpdir(), seconds: 0.3, ...extra });
 const treeKill = (pid) => (process.platform === 'win32' ? require('node:child_process').spawnSync('taskkill', ['/T', '/F', '/PID', String(pid)], { stdio: 'ignore' }) : process.kill(pid, 'SIGKILL'));
+
+// cpp-01's compiler is not on the machine's PATH: the task names its directory and the session's process gets it first.
+test('a task directory goes first on the one PATH key, whatever its case', () => {
+  const dir = path.resolve(os.tmpdir(), 'toolchain', 'bin');
+  assert.equal(withPath({ Path: 'a' }, undefined).Path, 'a', 'no directory: the environment is untouched');
+  assert.deepEqual(withPath({ Path: `a${path.delimiter}b`, X: '1' }, dir), { Path: `${dir}${path.delimiter}a${path.delimiter}b`, X: '1' }, 'the existing key keeps its case');
+  assert.deepEqual(withPath({ PATH: 'a' }, dir), { PATH: `${dir}${path.delimiter}a` });
+  assert.deepEqual(Object.keys(withPath({ Path: 'a', PATH: 'a' }, dir)), ['Path'], 'two spellings become one key');
+  assert.deepEqual(withPath({}, dir), { PATH: dir }, 'no PATH at all: the directory alone');
+  const env = { Path: 'a' };
+  withPath(env, dir);
+  assert.equal(env.Path, 'a', 'the caller\'s object is not changed');
+});
+
+test('a session sees the task directory first on its PATH', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-path-'));
+  const file = path.join(dir, 'echo.cjs');
+  fs.writeFileSync(file, "process.stdout.write(String(process.env.PATH || process.env.Path).split(require('node:path').delimiter)[0]);\n");
+  const first = path.join(dir, 'toolchain');
+  const s = await runSession('p', { settings: {}, pluginDirs: [] }, sessionOpts(`node ${file}`, { seconds: 30, pathPrepend: first }));
+  assert.equal(s.raw, first);
+  const plain = await runSession('p', { settings: {}, pluginDirs: [] }, sessionOpts(`node ${file}`, { seconds: 30 }));
+  assert.notEqual(plain.raw, first, 'without the field the session has the runner\'s own PATH');
+  fs.rmSync(dir, { recursive: true, force: true });
+});
 
 test('a session its kill ends is cut, not an orphan', async () => {
   const { dir, bin } = sleeper();

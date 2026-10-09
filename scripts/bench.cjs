@@ -99,6 +99,19 @@ function kitRevision(root = ROOT) {
   return { branch: git('rev-parse', '--abbrev-ref', 'HEAD'), commit: git('rev-parse', 'HEAD'), dirty: status === null ? null : status.length > 0 };
 }
 
+// A task may name a directory to put first on the PATH of its sessions (cpp-01: the compiler's, which is not on the
+// machine's PATH). The one existing key is set whatever its case: on Windows `Path` and `PATH` are one variable, and
+// a second key in the object would be a silent duplicate.
+function withPath(env, dir) {
+  if (!dir) return env;
+  const out = { ...env };
+  const keys = Object.keys(out).filter((k) => k.toUpperCase() === 'PATH');
+  const old = keys.map((k) => out[k]).find(Boolean) || '';
+  for (const k of keys) delete out[k];
+  out[keys[0] || 'PATH'] = old ? `${path.resolve(dir)}${path.delimiter}${old}` : path.resolve(dir);
+  return out;
+}
+
 // On Windows `claude` resolves through a .cmd shim, so the process started is cmd.exe and the session runs in a child
 // of it: a timeout that kills cmd.exe alone leaves the session alive, still working in the fixture the next session
 // is about to use. The whole tree is killed instead.
@@ -110,7 +123,7 @@ function runSession(prompt, setup, opts) {
   fs.writeFileSync(promptFile, prompt);
   const args = ['-p', '--output-format', 'stream-json', '--verbose', '--max-turns', String(opts.turns), '--model', opts.model, '--settings', settingsFile];
   for (const d of setup.pluginDirs) args.push('--plugin-dir', d);
-  const env = { ...process.env, CLAUDE_CONFIG_DIR: opts.configDir };
+  const env = withPath({ ...process.env, CLAUDE_CONFIG_DIR: opts.configDir }, opts.pathPrepend);
   delete env.CLAUDECODE;
   const fd = fs.openSync(promptFile, 'r');
   const quote = (a) => (/\s/.test(a) ? `"${a}"` : a);
@@ -244,6 +257,7 @@ async function run(argv) {
   const builder = require(path.join(task.dir, task.fixture));
   const above = ancestorMemoryFiles(path.dirname(builder.DST));
   if (above.length) { process.stdout.write(`refusing: memory files above the fixture: ${above.join(', ')}\n`); process.exitCode = 2; return; }
+  if (task.pathPrepend && !fs.existsSync(task.pathPrepend)) { process.stdout.write(`refusing: the task's pathPrepend is not there: ${task.pathPrepend}\n`); process.exitCode = 2; return; }
   process.stdout.write(`${plan.length} sessions: ${plan.map((p) => `${p.variant[0]}${p.branch}${p.run}`).join(' ')}\n`);
   if (args['dry-run']) return;
   builder.build();
@@ -256,7 +270,7 @@ async function run(argv) {
   let orphaned = false;
   for (const [i, p] of plan.entries()) {
     builder.reset();
-    const s = await runSession(promptFor(task, p.variant, p.branch), branchSetup(task, p.branch), { ...opts, cwd: builder.DST });
+    const s = await runSession(promptFor(task, p.variant, p.branch), branchSetup(task, p.branch), { ...opts, cwd: builder.DST, pathPrepend: task.pathPrepend });
     const base = `${String(i + 1).padStart(2, '0')}-${p.variant}-${p.branch}${p.run}`;
     fs.writeFileSync(path.join(outDir, `${base}.raw.jsonl`), s.raw);
     // A check that throws (a file held open on Windows) costs that session its checks, not the run.
@@ -284,4 +298,4 @@ async function run(argv) {
   process.stdout.write(`${stopped ? `stopped: ${stopped}\n` : ''}results: ${path.join(outDir, 'results.md')}\n`);
 }
 
-module.exports = { kitRevision, preflight, loadTask, branchSetup, promptFor, schedule, checkSources, report, rescore, resultsDir, run, runSession };
+module.exports = { kitRevision, preflight, loadTask, branchSetup, promptFor, schedule, checkSources, report, rescore, resultsDir, run, runSession, withPath };
