@@ -1,3 +1,5 @@
+// RECORD, DONE: the measurement ended on 2026-10-09 (the spec's "Result"); this file starts nothing any more and only
+// --dry-run prints. To measure again is a new registration and a new driver.
 // Driver for the measurement of cpp-01 (docs/specs/2026-10-08-stack-c-cpp-design.md, "Registered"), on the pattern of
 // evals/analysis/shell-run.cjs. Every call runs from the main checkout with its branch checked out; before each the
 // tree must be clean, and after each the call's meta.json must name that branch at the head pinned when the driver
@@ -85,9 +87,16 @@ function began(lines, step) {
   return lines.some((l) => new RegExp(`^\\S+ ${step} \\S+ \\S+ \\S+ \\S+ runs=\\d+ exit=\\S+ dir=[^?\\s]`).test(l));
 }
 
+// The lock: true since the measurement ended. A constant, not a sentence: the log check covers only steps that ran.
+const MEASUREMENT_OVER = true;
+
 if (require.main === module) {
   const step = process.argv[2];
   const dry = process.argv.includes('--dry-run');
+  if (MEASUREMENT_OVER && !dry) {
+    console.error('cpp-run.cjs: the measurement of cpp-01 ended on 2026-10-09 (docs/specs/2026-10-08-stack-c-cpp-design.md, "Result"). This driver is its record and starts no session; only --dry-run prints.');
+    process.exit(1);
+  }
   const arg = (name) => { const i = process.argv.indexOf(name); return i < 0 ? null : Number(process.argv[i + 1]); };
   const sh = (cmd, args) => spawnSync(cmd, args, { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 26 });
   const log = (s) => { if (!dry) { fs.mkdirSync(RESULTS, { recursive: true }); fs.appendFileSync(LOG, s + '\n'); } console.log(s); };
@@ -161,4 +170,4 @@ if (require.main === module) {
   log(`${new Date().toISOString()} DONE ${step}`);
 }
 
-module.exports = { STEPS, BEFORE, AFTER, THREE, MODEL, plan, initFault, hostOf, began };
+module.exports = { STEPS, BEFORE, AFTER, THREE, MODEL, MEASUREMENT_OVER, plan, initFault, hostOf, began };

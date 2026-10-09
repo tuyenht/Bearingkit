@@ -4,7 +4,7 @@
 // on both sides. No session runs here.
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { STEPS, BEFORE, AFTER, THREE, MODEL, plan, initFault, hostOf, began } = require('../evals/analysis/cpp-run.cjs');
+const { STEPS, BEFORE, AFTER, THREE, MODEL, MEASUREMENT_OVER, plan, initFault, hostOf, began } = require('../evals/analysis/cpp-run.cjs');
 const { sourceRead, builtOnce, counted, completed, dirsOf } = require('../evals/analysis/cpp-tally.cjs');
 
 const stream = (evs) => evs.map((e) => JSON.stringify(e)).join('\n');
@@ -124,4 +124,16 @@ test('cpp-run: the host comes from the one uncounted session in the log', () => 
   assert.equal(hostOf([line('2.1.291'), line('2.1.292')]), null, 'two uncounted hosts are not one');
   assert.equal(hostOf([line('none')]), null);
   assert.equal(hostOf([line('?')]), null);
+});
+
+test('cpp-run: the measurement is over and the driver starts nothing', () => {
+  const { spawnSync } = require('node:child_process');
+  const path = require('node:path');
+  assert.equal(MEASUREMENT_OVER, true);
+  for (const args of [['usable'], ['probe', '--from', '1'], ['uncounted'], ['build-01']]) {
+    const r = spawnSync(process.execPath, [path.join(__dirname, '..', 'evals', 'analysis', 'cpp-run.cjs'), ...args], { encoding: 'utf8' });
+    assert.equal(r.status, 1, args.join(' '));
+    assert.match(r.stderr, /ended on 2026-10-09/);
+    assert.equal(r.stdout, '', 'nothing is logged and no branch is switched');
+  }
 });
