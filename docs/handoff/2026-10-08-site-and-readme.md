@@ -39,3 +39,9 @@ Owner đã nộp đơn với tên Bearingkit (thành lập 09/2026, chưa có ph
 - Một lượt soát độc lập (Sonnet) trên diff: không lỗi chặn.
 
 Còn lại: dòng mô tả repo trên GitHub còn ghi ba host có manifest; `docs/status.md:15` chưa ghi phép so `c-cpp.md` với nguồn.
+
+## Block 5 · 2026-10-09: trang số đo tiếng Anh
+
+- `docs/measurements.md`: bản chỉ mục tiếng Anh của các con số trên site và README, mỗi số kèm nơi ghi; không giữ số riêng, `docs/status.md` thắng khi lệch. Trang Anh của site và `README.md:7` trỏ sang đó; trang Việt vẫn trỏ `docs/status.md`. Một lượt kiểm số độc lập (Sonnet): sửa một dòng dẫn sai nguồn (context cố định), còn lại khớp.
+- Phải cập nhật `docs/measurements.md` mỗi khi một con số trong `docs/status.md` mà site hoặc README trích thay đổi.
+- Hồ sơ GitHub `@tuyenht` còn trống (tên, giới thiệu, nơi ở, website): phiên không được phép sửa cài đặt tài khoản, việc của owner.

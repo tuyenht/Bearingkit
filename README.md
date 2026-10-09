@@ -4,7 +4,7 @@
 
 Bearingkit is one protocol and 17 skills that replace a stack of overlapping plugins. Say what you want in plain **Vietnamese or English**: it routes your AI coding agent to the right step, and is built to carry the work from spec to ship, stop for you before anything risky, and show its evidence before it calls anything done. It runs on **Claude Code** and the **Antigravity** 2.0 app today, from one skills source; Gemini CLI, Cursor, Codex, Copilot CLI and Factory Droid have manifests in place and are listed as supported once their acceptance test passes.
 
-> Pre-release and in active development: no public release or npm package yet (package version 0.1.0, working toward v0.3). Bearingkit is an independent project, not affiliated with Anthropic or Google. Every figure below is traceable to the repository — mostly [`docs/status.md`](docs/status.md), which says how each was measured.
+> Pre-release and in active development: no public release or npm package yet (package version 0.1.0, working toward v0.3). Bearingkit is an independent project, not affiliated with Anthropic or Google. Every figure below is traceable to the repository — mostly [`docs/status.md`](docs/status.md), which says how each was measured (it is in Vietnamese; an English index is [`docs/measurements.md`](docs/measurements.md)).
 
 ## Why one kit instead of a stack
 
