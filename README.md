@@ -71,21 +71,28 @@ Detailed plan: [`docs/plans/2026-09-26-v03-roadmap.md`](docs/plans/2026-09-26-v0
 
 The kit is installed once for your machine and switched on per project: a project you have not activated sees nothing of it — no protocol, no skill in the listing, no hook.
 
+Copy-paste, in bash or PowerShell (`$HOME` works in both):
+
 ```
-bearingkit install                    # the store for Antigravity, and the two commands to run for Claude Code
-cd <your project> && bearingkit activate
-bearingkit status                     # what is installed, what this project has on, what is out of date
+# Once per machine: clone the repository (no npm package yet)
+git clone https://github.com/tuyenht/Bearingkit.git $HOME/bearingkit
+
+# Claude Code: add the marketplace and install the plugin
+claude plugin marketplace add https://github.com/tuyenht/Bearingkit
+claude plugin install bearingkit@bearingkit
+
+# Antigravity only: install the skills store
+node $HOME/bearingkit/bin/bearingkit.cjs install --host antigravity
+
+# In each project that should use it
+cd path/to/your-project
+node $HOME/bearingkit/bin/bearingkit.cjs activate
+node $HOME/bearingkit/bin/bearingkit.cjs status   # what is installed, what this project has on, what is out of date
 ```
 
 The other three verbs are `update` (pull the checkout, refresh the store), `deactivate` and `uninstall`. Every command takes `--host all|antigravity|claude` (default all; a host you do not have is skipped), a project path (default: the working directory), and `--dry-run`, which says what would change and writes nothing.
 
-**How to spell `bearingkit`.** The package is not published yet, so today the command is the checkout's own entry point:
-
-```
-node <checkout>/bin/bearingkit.cjs status
-```
-
-After publication: `pnpm add -g bearingkit` (or `npm i -g bearingkit`) and then plain `bearingkit …`; `pnpm dlx bearingkit …` and `npx bearingkit …` run it once without installing, and both need the matching package manager on your PATH.
+**How to spell `bearingkit`.** The package is not published yet, so below `bearingkit …` stands for `node $HOME/bearingkit/bin/bearingkit.cjs …` from the clone above. After publication: `pnpm add -g bearingkit` (or `npm i -g bearingkit`) and then plain `bearingkit …`; `pnpm dlx bearingkit …` and `npx bearingkit …` run it once without installing, and both need the matching package manager on your PATH.
 
 **What each host needs.** `activate` writes one entry in that host's own configuration file inside the project — `.agents/plugins.json` for Antigravity, `.claude/settings.local.json` for Claude Code — and nothing else; in a git clone both are ignored locally through `.git/info/exclude` unless you pass `--no-git-exclude`. Claude Code also needs its own two commands once per machine, because only its CLI may write under `~/.claude`; `bearingkit install` prints them, together with the `extraKnownMarketplaces` entry that makes Claude Code follow the repository on its own.
 
