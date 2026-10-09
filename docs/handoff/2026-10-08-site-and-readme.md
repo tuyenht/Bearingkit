@@ -27,3 +27,15 @@ Phiên đám mây (Opus 5.5), không chạm `skills/`, `evals/`, `scripts/`, kh�
 - GitHub About và topics cập nhật qua trình duyệt của owner (proxy chặn API): bỏ `solo-founder`, thêm `ai-agents`.
 
 Còn lại: 7 test trượt khi clone nông trên Linux (`record-guardrail` state null, `plan-run` cần đủ lịch sử, hai test chưa xem); `activate` in "store is not installed" cả khi chỉ dùng Claude Code; đo lại routing trên bộ 17 skill.
+
+## Block 4 · 2026-10-09 (phiên trên máy owner): đối chiếu với đơn Claude Startups
+
+Owner đã nộp đơn với tên Bearingkit (thành lập 09/2026, chưa có pháp nhân, email `tuyen@bearingkit.dev`). Theo lời owner trong phiên ("làm đi, rồi cập nhật trên trang"):
+
+- Site (EN và VI): đoạn tác giả ghi họ tên, vai trò người sáng lập, bắt đầu 09/2026, xây bằng Claude Code; không nêu tên công ty khác của owner (owner quyết). Footer "© 2026 Bearingkit"; `LICENSE` giữ `tuyenht` vì chưa có pháp nhân.
+- Số test trên site 233 → 248 (`node --test tests/*.test.cjs` trên Windows, 2026-10-09: 248 đạt, 0 trượt). Trong mục hiện trạng, khối số liệu đứng trước đoạn mở, chữ giữ nguyên.
+- Thêm `site/og.png` (1200×630), thẻ `og:image`, `site/robots.txt`, `site/sitemap.xml`.
+- README và README.vi: thêm C/C++ vào danh sách stack (8/8), "năm file stack" đã so với nguồn (`c-cpp.md` so với `cpp-pro`: không khác biệt rõ), bỏ "file stack cuối cùng" khỏi v0.3, danh sách host có manifest khớp với site (thêm Copilot CLI, Factory Droid: dùng chung định dạng plugin của Claude Code, `docs/hosts.md:51`).
+- Một lượt soát độc lập (Sonnet) trên diff: không lỗi chặn.
+
+Còn lại: dòng mô tả repo trên GitHub còn ghi ba host có manifest; `docs/status.md:15` chưa ghi phép so `c-cpp.md` với nguồn.

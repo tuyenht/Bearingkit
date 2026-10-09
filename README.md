@@ -2,7 +2,7 @@
 
 **An open-source workflow for AI coding agents.** · [bearingkit.dev](https://bearingkit.dev) · [Tiếng Việt](README.vi.md)
 
-Bearingkit is one protocol and 17 skills that replace a stack of overlapping plugins. Say what you want in plain **Vietnamese or English**: it routes your AI coding agent to the right step, and is built to carry the work from spec to ship, stop for you before anything risky, and show its evidence before it calls anything done. It runs on **Claude Code** and the **Antigravity** 2.0 app today, from one skills source; Gemini CLI, Cursor and Codex have manifests in place and are listed as supported once their acceptance test passes.
+Bearingkit is one protocol and 17 skills that replace a stack of overlapping plugins. Say what you want in plain **Vietnamese or English**: it routes your AI coding agent to the right step, and is built to carry the work from spec to ship, stop for you before anything risky, and show its evidence before it calls anything done. It runs on **Claude Code** and the **Antigravity** 2.0 app today, from one skills source; Gemini CLI, Cursor, Codex, Copilot CLI and Factory Droid have manifests in place and are listed as supported once their acceptance test passes.
 
 > Pre-release and in active development: no public release or npm package yet (package version 0.1.0, working toward v0.3). Bearingkit is an independent project, not affiliated with Anthropic or Google. Every figure below is traceable to the repository — mostly [`docs/status.md`](docs/status.md), which says how each was measured.
 
@@ -43,10 +43,10 @@ Skills hand off in a fixed chain — **spec → plan → build → test → revi
 
 | | Today |
 |---|---|
-| Skills | 17 skills plus the protocol; `bk-build` opens stack rules for TypeScript/React, Kotlin, SQL, Node, Python, PHP/Laravel, Shell |
-| Hosts | Accepted: Claude Code, Antigravity 2.0 app. Loads per project, full acceptance pending: Antigravity IDE. Manifests in place: Gemini CLI, Cursor, Codex |
+| Skills | 17 skills plus the protocol; `bk-build` opens stack rules for TypeScript/React, Kotlin, SQL, Node, Python, PHP/Laravel, Shell, C/C++ |
+| Hosts | Accepted: Claude Code, Antigravity 2.0 app. Loads per project, full acceptance pending: Antigravity IDE. Manifests in place: Gemini CLI, Cursor, Codex, Copilot CLI, Factory Droid |
 | Plain-language routing | EN + VI; precision and recall ≥ 0.9 on the 60-prompt core set, both accepted hosts (measured 2026-09-16/17, before the five newest skills) |
-| Against the source skills | compared so far: `bk-review`, `bk-debug`, `bk-plan` and four stack files. Most showed no clear difference (small samples; on most, neither side could be told apart from no skill at all); one planning task with one model favoured the kit; on PowerShell the kit beat the no-skill floor and a pack with no shell skill, not its own source. Where cost was recorded, the kit cost about 1.3–3× what its sources did per task (per-task figures in `docs/specs`), so **no task yet meets the v1.0 bar** (at least the sources' pass rate *and* fewer tokens) |
+| Against the source skills | compared so far: `bk-review`, `bk-debug`, `bk-plan` and five stack files. Most showed no clear difference (small samples; on most, neither side could be told apart from no skill at all); one planning task with one model favoured the kit; on PowerShell the kit beat the no-skill floor and a pack with no shell skill, not its own source. Where cost was recorded, the kit cost about 1.3–3× what its sources did per task (per-task figures in `docs/specs`), so **no task yet meets the v1.0 bar** (at least the sources' pass rate *and* fewer tokens) |
 | npm package, marketplace listings | not yet |
 
 **How claims are made.** Each skill is to be judged against the sources it was distilled from — same task, fixture, model and host, once with the kit and once with the sources. Until that comparison exists for a skill, it is "not compared"; results that did not replicate are recorded as such.
@@ -61,7 +61,7 @@ Skills hand off in a fixed chain — **spec → plan → build → test → revi
 
 ## Roadmap
 
-- **v0.3** (in progress): the remaining lifecycle skills distilled and measured (`bk-spec`, `bk-ship`, `bk-close`), the last stack file, the v0.3 gate.
+- **v0.3** (in progress): the remaining lifecycle skills distilled and measured (`bk-spec`, `bk-ship`, `bk-close`), the v0.3 gate.
 - **v0.4**: optional packs, push and deploy hooks, acceptance on Gemini CLI, Cursor and Codex.
 - **v1.0**: a 12-task outcome benchmark against the sources, `upstream-watch` to report changes in each source; publication: marketplace listings, README in English and Vietnamese, CI, and a squashed public history.
 
