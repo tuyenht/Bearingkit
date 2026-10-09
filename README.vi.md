@@ -69,23 +69,26 @@ Kế hoạch chi tiết: [`docs/plans/2026-09-26-v03-roadmap.md`](docs/plans/202
 
 ## Cài đặt
 
-Cài một lần cho mỗi máy, rồi bật theo từng dự án.
+Cài một lần trên mỗi máy, rồi bật trong từng dự án cần dùng. Chép nguyên khối dưới đây; `$HOME` dùng được trong cả bash lẫn PowerShell.
 
 ```
+# Một lần trên mỗi máy: clone repository (chưa có gói npm)
+git clone https://github.com/tuyenht/Bearingkit.git $HOME/bearingkit
+
 # Claude Code: thêm marketplace và cài plugin
 claude plugin marketplace add https://github.com/tuyenht/Bearingkit
 claude plugin install bearingkit@bearingkit
 
-# Antigravity: ghi kho một lần cho mỗi máy (từ bản checkout)
-node <checkout>/bin/bearingkit.cjs install --host antigravity
+# Chỉ cho Antigravity: cài kho skill
+node $HOME/bearingkit/bin/bearingkit.cjs install --host antigravity
 
-# Mọi host: bật trong dự án, xem những gì đang bật
-cd <dự án của bạn>
-node <checkout>/bin/bearingkit.cjs activate
-node <checkout>/bin/bearingkit.cjs status
+# Trong từng dự án cần dùng
+cd path/to/your-project
+node $HOME/bearingkit/bin/bearingkit.cjs activate
+node $HOME/bearingkit/bin/bearingkit.cjs status
 ```
 
-Gói npm chưa phát hành nên tạm chạy lệnh từ bản checkout. Chi tiết từng host, cách gỡ, phát triển: [README tiếng Anh](README.md) và [`docs/hosts.md`](docs/hosts.md).
+`activate` chỉ ghi `.claude/settings.local.json` và `.agents/plugins.json` trong dự án (git bỏ qua cả hai trong bản clone); `status` cho biết host nào đang bật. Chi tiết từng host, cách gỡ, phát triển: [README tiếng Anh](README.md) và [`docs/hosts.md`](docs/hosts.md).
 
 ## Giấy phép và hỗ trợ
 
