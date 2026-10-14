@@ -166,3 +166,53 @@ Nothing was written to a tracked file between the two calls. The loaded-sign of 
 **Stage 2 uncounted session read**: it names `claude-sonnet-5-5`; it completed (`completed()` of `evals/analysis/cpp-tally.cjs`: true); it is not cut; `node evals/analysis/skill-loaded.cjs <folder> --skill bk-spec --marker "Stack rules before anything else"` read "bk-spec with marker: loaded in 1 of 1; unknown 0"; its host is **`2.1.291`**, which every counted session of stage 2 must name. No Kernel-Power event 41, 42 or 107 in the System log from 05:27:00Z to the reading after it.
 
 This session is in no tally; its other figures are not read as a result.
+
+## Stage 2 result (2026-10-14, session 9): bars 1 to 4 hold; the guard runs next
+
+**The calls**, from `main` at `f742f1c`, through the driver: `node evals/analysis/bk-spec-reach-run.cjs node-01` (first round started 08:40Z, "DONE node-01" at 11:39:04Z) and `node evals/analysis/bk-spec-reach-run.cjs py-01` (started about 11:40Z, "DONE py-01" at 13:45:16Z); each call of the driver's log ends `exit=0` with the sessions asked, `model=claude-sonnet-5-5 host=2.1.291`, and `cut=0`, except round 10's K-before call of `node-01` (folder `-24`), which ends `cut=1` (next paragraph). `get_usage` before them: 26% of the five-hour window and 6% of the week, then 18% and 12%. No session was re-run. Folders `evals/results/2026-10-14-bench-node-01-natural-claude-sonnet-5-5-2` to `-29` and `evals/results/2026-10-14-bench-py-01-natural-claude-sonnet-5-5-3` to `-30`, as the driver's log names them (not in git).
+
+**A sleep inside the run.** The System log holds Kernel-Power 42 ("The system is entering sleep") at 10:01:45Z and 107 ("The system has resumed from sleep") at 10:01:49Z, preceded at 10:01:40Z by event 187 ("User-mode process attempted to change the system state by calling SetSuspendState ..."); the machine came back at about 11:17Z (event 107 is stamped 10:01:49Z; the wall-clock jump to about 11:17Z is read from the stream's last write, 11:17:27Z, and the call's end). The call running then was round 10's K-before call of `node-01` (folder `-24`, started 09:58:32Z): its K1 ended at 10:01:01Z, before the event, and is not affected; its K2 began before the event and ended at 11:19:21Z, so its own run holds the sleep. As registered, it is named and counted as a cut session: for K-before, as opening the file and passing the deadline hazard (it is passed to the tally with `--sleep`, and the tally also flags it cut and not completed). No other Kernel-Power 41, 42 or 107 event lies in the run (read from 08:40Z to the end of `py-01`). Under the other handling (the session read as streamed, where it did not open the file), no bar's verdict changes (K-before `Rfile` 4 of 48 instead of 5).
+
+**The tally**, once, from `main`: `node evals/analysis/bk-spec-reach-tally.cjs --sleep 2026-10-14-bench-node-01-natural-claude-sonnet-5-5-24/02-natural-K2`. Its lines other than the 112 session rows, unedited:
+
+```
+uncounted session's host: 2.1.291
+task | folder | session | branch | model | host | inits | flags | Rfile | deadline | O1 O2 | M | Rdetect | hazards | cost | s | tokens | skills
+model and host check (every counted session names claude-sonnet-5-5 and host 2.1.291, one init): holds
+counted against the kit (cut, not completed, sleep-hit, never started): 2026-10-14-bench-node-01-natural-claude-sonnet-5-5-24/02-natural-K2 [cut,not-completed,sleep] K-before
+node-01: expected K-before 24, K-after 24, S 8; found 24, 24, 8
+py-01: expected K-before 24, K-after 24, S 8; found 24, 24, 8
+bar 1 (Rfile pooled, K-after above K-before, Fisher two-sided p <= 0.05): K-after 47 of 48, K-before 5 of 48, p = 0.0000: holds
+bar 2 (deadline hazard pooled, K-after not more than 4 below K-before): K-after 47, K-before 5: holds
+bar 3 (node-01, K-after O1 and O2 each at least 21 of 24): O1 24, O2 24 of 24: holds
+bar 3 (py-01, K-after O1 and O2 each at least 21 of 24): O1 24, O2 24 of 24: holds
+bar 4 (node-01, K-after loaded with the marker at least 21 of 24; unknown counts as no): 24 of 24 (unknown 0): holds
+bar 4 (py-01, K-after loaded with the marker at least 21 of 24; unknown counts as no): 24 of 24 (unknown 0): holds
+against S (deadline hazard pooled, K-after against S, Fisher two-sided): K-after 47 of 48, S 0 of 16, p = 0.0000
+reported with no bar:
+  node-01: Rfile K-after 24 of 24, K-before 5 of 24, Fisher p = 0.0000; deadline K-after 24, K-before 5, S 0 of 8
+    K-before: Rdetect ran 8 of 24; loaded with marker 0 (unknown 0); Rfile and deadline: y/y 5, y/n 0, n/y 0, n/n 19; skills bearingkit:bk-spec; cost 0.2059 (0.1747 to 0.251); tokens 403989 (304614 to 588159); seconds 49 (37 to 62)
+    K-after: Rdetect ran 24 of 24; loaded with marker 24 (unknown 0); Rfile and deadline: y/y 24, y/n 0, n/y 0, n/n 0; skills bearingkit:bk-spec; cost 0.2125 (0.18 to 0.2459); tokens 361517.5 (310445 to 511613); seconds 48.5 (41 to 55)
+    S: Rdetect ran 0 of 8; loaded with marker 0 (unknown 0); Rfile and deadline: y/y 0, y/n 0, n/y 0, n/n 8; skills -; cost 0.1782 (0.1592 to 0.1968); tokens 332053.5 (275797 to 419875); seconds 31.5 (26 to 35)
+  py-01: Rfile K-after 23 of 24, K-before 0 of 24, Fisher p = 0.0000; deadline K-after 23, K-before 0, S 0 of 8
+    K-before: Rdetect ran 4 of 24; loaded with marker 0 (unknown 0); Rfile and deadline: y/y 0, y/n 0, n/y 0, n/n 24; skills bearingkit:bk-spec; cost 0.1791 (0.1604 to 0.2255); tokens 307741 (257609 to 448150); seconds 51 (45 to 78)
+    K-after: Rdetect ran 24 of 24; loaded with marker 24 (unknown 0); Rfile and deadline: y/y 23, y/n 0, n/y 0, n/n 1; skills bearingkit:bk-spec; cost 0.1921 (0.1754 to 0.2401); tokens 316873.5 (263470 to 469084); seconds 51.5 (45 to 69)
+    S: Rdetect ran 0 of 8; loaded with marker 0 (unknown 0); Rfile and deadline: y/y 0, y/n 0, n/y 0, n/n 8; skills -; cost 0.1391 (0.1233 to 0.1797); tokens 226350 (178937 to 327714); seconds 36 (29 to 41)
+```
+
+**The bars, fixed before the data:**
+
+| Bar | Rule | Read | Holds |
+|---|---|---|---|
+| 1. primary | `Rfile` pooled, K-after above K-before, Fisher two-sided p ≤ 0.05 | 47 of 48 against 5 of 48; p = 3.6e-20 (exact hypergeometric tail, doubled; the tally prints 0.0000) | yes |
+| 2. deadline hazard | pooled, K-after not more than 4 of 48 below K-before | 47 against 5 | yes |
+| 3. O1 and O2 | K-after, each at least 21 of 24 a task | `node-01` 24 and 24; `py-01` 24 and 24 | yes |
+| 4. reach of the text | loaded with the marker, at least 21 of 24 K-after a task | 24 of 24 and 24 of 24, unknown 0 | yes |
+
+The model and host check holds for every counted session (`claude-sonnet-5-5`, host `2.1.291`, one `init` each); every session asked for was started (the tally found 24, 24 and 8 on each task).
+
+**Bars 1 to 4 hold**, and no counted session failed the model and host check: by the decisions fixed before the data, the guard runs (`node evals/analysis/bk-spec-reach-run.cjs guard`, eight K-after sessions of `build-01`, plain prompt; O1 8 of 8; O2, O3 and P3 each at least 7 of 8, read from each session's `check.json`). If the guard holds, the merge of the text into `main` is the owner's, after the gate's heavy-step review, the advisor and the audit the rules ask for. Nothing is said of a pass of stage 2 until the guard is read.
+
+**Reported with no bar** (descriptions, from the tally above): per task, `Rfile` K-after 24 of 24 against K-before 5 of 24 on `node-01` (Fisher p = 7.4e-9; 4 of 24 as streamed, the fifth being the sleep-hit session counted as opening) and 23 of 24 against 0 of 24 on `py-01` (p = 1.6e-12); the deadline hazard passed in K-after 24 and 23, K-before 5 and 0, S 0 of 8 and 0 of 8; the other hazards did not separate the branches: on `node-01` N1, N2 and X passed in all 56 counted sessions of the three branches, on `py-01` Y1 and Y3 passed in all 56 and X (the control) in none of 56; O1 and O2 passed in all 112 counted sessions; no session made a commit attempt (`P5try` false in all 112); set against `Rfile`, every session that opened the file passed the hazard and every session that did not open it missed it, on every branch (the tally's y/y and n/n counts; the single K-after miss is `...py-01...-28/01-natural-K1`, `Rfile` no, Y2 no, loaded yes); `Rdetect` ran in K-after 24 and 24 of 24, K-before 8 and 4 of 24, S 0; the loaded-sign with the marker in K-after 48 of 48 and in K-before and S 0; skills launched: `bearingkit:bk-spec` on the K branches, none on S; cost, tokens and duration as printed above, K-after against K-before: `node-01` 0.2125 against 0.2059 USD, 361,517.5 against 403,989 tokens, 48.5 against 49 s (medians); `py-01` 0.1921 against 0.1791 USD, 316,873.5 against 307,741 tokens, 51.5 against 51 s (K-before `node-01`: 23 sessions, the sleep-hit one has no figures). The time of the first opening against the first edit, read with `evals/analysis/spec-probe-tally.cjs` over the K folders of each branch (not with `stack-rule-timing.cjs`, which reads every folder of the results directory, as the section "Stage 2 registered" said): every K-after session with `Rfile` opened the file before its first edit (24 of 24 and 23 of 23), and so did the K-before ones (4 of 4 on `node-01`, as streamed); on K-before the output of `detect-stack` was cut in 7 of 24 (`node-01`) and 4 of 24 (`py-01`) sessions, on K-after in none.
+
+**Against the pinned stack-knowledge plugins (S)**: the deadline hazard pooled, K-after 47 of 48 against S 0 of 16, p = 3.5e-14 (the tally prints 0.0000). By the registration, the wording "better than the pinned stack-knowledge plugins at the deadline hazard on these two tasks, on `claude-sonnet-5-5`" is allowed only after a pass of bars 1 to 5, so it is not said until the guard is read. No S session launched a source skill.
