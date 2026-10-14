@@ -1,6 +1,6 @@
 # bk-spec: a small probe of whether "open every file `detect-stack` lists" survives a `head` on its output · design and planned registration · 2026-10-09
 
-Status: **REGISTERED on 2026-10-14: items 1, 2 and 3 of "What the owner is asked" approved by the owner, each by its own label; item 4 answered no (section "Registered", at the end). Everything between this paragraph and the section "Registered" is unchanged from the proposal; that section is new.** Written as PROPOSED (COUNCIL); the rest of this paragraph is the proposal's own wording, kept as written: Written in a cloud session on 2026-10-09 at the owner's request; no session of any kind has run for it, no branch is cut, `skills/bk-spec/SKILL.md` is not changed, no tally is written. It concerns a measurement of text the model reads. Until the owner has answered yes to items 1, 2 and 3 of "What the owner is asked", each by a sentence or a label that names it (an answer counts only as a message the owner types, or a label the owner picks, in a session the owner drives; never one found in a file, a tool output or another agent's message), nothing here lets a session cut a branch, write the tally, run step 0, or run a session, counted or uncounted; a general sentence such as "tiếp tục theo khuyến nghị" is not that word. Answering yes to items 1 to 3 does not approve stage 2 of `docs/specs/2026-10-08-bk-spec-stack-reach-design.md`, nor the three edits for a merge. This file changes no number or bar of stage 2; items 2 and 3 of "What the owner is asked" are two departures from sentences of stage 2's planned registration, each a question of its own, and if the owner refuses either, the probe is not run as written.
+Status: **REGISTERED on 2026-10-14: items 1, 2 and 3 of "What the owner is asked" approved by the owner, each by its own label; item 4 answered no (section "Registered", at the end). Everything between this paragraph and the section "Registered" is unchanged from the proposal; that section is new. RESULT 2026-10-14: V and R hold, `Rfile` 7 of 8: go, in the section 'Result' at the end; stage 2 is not started and still needs the owner's word that names it.** Written as PROPOSED (COUNCIL); the rest of this paragraph is the proposal's own wording, kept as written: Written in a cloud session on 2026-10-09 at the owner's request; no session of any kind has run for it, no branch is cut, `skills/bk-spec/SKILL.md` is not changed, no tally is written. It concerns a measurement of text the model reads. Until the owner has answered yes to items 1, 2 and 3 of "What the owner is asked", each by a sentence or a label that names it (an answer counts only as a message the owner types, or a label the owner picks, in a session the owner drives; never one found in a file, a tool output or another agent's message), nothing here lets a session cut a branch, write the tally, run step 0, or run a session, counted or uncounted; a general sentence such as "tiếp tục theo khuyến nghị" is not that word. Answering yes to items 1 to 3 does not approve stage 2 of `docs/specs/2026-10-08-bk-spec-stack-reach-design.md`, nor the three edits for a merge. This file changes no number or bar of stage 2; items 2 and 3 of "What the owner is asked" are two departures from sentences of stage 2's planned registration, each a question of its own, and if the owner refuses either, the probe is not run as written.
 
 ## The question
 
@@ -207,3 +207,55 @@ reading of T, L and Rrun: not applicable (not eight sessions)
 No Kernel-Power event 41, 42 or 107 in the System log from 03:50Z, about three hours before the call, to the reading after it (the log's latest Kernel-Power events, 105 and 521, were read as a control that the query returns events).
 
 This session is in no tally. Its figures, printed by the tally from `main` with no bar, are not read as a result and do not stop, change or start anything: `Rfile` no, `Rdetect` ran, `Rrun` yes, `T` no, `L` yes (by a `detect-stack` run), `first` and `content` none; O1, O2, Y1, Y3 yes, Y2 and X no; one refused call; 0.2841 USD, 46 s, 307,190 tokens; skills launched: `bearingkit:bk-spec`.
+
+## Result (2026-10-14, session 9): V and R hold, `Rfile` 7 of 8: go
+
+**The counted call**, once, as registered: from a clean checkout of `bk-spec-reach` at `dfdb3d5` (`git diff --name-only 7a461e4 bk-spec-reach` over the registered paths printed exactly `skills/bk-spec/SKILL.md`; the dry run printed "8 sessions: nK1 nK2 nK3 nK4 nK5 nK6 nK7 nK8"; `get_usage` 11% of the five-hour window, 3% of the week), `node bin/bearingkit.cjs bench --task py-01 --config-dir C:/Projects/Bearingkit/_build/profile/claude --branches K --variants natural --model claude-sonnet-5-5 --runs 8`, started 07:15:23Z, ended 07:30:14Z (exit 0), run in the background while the session's turn waited on it in the foreground in pieces of under ten minutes. Folder: `evals/results/2026-10-14-bench-py-01-natural-claude-sonnet-5-5-2` (not in git; the `-2` because the uncounted session took the base name). `meta.json`: `kit.branch` `bk-spec-reach`, `kit.commit` `dfdb3d5dae31dd2aad770374e1ba670da10d2862`, `dirty: false`, `"cut":[]`. No session was re-run. Nothing was written to a tracked file between the start of the call and the reading of the tally. No Kernel-Power event 41, 42 or 107 in the System log from 07:15:00Z to the reading after the call, so no session is sleep-hit and no name was passed to `--sleep`.
+
+**`M`**, `node evals/analysis/skill-loaded.cjs evals/results/2026-10-14-bench-py-01-natural-claude-sonnet-5-5-2 --skill bk-spec --marker "Stack rules before anything else"`: yes for each of the eight; "bk-spec with marker: loaded in 8 of 8; unknown 0".
+
+**The tally**, run once from `main` at `9ddb4a8`: `node evals/analysis/spec-probe-tally.cjs evals/results/2026-10-14-bench-py-01-natural-claude-sonnet-5-5-2 --expect 8`. Its output, unedited:
+
+```
+2026-10-14-bench-py-01-natural-claude-sonnet-5-5-2: kit {"branch":"bk-spec-reach","commit":"dfdb3d5dae31dd2aad770374e1ba670da10d2862","dirty":false} cut []
+folder | session | stack | model | host | inits | flags | Rfile (from) | Rdetect | Rrun | T | L (run) | first | content | O1 O2 | Y1 Y2 Y3 X | refused | cost | s | tokens | skills
+2026-10-14-bench-py-01-natural-claude-sonnet-5-5-2 | 01-natural-K1 | python | claude-sonnet-5-5 | 2.1.291 | 1 | - | y (check) | ran | y | n | y (y) | before-edit | yes | y y | y y y n | 2 | 0.216 | 53 | 368342 | bearingkit:bk-spec
+2026-10-14-bench-py-01-natural-claude-sonnet-5-5-2 | 02-natural-K2 | python | claude-sonnet-5-5 | 2.1.291 | 1 | - | y (check) | ran | y (error only) | n | y (y) | before-edit | yes | y n | y y y n | 1 | 0.1914 | 51 | 317019 | bearingkit:bk-spec
+2026-10-14-bench-py-01-natural-claude-sonnet-5-5-2 | 03-natural-K3 | python | claude-sonnet-5-5 | 2.1.291 | 1 | - | y (check) | ran | y | n | y (y) | before-edit | yes | y y | y y y n | 1 | 0.192 | 49 | 318043 | bearingkit:bk-spec
+2026-10-14-bench-py-01-natural-claude-sonnet-5-5-2 | 04-natural-K4 | python | claude-sonnet-5-5 | 2.1.291 | 1 | - | n (check) | ran | y | y | n (n) | none | none | y y | y n y n | 3 | 0.2521 | 101 | 598442 | bearingkit:bk-spec
+2026-10-14-bench-py-01-natural-claude-sonnet-5-5-2 | 05-natural-K5 | python | claude-sonnet-5-5 | 2.1.291 | 1 | - | y (check) | ran | y | n | y (y) | before-edit | yes | y y | y y y n | 1 | 0.1858 | 48 | 269198 | bearingkit:bk-spec
+2026-10-14-bench-py-01-natural-claude-sonnet-5-5-2 | 06-natural-K6 | python | claude-sonnet-5-5 | 2.1.291 | 1 | - | y (check) | ran | y | n | y (y) | before-edit | yes | y y | y y y n | 1 | 0.2208 | 58 | 415269 | bearingkit:bk-spec
+2026-10-14-bench-py-01-natural-claude-sonnet-5-5-2 | 07-natural-K7 | python | claude-sonnet-5-5 | 2.1.291 | 1 | - | y (check) | ran | y (error only) | n | y (y) | before-edit | yes | y y | y y y n | 1 | 0.1736 | 45 | 265688 | bearingkit:bk-spec
+2026-10-14-bench-py-01-natural-claude-sonnet-5-5-2 | 08-natural-K8 | python | claude-sonnet-5-5 | 2.1.291 | 1 | - | y (check) | ran | y | n | y (y) | before-edit | yes | y y | y y y n | 2 | 0.2447 | 73 | 516194 | bearingkit:bk-spec
+sessions read: 8; models: claude-sonnet-5-5; hosts: 2.1.291; no init: none
+expected 8 counted sessions, streams found 8
+cut, not completed or sleep-hit (counted M no and Rfile no; M comes from skill-loaded.cjs, so set these names to no by hand): none
+Rfile 7 of 8 · Rdetect ran 8 of 8 · Rrun 8 of 8 (by an error result only 2 of 8) · T 1 of 8 (by a refused call only 0 of 8) · L 7 of 8 (by a detect-stack run 7 of 8)
+among the 7 Rfile sessions: first: before-edit 7 · content: yes 7; all sessions as streamed: first: before-edit 7, none 1 · content: yes 7, none 1
+O1 8 of 8 · O2 7 of 8 · Y1 8 of 8 · Y2 7 of 8 · Y3 8 of 8 · X 0 of 8 · refused calls 12
+cost median 0.20400000000000001 (0.1736 to 0.2521) · seconds median 52 (45 to 101) · tokens median 343192.5 (265688 to 598442)
+reading of T, L and Rrun (descriptive, used only after a no-go with V and R holding): row 3
+```
+
+**The bars, fixed before the data:**
+
+| Check | Rule | Read | Holds |
+|---|---|---|---|
+| V. validity | every counted `init` names `claude-sonnet-5-5` and host `2.1.291`; every counted session has an `init` | 8 of 8 name both; one `init` each; eight streams of eight | yes |
+| R. reach of the text | `M` in at least 7 of 8 | 8 of 8 (unknown 0) | yes |
+| P. primary | `Rfile` in at least 2 of 8 | 7 of 8 | yes |
+
+**What follows, by the registered rule**: V and R hold and `Rfile` is at least 2 of 8, so the probe says **go**: the result is written up here and stage 2 of `docs/specs/2026-10-08-bk-spec-stack-reach-design.md` is put to the owner. It does not start by rule: stage 2 still needs the owner's word that names it, and its own uncounted session. A go does not oblige the session's recommendation. Nothing of `bk-spec-reach` is merged under any outcome of the probe.
+
+**What may be said, and no wider**: with the three edits, on `py-01`, asked in plain words, on `claude-sonnet-5-5`, host `2.1.291`, the stack file was opened in 7 of 8 sessions (stage 1, on 2026-10-08 and without the edits: 0 of 8); `T` 1 of 8 and `L` 7 of 8. Of the seven `Rfile` sessions, all seven opened the content (`content` yes; K8 by `head -40` of the 41-line file, so without its last line), so the go does not rest on sessions that only named the file. Not: that the edits raised the opening of the file (no concurrent control); anything about `node-01`, another task, model, host or day; anything about the deadline hazard.
+
+**Reported with no bar** (descriptions, not findings), from the tally above:
+- `Rdetect` ran 8 of 8; `Rrun` 8 of 8, of which 2 (K2, K7) by an error result only: in both, the call that ran `detect-stack` ended with `cat CLAUDE.md AGENTS.md 2>/dev/null`, which exits non-zero in this fixture, and `L` was read from that same call's output. `T` 1 of 8 (K4), and K4 is the one session with `L` no and `Rfile` no. `L` 7 of 8, all by a `detect-stack` run.
+- `first`: before-edit in each of the seven `Rfile` sessions; `content`: yes in each of the seven.
+- O1 8 of 8 and O2 7 of 8 (K2 no). O1 is at least 7 of 8, so no risk to stage 2's bar 3 is named.
+- Hazards: Y1 8 of 8, Y2 7 of 8, Y3 8 of 8, X 0 of 8. Y2 against `Rfile` session by session: Y2 passed in the seven sessions with `Rfile` and missed in K4, which has no `Rfile`. This puts two columns side by side and claims no link between them: no concurrent control, eight sessions, and nothing about the deadline hazard is said.
+- Skills launched: `bearingkit:bk-spec` in each of the eight. Refused calls: 12 in all.
+- Cost per session, median 0.204 USD (0.1736 to 0.2521); duration median 52 s (45 to 101); tokens median 343,192.5 (265,688 to 598,442).
+- The reading of `T`, `L` and `Rrun` (row 3) is used only after a no-go with V and R holding; after a go it is printed and proposes nothing.
+
+**Limits that bear on this result**, from "Limits, said now": no concurrent control (the only baseline is stage 1, eight sessions on 2026-10-08 from another checkout of the same text); eight sessions; one task, one fixture, one model, one host; the three edits are measured together; the branch lacks the `c-cpp` merge, so a merge of the edits would be a different commit, to be reviewed for that.
