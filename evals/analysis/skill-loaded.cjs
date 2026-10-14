@@ -81,4 +81,4 @@ function main(argv) {
   process.stdout.write(`\n${args.skill}${args.marker ? ` with marker` : ''}: loaded in ${yes} of ${n}; unknown ${unknown}\n`);
 }
 if (require.main === module) main(process.argv.slice(2));
-module.exports = { loaded, textOf };
+module.exports = { loaded, textOf, parseLines, sessionId, transcriptFor };
