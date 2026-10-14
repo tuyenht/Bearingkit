@@ -143,3 +143,49 @@ Limits of the tally, named by its reviewers and not in the proposal's "Limits": 
 Checks run before this commit, a reading and not a result of the probe: on stage 1's two folders the tally prints, for `py-01`, `Rdetect` and `Rrun` 6 of 8, `T` 6 of 8, `L` 0 of 8, `Rfile` 0 of 8, and for `node-01` (`--stack node`) `Rrun` 4 of 8 and `L` 4 of 8 (Stage 1: `Rdetect` 4 of 8, the path of `node.md` shown in all four) and `Rfile` 1 of 8; with the cut predicate, the list predicate, or the use of the `permission_denied` event broken in turn, three, two and one of the sixteen tests fail. Both round 1 reviewers of this commit ran the tally over the ten step-0 folders while reviewing it, before step 0 was due; they report 18 K-after sessions with `Rrun` 18 of 18 and `T` 0 of 18. Step 0 is still run once by the session after this commit and written below unedited; nothing above was chosen or changed from that reading.
 
 Sentences of the proposal that were true when written and are superseded by this section: in Status, "no tally is written" (the tally exists from this commit; no branch is cut yet); in "Limits", "The tally does not exist yet". No bar, definition or step is among them.
+
+## Step 0 and step 3 (2026-10-14, session 9)
+
+**Step 0**, run once by the session, from `main` at `a1fe6f8`, after the commit of step 1, with no bar: `node evals/analysis/spec-probe-tally.cjs evals/results/2026-10-01-bench-php-01-natural evals/results/2026-10-01-bench-php-01-natural-2 evals/results/2026-10-01-bench-php-01-natural-3 evals/results/2026-10-01-bench-php-01-natural-4 evals/results/2026-10-01-bench-php-01-natural-5 evals/results/2026-10-01-bench-php-01-natural-6 evals/results/2026-10-01-bench-php-01-natural-7 evals/results/2026-10-01-bench-php-01-natural-8 evals/results/2026-10-01-bench-php-01-natural-9 evals/results/2026-10-01-bench-build-01-natural --branch p4c-build-reach`. Every listed folder is present. Its output, unedited:
+
+```
+2026-10-01-bench-php-01-natural: kit {"branch":"p4c-build-reach","commit":"32d1497e71f4ce00e48f1c32a92e70b267790205","dirty":false} cut []
+2026-10-01-bench-php-01-natural-2: skipped, kit.branch p4a-php, not p4c-build-reach
+2026-10-01-bench-php-01-natural-3: kit {"branch":"p4c-build-reach","commit":"32d1497e71f4ce00e48f1c32a92e70b267790205","dirty":false} cut []
+2026-10-01-bench-php-01-natural-4: skipped, kit.branch p4a-php, not p4c-build-reach
+2026-10-01-bench-php-01-natural-5: kit {"branch":"p4c-build-reach","commit":"32d1497e71f4ce00e48f1c32a92e70b267790205","dirty":false} cut []
+2026-10-01-bench-php-01-natural-6: skipped, kit.branch p4a-php, not p4c-build-reach
+2026-10-01-bench-php-01-natural-7: kit {"branch":"p4c-build-reach","commit":"32d1497e71f4ce00e48f1c32a92e70b267790205","dirty":false} cut []
+2026-10-01-bench-php-01-natural-8: skipped, kit.branch p4a-php, not p4c-build-reach
+2026-10-01-bench-php-01-natural-9: kit {"branch":"p4c-build-reach","commit":"32d1497e71f4ce00e48f1c32a92e70b267790205","dirty":false} cut []
+2026-10-01-bench-build-01-natural: kit {"branch":"p4c-build-reach","commit":"32d1497e71f4ce00e48f1c32a92e70b267790205","dirty":false} cut []
+folder | session | stack | model | host | inits | flags | Rfile (from) | Rdetect | Rrun | T | L (run) | first | content | O1 O2 | Y1 Y2 Y3 X | refused | cost | s | tokens | skills
+2026-10-01-bench-php-01-natural | 01-natural-K1 | php-laravel | claude-sonnet-5 | 2.1.281 | 1 | - | n (check) | ran | y | n | y (y) | none | none | y y | - - - y | 3 | 0.4497 | 132 | 892247 | bearingkit:bk-build
+2026-10-01-bench-php-01-natural | 02-natural-K2 | php-laravel | claude-sonnet-5 | 2.1.281 | 1 | - | y (check) | ran | y | n | y (y) | before-edit | yes | y y | - - - y | 0 | 0.2997 | 95 | 591505 | bearingkit:bk-build
+2026-10-01-bench-php-01-natural-3 | 01-natural-K1 | php-laravel | claude-sonnet-5 | 2.1.281 | 1 | - | y (check) | ran | y | n | y (y) | before-edit | yes | y y | - - - y | 0 | 0.359 | 111 | 799039 | bearingkit:bk-build
+2026-10-01-bench-php-01-natural-3 | 03-natural-K2 | php-laravel | claude-sonnet-5 | 2.1.281 | 1 | - | n (check) | ran | y | n | y (y) | none | none | y y | - - - y | 0 | 0.4057 | 121 | 822523 | bearingkit:bk-build
+2026-10-01-bench-php-01-natural-5 | 01-natural-K1 | php-laravel | claude-sonnet-5 | 2.1.281 | 1 | - | y (check) | ran | y | n | y (y) | before-edit | yes | y y | - - - y | 0 | 0.3633 | 100 | 818225 | bearingkit:bk-build
+2026-10-01-bench-php-01-natural-5 | 03-natural-K2 | php-laravel | claude-sonnet-5 | 2.1.281 | 1 | - | y (check) | ran | y | n | y (y) | before-edit | yes | y y | - - - y | 0 | 0.5442 | 213 | 910319 | bearingkit:bk-spec,bearingkit:bk-build
+2026-10-01-bench-php-01-natural-7 | 01-natural-K1 | php-laravel | claude-sonnet-5 | 2.1.281 | 1 | - | y (check) | ran | y | n | y (y) | before-edit | yes | y y | - - - y | 0 | 0.43 | 124 | 891954 | bearingkit:bk-build
+2026-10-01-bench-php-01-natural-7 | 03-natural-K2 | php-laravel | claude-sonnet-5 | 2.1.281 | 1 | - | y (check) | ran | y | n | y (y) | before-edit | yes | y y | - - - y | 0 | 0.3969 | 106 | 946065 | bearingkit:bk-build
+2026-10-01-bench-php-01-natural-9 | 01-natural-K1 | php-laravel | claude-sonnet-5 | 2.1.281 | 1 | - | n (check) | ran | y | n | y (y) | none | none | y y | - - - y | 0 | 0.3361 | 105 | 723115 | bearingkit:bk-build
+2026-10-01-bench-php-01-natural-9 | 03-natural-K2 | php-laravel | claude-sonnet-5 | 2.1.281 | 1 | - | y (check) | ran | y | n | y (y) | before-edit | yes | y y | - - - y | 0 | 0.4229 | 143 | 779642 | bearingkit:bk-build
+2026-10-01-bench-build-01-natural | 01-natural-K1 | node | claude-sonnet-5 | 2.1.281 | 1 | - | y (reach) | ran (reach) | y | n | y (y) | before-edit | yes | y y | - - - - | 8 | 0.6538 | 129 | 1879293 | bearingkit:bk-build
+2026-10-01-bench-build-01-natural | 02-natural-K2 | node | claude-sonnet-5 | 2.1.281 | 1 | - | y (reach) | ran (reach) | y | n | y (y) | before-edit | yes | y y | - - - - | 3 | 0.5063 | 157 | 1326727 | bearingkit:bk-build
+2026-10-01-bench-build-01-natural | 03-natural-K3 | node | claude-sonnet-5 | 2.1.281 | 1 | - | y (reach) | ran (reach) | y | n | y (y) | before-edit | yes | y y | - - - - | 8 | 0.6366 | 173 | 1903482 | bearingkit:bk-build
+2026-10-01-bench-build-01-natural | 04-natural-K4 | node | claude-sonnet-5 | 2.1.281 | 1 | - | y (reach) | ran (reach) | y | n | y (y) | before-edit | yes | y y | - - - - | 3 | 0.5128 | 121 | 1483812 | bearingkit:bk-build
+2026-10-01-bench-build-01-natural | 05-natural-K5 | node | claude-sonnet-5 | 2.1.281 | 1 | - | y (reach) | ran (reach) | y | n | y (y) | before-edit | yes | y y | - - - - | 8 | 0.5398 | 152 | 1502610 | bearingkit:bk-build
+2026-10-01-bench-build-01-natural | 06-natural-K6 | node | claude-sonnet-5 | 2.1.281 | 1 | - | y (reach) | ran (reach) | y | n | y (y) | before-edit | yes | y y | - - - - | 2 | 0.5124 | 119 | 1392894 | bearingkit:bk-build
+2026-10-01-bench-build-01-natural | 07-natural-K7 | node | claude-sonnet-5 | 2.1.281 | 1 | - | y (reach) | ran (reach) | y | n | y (y) | before-edit | yes | y y | - - - - | 4 | 0.4535 | 96 | 1325729 | bearingkit:bk-build
+2026-10-01-bench-build-01-natural | 08-natural-K8 | node | claude-sonnet-5 | 2.1.281 | 1 | - | y (reach) | ran (reach) | y | n | y (y) | before-edit | yes | y y | - - - - | 9 | 0.6731 | 193 | 1859791 | bearingkit:bk-build
+sessions read: 18; models: claude-sonnet-5; hosts: 2.1.281; no init: none
+WARNING: --expect not given; a session missing from the folder would not be seen
+cut, not completed or sleep-hit (counted M no and Rfile no; M comes from skill-loaded.cjs, so set these names to no by hand): none
+Rfile 15 of 18 · Rdetect ran 18 of 18 · Rrun 18 of 18 (by an error result only 0 of 18) · T 0 of 18 (by a refused call only 0 of 18) · L 18 of 18 (by a detect-stack run 18 of 18)
+among the 15 Rfile sessions: first: before-edit 15 · content: yes 15; all sessions as streamed: first: none 3, before-edit 15 · content: none 3, yes 15
+O1 18 of 18 · O2 18 of 18 · Y1 0 of 18 · Y2 0 of 18 · Y3 0 of 18 · X 10 of 18 · refused calls 48
+cost median 0.4516 (0.2997 to 0.6731) · seconds median 122.5 (95 to 213) · tokens median 928192 (591505 to 1903482)
+reading of T, L and Rrun: not applicable (not eight sessions)
+```
+
+**Step 3**: the branch `bk-spec-reach`, cut from `7a461e4`, holds one commit, **`dfdb3d5`**, with the three edits; `git diff --name-only 7a461e4 bk-spec-reach -- skills hooks agents scripts bin .claude-plugin evals/bench evals/fixtures NOTICE upstream` printed exactly `skills/bk-spec/SKILL.md`; the suite on the branch, run alone: 233 tests, 233 pass; its own reviewer, checking the three edits against the fixed words character by character: "REVIEW (branch edits): 0 must-fix, 0 should-fix"; pushed to `origin/bk-spec-reach`. The uncounted session runs next, from a clean checkout of `bk-spec-reach`.
