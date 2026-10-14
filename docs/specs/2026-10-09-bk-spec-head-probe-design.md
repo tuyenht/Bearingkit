@@ -189,3 +189,21 @@ reading of T, L and Rrun: not applicable (not eight sessions)
 ```
 
 **Step 3**: the branch `bk-spec-reach`, cut from `7a461e4`, holds one commit, **`dfdb3d5`**, with the three edits; `git diff --name-only 7a461e4 bk-spec-reach -- skills hooks agents scripts bin .claude-plugin evals/bench evals/fixtures NOTICE upstream` printed exactly `skills/bk-spec/SKILL.md`; the suite on the branch, run alone: 233 tests, 233 pass; its own reviewer, checking the three edits against the fixed words character by character: "REVIEW (branch edits): 0 must-fix, 0 should-fix"; pushed to `origin/bk-spec-reach`. The uncounted session runs next, from a clean checkout of `bk-spec-reach`.
+
+## The uncounted session (2026-10-14, session 9): its four checks and its host; the host every counted session must name
+
+**Before the call**: a clean checkout of `bk-spec-reach` at `dfdb3d5`; the dry run of the same command printed "1 sessions: nK1"; `get_usage` 11% of the five-hour window, 3% of the week.
+
+**The call**, once: `node bin/bearingkit.cjs bench --task py-01 --config-dir C:/Projects/Bearingkit/_build/profile/claude --branches K --variants natural --model claude-sonnet-5-5 --runs 1`, started 06:53:51Z, ended by 06:56:24Z, run with the turn kept alive. Folder: `evals/results/2026-10-14-bench-py-01-natural-claude-sonnet-5-5` (not in git). `meta.json`: `kit.branch` `bk-spec-reach`, `kit.commit` `dfdb3d5dae31dd2aad770374e1ba670da10d2862`, `dirty: false`, `"cut":[]`.
+
+**The four registered checks**, all hold:
+- its `init` names model `claude-sonnet-5-5`;
+- it completed (its last `result` event is a success with `is_error` false: the tally flags it neither cut nor not completed);
+- `"cut":[]` in `meta.json`;
+- `node evals/analysis/skill-loaded.cjs <folder> --skill bk-spec --marker "Stack rules before anything else"` read "bk-spec with marker: loaded in 1 of 1; unknown 0".
+
+**Its host** (`claude_code_version`): **`2.1.291`**, the host of stage 1, so the set-side with stage 1 does not cross hosts. **Every counted session must name host `2.1.291`.**
+
+No Kernel-Power event 41, 42 or 107 in the System log from 03:50Z, about three hours before the call, to the reading after it (the log's latest Kernel-Power events, 105 and 521, were read as a control that the query returns events).
+
+This session is in no tally. Its figures, printed by the tally from `main` with no bar, are not read as a result and do not stop, change or start anything: `Rfile` no, `Rdetect` ran, `Rrun` yes, `T` no, `L` yes (by a `detect-stack` run), `first` and `content` none; O1, O2, Y1, Y3 yes, Y2 and X no; one refused call; 0.2841 USD, 46 s, 307,190 tokens; skills launched: `bearingkit:bk-spec`.
