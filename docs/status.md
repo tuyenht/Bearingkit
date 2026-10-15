@@ -30,7 +30,7 @@ Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. Cả năm đã v
 | Hàng nguồn trong ma trận | **39** | `grep -c '^\| [0-9]' docs/specs/2026-09-10-coverage-matrix.md` |
 | Host đã qua acceptance | **2/7** (Claude Code, Antigravity; bảy host của `docs/hosts.md`, trong đó Copilot CLI và Factory Droid chung một mục. §2 mục 11 là chỉ số khác: 2/6 host owner thực dùng, câu 8) | `docs/hosts.md` |
 | Bootstrap protocol | **6.485/6.500** ký tự | proxy của `tests/session-start.test.cjs`, đo lại 2026-09-26 |
-| Bản cài hằng ngày | `c57ce09` ở cả scope user lẫn local (2026-10-09, theo nhãn của owner); kho Antigravity ở `c57ce09`; `doctor` sau merge 2026-10-15: năm `ok`, một `skip`, một `FAIL` (bản sao Antigravity của `skills/` khác checkout, dự kiến khi chưa cập nhật bản cài) | nhật ký mục 53 |
+| Bản cài hằng ngày | `5cf18ab` ở cả scope user lẫn local (2026-10-15, theo lời nêu tên của owner; trước đó host đã tự cập nhật lên `d0e6ceb`); kho Antigravity làm mới từ `main` ở `5cf18ab`; `doctor` sáu `ok`, một `skip` | nhật ký mục 55 |
 
 ## 2. "Hoàn thành" là gì — 12 mục: 2 đạt có phép đo, 1 đạt theo thiết kế, 9 chưa
 
@@ -66,7 +66,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 - **Đo kit so với một chồng gói** (2026-10-08): đề xuất `docs/specs/2026-10-08-kit-vs-stack-proposal.md` (PROPOSED, năm câu hỏi ở cuối); chưa phiên nào chạy.
 - **Trang `bearingkit.dev`** (2026-10-08, `docs/handoff/2026-10-08-site-and-readme.md`): bật GitHub Pages với nguồn "GitHub Actions", đặt custom domain, trỏ DNS; điền mục About của repo (proxy của phiên chặn API settings).
 - **38/38 câu D5 có quyết định** (`docs/specs/2026-09-12-d5-owner-questions.md`). Mới nhất: câu 38 (2026-09-27), cách đo ba file stack còn lại của P4.
-- Việc chờ owner của phiên đang mở: mục Decisions waiting của handoff mới nhất. Mới nhất (`docs/handoff/2026-10-15-bk-spec-merge.md`): cập nhật bản cài hằng ngày sau merge `bk-spec` (cần lời nêu tên của owner); phát hiện kiểm toán còn mở (nhật ký mục 42 đến 44, 52 và 54).
+- Việc chờ owner của phiên đang mở: mục Decisions waiting của handoff mới nhất. Mới nhất (`docs/handoff/2026-10-15-bk-spec-merge.md`): phát hiện kiểm toán còn mở (nhật ký mục 42 đến 44, 52 và 54).
 
 ## 5. Luồng mở mang từ bản cũ của file này
 
