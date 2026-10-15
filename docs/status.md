@@ -66,7 +66,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 - **Đo kit so với một chồng gói** (2026-10-08): đề xuất `docs/specs/2026-10-08-kit-vs-stack-proposal.md` (PROPOSED, năm câu hỏi ở cuối); chưa phiên nào chạy.
 - **Trang `bearingkit.dev`** (2026-10-08, `docs/handoff/2026-10-08-site-and-readme.md`): bật GitHub Pages với nguồn "GitHub Actions", đặt custom domain, trỏ DNS; điền mục About của repo (proxy của phiên chặn API settings).
 - **38/38 câu D5 có quyết định** (`docs/specs/2026-09-12-d5-owner-questions.md`). Mới nhất: câu 38 (2026-09-27), cách đo ba file stack còn lại của P4.
-- Việc chờ owner của phiên đang mở: mục Decisions waiting của handoff mới nhất. Mới nhất (`docs/handoff/2026-10-15-bk-spec-merge.md`): cập nhật bản cài hằng ngày sau merge `bk-spec` (cần lời nêu tên của owner); phát hiện kiểm toán còn mở (nhật ký mục 42 đến 44 và 52).
+- Việc chờ owner của phiên đang mở: mục Decisions waiting của handoff mới nhất. Mới nhất (`docs/handoff/2026-10-15-bk-spec-merge.md`): cập nhật bản cài hằng ngày sau merge `bk-spec` (cần lời nêu tên của owner); phát hiện kiểm toán còn mở (nhật ký mục 42 đến 44, 52 và 54).
 
 ## 5. Luồng mở mang từ bản cũ của file này
 

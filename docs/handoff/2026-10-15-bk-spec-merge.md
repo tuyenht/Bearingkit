@@ -10,32 +10,33 @@ Một khối dán vào, không có dòng gõ thêm lúc mở. Các câu chính, 
 
 **Kiểm đầu phiên**: không có khóa; cây sạch trên `main` ở `7b80f9e`, trùng `origin/main`; các nhánh ghim và tag đúng mã; không tiến trình đo; `get_usage` 14% cửa sổ 5 giờ, 17% tuần; `doctor` sáu `ok`, một `skip`. Model phiên chính (`get_session`): `claude-opus-5-5`.
 
-**Việc 1, kiểm toán** (nhật ký mục 52, `8dbd51b`): một sub-agent Sonnet mới làm phần đọc. Nó ra 3 phát hiện mức thấp (một FAULT, hai GAP), không có lỗi chặn. Bộ đếm chạy lại khớp mục "Stage 2 result" từng dòng. Sub-agent tự khai đã chạy vài lệnh chỉ đọc ngoài danh sách được giao và mở nhầm một tab terminal ("c1", chỉ chạy `echo skip`); phiên chính đã kiểm: không file nào bị ghi. Phát hiện 1: handoff phiên 9 dẫn chuyện Git for Windows tự cập nhật tới "mục 44 tới 48 và thân `9ddb4a8`", nhưng chuyện đó không có ở đâu khác; test đỏ được dẫn tới mục 46, nhưng chỉ có trong thân `9ddb4a8`. Handoff phiên 9 để nguyên.
+**Việc 1, kiểm toán** (nhật ký mục 52, `8dbd51b`): một sub-agent Sonnet mới làm phần đọc. Nó ra 3 phát hiện mức thấp (một FAULT, hai GAP), không có lỗi chặn. Bộ đếm chạy lại khớp mục "Stage 2 result" từng dòng. Sub-agent tự khai đã chạy vài lệnh chỉ đọc ngoài danh sách được giao và mở nhầm một tab terminal ("c1", chỉ chạy `echo skip`). Phiên chính chỉ kiểm cây repo; sau khi đóng phiên, lần tự kiểm toán thấy lệnh đó đã thêm một dòng vào file lịch sử của PowerShell, nên câu "không file nào bị ghi" ở mục 52 là sai (sửa ở mục 54). Phát hiện 1: handoff phiên 9 dẫn chuyện Git for Windows tự cập nhật tới "mục 44 tới 48 và thân `9ddb4a8`", nhưng chuyện đó không có ở đâu khác; test đỏ được dẫn tới mục 46, nhưng chỉ có trong thân `9ddb4a8`. Handoff phiên 9 để nguyên.
 
 **Việc 2, merge** (nhật ký mục 53, `bc541c1`): stage `skills/bk-spec/SKILL.md` của `dfdb3d5`, đúng một file, cùng md5 với diff đã đo. Suite 272/272 trên cây đã stage. Một sub-agent kiểm toán đọc thay đổi đã stage: 0 lỗi, 3 GAP. Có hai vòng review, mỗi vòng một reviewer sự thật và một reviewer đối kháng, không vòng nào có must-fix. Cố vấn: "no reason against the merge as staged". Lần commit đầu bị bộ kiểm quyền của host chặn; owner xác nhận, rồi commit và đẩy fast-forward. `doctor` sau merge báo `FAIL` ở bản sao Antigravity của `skills/`, đúng như owner đã báo trước; không sửa.
 
 **Lỗi của phiên, nói thẳng**: một lần chạy bộ đếm, phiên ghi nhầm kết quả vào một file trong `AppData\Local` của owner, ngoài thư mục nháp; đã chuyển về thư mục nháp ngay.
 
-**Không làm**: không merge nhánh `bk-spec-reach`; không sửa file nào khác dưới `skills/`; không cập nhật bản cài hằng ngày hay kho Antigravity; không sửa `AGENTS.md`, `state.md`, `docs/measurements.md`, README, `site/`; không ghi `RUN`; không ghi gì dưới `~/.claude`; không chạy phiên đo nào; không cắt nhánh.
+**Không làm**: không merge nhánh `bk-spec-reach`; không sửa file nào khác dưới `skills/`; không cập nhật bản cài hằng ngày hay kho Antigravity; không sửa `AGENTS.md`, `state.md`, `docs/measurements.md`, README, `site/`; không ghi `RUN`; không ghi gì dưới `~/.claude` trước khi đóng phiên (sau đó, theo nhãn của owner, chỉ ghi chú trạng thái trong bộ nhớ: mục 54); không chạy phiên đo nào; không cắt nhánh.
 
 ## Block 2 · Resume payload
 
 ### State
 
-`main` chứa commit đóng phiên này, sau `bc541c1`. `skills/bk-spec/SKILL.md` trên `main` giống hệt bản của `dfdb3d5`. Nhánh `bk-spec-reach` ở `dfdb3d5` (đã đẩy) và nhánh cục bộ `bk-spec-reach-before` ở `7a461e4`: giữ, không xóa. `stack-c-cpp` `272964d`, `stack-c-cpp-before` `3acf62f`, `p5b-bk-plan` và tag `p5b-plan-01-record` `3ece22d`: không đổi. Công tắc **`PAUSE`**. Bộ đếm kiểm toán: **0** (theo lời owner, ngoại lệ một lần). Bản cài hằng ngày vẫn ở `c57ce09`; `doctor` báo `FAIL` ở bản sao Antigravity của `skills/` cho tới khi owner cập nhật bản cài. Suite 272/272 trên Windows. Không có `docs/autopilot/.lock` sau khi đóng.
+`main` chứa commit đóng phiên này (`d0e6ceb`) và commit sửa bản ghi mục 54, sau `bc541c1`. `skills/bk-spec/SKILL.md` trên `main` giống hệt bản của `dfdb3d5`. Nhánh `bk-spec-reach` ở `dfdb3d5` (đã đẩy) và nhánh cục bộ `bk-spec-reach-before` ở `7a461e4`: giữ, không xóa. `stack-c-cpp` `272964d`, `stack-c-cpp-before` `3acf62f`, `p5b-bk-plan` và tag `p5b-plan-01-record` `3ece22d`: không đổi. Công tắc **`PAUSE`**. Bộ đếm kiểm toán: **0** (theo lời owner, ngoại lệ một lần). Bản cài hằng ngày vẫn ở `c57ce09`; `doctor` báo `FAIL` ở bản sao Antigravity của `skills/` cho tới khi owner cập nhật bản cài. Suite 272/272 trên Windows. Không có `docs/autopilot/.lock` sau khi đóng.
 
 ### Decisions waiting on the owner
 
 1. **Cập nhật bản cài hằng ngày** sau merge `bk-spec` (marketplace update, rồi `--scope user` và `--scope local`, không cài từ checkout cục bộ), và làm mới kho Antigravity: cần lời nêu tên của owner.
-2. **Phát hiện kiểm toán còn mở**: mục 52 (phát hiện 1 về handoff phiên 9; reviewer của phiên 9 phá luật chỉ đọc mà nhật ký không ghi; các mục 45, 46, 47, 49, 50 và 51 thiếu mã commit và số vòng review; sub-agent kiểm toán chạy lệnh ngoài danh sách, phiên chính xếp là vẫn trong điều kiện của owner) và mục 42 đến 44.
-3. **Máy ngủ do một chương trình gọi `SetSuspendState`** (phiên 9, 10:01:40Z): owner xem đó là chương trình nào.
+2. **Phát hiện kiểm toán còn mở**: mục 52 (phát hiện 1 về handoff phiên 9; reviewer của phiên 9 phá luật chỉ đọc mà nhật ký không ghi; các mục 45, 46, 47, 49, 50 và 51 thiếu mã commit và số vòng review; sub-agent kiểm toán chạy lệnh ngoài danh sách và đã ghi một dòng vào file lịch sử PowerShell: kiểm toán có còn được tính hay không là việc của owner, mục 54), mục 54 (đoạn Gate trong thân commit `8dbd51b` và `d0e6ceb` viết sau vòng review cuối, không reviewer nào đọc; một lệnh cho owner nằm trong khung `bash`) và mục 42 đến 44.
+3. **Máy ngủ ở phiên 9** (10:01:40Z): sự kiện 187 ghi tiến trình gọi là `StartMenuExperienceHost.exe` (tiến trình của menu Start), khớp với việc chọn Sleep từ menu Start (chưa kiểm chứng); owner xem ai đã chọn (mục 54).
 4. Cây C/C++ với bước 1 mới của `bk-spec`: chưa đo; đo hay không là việc của owner.
 5. Các mục cũ: sáu test đỏ trên Linux; số test trên `site/` (248, nay 272), việc của phiên trang web; đề C++ khó hơn; hai chỗ của `docs/specs/2026-10-08-autopilot-stale-lines-proposal.md`; chữ hai bài học; luật tự lái; `RUN`.
 
 ### Open threads
 
 - `docs/specs/2026-09-18-item-inventory.md:382` ghi "bk-spec step 1" cho bước nhắc lại yêu cầu, nay là bước 2; file là hồ sơ theo ngày, không sửa.
-- Ghi chú trạng thái trong bộ nhớ (`bearingkit-status.md`) còn nói merge đang chờ; chỉ sửa khi owner chọn nhãn.
+- Ghi chú trạng thái trong bộ nhớ đã cập nhật theo phiên 10, theo nhãn của owner (mục 54).
+- Suite để lại thư mục tạm `bk-*` trong `%TEMP%` (15.874 thư mục, cũ nhất từ 2026-09-28): việc sửa đã đề xuất thành một phiên riêng, chưa chạy; không xóa gì.
 
 ### Next work
 
