@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-10-14, bước `bk-spec` (thêm bước "mở file stack trước"): giai đoạn 2 đạt mọi ngưỡng, chờ owner quyết merge (`docs/specs/2026-10-08-bk-spec-stack-reach-design.md`, "Stage 2 result" và "The guard"): file stack mở 47/48 phiên K-after so với 5/48 K-before, p = 3,6e-20, trên `node-01` và `py-01`, `claude-sonnet-5-5`; guard `build-01` 8/8. Phép dò trước đó: 7/8 so với 0/8 trên `py-01` (`docs/specs/2026-10-09-bk-spec-head-probe-design.md`). 2026-10-09: `c-cpp.md` vào `main` theo lời owner (8/8 file stack).** Nhãn được dùng cho `bk-plan`: đạt ngưỡng đã đăng ký trên `plan-01`, `claude-sonnet-5-5`, ở lượt đo thứ hai của bản chữ, theo cách đọc B kèm F do owner chọn đích danh; tốt hơn `superpowers:writing-plans` như đã đọc trên task và model đó; với `to-tickets`: chưa so. Không được nói: lượt hai lặp lại lượt đầu, hai lượt gộp lại, điều gì về "Sonnet" nói chung, hay guard cho thấy bản chữ có tác dụng. P5a (`bk-spec`, `spec-01`): đóng, không merge, nhánh `p5a-bk-spec`. P5c: đóng theo luật đã đăng ký, không merge. Phiên gần nhất: `docs/handoff/2026-10-14-bk-spec-stage2.md` (công tắc `PAUSE`). Lịch sử file này (nguyên văn tới `b89eb36`): `docs/status-history.md`; mọi tham chiếu "status §N" viết trước 2026-09-26 trỏ về đó.
+Cập nhật: **2026-10-15, bước 1 mới của `bk-spec` (mở file stack trước) đã vào `main` theo lời owner (`bc541c1`, `skills/bk-spec/SKILL.md` lấy nguyên từ `dfdb3d5`; không đo lại trên bản merge). Nhãn: đạt ngưỡng trên `node-01` và `py-01`, `claude-sonnet-5-5`, host `2.1.291`, hỏi bằng lời thường: file stack mở 47/48 phiên K-after so với 5/48 K-before, p = 3,6e-20; tốt hơn các plugin kiến thức stack đã ghim ở rủi ro deadline trên hai task này. Không được nói: điều gì về "Sonnet" nói chung, task, model, host khác; "tốt hơn nguồn của nó"; bước này lặp lại kết quả của `bk-build`; đạt ngưỡng không cho thấy rủi ro deadline được qua nhiều hơn (số đếm chỉ là mô tả, chưa có phép thử nguyên nhân). Guard `build-01` 8/8 chạy trên `bk-build` cũ và không chạm chữ mới; cây C/C++ chưa đo (`docs/specs/2026-10-08-bk-spec-stack-reach-design.md`, "The guard" và "The merge").** Nhãn được dùng cho `bk-plan`: đạt ngưỡng đã đăng ký trên `plan-01`, `claude-sonnet-5-5`, ở lượt đo thứ hai của bản chữ, theo cách đọc B kèm F do owner chọn đích danh; tốt hơn `superpowers:writing-plans` như đã đọc trên task và model đó; với `to-tickets`: chưa so. Không được nói: lượt hai lặp lại lượt đầu, hai lượt gộp lại, điều gì về "Sonnet" nói chung, hay guard cho thấy bản chữ có tác dụng. P5a (`bk-spec`, `spec-01`): đóng, không merge, nhánh `p5a-bk-spec`. P5c: đóng theo luật đã đăng ký, không merge. Phiên gần nhất: `docs/handoff/2026-10-15-bk-spec-merge.md` (công tắc `PAUSE`). Lịch sử file này (nguyên văn tới `b89eb36`): `docs/status-history.md`; mọi tham chiếu "status §N" viết trước 2026-09-26 trỏ về đó.
 
 > **File này là bảng điều khiển, không phải nguồn sự thật.** Nó chỉ đếm và trỏ; nội dung thật nằm ở:
 > - thiết kế: `docs/specs/2026-09-11-bearingkit-v2-design.md` (§13 bảng mốc, §15 log quyết định);
@@ -12,7 +12,7 @@ Cập nhật: **2026-10-14, bước `bk-spec` (thêm bước "mở file stack tr
 
 ## 1. Đang ở đâu
 
-Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. Cả năm đã vào `main`; `c-cpp.md` vào 2026-10-09: đạt guard trên `cpp-01`, chưa cho thấy có ích. So với skill nguồn, tám phiên xen kẽ mỗi bên: **không khác biệt rõ** (`node-01` p = 1,0; `py-01` p = 0,2; `php-01` p = 1,0). `php-laravel.md` trượt guard lần đầu vì không được đọc (0/8); bước 1 mới của `bk-build` (chạy `detect-stack`, mở mọi file trong `stackFiles`) đo 2026-10-01: file mở 6/8 so với 1/8, p = 0,041, guard đạt → merge (`docs/specs/2026-10-01-bk-build-stack-reach-design.md`). P4b (2026-10-01): `detect-stack` nêu `sql.md` và `shell.md` theo nội dung cây; `sql.md` mở 8/8 trên `php-01` → merge (`docs/specs/2026-09-28-topic-stackfiles-design.md`). `shell.md` (2026-10-01, lặp lại 2026-10-02): `shell-01` (PowerShell 5.1) là task stack đầu tiên qua hiệu chỉnh; kit có file so với kit chưa có: p = 0,0016, **lặp lại được vào ngày khác** (p = 0,0003); so với `fullstack-dev-skills` p = 0,0005 (tốt hơn trên task này); **so với chữ của nguồn**, khi nguồn được đọc 8/8: **không khác biệt rõ** (p = 0,34); không câu nào được nói `shell.md` tốt hơn nguồn (`docs/specs/2026-10-01-stack-shell-design.md`). Bước 0 (2026-09-30): không merge, giữ nhánh; manh mối đo riêng ở P5. Sáu sprint lifecycle đầu đã xong (`bk-review`, test case `bk-audit`/`bk-next`, khung benchmark, `bk-debug`, `bk-test`, `bk-build`); còn `bk-spec` (P5a đóng, chưa merge; P5c đóng 2026-10-08), `bk-ship` + `bk-close` (P6), cổng v0.3 (P7); `bk-plan` (P5b) đã vào `main` 2026-10-07.
+Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. Cả năm đã vào `main`; `c-cpp.md` vào 2026-10-09: đạt guard trên `cpp-01`, chưa cho thấy có ích. So với skill nguồn, tám phiên xen kẽ mỗi bên: **không khác biệt rõ** (`node-01` p = 1,0; `py-01` p = 0,2; `php-01` p = 1,0). `php-laravel.md` trượt guard lần đầu vì không được đọc (0/8); bước 1 mới của `bk-build` (chạy `detect-stack`, mở mọi file trong `stackFiles`) đo 2026-10-01: file mở 6/8 so với 1/8, p = 0,041, guard đạt → merge (`docs/specs/2026-10-01-bk-build-stack-reach-design.md`). P4b (2026-10-01): `detect-stack` nêu `sql.md` và `shell.md` theo nội dung cây; `sql.md` mở 8/8 trên `php-01` → merge (`docs/specs/2026-09-28-topic-stackfiles-design.md`). `shell.md` (2026-10-01, lặp lại 2026-10-02): `shell-01` (PowerShell 5.1) là task stack đầu tiên qua hiệu chỉnh; kit có file so với kit chưa có: p = 0,0016, **lặp lại được vào ngày khác** (p = 0,0003); so với `fullstack-dev-skills` p = 0,0005 (tốt hơn trên task này); **so với chữ của nguồn**, khi nguồn được đọc 8/8: **không khác biệt rõ** (p = 0,34); không câu nào được nói `shell.md` tốt hơn nguồn (`docs/specs/2026-10-01-stack-shell-design.md`). Sáu sprint lifecycle đầu đã xong (`bk-review`, test case `bk-audit`/`bk-next`, khung benchmark, `bk-debug`, `bk-test`, `bk-build`); `bk-spec`: bước 1 vào `main` 2026-10-15 (P5a đóng, không merge; P5c đóng 2026-10-08); còn `bk-ship` + `bk-close` (P6), cổng v0.3 (P7); `bk-plan` (P5b) đã vào `main` 2026-10-07.
 
 | Đếm được hôm nay | Số | Lệnh / nguồn (chạy lại 2026-09-26) |
 |---|---|---|
@@ -22,7 +22,7 @@ Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. Cả năm đã v
 | Nguồn có `derived` (chữ thật đã port) | **4** nguồn, **29** mục dẫn xuất trên **27** file kit | `_build/v03-prep/recount-status-numbers.cjs` |
 | Mục trong `NOTICE` | **3** (anthropics/claude-plugins-official, mattpocock/skills, obra/superpowers) | `grep '^##' NOTICE` |
 | Kiểm kê từng mục (§5.2) | **1.295** mục của **22/22** nguồn: 46 absorb, 610 idea, 639 drop, 0 lệch | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
-| Test | **272/272** xanh trên Windows (2026-10-14 trên `main`; `bench-node-01` nhạy tải: từng trượt khi máy bận, chạy lại thì xanh) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test tests/*.test.cjs` |
+| Test | **272/272** xanh trên Windows (2026-10-15 trên cây đã stage của merge `bk-spec`; `bench-node-01` nhạy tải) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test tests/*.test.cjs` |
 | Prompt activation | **96** ở `phase-1.jsonl`, **6** ranh giới, **2** acceptance | `evals/activation/*.jsonl` |
 | Case trong `skills/<name>/tests/` | **17/17** skill, **56** case (`bk-protocol` không cần) | `recount-status-numbers.cjs` |
 | File stack `bk-build/references/stacks/` | **8/8** trên `main` (`typescript-react`, `kotlin`, `sql`, `node`, `python`, `php-laravel`, `shell`, `c-cpp`) | `ls` |
@@ -30,7 +30,7 @@ Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. Cả năm đã v
 | Hàng nguồn trong ma trận | **39** | `grep -c '^\| [0-9]' docs/specs/2026-09-10-coverage-matrix.md` |
 | Host đã qua acceptance | **2/7** (Claude Code, Antigravity; bảy host của `docs/hosts.md`, trong đó Copilot CLI và Factory Droid chung một mục. §2 mục 11 là chỉ số khác: 2/6 host owner thực dùng, câu 8) | `docs/hosts.md` |
 | Bootstrap protocol | **6.485/6.500** ký tự | proxy của `tests/session-start.test.cjs`, đo lại 2026-09-26 |
-| Bản cài hằng ngày | `c57ce09` ở cả scope user lẫn local (2026-10-09, theo nhãn của owner); kho Antigravity làm mới từ checkout `main` ở `c57ce09`; `doctor` sáu `ok`, một `skip` (thừa hưởng 2026-10-09, nhật ký mục 39) | handoff `2026-10-08-bk-spec-stage1.md` |
+| Bản cài hằng ngày | `c57ce09` ở cả scope user lẫn local (2026-10-09, theo nhãn của owner); kho Antigravity ở `c57ce09`; `doctor` sau merge 2026-10-15: năm `ok`, một `skip`, một `FAIL` (bản sao Antigravity của `skills/` khác checkout, dự kiến khi chưa cập nhật bản cài) | nhật ký mục 53 |
 
 ## 2. "Hoàn thành" là gì — 12 mục: 2 đạt có phép đo, 1 đạt theo thiết kế, 9 chưa
 
@@ -57,7 +57,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 |---|---|---|
 | `0.1.0-phase1` | đã phát hành 2026-09-11 | `docs/compat/phase-1-gate.md` |
 | v0.2 | cổng đo đạt từ 2026-09-17; còn hạng mục #11 (các nguồn còn lại); chắt lọc tám skill lifecycle đang làm trong v0.3 | `docs/status-history.md` §4, §5 |
-| **v0.3** | **đang làm**: catalog đủ; sprint lifecycle tới `bk-build` xong; còn `bk-spec` (P5a đóng, chưa merge; `bk-plan` đã vào `main` 2026-10-07), `bk-ship`/`bk-close`, cổng | `docs/plans/2026-09-26-v03-roadmap.md` |
+| **v0.3** | **đang làm**: catalog đủ; sprint lifecycle tới `bk-build` xong; `bk-spec` bước 1 vào `main` 2026-10-15, `bk-plan` 2026-10-07; còn `bk-ship`/`bk-close`, cổng | `docs/plans/2026-09-26-v03-roadmap.md` |
 | v0.4 | chưa bắt đầu: pack tuỳ chọn, hook push/deploy (Biome/Pint, câu 9), acceptance Gemini CLI / Cursor / Codex | spec §13 |
 | v1.0 | chưa bắt đầu: outcome benchmark đủ 12 task, `upstream-watch`, README EN+VI, CI, marketplace, publish từ history squash | spec §13 |
 
@@ -66,7 +66,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 - **Đo kit so với một chồng gói** (2026-10-08): đề xuất `docs/specs/2026-10-08-kit-vs-stack-proposal.md` (PROPOSED, năm câu hỏi ở cuối); chưa phiên nào chạy.
 - **Trang `bearingkit.dev`** (2026-10-08, `docs/handoff/2026-10-08-site-and-readme.md`): bật GitHub Pages với nguồn "GitHub Actions", đặt custom domain, trỏ DNS; điền mục About của repo (proxy của phiên chặn API settings).
 - **38/38 câu D5 có quyết định** (`docs/specs/2026-09-12-d5-owner-questions.md`). Mới nhất: câu 38 (2026-09-27), cách đo ba file stack còn lại của P4.
-- Việc chờ owner của phiên đang mở: mục Decisions waiting của handoff mới nhất. Mới nhất (`docs/handoff/2026-10-14-bk-spec-stage2.md`): merge bước `bk-spec` (nhánh `bk-spec-reach` ở `dfdb3d5`) chờ lời của owner, sau phiên kiểm toán, review nặng và cố vấn; phát hiện kiểm toán chưa sửa (nhật ký mục 42 đến 44).
+- Việc chờ owner của phiên đang mở: mục Decisions waiting của handoff mới nhất. Mới nhất (`docs/handoff/2026-10-15-bk-spec-merge.md`): cập nhật bản cài hằng ngày sau merge `bk-spec` (cần lời nêu tên của owner); phát hiện kiểm toán còn mở (nhật ký mục 42 đến 44 và 52).
 
 ## 5. Luồng mở mang từ bản cũ của file này
 
@@ -92,7 +92,7 @@ Chữ đầy đủ ở `docs/status-history.md`, §7, theo nhãn. Luồng của 
 
 ## 6. Việc của các mốc sau
 
-- **v0.3**: 8 file stack; `bk-spec` (P5a đóng, chưa merge), `bk-ship`/`bk-close` (có `--verify`, câu 34); một lượt chấp nhận Antigravity ngắn (câu 34, đã duyệt).
+- **v0.3**: 8 file stack; `bk-spec` (bước 1 đã vào `main` 2026-10-15), `bk-ship`/`bk-close` (có `--verify`, câu 34); một lượt chấp nhận Antigravity ngắn (câu 34, đã duyệt).
 - **v0.4**: pack tuỳ chọn kiểm kê chứng minh được; hook push/deploy; acceptance thật cho Gemini CLI, Cursor, Codex, Copilot CLI trên máy khác (câu 8).
 - **v1.0**: outcome benchmark 12 task; `upstream-watch`; README EN+VI; CI; marketplace; publish từ history squash sau khi grep tên project riêng.
 
