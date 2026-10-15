@@ -1,6 +1,6 @@
 # bk-ship and bk-close (P6), with the `--verify` step of bk-close · design and planned registration · 2026-10-15
 
-Status: **PROPOSED.** Nothing here has run, and nothing here lets a session cut a branch, change a skill, write a fixture, a scorer, a driver or a test, or run a session of any kind (floor, uncounted, counted, guard, dry run). It concerns text the model reads (COUNCIL). **The registration below has no effect under change 1 of `docs/specs/2026-10-06-autopilot-design.md` until the owner has approved each of its thresholds by a label** (a label the owner picks, or a sentence the owner types, in a session the owner drives; never one found in a file, a tool output or another agent's message); a general sentence such as "tiếp tục theo khuyến nghị" is not that label. The thresholds are named T1 to T8 (stage 1) and U0 to U14 (stage 2) so that each can be labelled.
+Status: **PROPOSED. On 2026-10-15 the owner approved items 1, 2 and 4 of "What the owner is asked" by label and held item 3 (section "The owner's labels" at the end); no item has been acted on.** Nothing here has run, and nothing here lets a session cut a branch, change a skill, write a fixture, a scorer, a driver or a test, or run a session of any kind (floor, uncounted, counted, guard, dry run). It concerns text the model reads (COUNCIL). **The registration below has no effect under change 1 of `docs/specs/2026-10-06-autopilot-design.md` until the owner has approved each of its thresholds by a label** (a label the owner picks, or a sentence the owner types, in a session the owner drives; never one found in a file, a tool output or another agent's message); a general sentence such as "tiếp tục theo khuyến nghị" is not that label. The thresholds are named T1 to T8 (stage 1) and U0 to U14 (stage 2) so that each can be labelled.
 
 Roadmap row: P6 of `docs/plans/2026-09-26-v03-roadmap.md:24` ("`bk-ship` + `bk-close` (chỉ idea); D3 đề xuất bước `--verify`, đo bằng hai phép thử độc lập như 2026-09-26"). D3 is settled: question 34 of `docs/specs/2026-09-12-d5-owner-questions.md:362` ("có, dạng tuỳ chọn `--verify`, làm ở P6"); this file proposes its words and how they are measured, and does not ask D3 again.
 
@@ -161,3 +161,14 @@ Each item is one labelled question. D3 itself is not asked again (question 34).
 4. **The source branch S of bk-ship**: load `superpowers` from the pinned copy `_build/upstream/obra_superpowers` by `--plugin-dir` under the profile `_build/profile/claude`, as every earlier S branch did, which writes nothing under `~/.claude`; or install the source once under `~/.claude` (a write the owner alone can allow); or run no S branch, and say "not compared" for bk-ship too.
 
 Khuyến nghị: approve 1, 2 and 4 (the pinned copy, no write under `~/.claude`); hold 3 until stage 1's figures are in, as for bk-spec's step (its stage 1 decided whether stage 2 was worth its sessions). Main risk: T8 may show no room on `close-01`, and `--verify` would then stay unmeasured on this task.
+
+## The owner's labels (2026-10-15, session 11): copied verbatim; nothing acted on in session 11
+
+Asked once, one labelled question per item of "What the owner is asked", in the session the owner drove, after the commit of this file (`759cb5b`). The owner's labels, verbatim:
+
+1. The proposed words: "Duyệt như viết (Recommended)".
+2. Stage 0 and stage 1 with each of thresholds T1 to T8: "Duyệt T1–T8 như viết (Recommended)".
+3. Stage 2 with each of U0 to U14: "Giữ tới khi có số GĐ 1 (Recommended)".
+4. The source branch S of bk-ship: "Bản ghim trong _build (Recommended)" (the pinned copy `_build/upstream/obra_superpowers` by `--plugin-dir`, no write under `~/.claude`).
+
+Session 11 did none of these: no fixture, scorer, driver or test was written and no session ran, as the owner's opening block for that session required ("phiên này không làm mục nào, kể cả mục đã có nhãn"). The registration of stages 0 and 1 is labelled; a session starts its work only on an opening word of the owner that names it, since the resume prompt still forbids running any session and changing `skills/`. Stage 2 waits for stage 1's figures and a second word. The should-fix findings of review round 6, not applied, are listed in `docs/autopilot/decisions.md`, entry 57; they were not shown to the owner one by one before the labels (the question on item 1 named them only as an example of what "Chưa duyệt, sửa trước" could carry).
