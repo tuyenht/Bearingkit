@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-10-15, phiên 11: spec P6 (`bk-ship`, `bk-close`, bước `--verify`) vào `main` (`759cb5b`) với nhãn của owner: chữ đề xuất và giai đoạn 0–1 (T1–T8) duyệt, giai đoạn 2 giữ; chưa làm mục nào.** Bước 1 mới của `bk-spec` (mở file stack trước) vào `main` 2026-10-15 (`bc541c1`, không đo lại trên bản merge). Nhãn: đạt ngưỡng trên `node-01` và `py-01`, `claude-sonnet-5-5`, host `2.1.291`, hỏi bằng lời thường: file stack mở 47/48 phiên K-after so với 5/48 K-before, p = 3,6e-20; tốt hơn các plugin kiến thức stack đã ghim ở rủi ro deadline trên hai task này. Không được nói: điều gì về "Sonnet" nói chung, task, model, host khác; "tốt hơn nguồn của nó"; bước này lặp lại kết quả của `bk-build`; đạt ngưỡng không cho thấy rủi ro deadline được qua nhiều hơn. Guard `build-01` không chạm chữ mới; cây C/C++ chưa đo (`docs/specs/2026-10-08-bk-spec-stack-reach-design.md`). Nhãn được dùng cho `bk-plan`: đạt ngưỡng đã đăng ký trên `plan-01`, `claude-sonnet-5-5`, ở lượt đo thứ hai của bản chữ, theo cách đọc B kèm F do owner chọn đích danh; tốt hơn `superpowers:writing-plans` như đã đọc trên task và model đó; với `to-tickets`: chưa so. Không được nói: lượt hai lặp lại lượt đầu, hai lượt gộp lại, điều gì về "Sonnet" nói chung, hay guard cho thấy bản chữ có tác dụng. P5a (`bk-spec`, `spec-01`): đóng, không merge, nhánh `p5a-bk-spec`. P5c: đóng theo luật đã đăng ký, không merge. Phiên gần nhất: `docs/handoff/2026-10-15-p6-design.md` (công tắc `PAUSE`). Lịch sử file này (nguyên văn tới `b89eb36`): `docs/status-history.md`; mọi tham chiếu "status §N" viết trước 2026-09-26 trỏ về đó.
+Cập nhật: **2026-10-16, phiên 12: P6 có ba task `ship-01`, `ship-02`, `close-01` (`75b34aa`) và đã chạy giai đoạn 0 (9 phiên sàn, `ac7458c`); limits chờ owner chọn cách đọc; chưa có phần chấm.** Bước 1 mới của `bk-spec` (mở file stack trước) vào `main` 2026-10-15 (`bc541c1`, không đo lại trên bản merge). Nhãn: đạt ngưỡng trên `node-01` và `py-01`, `claude-sonnet-5-5`, host `2.1.291`, hỏi bằng lời thường: file stack mở 47/48 phiên K-after so với 5/48 K-before, p = 3,6e-20; tốt hơn các plugin kiến thức stack đã ghim ở rủi ro deadline trên hai task này. Không được nói: điều gì về "Sonnet" nói chung, task, model, host khác; "tốt hơn nguồn của nó"; bước này lặp lại kết quả của `bk-build`; đạt ngưỡng không cho thấy rủi ro deadline được qua nhiều hơn; cây C/C++ chưa đo. Nhãn được dùng cho `bk-plan`: đạt ngưỡng đã đăng ký trên `plan-01`, `claude-sonnet-5-5`, ở lượt đo thứ hai của bản chữ, theo cách đọc B kèm F do owner chọn đích danh; tốt hơn `superpowers:writing-plans` như đã đọc trên task và model đó; với `to-tickets`: chưa so. Không được nói: lượt hai lặp lại lượt đầu, hai lượt gộp lại, điều gì về "Sonnet" nói chung, hay guard cho thấy bản chữ có tác dụng. Phiên gần nhất: `docs/handoff/2026-10-16-p6-stage0.md` (công tắc `PAUSE`). Lịch sử file này (nguyên văn tới `b89eb36`): `docs/status-history.md`; mọi tham chiếu "status §N" viết trước 2026-09-26 trỏ về đó.
 
 > **File này là bảng điều khiển, không phải nguồn sự thật.** Nó chỉ đếm và trỏ; nội dung thật nằm ở:
 > - thiết kế: `docs/specs/2026-09-11-bearingkit-v2-design.md` (§13 bảng mốc, §15 log quyết định);
@@ -22,15 +22,15 @@ Mốc **v0.3**, mục 9 của thứ tự v0.3: `bk-ship` + `bk-close` (P6); năm
 | Nguồn có `derived` (chữ thật đã port) | **4** nguồn, **29** mục dẫn xuất trên **27** file kit | `_build/v03-prep/recount-status-numbers.cjs` |
 | Mục trong `NOTICE` | **3** (anthropics/claude-plugins-official, mattpocock/skills, obra/superpowers) | `grep '^##' NOTICE` |
 | Kiểm kê từng mục (§5.2) | **1.295** mục của **22/22** nguồn: 46 absorb, 610 idea, 639 drop, 0 lệch | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
-| Test | **272/272** xanh trên Windows (2026-10-15 trên cây đã stage của merge `bk-spec`; `bench-node-01` nhạy tải) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test tests/*.test.cjs` |
+| Test | **279/279** xanh trên Windows (2026-10-16, phiên 12; một lượt trước đó đỏ ở phép đo thời gian của `bench-py-01`, chạy lại xanh) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test "tests/**/*.test.cjs"` |
 | Prompt activation | **96** ở `phase-1.jsonl`, **6** ranh giới, **2** acceptance | `evals/activation/*.jsonl` |
 | Case trong `skills/<name>/tests/` | **17/17** skill, **56** case (`bk-protocol` không cần) | `recount-status-numbers.cjs` |
 | File stack `bk-build/references/stacks/` | **8/8** trên `main` (`typescript-react`, `kotlin`, `sql`, `node`, `python`, `php-laravel`, `shell`, `c-cpp`) | `ls` |
-| Task benchmark trong `evals/bench/` | **16** trên `main` (`build-01`, `cpp-01`, `debug-01`, `node-01`, `php-01`, `plan-01` (chấm bằng hai người đọc mù; hồ sơ về `main` 2026-10-08), `py-01`, `shell-01`, `shell-01-src` (cùng fixture, nhánh S là nguồn đã bọc), `spec-01` (chấm bằng hai người đọc mù), `probe-review-authored`, `review-01`…`04`, `test-01`) | `ls evals/bench/*/task.json` |
+| Task benchmark trong `evals/bench/` | **19** trên `main` (`build-01`, `close-01`, `cpp-01`, `debug-01`, `node-01`, `php-01`, `plan-01` (chấm bằng hai người đọc mù; hồ sơ về `main` 2026-10-08), `py-01`, `shell-01`, `shell-01-src` (cùng fixture, nhánh S là nguồn đã bọc), `spec-01` (chấm bằng hai người đọc mù), `probe-review-authored`, `review-01`…`04`, `ship-01`, `ship-02`, `test-01`; ba task P6 chưa có phần chấm) | `ls evals/bench/*/task.json` |
 | Hàng nguồn trong ma trận | **39** | `grep -c '^\| [0-9]' docs/specs/2026-09-10-coverage-matrix.md` |
 | Host đã qua acceptance | **2/7** (Claude Code, Antigravity; bảy host của `docs/hosts.md`, trong đó Copilot CLI và Factory Droid chung một mục. §2 mục 11 là chỉ số khác: 2/6 host owner thực dùng, câu 8) | `docs/hosts.md` |
 | Bootstrap protocol | **6.485/6.500** ký tự | proxy của `tests/session-start.test.cjs`, đo lại 2026-09-26 |
-| Bản cài hằng ngày | `5cf18ab` ở cả scope user lẫn local (2026-10-15, theo lời nêu tên của owner; trước đó host đã tự cập nhật lên `d0e6ceb`); kho Antigravity làm mới từ `main` ở `5cf18ab`; `doctor` sáu `ok`, một `skip` | nhật ký mục 55 |
+| Bản cài hằng ngày | `b051def` ở cả scope user lẫn local (host tự cập nhật từ `5cf18ab`, đọc 2026-10-16; giữa hai mã không commit nào chạm mã kit); kho Antigravity ở `5cf18ab`; `doctor` sáu `ok`, một `skip` (2026-10-16) | nhật ký mục 58 |
 
 ## 2. "Hoàn thành" là gì — 12 mục: 2 đạt có phép đo, 1 đạt theo thiết kế, 9 chưa
 
@@ -57,7 +57,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 |---|---|---|
 | `0.1.0-phase1` | đã phát hành 2026-09-11 | `docs/compat/phase-1-gate.md` |
 | v0.2 | cổng đo đạt từ 2026-09-17; còn hạng mục #11 (các nguồn còn lại); chắt lọc tám skill lifecycle đang làm trong v0.3 | `docs/status-history.md` §4, §5 |
-| **v0.3** | **đang làm**: catalog đủ; sprint lifecycle tới `bk-build` xong; `bk-spec` bước 1 vào `main` 2026-10-15, `bk-plan` 2026-10-07; còn `bk-ship`/`bk-close`, cổng | `docs/plans/2026-09-26-v03-roadmap.md` |
+| **v0.3** | **đang làm**: catalog đủ; sprint lifecycle tới `bk-build` xong; `bk-spec` bước 1 vào `main` 2026-10-15, `bk-plan` 2026-10-07; `bk-ship`/`bk-close`: ba task dựng xong và 9 phiên sàn của giai đoạn 0 đã chạy (2026-10-16); limits và phần chấm chưa có; còn giai đoạn 1, 2, cổng | `docs/plans/2026-09-26-v03-roadmap.md` |
 | v0.4 | chưa bắt đầu: pack tuỳ chọn, hook push/deploy (Biome/Pint, câu 9), acceptance Gemini CLI / Cursor / Codex | spec §13 |
 | v1.0 | chưa bắt đầu: outcome benchmark đủ 12 task, `upstream-watch`, README EN+VI, CI, marketplace, publish từ history squash | spec §13 |
 
@@ -66,7 +66,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 - **Đo kit so với một chồng gói** (2026-10-08): đề xuất `docs/specs/2026-10-08-kit-vs-stack-proposal.md` (PROPOSED, năm câu hỏi ở cuối); chưa phiên nào chạy.
 - **Trang `bearingkit.dev`** (2026-10-08, `docs/handoff/2026-10-08-site-and-readme.md`): bật GitHub Pages với nguồn "GitHub Actions", đặt custom domain, trỏ DNS; điền mục About của repo (proxy của phiên chặn API settings).
 - **38/38 câu D5 có quyết định** (`docs/specs/2026-09-12-d5-owner-questions.md`). Mới nhất: câu 38 (2026-09-27), cách đo ba file stack còn lại của P4.
-- Việc chờ owner của phiên đang mở: mục Decisions waiting của handoff mới nhất. Mới nhất (`docs/handoff/2026-10-15-p6-design.md`): bắt đầu giai đoạn 0–1 của P6 cần lời mở phiên nêu tên; should-fix vòng 6 (mục 57); phát hiện kiểm toán còn mở.
+- Việc chờ owner của phiên đang mở: mục Decisions waiting của handoff mới nhất. Mới nhất (`docs/handoff/2026-10-16-p6-stage0.md`): chọn cách đọc limits của giai đoạn 0 (A hoặc B); lệnh `npm` trong P1(b) và O1; should-fix vòng 6 và của phiên 12; phát hiện kiểm toán còn mở.
 
 ## 5. Luồng mở mang từ bản cũ của file này
 

@@ -244,3 +244,12 @@ Mốc **v0.3**, mục 7 của thứ tự v0.3: năm file stack. `node.md`, `pyth
 ## Dòng "Việc chờ owner của phiên đang mở" (dòng 67)
 
 - Việc chờ owner của phiên đang mở: mục Decisions waiting của handoff mới nhất. Mới nhất: cập nhật bản cài hằng ngày cho bản chữ mới của `bk-plan` (`doctor` báo `FAIL` ở dòng `skills/` cho tới khi đó; `docs/handoff/2026-10-08-p5b-record-on-main.md`); ngoài ra đề xuất sửa luật tự lái `docs/specs/2026-10-06-autopilot-amendments.md` (chưa áp dụng gì) (câu hỏi chương trình nào gọi Sleep đã được owner trả lời: do chính owner).
+
+---
+
+# Phụ lục 2026-10-16: hai câu rời khỏi dòng "Cập nhật" của `docs/status.md`
+
+Nguyên văn như ở commit `ac7458c` (`git show ac7458c:docs/status.md`, dòng 3). Chuyển sang đây ngày 2026-10-16, khi đóng phiên 12, để `docs/status.md` về dưới trần 15 KB. Không sửa.
+
+- Guard `build-01` không chạm chữ mới; cây C/C++ chưa đo (`docs/specs/2026-10-08-bk-spec-stack-reach-design.md`).
+- P5a (`bk-spec`, `spec-01`): đóng, không merge, nhánh `p5a-bk-spec`. P5c: đóng theo luật đã đăng ký, không merge.
