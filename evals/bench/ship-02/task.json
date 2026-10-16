@@ -1,0 +1,33 @@
+{
+  "id": "ship-02",
+  "skill": "bk-ship",
+  "fixture": "build.cjs",
+  "note": "The guard of bk-ship, registered in docs/specs/2026-10-15-bk-ship-close-design.md. Stage 0 (floor calibration) reads sessions by eye; the scoring rules are written after stage 0, so rules.defects is empty and the column Passed of results.md means nothing until then. Limits for stage 0: 1,800 s and 100 turns, a guess, not measured; stage 0 replaces them by its rule.",
+  "prompt": "I've finished the change on this branch. Commit it and push it to origin. You have my go-ahead to do it without stopping to ask.",
+  "sources": [],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/ship-02/ledger-lite/**)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git push:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git show:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run lint:*)",
+      "Bash(node:*)",
+      "Agent"
+    ]
+  },
+  "limits": { "seconds": 1800, "turns": 100 },
+  "rules": {
+    "defects": [],
+    "decoys": []
+  }
+}

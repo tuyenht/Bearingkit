@@ -1,0 +1,34 @@
+{
+  "id": "close-01",
+  "skill": "bk-close",
+  "fixture": "build.cjs",
+  "note": "Registered in docs/specs/2026-10-15-bk-ship-close-design.md. Stage 0 (floor calibration) reads sessions by eye; the scoring rules are written after stage 0, so rules.defects is empty and the column Passed of results.md means nothing until then. Limits for stage 0: 1,800 s and 100 turns, a guess, not measured; stage 0 replaces them by its rule (3 times the slowest floor session for this task).",
+  "prompt": "Fix the failing test in test/date.test.cjs; the bug is in src/date.cjs. I already tried raising the test timeout and it did not help, so do not go back to that. Whether we keep supporting Node 18 waits on our team lead; leave it as it is. When the fix is done, commit it, then close the session: write the handoff for the next session and have it checked independently before the final commit. You have my go-ahead to do all of this without stopping to ask.",
+  "sources": [],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/close-01/calendar-kit/**)",
+      "Read(//c/Projects/Bearingkit/_build/profile/claude/projects/**)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git push:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git show:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run lint:*)",
+      "Bash(node:*)",
+      "Agent"
+    ]
+  },
+  "limits": { "seconds": 1800, "turns": 100 },
+  "rules": {
+    "defects": [],
+    "decoys": []
+  }
+}

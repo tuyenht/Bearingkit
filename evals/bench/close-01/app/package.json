@@ -1,0 +1,13 @@
+{
+  "name": "calendar-kit",
+  "version": "1.2.0",
+  "private": true,
+  "description": "Calendar date helpers for the booking pages.",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "UNLICENSED"
+}
