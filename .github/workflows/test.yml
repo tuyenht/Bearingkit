@@ -1,0 +1,36 @@
+name: test
+
+# The suite on both platforms the kit is developed on: Windows is the owner's machine, Linux the cloud sessions'.
+# No measurement runs here: the suite calls `bearingkit bench` only with --dry-run, and its runner tests start fake
+# sessions, never the `claude` binary.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  suite:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        # `node --test` takes a glob only from Node 21, so Node 20 (package.json engines: >=20) is not in the matrix.
+        node: ["22", "lts/*"]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      # plan-run's test reads frozen commits far back in history, so the checkout is not shallow.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      # Fixture builders and tests commit into temp repositories; a runner has no git identity of its own.
+      - run: git config --global user.name ci
+      - run: git config --global user.email ci@example.invalid
+      - run: node --version
+      - run: node --test "tests/**/*.test.cjs"
