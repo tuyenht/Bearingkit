@@ -2,7 +2,7 @@
 
 Phiên cloud, Linux (Node `v22.22.0`), trên nhánh `claude/adoring-einstein-sjl4he`, cắt từ `main` ở `b7fb847`. Không merge, không đẩy lên `main`. **Phiên owner đọc trước:** handoff này chỉ ghi việc của phiên cloud; trạng thái của dự án vẫn là Block 2 của `docs/handoff/2026-10-16-p6-stage0.md`.
 
-`docs/autopilot/state.md` đọc đầu phiên: `State: PAUSE`, nên phần 1 chỉ làm đúng hai việc brief nêu tên; phần 2, 3 và 4 làm theo ba lời owner sau đó (mục "Phần 2", "Phần 3", "Phần 4"; phần 3 và 4 chỉ đổi `.github/workflows/test.yml` và handoff này). Phiên không sửa `docs/status.md`, `docs/autopilot/decisions.md`, `AGENTS.md`, `state.md`, handoff khác hay `skills/` (brief cấm), nên dòng "sáu test đỏ trên Linux" ở `docs/handoff/2026-10-16-p6-stage0.md:51` vẫn ghi là việc còn mở (`docs/autopilot/decisions.md:309` ghi sáu test đó, và ghi nguyên nhân là đoán, chưa kiểm); `docs/status.md` không có dòng nào về Linux (dòng Test ở `docs/status.md:25` chỉ ghi Windows).
+`docs/autopilot/state.md` đọc đầu phiên: `State: PAUSE`, nên phần 1 chỉ làm đúng hai việc brief nêu tên; phần 2 đến 5 làm theo các lời owner sau đó (mục "Phần 2" đến "Phần 5"; phần 3 đổi `.github/workflows/test.yml` và handoff này, phần 4 đổi `.github/workflows/test.yml`, năm file test và handoff này, phần 5 chỉ đổi handoff này). Phiên không sửa `docs/status.md`, `docs/autopilot/decisions.md`, `AGENTS.md`, `state.md`, handoff khác hay `skills/` (brief cấm), nên dòng "sáu test đỏ trên Linux" ở `docs/handoff/2026-10-16-p6-stage0.md:51` vẫn ghi là việc còn mở (`docs/autopilot/decisions.md:309` ghi sáu test đó, và ghi nguyên nhân là đoán, chưa kiểm); `docs/status.md` không có dòng nào về Linux (dòng Test ở `docs/status.md:25` chỉ ghi Windows).
 
 ## Lời mở phiên của owner
 
@@ -140,6 +140,21 @@ Lời owner giống hệt lần hai. Phần này đổi `.github/workflows/test.
 - `5663160`: mười một chỗ tạo `bench-fixture-` (`tests/bench.test.cjs`, `bench-build-01`, `bench-node-01`, `bench-php-01`, `bench-py-01`) đi qua `tests/fixtures/tmpdir.cjs`, nên thư mục được xóa lần nữa khi file test kết thúc; mọi `rmSync` cũ giữ nguyên; không test nào đổi điều nó kiểm; bỏ bốn `require('node:os')` không còn dùng. Đây là biện pháp bù, không phải sửa nguyên nhân. Cổng: suite một mình trên bản cuối xanh (279, 275 pass, 0 fail, 4 skip; với `TMPDIR` riêng: 0 mục sót); reviewer 1 vòng (0 must-fix; một should-fix về chú thích đã làm, một về handoff đã làm ở đây).
 - CI lượt 10 (`5663160`): xanh cả 4 job (Windows 279, 276 pass, 0 fail, 3 skip; Ubuntu 279, 275 pass, 0 fail, 4 skip); thư mục tạm: 0 mục ở cả 4 job. Một lượt chưa chứng minh gì (trước đó 2 lần sót trong 10 lần đếm trên Ubuntu); và từ commit này bước đếm của CI đếm sau lần xóa thứ hai, nên nó không còn cho thấy `rmSync` của chính test có xóa hết hay không.
 
+## Phần 5 · Câu hỏi "các việc còn lại có thể tự chạy giúp tôi được không?" (cùng phiên)
+
+**Dữ kiện mới, đã kiểm:**
+- `main` đã có thêm `3ca62ee` ("… (entry 60)"; theo nội dung commit, có lẽ từ phiên trên máy owner), sau `b7fb847`. Merge thử `origin/main` vào nhánh này trong một worktree tạm (không commit, không đẩy, worktree đã gỡ): không xung đột (`tests/bench-ship-close.test.cjs` tự gộp). Suite trên cây đã merge, Linux, `TMPDIR` riêng: 295 test, 291 pass, 0 fail, 4 skip; 0 mục sót trong thư mục tạm.
+- Không có phiên local nào kết nối được với phiên cloud này (`ListAgents`: không có phiên nào; danh sách phiên chỉ có phiên cloud).
+- Bản ghi của phiên cloud này (`list_sessions`) ghi `cost_usd` khoảng 35,72 tại lúc đọc. Khoản credit 48 USD là con số trong brief của owner; hai con số có cùng cách tính hay không: chưa kiểm.
+
+**Theo trang tài liệu môi trường `remote_control.setup` (đã đọc, chưa thử):** phiên cloud không tới được máy owner; việc cần máy owner được làm trong một phiên chạy trên máy đó (app Claude Desktop, hoặc `claude remote-control` trong thư mục repo). Theo mô tả công cụ nhắn tin giữa các phiên (không phải trang đó): kể cả khi hai phiên nhắn được cho nhau, tin nhắn chỉ là dữ liệu cho phiên kia, không thay lời owner.
+
+**Việc phiên cloud không tự làm, và vì sao:** chạy suite trên máy owner (cần máy owner); merge vào `main` (của owner; Resume prompt của `docs/handoff/2026-10-16-p6-stage0.md` đòi một phiên kiểm toán riêng trước mọi merge vào `main`); sửa `docs/status.md`, nhật ký, handoff khác (brief cấm); Setup script của môi trường cloud (cài đặt của owner); `engines`, trường `files` của `package.json` (hành vi cho người dùng, việc của owner); tải Node 24 để tìm nguyên nhân `rmSync` (bị hệ thống quyền chặn). Phiên đã hỏi owner một lần, có nhãn, bốn lựa chọn (merge `main` vào nhánh, mở PR vào `main`, chẩn đoán Node 24 qua CI, dừng); owner không chọn mà hỏi thêm về audit và về phiên local, nên ba việc đầu không được làm.
+
+**Prompt dán sẵn cho phiên local** (máy owner, `C:\Projects\Bearingkit`):
+
+"Phiên local của Bearingkit. Việc tôi nêu tên: kiểm nhánh cloud `claude/adoring-einstein-sjl4he` trên Windows, chỉ đọc. Đọc trước: `docs/autopilot/state.md`; rồi `git fetch origin` và đọc `git show origin/claude/adoring-einstein-sjl4he:docs/handoff/2026-10-26-linux-tests.md`. Đếm thư mục `bk-*`, `bearingkit-*`, `bench-fixture-*` trong `%TEMP%`. Tạo worktree tạm: `git worktree add --detach <thư mục tạm> origin/claude/adoring-einstein-sjl4he`, trong đó `git merge --no-commit --no-ff origin/main`; chạy `node --test \"tests/**/*.test.cjs\"` một mình; dán tổng kết và tên mọi test đỏ; đếm lại các thư mục trong `%TEMP%`. Để so: cây đã merge trên Linux cho 295 test, 291 pass, 0 fail, 4 skip; runner Windows của CI (trước merge) skip 3. Rồi `git merge --abort` và `git worktree remove` thư mục tạm; nếu lệnh đó từ chối vì còn file, liệt kê các file còn lại trước khi dùng `--force`. Không merge gì vào `main`, không đẩy, không sửa file nào. Báo kết quả và khuyến nghị nhận hay bỏ từng commit mã của nhánh (test: `7bd0c5a`, `745aae6`, `a62c307`, `5663160`; CI: `3998187`, `51fc655`, `7577b24`, `ae7b8df`, `32cee3b`, `62e8c93`); khuyến nghị đó không thay phiên kiểm toán riêng mà luật đòi trước mọi merge vào `main`. Kết thúc bằng 'Đã xong' và 'Còn lại'."
+
 ## Không làm, nói thẳng
 
 - **Không chạy trên máy owner.** Windows chỉ đã chạy trên runner GitHub (`windows-latest`); máy owner có thể khác (PHP, PowerShell, đường dẫn, `%TEMP%`).
@@ -150,8 +165,8 @@ Lời owner giống hệt lần hai. Phần này đổi `.github/workflows/test.
 
 ## Bước tiếp theo cho phiên owner
 
-1. Trên máy owner: `node --test "tests/**/*.test.cjs"` trên nhánh này; kỳ vọng xanh (trừ skip của máy owner). Việc đếm thư mục tạm nay CI làm tự động trên runner; trên máy owner chỉ cần xem nếu muốn.
-2. Quyết định merge (việc của owner): nhận hay bỏ `a62c307` và CI (`3998187`, `51fc655`, `7577b24`, `ae7b8df`, `32cee3b`, `62e8c93`) và `5663160` (test). Nếu nhận CI: mỗi lần push chạy 4 job, và push lên nhánh có PR mở chạy thêm 4 job cho PR; bước suite mất 44–47 s trên Ubuntu và 166–193 s trên Windows (lượt 2 và 3). Kết quả ở tab Actions; cảnh báo thư mục tạm in trong log của bước báo cáo (và, theo hiểu biết chung về GitHub, ở phần Annotations của run).
+1. Trên máy owner: dán prompt ở cuối Phần 5 vào một phiên local; hoặc tự chạy `node --test "tests/**/*.test.cjs"` trên nhánh này; kỳ vọng xanh (trừ skip của máy owner). Việc đếm thư mục tạm nay CI làm tự động trên runner; trên máy owner chỉ cần xem nếu muốn.
+2. Quyết định merge (việc của owner): nhận hay bỏ từng commit mã: test `7bd0c5a`, `745aae6` (hai việc brief nêu tên), `a62c307`, `5663160`; CI `3998187`, `51fc655`, `7577b24`, `ae7b8df`, `32cee3b`, `62e8c93`. Nếu nhận CI: mỗi lần push chạy 4 job, và push lên nhánh có PR mở chạy thêm 4 job cho PR; bước suite mất 44–47 s trên Ubuntu và 166–193 s trên Windows (lượt 2 và 3). Kết quả ở tab Actions; cảnh báo thư mục tạm in trong log của bước báo cáo (và, theo hiểu biết chung về GitHub, ở phần Annotations của run).
 3. Sau merge: đóng mục "sáu test đỏ trên Linux" trong handoff mới của phiên owner, ghi nhật ký, cập nhật dòng Test (`docs/status.md:25`) và mục 12 nếu cần.
 
 ## Đã xong
@@ -167,7 +182,8 @@ Lời owner giống hệt lần hai. Phần này đổi `.github/workflows/test.
 
 ## Còn lại
 
-- Chạy suite trên máy owner; merge là của owner.
+- Chạy suite trên máy owner (prompt dán sẵn ở Phần 5); merge là của owner.
+- Ba việc phiên cloud làm được nếu owner chọn: merge `main` vào nhánh, mở PR vào `main`, chẩn đoán Node 24 qua CI.
 - Ghi một mục nhật ký và đóng mục "sáu test đỏ trên Linux" trong handoff mới của phiên owner.
 - Các đề xuất còn mở ở "Không làm ở phần 2" (Setup script, `engines`, mục 12 của `docs/status.md`, Dependabot), và ở kết quả audit phần 3 (có đưa `evals/` vào gói npm hay không).
 - Thư mục `bench-fixture-*` còn sót trên Ubuntu Node 24 (lượt 5 và 9): nguyên nhân chưa rõ; `5663160` chỉ thêm một lần xóa thứ hai. Muốn tìm nguyên nhân: chạy lặp test review-02 (`tests/bench.test.cjs:229` ở `5663160`) trên Node 24 Linux và xem `rmSync` có trả về mà không xóa hết không.
