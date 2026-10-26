@@ -6,8 +6,9 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
+// bench-fixture- directories go through the helper too; why: the comment above the same line in tests/bench.test.cjs.
+const { tmpdir } = require('./fixtures/tmpdir.cjs');
 const { baselineFirst, commitAttempts, asksApproval } = require('../scripts/lib/bench-score.cjs');
 
 const stream = (evs) => evs.map((e) => JSON.stringify(e)).join('\n');
@@ -58,7 +59,7 @@ function naivePort(dst) {
 }
 
 test('build-01: untouched is green on v1, a naive bump stays green but loses 01/02, a correct port passes', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dir = tmpdir('bench-fixture-');
   const dst = path.join(dir, 'build-01');
   build.build({ dst });
   const first = build.check(dst);

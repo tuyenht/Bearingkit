@@ -4,6 +4,10 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+// bench-fixture- directories also go through the helper: one was left behind on Linux, Node 24, in each of CI runs 5
+// and 9 (in run 9 review-02's, which its test below removes with rmSync; cause unknown), and the helper tries again
+// when the file's tests are over.
+const { tmpdir } = require('./fixtures/tmpdir.cjs');
 const { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect } = require('../scripts/lib/bench-score.cjs');
 const { loadTask, branchSetup, promptFor, schedule, preflight, rescore, runSession, withPath } = require('../scripts/bench.cjs');
 
@@ -223,7 +227,7 @@ test('a rescore keeps the run meta and still counts a session with no result as 
 });
 
 test('review-02 keeps the pay route outside the diff and its rules tell a careful answer from a careless one', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dir = tmpdir('bench-fixture-');
   const dst = path.join(dir, 'review-02');
   const build = require('../evals/bench/review-02/build.cjs');
   build.build({ dst, src: path.join(ROOT, 'evals', 'fixtures', 'sample-app') });
@@ -240,7 +244,7 @@ test('review-02 keeps the pay route outside the diff and its rules tell a carefu
 });
 
 test('the fixture builder makes the branch with the planted defects and resets it', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dir = tmpdir('bench-fixture-');
   const dst = path.join(dir, 'review-01');
   const build = require('../evals/bench/review-01/build.cjs');
   build.build({ dst, src: path.join(ROOT, 'evals', 'fixtures', 'sample-app') });
@@ -272,7 +276,7 @@ test('a block verdict is read on the whole answer, and a clean task fails when i
 });
 
 test('review-03 is a clean branch whose own code passes its checks, and its rules tell a careful answer from a careless one', async (t) => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dir = tmpdir('bench-fixture-');
   const dst = path.join(dir, 'review-03');
   const build = require('../evals/bench/review-03/build.cjs');
   build.build({ dst });
@@ -470,7 +474,7 @@ test('a task that needs tools gets the same permissions on every branch', () => 
 });
 
 test('debug-01: the planted bug fails only east of UTC, and the checks tell the tempting patch from the root fix', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dir = tmpdir('bench-fixture-');
   const dst = path.join(dir, 'debug-01');
   const build = require('../evals/bench/debug-01/build.cjs');
   build.build({ dst });
@@ -648,7 +652,7 @@ test('a test file written outside the fixture does not count, and an explicit 1>
 // review-04, a pull request of realistic size (2026-09-26): 29 files over four commits, three planted defects among
 // benign changes, two decoys. The fixture test pins the planted state and the benign modules' behaviour.
 test('review-04 plants its three defects in a 29-file branch and its rules tell a careful answer from a careless one', async (t) => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dir = tmpdir('bench-fixture-');
   const dst = path.join(dir, 'review-04');
   const build = require('../evals/bench/review-04/build.cjs');
   build.build({ dst });
@@ -694,7 +698,7 @@ test('review-04 plants its three defects in a 29-file branch and its rules tell 
 // test-01 (2026-09-26): characterization tests scored by mutation. Untouched, the suite kills nothing; a suite that pins
 // one input per quirk kills all twelve (so no mutant is equivalent); a suite that edits the module is not "kept".
 test('test-01 kills no mutant untouched, all twelve with a characterization suite, and notices an edited module', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dir = tmpdir('bench-fixture-');
   const dst = path.join(dir, 'test-01');
   const build = require('../evals/bench/test-01/build.cjs');
   build.build({ dst });
