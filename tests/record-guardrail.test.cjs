@@ -2,13 +2,13 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
+const { tmpdir } = require('./fixtures/tmpdir.cjs');
 const { spawnSync } = require('node:child_process');
 const { State } = require('../scripts/lib/state.cjs');
 
 const script = path.join(__dirname, '..', 'scripts', 'record-guardrail.cjs');
-const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'bk-rg-'));
+const tmp = () => tmpdir('bk-rg-');
 const run = (args, env) => spawnSync(process.execPath, [script, ...args], { encoding: 'utf8', env: { ...process.env, ...env } });
 // The recorder resolves --cwd before it looks the state up, and State.latest compares it with the cwd stored at
 // creation. 'C:/proj-a' is absolute only on Windows; elsewhere it resolves against the current directory, so each test

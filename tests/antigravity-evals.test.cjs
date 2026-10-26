@@ -4,11 +4,12 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { tmpdir } = require('./fixtures/tmpdir.cjs');
 const { spawnSync } = require('node:child_process');
 const { activationFromTranscript, arm, disarm, score, stage, PROBE_GLOB } = require('../scripts/antigravity-evals.cjs');
 const driver = require('../scripts/antigravity/eval-driver.cjs');
 
-const tmp = (p) => fs.mkdtempSync(path.join(os.tmpdir(), `bk-${p}-`));
+const tmp = (p) => tmpdir(`bk-${p}-`);
 const line = (o) => JSON.stringify(o);
 const REPO = path.join(__dirname, '..');
 // Words that tell a model it is inside a measurement. On 2026-09-19 the fixture README ("used only to run the
@@ -391,7 +392,7 @@ test('arm installs the driver hook beside the kit hook, score reads transcripts,
 // window. The conversation it left behind never finished; the one after it, last in the queue, did.
 test('the driver does not call a reply settled while a planner step that called a tool waits for its result', () => {
   const { transcriptSettled } = require('../scripts/antigravity/drive.cjs');
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bk-settle-'));
+  const dir = tmpdir('bk-settle-');
   const file = path.join(dir, 'transcript.jsonl');
   const step = (o) => JSON.stringify(o);
   fs.writeFileSync(file, [

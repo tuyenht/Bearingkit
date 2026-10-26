@@ -2,14 +2,14 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
+const { tmpdir } = require('./fixtures/tmpdir.cjs');
 
 // Spec §5.2 asks for every skill, command, rule set or agent of every source to be inventoried once. The item list is
 // taken from the source tree by this script rather than from memory, so "every" can be checked
 // (docs/plans/2026-09-18-item-inventory.md).
 function tree(files) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'bk-inv-'));
+  const root = tmpdir('bk-inv-');
   for (const [rel, text] of Object.entries(files)) {
     const p = path.join(root, ...rel.split('/'));
     fs.mkdirSync(path.dirname(p), { recursive: true });
