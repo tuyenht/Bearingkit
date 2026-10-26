@@ -10,10 +10,14 @@ const { State } = require('../scripts/lib/state.cjs');
 const script = path.join(__dirname, '..', 'scripts', 'record-guardrail.cjs');
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'bk-rg-'));
 const run = (args, env) => spawnSync(process.execPath, [script, ...args], { encoding: 'utf8', env: { ...process.env, ...env } });
+// The recorder resolves --cwd before it looks the state up, and State.latest compares it with the cwd stored at
+// creation. 'C:/proj-a' is absolute only on Windows; elsewhere it resolves against the current directory, so each test
+// that looks the state up resolves its directory first and both sides hold the same string (on Windows: the same path as before).
+const dirOf = (p) => path.resolve(p);
 
 test('appends a guardrail run to the newest state for the directory', () => {
   const base = tmp();
-  const cwd = 'C:/proj-a';
+  const cwd = dirOf('C:/proj-a');
   new State({ host: 'claude', sessionId: 's1', cwd, baseDir: base });
   const r1 = run(['--command', 'pnpm test', '--exit', '0', '--cwd', cwd], { BEARINGKIT_STATE_DIR: base });
   assert.equal(r1.status, 0, r1.stderr);
@@ -26,7 +30,7 @@ test('appends a guardrail run to the newest state for the directory', () => {
 
 test('records an independent review with its scope', () => {
   const base = tmp();
-  const cwd = 'C:/proj-b';
+  const cwd = dirOf('C:/proj-b');
   new State({ host: 'antigravity', sessionId: 'c9', cwd, baseDir: base });
   const r = run(['--review', 'src/auth/login.ts, src/auth/session.ts', '--by', 'reviewer-7', '--cwd', cwd], { BEARINGKIT_STATE_DIR: base });
   assert.equal(r.status, 0, r.stderr);
@@ -41,7 +45,7 @@ test('records an independent review with its scope', () => {
 // — could only fail. The recorder is the only writer of this store left, so it creates its own file.
 test('records without --session by creating the state for the directory, since nothing else creates it', () => {
   const base = tmp();
-  const cwd = 'C:/proj-fresh';
+  const cwd = dirOf('C:/proj-fresh');
   const r = run(['--command', 'pnpm test', '--exit', '0', '--cwd', cwd], { BEARINGKIT_STATE_DIR: base });
   assert.equal(r.status, 0, r.stderr);
   const d = State.latest({ cwd, baseDir: base }).read();
@@ -50,7 +54,7 @@ test('records without --session by creating the state for the directory, since n
 
 test('a second record the same day in the same directory lands in the same file, not a new one', () => {
   const base = tmp();
-  const cwd = 'C:/proj-same-day';
+  const cwd = dirOf('C:/proj-same-day');
   assert.equal(run(['--command', 'a', '--exit', '0', '--cwd', cwd], { BEARINGKIT_STATE_DIR: base }).status, 0);
   assert.equal(run(['--command', 'b', '--exit', '1', '--cwd', cwd], { BEARINGKIT_STATE_DIR: base }).status, 0);
   assert.equal(fs.readdirSync(base).filter((f) => f.endsWith('.json')).length, 1);
