@@ -58,11 +58,32 @@ jobs:
         shell: bash
         run: |
           node -e '
-            const dir = require("path").join(process.env.RUNNER_TEMP, "suite-tmp");
+            // Never fails the job: every read is guarded, and leftovers only raise a warning.
             const fs = require("fs");
-            if (!fs.existsSync(dir)) process.exit(0);
-            const left = fs.readdirSync(dir);
+            const path = require("path");
+            const dir = path.join(process.env.RUNNER_TEMP, "suite-tmp");
+            let left = [];
+            try { left = fs.readdirSync(dir, { withFileTypes: true }); } catch (err) {
+              if (err.code !== "ENOENT") console.log(`temp folder unreadable: ${err.code || err.message}`);
+              process.exit(0);
+            }
             console.log(`entries the suite left in its temp folder: ${left.length}`);
-            for (const n of left.slice(0, 50)) console.log(`  ${n}`);
+            // The first ten entries with what is inside them (three levels, at most 40 paths each), so the test that
+            // left them can be traced; further entries by name only, up to 50.
+            const walk = (d, rel, depth, out) => {
+              for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+                if (out.length >= 40) { out.push("..."); return false; }
+                const r = rel + e.name + (e.isDirectory() ? "/" : "");
+                out.push(r);
+                if (e.isDirectory() && depth < 3 && walk(path.join(d, e.name), r, depth + 1, out) === false) return false;
+              }
+              return true;
+            };
+            left.slice(0, 50).forEach((e, i) => {
+              if (i >= 10 || !e.isDirectory()) { console.log(`  ${e.name}`); return; }
+              const out = [];
+              try { walk(path.join(dir, e.name), "", 1, out); } catch (err) { out.push(`(${err.code || err.message})`); }
+              console.log(`  ${e.name}/: ${out.length ? out.join(", ") : "(empty)"}`);
+            });
             if (left.length) console.log(`::warning::the suite left ${left.length} entries in its temp folder`);
           '
