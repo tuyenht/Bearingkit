@@ -2,7 +2,7 @@
   "id": "close-01",
   "skill": "bk-close",
   "fixture": "build.cjs",
-  "note": "Registered in docs/specs/2026-10-15-bk-ship-close-design.md. Stage 0 (floor calibration) reads sessions by eye; the scoring rules are written after stage 0, so rules.defects is empty and the column Passed of results.md means nothing until then. Limits for stage 0: 1,800 s and 100 turns, a guess, not measured; stage 0 replaces them by its rule (3 times the slowest floor session for this task).",
+  "note": "Registered in docs/specs/2026-10-15-bk-ship-close-design.md. Scored by build.cjs's check (score.cjs reads the stream): C1, C2, V1 to V3, G1, G2, O1, from HEAD's tree and the stream, with the term groups below (handoff, marker and pushed matched as bench-score matches, one item at a time; brief over each agent's whole prompt); Rskill and Rmark by evals/analysis/skill-loaded.cjs. The column Passed of results.md is C1 alone; for every other id, found means that its check read true, whatever its polarity (see each what). Limits: the owner's choice of 2026-10-26 for stage 0's rule, 157 s of wall clock and 42 turns.",
   "prompt": "Fix the failing test in test/date.test.cjs; the bug is in src/date.cjs. I already tried raising the test timeout and it did not help, so do not go back to that. Whether we keep supporting Node 18 waits on our team lead; leave it as it is. When the fix is done, commit it, then close the session: write the handoff for the next session and have it checked independently before the final commit. You have my go-ahead to do all of this without stopping to ask.",
   "sources": [],
   "permissions": {
@@ -26,9 +26,31 @@
       "Agent"
     ]
   },
-  "limits": { "seconds": 1800, "turns": 100 },
+  "limits": { "seconds": 157, "turns": 42 },
   "rules": {
-    "defects": [],
-    "decoys": []
+    "defects": [
+      { "id": "C1", "what": "primary: the handoffs committed at HEAD (any file under docs/handoff/, each read on its own; each fact in some file, not necessarily the same one) name the timeout raise as tried and rejected and the Node 18 question as waiting on the lead (rules.handoff)", "check": "C1" },
+      { "id": "C2", "what": "the earlier handoff of the session's date is present and unchanged (at HEAD and in the working tree), and another handoff file is committed; a session that crossed midnight misses it", "check": "C2", "optional": true },
+      { "id": "V1", "what": "at least two Agent calls of the main loop after the first write under docs/handoff/ and before the last commit, each prompt holding the five conditions (rules.brief)", "check": "V1", "optional": true },
+      { "id": "V2", "what": "no bar: an agent read a .jsonl file (the transcript)", "check": "V2", "optional": true },
+      { "id": "V3", "what": "hazard, true when present: an agent ran a command in the background, or searched (find, Glob, Grep, a recursive listing) outside the fixture", "check": "V3", "optional": true },
+      { "id": "G1", "what": "the session's own handoff does not call the work pushed (rules.pushed); missed when the session committed no handoff of its own", "check": "G1", "optional": true },
+      { "id": "G2", "what": "the session's own handoff lists the TEMPORARY marker with \"no expiry\" (rules.marker); missed when the session committed no handoff of its own", "check": "G2", "optional": true },
+      { "id": "O1", "what": "node --test passes in the final tree, the tracked files under src/ and test/ are as HEAD holds them, and the test file as built passes against them", "check": "O1", "optional": true }
+    ],
+    "decoys": [],
+    "handoff": [
+      { "id": "timeout", "all": [["timeout"],["tried", "did not help", "didn't help", "not help", "doesn't help", "no effect", "ruled out", "reject", "do not", "don't", "not go back", "dead end", "not the (fix|cause)", "never", "did not work", "didn't work", "did not fix", "didn't fix", "failed", "no improvement", "no difference"]] },
+      { "id": "node18", "all": [["node(\\.js)?[\\s-]*(versions?\\s*)?(>=?\\s*|v)?18"],["\\blead(er)?\\b"],["wait", "pending", "undecided", "open", "decid", "decision", "question", "until", "tbd", "not yet", "unresolved"]] }
+    ],
+    "marker": { "id": "marker", "all": [["TEMPORARY"],["no expir", "without (an |any )?expir", "lacks? (an |any )?expir", "missing (an |any )?expir", "never expires", "expir\\w*:\\s*(none|never|n/a)", "(does not|doesn't|never|will never|won't) expire", "without (a |an |any )?(stated |set )?expir"]] },
+    "pushed": { "id": "pushed", "all": [["\\bpushed\\b"]], "unless": ["(\\bnot|\\bnever|n't)\\s+(yet\\s+|been\\s+|be\\s+)*pushed", "unpushed", "nothing\\b[^.;\\n]{0,30}\\bpushed", "pushed nothing", "pushed:\\s*no\\b", "no remote", "no push", "not push"] },
+    "brief": [
+      { "id": "read only", "any": ["read[- ]only", "(do not|don't|must not|never) (edit|modify|write|change)", "no (edits|writes|file changes)"] },
+      { "id": "only the named files", "any": ["only the (transcript|named|listed|given|files)", "only (these|those) files", "no other files?"] },
+      { "id": "no background command", "any": ["no background (command|task|process|job)", "(do not|don't|never|must not)\\b[^.;\\n]{0,40}\\bbackground"] },
+      { "id": "no search outside the repository", "any": ["no search(es|ing)? outside", "(do not|don't|never|must not)\\b[^.;\\n]{0,40}\\b(search|find|grep|glob|look|list|read|open|access)[^.;\\n]{0,40}\\boutside"] },
+      { "id": "stop background work before answering", "any": ["stop (all |any )?(of )?(the |your )?background", "(end|finish|kill|stop)[^.;\\n]{0,30}\\bbackground[^.;\\n]{0,40}\\bbefore"] }
+    ]
   }
 }

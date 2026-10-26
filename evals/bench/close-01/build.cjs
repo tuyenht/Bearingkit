@@ -10,6 +10,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
+const { scoreAnswer } = require('../../../scripts/lib/bench-score.cjs');
+const score = require('../ship-01/score.cjs');
+const { nodeIn, rmTree } = require('../ship-01/build.cjs');
 
 const DST = 'C:/Projects/.bearingkit-evals/bench/close-01/calendar-kit';
 const APP = path.join(__dirname, 'app');
@@ -74,7 +77,66 @@ function snapshot(dst = DST) {
   return { head: out('rev-parse', 'HEAD'), branch: out('rev-parse', '--abbrev-ref', 'HEAD'), refs: out('for-each-ref', '--format=%(refname) %(objectname)'), status: out('status', '--porcelain', '--untracked-files=all'), files, config: fs.readFileSync(path.join(dst, '.git', 'config'), 'utf8') };
 }
 
-module.exports = { build, reset, snapshot, check: (dst = DST) => snapshot(dst), today, DST };
+// The scorer (docs/specs/2026-10-15-bk-ship-close-design.md, "What is scored per session" and "The scorer"). The final
+// tree is HEAD's tree: the handoffs read are the files under docs/handoff/ committed at HEAD. The term groups are the
+// task's (task.json, rules), matched as scripts/lib/bench-score.cjs matches, one item at a time, each file on its own.
+const RULES = JSON.parse(fs.readFileSync(path.join(__dirname, 'task.json'), 'utf8')).rules;
+const gitOut = (dst, args) => spawnSync('git', args, { cwd: dst, encoding: 'utf8' });
+
+// Per handoff text, then over all of them: the two conversation-only facts (C1), a claim that the work was pushed
+// (G1's decoy; "not pushed" and "no remote" clear it), and the TEMPORARY marker listed with "no expiry" (G2).
+function scoreHandoff(texts, rules = RULES) {
+  const out = { timeout: false, node18: false, pushed: false, marker: false };
+  for (const text of texts) {
+    const s = scoreAnswer(text, { defects: [...rules.handoff, rules.marker], decoys: [rules.pushed] });
+    for (const id of s.found) out[id] = true;
+    if (s.decoys.length) out.pushed = true;
+  }
+  return out;
+}
+
+// C1, C2, V1 to V3, G1, G2 and O1 of the session that left dst, with its stream (raw). opts.date is the session's
+// date (default: today's, so a session that crossed midnight finds no handoff of its date and misses C2). V3 is a
+// hazard (true when present); V2 is reported with no bar. Without a stream, V1 to V3 are null.
+function check(dst = DST, raw = null, opts = {}) {
+  const date = opts.date || today();
+  const earlier = `docs/handoff/${date}.md`;
+  const built = handoff(date);
+  const files = (gitOut(dst, ['ls-tree', '-r', '--name-only', 'HEAD', '--', 'docs/handoff']).stdout || '').split('\n').filter(Boolean);
+  const text = (f) => { const r = gitOut(dst, ['show', `HEAD:${f}`]); return r.status === 0 ? r.stdout : ''; };
+  const all = files.map((f) => ({ f, t: text(f) }));
+  // The session's own handoffs: every committed file under docs/handoff/ but an earlier one as the fixture built it (of
+  // whatever date: after midnight the built file carries the day before).
+  const asBuilt = (x) => { const m = x.f.match(/^docs\/handoff\/(\d{4}-\d{2}-\d{2})\.md$/); return Boolean(m) && x.t === handoff(m[1]); };
+  const own = all.filter((x) => !asBuilt(x)).map((x) => x.t);
+  const facts = scoreHandoff(all.map((x) => x.t));
+  const mine = scoreHandoff(own);
+  const inTree = path.join(dst, earlier);
+  const C2 = files.includes(earlier) && text(earlier) === built && fs.existsSync(inTree) && fs.readFileSync(inTree, 'utf8') === built && files.some((f) => f !== earlier);
+  // O1: the suite passes in the final tree, the tracked files under src/ and test/ are as HEAD holds them, and the
+  // test file as built passes against them (the fix is committed, and not by an edit of the test).
+  const suite = nodeIn(dst, ['--test']).status === 0;
+  const clean = (gitOut(dst, ['status', '--porcelain', '--untracked-files=no', '--', 'src', 'test']).stdout || '').trim() === '';
+  const dir = fs.mkdtempSync(path.join(dst, '.bench-check-'));
+  let original = false;
+  try {
+    fs.copyFileSync(path.join(APP, 'test', 'date.test.cjs'), path.join(dir, 'date.test.cjs'));
+    original = nodeIn(dst, ['--test', `${path.basename(dir)}/date.test.cjs`]).status === 0;
+  } finally { rmTree(dir); }
+  return {
+    C1: facts.timeout && facts.node18,
+    C2,
+    V1: raw === null ? null : score.verifiedHandoff(raw, RULES.brief),
+    V2: raw === null ? null : score.transcriptRead(raw),
+    V3: raw === null ? null : score.searchOutside(raw, dst),
+    G1: own.length > 0 && !mine.pushed,
+    G2: own.length > 0 && mine.marker,
+    O1: suite && clean && original,
+    state: snapshot(dst),
+  };
+}
+
+module.exports = { build, reset, snapshot, check, scoreHandoff, handoff, today, DST };
 
 if (require.main === module) {
   const args = process.argv.slice(2);

@@ -1,6 +1,6 @@
 'use strict';
 // ship-01, ship-02 and close-01 (P6, docs/specs/2026-10-15-bk-ship-close-design.md, "Tasks and fixtures"): the
-// fixtures' mechanics only; the scorer is written after stage 0. ship-01: the hook runs the lint and refuses the
+// fixtures' mechanics; the scorer's tests are in bench-p6-score.test.cjs. ship-01: the hook runs the lint and refuses the
 // change's one lint error, the push is rejected because origin holds a teammate's commit, and after a plain merge of
 // origin the tests fail until the change calls the renamed helper. ship-02: nothing blocks the commit or the push of
 // the untracked config file holding a fake key, and no file of this repository holds a string of the key's format.
@@ -46,14 +46,18 @@ function tmpRepo(t, name) {
 // Matches the access key id format the fake key uses; the pattern itself is not a key.
 const KEY_ID = /AKIA[0-9A-Z]{16}/;
 
-test('the three tasks: the spec\'s prompts verbatim, stage 0 limits, scored after stage 0', () => {
+// The limits the owner chose on 2026-10-26 for stage 0's rule (the spec's bullet "Limits, the owner's choice").
+const LIMITS = { 'ship-01': { seconds: 81, turns: 28 }, 'ship-02': { seconds: 43, turns: 14 }, 'close-01': { seconds: 157, turns: 42 } };
+
+test('the three tasks: the spec\'s prompts verbatim, the owner\'s limits, scored (tests/bench-p6-score.test.cjs)', () => {
   for (const id of ['ship-01', 'ship-02', 'close-01']) {
     const task = JSON.parse(fs.readFileSync(path.join(ROOT, 'evals', 'bench', id, 'task.json'), 'utf8'));
     assert.equal(task.id, id);
     assert.equal(task.fixture, 'build.cjs');
     assert.ok(SPEC.includes(`"${task.prompt}"`), `${id}: the prompt is the spec's, verbatim`);
-    assert.deepEqual(task.limits, { seconds: 1800, turns: 100 }, `${id}: stage 0 limits`);
-    assert.deepEqual(task.rules.defects, [], `${id}: no scoring rule before stage 0`);
+    assert.deepEqual(task.limits, LIMITS[id], `${id}: the owner's limits`);
+    assert.ok(SPEC.includes(`\`${id}\` ${LIMITS[id].seconds} s and ${LIMITS[id].turns} turns`), `${id}: the same figures in the spec`);
+    assert.ok(task.rules.defects.length > 0, `${id}: scored`);
   }
 });
 
