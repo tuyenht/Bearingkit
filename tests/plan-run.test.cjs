@@ -47,14 +47,18 @@ test('plan-run starts no session while the bars are not approved, and refuses a 
   }
 });
 
+// A shallow clone (a cloud session's checkout, a CI checkout without full history) may lack the frozen commits: the
+// message says so, since the fix is the clone's, not the code's.
+const SHALLOW = (git('rev-parse', '--is-shallow-repository').stdout || '').trim() === 'true' ? ' (this clone is shallow: git fetch --unshallow origin)' : '';
+
 test('plan-run pins paths that exist at the frozen commit; the seven files are what it changed against K-before, and one file against the first freeze', () => {
-  assert.equal(git('cat-file', '-e', `${run.FROZEN}^{commit}`).status, 0, 'the frozen commit is in this repository');
+  assert.equal(git('cat-file', '-e', `${run.FROZEN}^{commit}`).status, 0, `the frozen commit is in this repository${SHALLOW}`);
   // A pathspec that matches nothing would pass every diff in silence: each pinned path exists at the frozen commit.
   for (const p of [...run.SAME_PATHS, ...run.KIT_PATHS, ...run.SEVEN]) assert.equal(git('cat-file', '-e', `${run.FROZEN}:${p}`).status, 0, p);
   // The first freeze changed exactly the seven files, against its parent, and K-before is that parent: the same
   // K-before as in the first run.
   const names = (...args) => git('diff', '--name-only', ...args).stdout.split('\n').filter(Boolean).sort();
-  assert.equal(git('cat-file', '-e', `${run.FIRST_FROZEN}^{commit}`).status, 0, 'the first frozen commit is in this repository');
+  assert.equal(git('cat-file', '-e', `${run.FIRST_FROZEN}^{commit}`).status, 0, `the first frozen commit is in this repository${SHALLOW}`);
   assert.deepEqual(names(`${run.FIRST_FROZEN}^`, run.FIRST_FROZEN), [...run.SEVEN].sort());
   assert.equal(git('rev-parse', `${run.FIRST_FROZEN}^`).stdout.trim(), run.BEFORE_COMMIT);
   // The frozen commit (the second freeze) is not the first, follows it, and still differs from K-before, in what a
