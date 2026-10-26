@@ -7,8 +7,9 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
+// bench-fixture- directories go through the helper too; why: the comment above the same line in tests/bench.test.cjs.
+const { tmpdir } = require('./fixtures/tmpdir.cjs');
 const { reach } = require('../scripts/lib/bench-score.cjs');
 const { detect } = require('../scripts/detect-stack.cjs');
 const build = require('../evals/bench/node-01/build.cjs');
@@ -75,7 +76,7 @@ exports.exportFile = async (f) => {
 const SMALL = { small: 40, large: 80, few: 20, deadlineMs: 4000, killMs: 6000, runMs: 30000 };
 
 test('node-01: untouched is green with no export; each port fails the hazard it ignores, the pooled one passes all', async () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dir = tmpdir('bench-fixture-');
   const dst = path.join(dir, 'node-01');
   try {
     build.build({ dst });

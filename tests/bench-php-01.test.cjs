@@ -8,8 +8,9 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
+// bench-fixture- directories go through the helper too; why: the comment above the same line in tests/bench.test.cjs.
+const { tmpdir } = require('./fixtures/tmpdir.cjs');
 const { reach } = require('../scripts/lib/bench-score.cjs');
 const { detect } = require('../scripts/detect-stack.cjs');
 const build = require('../evals/bench/php-01/build.cjs');
@@ -80,7 +81,7 @@ const vary = (src, from, to) => { assert.ok(from instanceof RegExp ? from.test(s
 const H = ['O1', 'H1', 'H2', 'H3', 'X'];
 
 test('php-01: untouched is green with no transfer; each port fails the hazard it drops, the reference passes all', async (t) => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-fixture-'));
+  const dir = tmpdir('bench-fixture-');
   const dst = path.join(dir, 'php-01');
   try {
     build.build({ dst });
