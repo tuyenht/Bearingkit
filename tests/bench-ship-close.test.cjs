@@ -197,8 +197,11 @@ test('close-01: the handoff carries the session\'s local date, and reset rebuild
 test('the dry run of each task prints the planned floor sessions and runs nothing', (t) => {
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'bk-p6-profile-'));
   t.after(() => fs.rmSync(profile, { recursive: true, force: true }));
+  // The fixtures' DST is a Windows path ('C:/Projects/...'), absolute there, so the directory the run starts in does
+  // not matter. Elsewhere it resolves against that directory, and from the repository the memory check finds the
+  // repository's own CLAUDE.md above it and refuses: the run starts in the temp directory instead.
   for (const id of ['ship-01', 'ship-02', 'close-01']) {
-    const r = sh(ROOT, process.execPath, [path.join(ROOT, 'bin', 'bearingkit.cjs'), 'bench', '--task', id, '--config-dir', profile, '--branches', 'F', '--runs', '3', '--model', 'claude-sonnet-5-5', '--dry-run']);
+    const r = sh(os.tmpdir(), process.execPath, [path.join(ROOT, 'bin', 'bearingkit.cjs'), 'bench', '--task', id, '--config-dir', profile, '--branches', 'F', '--runs', '3', '--model', 'claude-sonnet-5-5', '--dry-run']);
     assert.equal(r.status, 0, r.stdout + r.stderr);
     assert.equal(r.stdout, '3 sessions: nF1 nF2 nF3\n', id);
   }

@@ -529,13 +529,20 @@ test('each run gets a results folder of its own, named for its model', () => {
   fs.rmSync(root, { recursive: true, force: true });
 });
 
-// A session that outlives its kill is given up after a grace period and marked an orphan, so the run can stop
-// instead of waiting on it (2026-09-25: a stalled session ran 2,663 seconds against a 900-second limit).
+// runSession hands `bin` to cmd.exe as one command line on Windows, but elsewhere to spawn() as the program itself,
+// where "node <file>" names no program and the session is lost at once. Off Windows the script runs behind an
+// executable wrapper that execs node, so the pid the runner kills is node's.
+const nodeBin = (file) => {
+  if (process.platform === 'win32') return `node ${file}`;
+  const bin = `${file}.sh`;
+  fs.writeFileSync(bin, `#!/bin/sh\nexec "${process.execPath}" "${file}" "$@"\n`, { mode: 0o755 });
+  return bin;
+};
 const sleeper = () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bench-sleeper-'));
   const file = path.join(dir, 'sleep.cjs');
   fs.writeFileSync(file, 'setTimeout(() => {}, 4000);\n');
-  return { dir, bin: `node ${file}` };
+  return { dir, bin: nodeBin(file) };
 };
 const sessionOpts = (bin, extra) => ({ bin, turns: 1, model: 'x', configDir: os.tmpdir(), cwd: os.tmpdir(), seconds: 0.3, ...extra });
 const treeKill = (pid) => (process.platform === 'win32' ? require('node:child_process').spawnSync('taskkill', ['/T', '/F', '/PID', String(pid)], { stdio: 'ignore' }) : process.kill(pid, 'SIGKILL'));
@@ -558,9 +565,9 @@ test('a session sees the task directory first on its PATH', async () => {
   const file = path.join(dir, 'echo.cjs');
   fs.writeFileSync(file, "process.stdout.write(String(process.env.PATH || process.env.Path).split(require('node:path').delimiter)[0]);\n");
   const first = path.join(dir, 'toolchain');
-  const s = await runSession('p', { settings: {}, pluginDirs: [] }, sessionOpts(`node ${file}`, { seconds: 30, pathPrepend: first }));
+  const s = await runSession('p', { settings: {}, pluginDirs: [] }, sessionOpts(nodeBin(file), { seconds: 30, pathPrepend: first }));
   assert.equal(s.raw, first);
-  const plain = await runSession('p', { settings: {}, pluginDirs: [] }, sessionOpts(`node ${file}`, { seconds: 30 }));
+  const plain = await runSession('p', { settings: {}, pluginDirs: [] }, sessionOpts(nodeBin(file), { seconds: 30 }));
   assert.notEqual(plain.raw, first, 'without the field the session has the runner\'s own PATH');
   fs.rmSync(dir, { recursive: true, force: true });
 });
@@ -573,6 +580,8 @@ test('a session its kill ends is cut, not an orphan', async () => {
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
+// A session that outlives its kill is given up after a grace period and marked an orphan, so the run can stop
+// instead of waiting on it (2026-09-25: a stalled session ran 2,663 seconds against a 900-second limit).
 test('a session that outlives its kill is given up as an orphan after the grace period', async () => {
   const { dir, bin } = sleeper();
   const t0 = Date.now();
