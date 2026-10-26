@@ -34,7 +34,8 @@ jobs:
       # nor sqlite3 (run 2, 51fc655). The Windows jobs install the PHP the fixture was written against (8.2, the stack
       # card's version) with that extension; with it php-01 passed (run 2). The Linux jobs pass with the image's PHP.
       - if: runner.os == 'Windows'
-        uses: shivammathur/setup-php@v2
+        # A third-party action, so it is pinned to a commit: the one tag v2 resolved to in run 5 (ae7b8df).
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
           php-version: "8.2"
           extensions: pdo_sqlite, sqlite3
