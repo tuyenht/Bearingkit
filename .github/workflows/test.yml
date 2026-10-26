@@ -23,10 +23,10 @@ jobs:
     timeout-minutes: 30
     steps:
       # plan-run's test reads frozen commits far back in history, so the checkout is not shallow.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node }}
       # php-01's fixture runs on PDO SQLite, which the PHP that windows-latest ships does not load: with it the
@@ -42,4 +42,27 @@ jobs:
       - run: git config --global user.name ci
       - run: git config --global user.email ci@example.invalid
       - run: node --version
+      # The suite gets an empty temp folder of its own (TMPDIR on Linux, TEMP and TMP on Windows), so what it leaves
+      # behind can be counted. Leftovers are reported as a warning, not a failure: the suite removes its directories
+      # best effort (tests/fixtures/tmpdir.cjs and the tests that clean up after themselves), and a directory Windows
+      # still holds open may stay.
+      - shell: bash
+        run: |
+          node -e 'require("fs").mkdirSync(require("path").join(process.env.RUNNER_TEMP, "suite-tmp"), { recursive: true })'
       - run: node --test "tests/**/*.test.cjs"
+        env:
+          TMPDIR: ${{ runner.temp }}/suite-tmp
+          TEMP: ${{ runner.temp }}/suite-tmp
+          TMP: ${{ runner.temp }}/suite-tmp
+      - if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          node -e '
+            const dir = require("path").join(process.env.RUNNER_TEMP, "suite-tmp");
+            const fs = require("fs");
+            if (!fs.existsSync(dir)) process.exit(0);
+            const left = fs.readdirSync(dir);
+            console.log(`entries the suite left in its temp folder: ${left.length}`);
+            for (const n of left.slice(0, 50)) console.log(`  ${n}`);
+            if (left.length) console.log(`::warning::the suite left ${left.length} entries in its temp folder`);
+          '
