@@ -2,7 +2,7 @@
 
 Phiên cloud, Linux (Node `v22.22.0`), trên nhánh `claude/adoring-einstein-sjl4he`, cắt từ `main` ở `b7fb847`. Không merge, không đẩy lên `main`. **Phiên owner đọc trước:** handoff này chỉ ghi việc của phiên cloud; trạng thái của dự án vẫn là Block 2 của `docs/handoff/2026-10-16-p6-stage0.md`.
 
-`docs/autopilot/state.md` đọc đầu phiên: `State: PAUSE`, nên phần 1 chỉ làm đúng hai việc brief nêu tên; phần 2 và phần 3 làm theo hai lời owner sau đó (mục "Phần 2", "Phần 3"; phần 3 chỉ đổi `.github/workflows/test.yml` và handoff này). Phiên không sửa `docs/status.md`, `docs/autopilot/decisions.md`, `AGENTS.md`, `state.md`, handoff khác hay `skills/` (brief cấm), nên dòng "sáu test đỏ trên Linux" ở `docs/handoff/2026-10-16-p6-stage0.md:51` vẫn ghi là việc còn mở (`docs/autopilot/decisions.md:309` ghi sáu test đó, và ghi nguyên nhân là đoán, chưa kiểm); `docs/status.md` không có dòng nào về Linux (dòng Test ở `docs/status.md:25` chỉ ghi Windows).
+`docs/autopilot/state.md` đọc đầu phiên: `State: PAUSE`, nên phần 1 chỉ làm đúng hai việc brief nêu tên; phần 2, 3 và 4 làm theo ba lời owner sau đó (mục "Phần 2", "Phần 3", "Phần 4"; phần 3 và 4 chỉ đổi `.github/workflows/test.yml` và handoff này). Phiên không sửa `docs/status.md`, `docs/autopilot/decisions.md`, `AGENTS.md`, `state.md`, handoff khác hay `skills/` (brief cấm), nên dòng "sáu test đỏ trên Linux" ở `docs/handoff/2026-10-16-p6-stage0.md:51` vẫn ghi là việc còn mở (`docs/autopilot/decisions.md:309` ghi sáu test đó, và ghi nguyên nhân là đoán, chưa kiểm); `docs/status.md` không có dòng nào về Linux (dòng Test ở `docs/status.md:25` chỉ ghi Windows).
 
 ## Lời mở phiên của owner
 
@@ -93,7 +93,7 @@ Node: `v22.23.4` và `v24.22.1` trên Windows, `v22.23.3` và `v24.21.0` trên U
 - `package.json` ghi `engines: >=20`, nhưng lệnh suite cần Node ≥ 21 (glob của `node --test`; theo hiểu biết chung, chưa kiểm trên Node 20); CI không chạy Node 20. Sửa `engines` là việc của owner.
 - `docs/status.md` mục 12 ("README EN+VI, CI, marketplace, publish…", **0/4**) chưa cập nhật; CI chỉ vào `main` khi owner merge.
 - Log CI (job Windows Node 22, lượt 1, phiên đọc trực tiếp) cảnh báo `actions/checkout@v4`, `actions/setup-node@v4` nhắm Node 20 đã bị ép chạy Node 24 (đã đổi lên `v5` ở phần 3, `ae7b8df`).
-- `setup-php` ghim theo tag `v2`, không theo SHA (vẫn mở).
+- `setup-php` ghim theo tag `v2`, không theo SHA (đã ghim theo SHA ở phần 4, `62e8c93`).
 - Khi push, GitHub báo Dependabot thấy 228 lỗ hổng trên nhánh mặc định (39 critical, 60 high, 105 moderate, 24 low). Chưa xem là ở file nào; chưa kiểm (xem phần 3).
 - Không xóa 311 thư mục tạm của container cloud (container sẽ bị thu hồi).
 
@@ -122,6 +122,19 @@ Lời owner, nguyên văn: "Audit kỹ các xử lý cũng như các phản hồ
 
 Kết luận về Việc 2: trên runner Windows, 4 lần đếm đều 0 mục; trên Ubuntu, 1 lần trong 4 lần đếm còn một thư mục `bench-fixture-*` (không phải `bk-*` của helper). Mọi test tạo `bench-fixture-` đều tự `rmSync` đồng bộ khi test xanh (`py-01`, `node-01`, `php-01` trong `finally`, các test khác ở cuối thân test); tiến trình con còn sống ghi lại sau khi xóa là phỏng đoán, chưa kiểm. Không chạy lại CI nhiều lần để săn lỗi này; lần sau nó xuất hiện, bước báo cáo in nội dung của nó.
 
+## Phần 4 · Audit lần ba theo lời owner (cùng phiên)
+
+Lời owner giống hệt lần hai. Phần này chỉ đổi `.github/workflows/test.yml` và handoff này.
+
+**Kết quả audit phần 3:** phần 3 lại kết thúc mà chưa đọc số đếm thư mục tạm của lượt CI do chính commit handoff của nó (`541b383`, lượt 7) tạo ra, đúng lỗi phần 3 đã chỉ ra cho phần 2; nay đã đọc (dưới đây). Hai việc còn mở nằm trong phạm vi phiên: ghim `setup-php` theo SHA, và nguồn của thư mục `bench-fixture-*` còn sót.
+
+**Đã làm:**
+- `62e8c93`: `shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2`, đúng commit mà tag `v2` trỏ tới trong log lượt 5 và 6. Hai action của `actions/` giữ theo tag; chú thích chỉ nói `setup-php` được ghim vì là action bên thứ ba, lý do giữ tag cho `actions/` là suy ra từ đó. Không có công cụ tự cập nhật bản ghim; đổi bằng tay. Cổng: suite một mình trên bản cuối xanh (279, 275 pass, 0 fail, 4 skip); reviewer 1 vòng (0 must-fix; 2 should-fix: một về danh sách commit trong handoff, đã làm; một tùy chọn về chú thích, không làm). Handoff phần 4: 2 vòng (vòng 1: 2 must-fix, thiếu lượt 7 trong số đếm và trỏ sai mục, đã sửa; vòng 2: 0 must-fix, bốn should-fix đã làm).
+- CI lượt 7 (`541b383`): xanh cả 4 job; Windows 279, 276 pass, 0 fail, 3 skip; Ubuntu 279, 275 pass, 0 fail, 4 skip; thư mục tạm: 0 mục ở cả 4 job; bước suite trên Ubuntu khoảng 48 và 49 s.
+- CI lượt 8 (`62e8c93`): xanh cả 4 job; Windows 279, 276 pass, 0 fail, 3 skip; log Windows tải đúng SHA đã ghim, PHP 8.2.35; thư mục tạm: 0 mục ở cả 4 job.
+
+**Không làm:** không chạy thêm CI để săn thư mục `bench-fixture-*` còn sót. Từ lượt 5 đến lượt 8: 1 trong 8 lần đếm trên Ubuntu có nó (lượt 5, job `lts/*`, log in `v24.21.0`), 0 trong 8 lần đếm trên Windows. Nguồn chưa rõ. Hai giả thuyết đã xét, đều chưa kiểm: (1) một `spawnSync` có `timeout` chạy `node --test` (`evals/bench/test-01/build.cjs:69`, `build-01/build.cjs:52`, `node-01/build.cjs:54`, `debug-01/build.cjs:70`) chỉ giết tiến trình cha khi timeout (120 s, `node-01` 180 s) nổ, để tiến trình con ghi lại sau khi test xóa thư mục; yếu, vì suite trên Ubuntu chạy dưới 51 s ở mọi lượt đã đọc, kể cả lượt 5 có thư mục sót (`duration_ms` 45401 ở job `lts/*`), không tới timeout, và cơ chế này giống nhau trên hai hệ điều hành; (2) `evals/bench/node-01/build.cjs:101-103` giết cả cây trên Windows nhưng chỉ tiến trình con trực tiếp trên Linux; yếu, vì `evals/bench/node-01/app/bin/stock.cjs` và `app/src/*.cjs` không tạo tiến trình con nào (đã grep `spawn`, `child_process`, `exec(`). Bước báo cáo của CI sẽ in nội dung thư mục ở lần nó xuất hiện tiếp theo; sửa sau khi có dữ liệu đó.
+
 ## Không làm, nói thẳng
 
 - **Không chạy trên máy owner.** Windows chỉ đã chạy trên runner GitHub (`windows-latest`); máy owner có thể khác (PHP, PowerShell, đường dẫn, `%TEMP%`).
@@ -133,7 +146,7 @@ Kết luận về Việc 2: trên runner Windows, 4 lần đếm đều 0 mục;
 ## Bước tiếp theo cho phiên owner
 
 1. Trên máy owner: `node --test "tests/**/*.test.cjs"` trên nhánh này; kỳ vọng xanh (trừ skip của máy owner). Việc đếm thư mục tạm nay CI làm tự động trên runner; trên máy owner chỉ cần xem nếu muốn.
-2. Quyết định merge (việc của owner): nhận hay bỏ `a62c307` và CI (`3998187`, `51fc655`, `7577b24`, `ae7b8df`, `32cee3b`). Nếu nhận CI: mỗi lần push chạy 4 job, và push lên nhánh có PR mở chạy thêm 4 job cho PR; bước suite mất 44–47 s trên Ubuntu và 166–193 s trên Windows (lượt 2 và 3). Kết quả ở tab Actions; cảnh báo thư mục tạm in trong log của bước báo cáo (và, theo hiểu biết chung về GitHub, ở phần Annotations của run).
+2. Quyết định merge (việc của owner): nhận hay bỏ `a62c307` và CI (`3998187`, `51fc655`, `7577b24`, `ae7b8df`, `32cee3b`, `62e8c93`). Nếu nhận CI: mỗi lần push chạy 4 job, và push lên nhánh có PR mở chạy thêm 4 job cho PR; bước suite mất 44–47 s trên Ubuntu và 166–193 s trên Windows (lượt 2 và 3). Kết quả ở tab Actions; cảnh báo thư mục tạm in trong log của bước báo cáo (và, theo hiểu biết chung về GitHub, ở phần Annotations của run).
 3. Sau merge: đóng mục "sáu test đỏ trên Linux" trong handoff mới của phiên owner, ghi nhật ký, cập nhật dòng Test (`docs/status.md:25`) và mục 12 nếu cần.
 
 ## Đã xong
@@ -142,12 +155,13 @@ Kết luận về Việc 2: trên runner Windows, 4 lần đếm đều 0 mục;
 - `745aae6`: suite không còn để lại `bk-*` (102 thành 0, đo bằng `TMPDIR` riêng).
 - `a62c307`: thông báo rõ khi clone nông.
 - `3998187`, `51fc655`, `7577b24`: CI 4 job; Windows trên runner: 279, 276 pass, 0 fail, 3 skip (lượt 2).
-- `ae7b8df`, `32cee3b`: action v5; CI tự đếm và liệt kê những gì suite để lại trong thư mục tạm (lượt 6: 0 ở cả 4 job).
+- `ae7b8df`, `32cee3b`: action v5; CI tự đếm và liệt kê những gì suite để lại trong thư mục tạm (lượt 6, 7 và 8: 0 ở cả 4 job).
+- `62e8c93`: `setup-php` ghim theo SHA.
 - Handoff này; nhánh `claude/adoring-einstein-sjl4he` đã đẩy.
 
 ## Còn lại
 
 - Chạy suite trên máy owner; merge là của owner.
 - Ghi một mục nhật ký và đóng mục "sáu test đỏ trên Linux" trong handoff mới của phiên owner.
-- Các đề xuất còn mở ở "Không làm ở phần 2" (Setup script, `engines`, mục 12 của `docs/status.md`, Dependabot, ghim `setup-php` theo SHA).
-- Thư mục `bench-fixture-*` thỉnh thoảng còn sót trên Ubuntu (1 lần trong 4 lần đếm): chờ CI in nội dung của nó lần sau rồi mới sửa.
+- Các đề xuất còn mở ở "Không làm ở phần 2" (Setup script, `engines`, mục 12 của `docs/status.md`, Dependabot), và ở kết quả audit phần 3 (có đưa `evals/` vào gói npm hay không).
+- Thư mục `bench-fixture-*` thỉnh thoảng còn sót trên Ubuntu (1 lần trong 8 lần đếm, lượt 5 đến 8): chờ CI in nội dung của nó lần sau rồi mới sửa.
