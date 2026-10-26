@@ -29,6 +29,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
+      # php-01's fixture runs on PDO SQLite. With the PHP that windows-latest ships, its untouched check failed (run 1
+      # of this workflow; a missing pdo_sqlite is the likely cause, not confirmed). The Windows jobs list the image's
+      # PHP modules first, to confirm or rule that out, then install the PHP the fixture was written against (8.2, the
+      # stack card's version) with that extension. The Linux jobs were green with the image's own PHP.
+      - if: runner.os == 'Windows'
+        run: php -m
+        continue-on-error: true
+      - if: runner.os == 'Windows'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pdo_sqlite, sqlite3
+      - if: runner.os == 'Windows'
+        run: php -m
       # Fixture builders and tests commit into temp repositories; a runner has no git identity of its own.
       - run: git config --global user.name ci
       - run: git config --global user.email ci@example.invalid
