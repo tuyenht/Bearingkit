@@ -2,6 +2,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
+const { tmpdir } = require('./fixtures/tmpdir.cjs');
 const { parseStream, loadPrompts, summarize, checklist } = require('../scripts/evals.cjs');
 
 const streamWithSkill = [
@@ -258,8 +259,7 @@ test('the run stops on either window, not only the five-hour one', () => {
 test('a profile that does not enable the inline plugin stops the run before any session', () => {
   const { preflight } = require('../scripts/evals.cjs');
   const fs = require('node:fs');
-  const os = require('node:os');
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bk-prof-'));
+  const dir = tmpdir('bk-prof-');
   const root = path.join(__dirname, '..');
   const stop = preflight({ _: [], 'config-dir': dir, 'plugin-dir': root });
   assert.equal(stop.exit, 2);
@@ -311,7 +311,7 @@ test('the fixture is staged outside the repository so the repository CLAUDE.md d
   const repo = path.join(__dirname, '..');
   const inRepo = ancestorMemoryFiles(path.join(repo, 'evals', 'fixtures', 'sample-app'));
   assert.ok(inRepo.some((f) => path.resolve(f) === path.resolve(repo, 'CLAUDE.md')), 'the in-repo fixture sits under the repository CLAUDE.md');
-  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'bk-stage-'));
+  const base = tmpdir('bk-stage-');
   const staged = stageFixture(repo, base);
   assert.equal(staged.cwd, path.join(base, 'sample-app'));
   assert.ok(fs.existsSync(path.join(staged.cwd, 'package.json')));
@@ -319,7 +319,7 @@ test('the fixture is staged outside the repository so the repository CLAUDE.md d
   assert.ok(!fs.existsSync(path.join(staged.cwd, 'CLAUDE.md')));
   assert.ok(!staged.ancestors.some((f) => path.resolve(f) === path.resolve(repo, 'CLAUDE.md')));
   // Ancestor detection covers the project-memory locations Claude Code reads on the way up: CLAUDE.md, .claude/CLAUDE.md, .claude/rules/.
-  const tree = fs.mkdtempSync(path.join(os.tmpdir(), 'bk-anc-'));
+  const tree = tmpdir('bk-anc-');
   fs.mkdirSync(path.join(tree, '.claude', 'rules'), { recursive: true });
   fs.writeFileSync(path.join(tree, '.claude', 'CLAUDE.md'), 'daily profile');
   fs.writeFileSync(path.join(tree, '.claude', 'rules', 'x.md'), 'rule');
@@ -329,10 +329,10 @@ test('the fixture is staged outside the repository so the repository CLAUDE.md d
   assert.ok(above.some((f) => f === path.resolve(tree, '.claude', 'rules')), 'finds .claude/rules in an ancestor');
   // The staging base skips candidates whose ancestors carry memory files.
   const { chooseStageBase } = require('../scripts/evals.cjs');
-  const foreign = fs.mkdtempSync(path.join(os.tmpdir(), 'bk-foreign-'));
+  const foreign = tmpdir('bk-foreign-');
   fs.writeFileSync(path.join(foreign, 'CLAUDE.md'), 'foreign');
   assert.equal(chooseStageBase(repo, [path.join(tree, 'a', 'evals'), path.join(foreign, 'evals')]), null, 'both candidates sit under memory files');
-  const clean = ancestorMemoryFiles(os.tmpdir()).length === 0 ? fs.mkdtempSync(path.join(os.tmpdir(), 'bk-clean-')) : null;
+  const clean = ancestorMemoryFiles(os.tmpdir()).length === 0 ? tmpdir('bk-clean-') : null;
   if (clean) assert.equal(chooseStageBase(repo, [path.join(foreign, 'evals'), path.join(clean, 'evals')]), path.join(clean, 'evals'), 'the first clean candidate wins');
   if (staged.vcs) assert.ok(fs.existsSync(path.join(staged.cwd, ['.', 'git'].join(''))), 'throwaway history present');
   const again = stageFixture(repo, base);

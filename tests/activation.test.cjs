@@ -2,12 +2,12 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
+const { tmpdir } = require('./fixtures/tmpdir.cjs');
 const { spawnSync } = require('node:child_process');
 const { activate, deactivate, status, storePath, PLUGIN_ID, AGENTS_FILE, CLAUDE_FILE } = require('../scripts/activation.cjs');
 
-const tmp = (p) => fs.mkdtempSync(path.join(os.tmpdir(), `bk-${p}-`));
+const tmp = (p) => tmpdir(`bk-${p}-`);
 const readJson = (f) => JSON.parse(fs.readFileSync(f, 'utf8'));
 const git = (cwd, args) => spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t.invalid', ...args], { cwd, encoding: 'utf8' });
 

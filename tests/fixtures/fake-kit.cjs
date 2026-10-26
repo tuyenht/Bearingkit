@@ -3,13 +3,13 @@
 // run pointed at this kit exercises the bootstrap check too. Shared by the install test and the doctor test; neither
 // ever points at the checkout's live plugin copy.
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
+const { tmpdir } = require('./tmpdir.cjs');
 
 const HOOK = path.join(__dirname, '..', '..', 'hooks', 'session-start.cjs');
 
 function fakeKit() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'bk-kit-'));
+  const root = tmpdir('bk-kit-');
   fs.mkdirSync(path.join(root, '.antigravity'), { recursive: true });
   fs.writeFileSync(path.join(root, '.antigravity', 'plugin.json'), '{"name":"bearingkit","version":"0.0.0","description":"t"}\n');
   fs.mkdirSync(path.join(root, 'skills', 'bk-protocol', 'references'), { recursive: true });

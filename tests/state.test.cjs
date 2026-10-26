@@ -2,11 +2,11 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
+const { tmpdir } = require('./fixtures/tmpdir.cjs');
 const { State } = require('../scripts/lib/state.cjs');
 
-const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'bk-state-'));
+const tmp = () => tmpdir('bk-state-');
 
 test('creates a file with defaults and reads it back', () => {
   const s = new State({ host: 'claude', sessionId: 'abc', cwd: 'C:\\x', baseDir: tmp() });

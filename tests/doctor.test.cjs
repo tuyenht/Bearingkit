@@ -2,8 +2,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
+const { tmpdir } = require('./fixtures/tmpdir.cjs');
 const { spawnSync } = require('node:child_process');
 const { install } = require('../scripts/antigravity.cjs');
 const { fakeKit, snapshot, assertRuleComplete } = require('./fixtures/fake-kit.cjs');
@@ -11,7 +11,7 @@ const { fakeKit, snapshot, assertRuleComplete } = require('./fixtures/fake-kit.c
 const ROOT = path.resolve(__dirname, '..');
 const BIN = path.join(ROOT, 'bin', 'bearingkit.cjs');
 
-function fakeHome() { return fs.mkdtempSync(path.join(os.tmpdir(), 'bk-home-')); }
+function fakeHome() { return tmpdir('bk-home-'); }
 function destIn(home) { return path.join(home, '.gemini', 'config', 'plugins', 'bearingkit'); }
 
 // The invariant is about the command the owner runs, so it is measured on the command, in a home of its own: node
