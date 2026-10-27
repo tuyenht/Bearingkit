@@ -17,18 +17,21 @@ Gõ trong phiên này (bằng nút của phiên), nguyên văn: "Tôi duyệt me
 
 **CI**: lần chạy đầu của workflow trên `main` (run `40547791086`): cả bốn job `success` (ubuntu và windows, Node 22 và `lts/*`), xong lúc 2026-10-27 17:12:00Z; ở các job mà log in tổng số: windows `lts/*` 296 test, 293 pass, 0 fail, 3 skip; ubuntu `lts/*` 296 test, 292 pass, 0 fail, 4 skip; bước báo cáo của cả bốn job: "entries the suite left in its temp folder: 0".
 
+**Sau merge: phiên tự kiểm việc của mình, theo lời owner** ("Audit kỹ các xử lý cũng như các phản hồi ở trên…", mục 64; đọc là lời cho việc trong repo, không cho việc vẫn là của owner). Phiên tìm ra: brief của auditor A ghi nhầm 17 commit (đúng là 16; đã sửa trước commit kiểm toán); sáu commit merge được hai reviewer đọc cả dải, không phải một reviewer cho mỗi commit; dòng "Cập nhật" của `docs/status.md` còn tả phiên 13; mục "sáu test đỏ trên Linux" mới đóng ở handoff, nay đóng ở nhật ký. Đã làm (việc trong repo, ACT theo `AGENTS.md`; mục 63 từng xếp chúng là của owner vì nằm ngoài lời duyệt merge): chú thích `tests/bench.test.cjs:7-9` theo chữ reviewer; glob của `npm test` có nháy (`pnpm test`: 296/296; một lần thử kèm tham số lọc tên cho 2 test đỏ trong 294, chưa truy); dòng "Cập nhật"; review bù cho `c6c110c` (kết quả trong thông điệp commit). Không đổi (phiên chấp nhận; owner có thể đọc khác): `catch {}` của helper, đường dẫn `\` của `record-guardrail`. Gỡ lại sau review: khối `concurrency` của `test.yml`, vì phiên cloud đã bỏ nó (có thể hủy nhầm lượt chạy) và trên `main` nó hủy lượt chạy của commit trước, làm mất bằng chứng theo từng commit; vẫn là việc của owner.
+
 ## Block 2 · Resume payload
 
 ### State
 
-Như Block 2 của `docs/handoff/2026-10-26-p6-scorer.md` với các chỗ đổi của Block 2 của `docs/handoff/2026-10-27-cloud-branch-windows.md` và `docs/handoff/2026-10-27-audit-session.md`, trừ: `main` có thêm sáu commit merge (`c95617e` tới `7a7b343`) và commit bản ghi này; nhánh cloud đã vào `main` (nhánh `origin/claude/adoring-einstein-sjl4he` vẫn còn, không xóa); mục "sáu test đỏ trên Linux" đóng: suite xanh trên Linux theo CI của nhánh, và trên Windows ở đây; **bộ đếm kiểm toán 1** (đoạn merge sau kiểm toán tính là một phiên; owner có thể đọc khác).
+Như Block 2 của `docs/handoff/2026-10-26-p6-scorer.md` với các chỗ đổi của Block 2 của `docs/handoff/2026-10-27-cloud-branch-windows.md` và `docs/handoff/2026-10-27-audit-session.md`, trừ: `main` có thêm sáu commit merge (`c95617e` tới `7a7b343`), commit bản ghi `396711c` và commit của mục 64; nhánh cloud đã vào `main` (nhánh `origin/claude/adoring-einstein-sjl4he` vẫn còn, không xóa); mục "sáu test đỏ trên Linux" đóng: suite xanh trên Linux theo CI của nhánh, và trên Windows ở đây; **bộ đếm kiểm toán 1** (đoạn merge sau kiểm toán tính là một phiên; owner có thể đọc khác).
 
 ### Decisions waiting on the owner
 
-1. Năm should-fix của reviewer đối kháng (mục 63): CI chạy ở mọi push vào mọi nhánh, không `concurrency` (đề nghị `push: { branches: [main] }` và `concurrency`; việc của owner vì là giá); `catch {}` của `tests/fixtures/tmpdir.cjs` nuốt mọi lỗi; chú thích "CI runs 5 and 9" ở `tests/bench.test.cjs:7-9`; bốn test của `record-guardrail` nay đưa đường dẫn `\` trên Windows; `npm test` trong `package.json` để glob không nháy.
-2. `b8e1545`, phát hiện 3 tới 6 và 8 của mục 62, bài học trong bộ nhớ host: như `docs/handoff/2026-10-27-audit-session.md`.
-3. Hơn 2900 thư mục `bk-*` trong `%TEMP%`: xóa hay giữ (xóa dữ liệu là của owner).
-4. Các mục chờ owner khác của các handoff trước: không đổi.
+1. `b8e1545`: một vòng review thứ bảy (reviewer sự thật và reviewer đối kháng mới) hay chấp nhận như hiện có; khuyến nghị: vòng bảy, vì nhóm từ C1 quyết T8 và U8 trước giai đoạn 1.
+2. Bài học trong bộ nhớ host (mục 61): khuyến nghị giữ và xác nhận.
+3. 2.915 thư mục `bk-*` trong `%TEMP%`: khuyến nghị xóa (xóa dữ liệu là của owner).
+4. CI: lọc trigger `push` chỉ còn `main` (khuyến nghị không) và khối `concurrency` (khuyến nghị không, vì mất bằng chứng theo từng commit; mục 64). Phát hiện 5, 6 và 8 của mục 62: cân nhắc hay chấp nhận.
+5. Các mục chờ owner khác của các handoff trước: không đổi.
 
 ### Open threads
 
@@ -44,4 +47,4 @@ Như Block 2 của `docs/handoff/2026-10-26-p6-scorer.md` với các chỗ đổ
 
 ### Resume prompt
 
-Resume prompt của `docs/handoff/2026-10-26-p6-scorer.md` với các chỗ đổi của hai file 2026-10-27, trừ: "bộ đếm kiểm toán 1"; đọc thêm file này ngay sau `docs/handoff/2026-10-27-audit-session.md`; phép kiểm `main` được nới thêm cho sáu commit merge và commit bản ghi này; suite trên `main` nay có `tests/fixtures/tmpdir.cjs`.
+Resume prompt của `docs/handoff/2026-10-26-p6-scorer.md` với các chỗ đổi của hai file 2026-10-27, trừ: "bộ đếm kiểm toán 1"; đọc thêm file này ngay sau `docs/handoff/2026-10-27-audit-session.md`; phép kiểm `main` được nới thêm cho sáu commit merge, `396711c` và commit của mục 64; suite trên `main` nay có `tests/fixtures/tmpdir.cjs`.

@@ -4,9 +4,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-// bench-fixture- directories also go through the helper: one was left behind on Linux, Node 24, in each of CI runs 5
-// and 9 (in run 9 review-02's, which its test below removes with rmSync; cause unknown), and the helper tries again
-// when the file's tests are over.
+// bench-fixture- directories also go through the helper: a bench-fixture directory was seen left behind on Linux,
+// Node 24, in two CI runs of the cloud branch; cause unknown; the helper removes it again.
 const { tmpdir } = require('./fixtures/tmpdir.cjs');
 const { splitItems, scoreAnswer, usageFrom, invocations, median, summarize, tokensComparable, perDefect } = require('../scripts/lib/bench-score.cjs');
 const { loadTask, branchSetup, promptFor, schedule, preflight, rescore, runSession, withPath } = require('../scripts/bench.cjs');
