@@ -1,0 +1,90 @@
+name: test
+
+# The suite on both platforms the kit is developed on: Windows is the owner's machine, Linux the cloud sessions'.
+# No measurement runs here: the suite calls `bearingkit bench` only with --dry-run, and its runner tests start fake
+# sessions, never the `claude` binary.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  suite:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        # `node --test` takes a glob only from Node 21, so Node 20 (package.json engines: >=20) is not in the matrix.
+        node: ["22", "lts/*"]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      # plan-run's test reads frozen commits far back in history, so the checkout is not shallow.
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+      # php-01's fixture runs on PDO SQLite, which the PHP that windows-latest ships does not load: with it the
+      # untouched check failed, and its `php -m` lists PDO but neither pdo_sqlite nor sqlite3. The Windows jobs
+      # install the PHP the fixture was written against (8.2, the stack card's version) with that extension; with it
+      # php-01 passed. The Linux jobs pass with the image's PHP.
+      - if: runner.os == 'Windows'
+        # A third-party action, so it is pinned to a commit: the one its tag v2 resolves to (git ls-remote, 2026-10-27).
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
+        with:
+          php-version: "8.2"
+          extensions: pdo_sqlite, sqlite3
+      # Fixture builders and tests commit into temp repositories; a runner has no git identity of its own.
+      - run: git config --global user.name ci
+      - run: git config --global user.email ci@example.invalid
+      - run: node --version
+      # The suite gets an empty temp folder of its own (TMPDIR on Linux, TEMP and TMP on Windows), so what it leaves
+      # behind can be counted. Leftovers are reported as a warning, not a failure: the suite removes its directories
+      # best effort (tests/fixtures/tmpdir.cjs and the tests that clean up after themselves), and a directory Windows
+      # still holds open may stay.
+      - shell: bash
+        run: |
+          node -e 'require("fs").mkdirSync(require("path").join(process.env.RUNNER_TEMP, "suite-tmp"), { recursive: true })'
+      - run: node --test "tests/**/*.test.cjs"
+        env:
+          TMPDIR: ${{ runner.temp }}/suite-tmp
+          TEMP: ${{ runner.temp }}/suite-tmp
+          TMP: ${{ runner.temp }}/suite-tmp
+      - if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          node -e '
+            // Never fails the job: every read is guarded, and leftovers only raise a warning.
+            const fs = require("fs");
+            const path = require("path");
+            const dir = path.join(process.env.RUNNER_TEMP, "suite-tmp");
+            let left = [];
+            try { left = fs.readdirSync(dir, { withFileTypes: true }); } catch (err) {
+              if (err.code !== "ENOENT") console.log(`temp folder unreadable: ${err.code || err.message}`);
+              process.exit(0);
+            }
+            console.log(`entries the suite left in its temp folder: ${left.length}`);
+            // The first ten entries with what is inside them (three levels, at most 40 paths each), so the test that
+            // left them can be traced; further entries by name only, up to 50.
+            const walk = (d, rel, depth, out) => {
+              for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+                if (out.length >= 40) { out.push("..."); return false; }
+                const r = rel + e.name + (e.isDirectory() ? "/" : "");
+                out.push(r);
+                if (e.isDirectory() && depth < 3 && walk(path.join(d, e.name), r, depth + 1, out) === false) return false;
+              }
+              return true;
+            };
+            left.slice(0, 50).forEach((e, i) => {
+              if (i >= 10 || !e.isDirectory()) { console.log(`  ${e.name}`); return; }
+              const out = [];
+              try { walk(path.join(dir, e.name), "", 1, out); } catch (err) { out.push(`(${err.code || err.message})`); }
+              console.log(`  ${e.name}/: ${out.length ? out.join(", ") : "(empty)"}`);
+            });
+            if (left.length) console.log(`::warning::the suite left ${left.length} entries in its temp folder`);
+          '
