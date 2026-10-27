@@ -22,7 +22,7 @@ Mốc **v0.3**, mục 9 của thứ tự v0.3: `bk-ship` + `bk-close` (P6); năm
 | Nguồn có `derived` (chữ thật đã port) | **4** nguồn, **29** mục dẫn xuất trên **27** file kit | `_build/v03-prep/recount-status-numbers.cjs` |
 | Mục trong `NOTICE` | **3** (anthropics/claude-plugins-official, mattpocock/skills, obra/superpowers) | `grep '^##' NOTICE` |
 | Kiểm kê từng mục (§5.2) | **1.295** mục của **22/22** nguồn: 46 absorb, 610 idea, 639 drop, 0 lệch | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
-| Test | **295/295** xanh trên Windows (2026-10-26, phiên 13) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test "tests/**/*.test.cjs"` |
+| Test | **296/296** xanh trên Windows (2026-10-27, phiên 13) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test "tests/**/*.test.cjs"` |
 | Prompt activation | **96** ở `phase-1.jsonl`, **6** ranh giới, **2** acceptance | `evals/activation/*.jsonl` |
 | Case trong `skills/<name>/tests/` | **17/17** skill, **56** case (`bk-protocol` không cần) | `recount-status-numbers.cjs` |
 | File stack `bk-build/references/stacks/` | **8/8** trên `main` (`typescript-react`, `kotlin`, `sql`, `node`, `python`, `php-laravel`, `shell`, `c-cpp`) | `ls` |
@@ -66,7 +66,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 - **Đo kit so với một chồng gói** (2026-10-08): đề xuất `docs/specs/2026-10-08-kit-vs-stack-proposal.md` (PROPOSED, năm câu hỏi ở cuối); chưa phiên nào chạy.
 - **Trang `bearingkit.dev`** (2026-10-08, `docs/handoff/2026-10-08-site-and-readme.md`): bật GitHub Pages với nguồn "GitHub Actions", đặt custom domain, trỏ DNS; điền mục About của repo (proxy của phiên chặn API settings).
 - **38/38 câu D5 có quyết định** (`docs/specs/2026-09-12-d5-owner-questions.md`). Mới nhất: câu 38 (2026-09-27), cách đo ba file stack còn lại của P4.
-- Việc chờ owner của phiên đang mở: mục Decisions waiting của handoff mới nhất. Mới nhất (`docs/handoff/2026-10-26-p6-scorer.md`): khoản $200 dùng vào việc gì (không phải phiên đo P6); 43 s của `ship-02`; should-fix vòng 5 (nhóm từ C1); phát hiện kiểm toán còn mở.
+- Việc chờ owner của phiên đang mở: mục Decisions waiting của handoff mới nhất. Mới nhất (`docs/handoff/2026-10-26-p6-scorer.md`): khoản $200 dùng vào việc gì (không phải phiên đo P6); xác nhận thu hồi khóa API; should-fix cũ của phiên 11, 12; phát hiện kiểm toán còn mở (43 s, V3, quyền task: khuyến nghị giữ, 2026-10-27).
 
 ## 5. Luồng mở mang từ bản cũ của file này
 

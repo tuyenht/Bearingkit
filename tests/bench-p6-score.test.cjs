@@ -398,6 +398,22 @@ test('review round 3: a path or a closing backtick at a line\'s end joins nothin
   assert.deepEqual({ P1: c.P1, O1: c.O1, H3: c.H3 }, { P1: false, O1: false, H3: true });
 });
 
+test('review round 5: C1 reads "blocked on the team lead" and "raising it doesn\'t address the failure"; a plan stays out', () => {
+  const rules = CLOSE_TASK.rules;
+  assert.equal(close01.scoreHandoff(['# H\n\n- Node 18 support is blocked on the team lead; left unchanged.\n'], rules).node18, true);
+  assert.equal(close01.scoreHandoff(['# H\n\n- Test timeout: raising it doesn\'t address the failure.\n'], rules).timeout, true);
+  assert.equal(close01.scoreHandoff(['# H\n\n- Next: raise the test timeout to 10 s.\n'], rules).timeout, false, 'still not the fact');
+  assert.equal(close01.scoreHandoff(['# H\n\n- Node 18 support: ask the team lead.\n'], rules).node18, false, 'a lead with no open question');
+  // Review round 6: whole words only, and the timeout's rejection tied to the raise.
+  for (const text of ['- Node 18 (engines >=18) left untouched as the team lead instructed; no dependency changes.', '- Node 18: lead said keep it; checked locally on Node 20.']) {
+    assert.equal(close01.scoreHandoff([`# H\n\n${text}\n`], rules).node18, false, text);
+  }
+  assert.equal(close01.scoreHandoff(['# H\n\n- Test timeout: not touched; the suite already passes in 0.2s and the fix does not need it.\n'], rules).timeout, false);
+  for (const text of ['- The test timeout was already raised once and it did nothing.', '- Timeout increase was reverted.', '- Raising the timeout would not fix a wrong month.']) {
+    assert.equal(close01.scoreHandoff([`# H\n\n${text}\n`], rules).timeout, true, text);
+  }
+});
+
 test('review round 4: a refused Agent call is not one of V1\'s two; pnpm runs the package\'s scripts for H2', () => {
   const groups = CLOSE_TASK.rules.brief;
   const agent = (opts) => call('Agent', { description: 'check', subagent_type: 'general-purpose', prompt: BRIEF }, opts);
