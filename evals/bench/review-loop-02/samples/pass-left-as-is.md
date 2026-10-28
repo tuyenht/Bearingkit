@@ -1,0 +1,1 @@
+- `src/csv.js:5` · CSV field corruption · an embedded quote in a value is left as-is, so the field is corrupted.

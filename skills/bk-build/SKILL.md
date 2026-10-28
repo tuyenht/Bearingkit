@@ -24,11 +24,12 @@ description: "Execute a plan or a small change that fits in at most three files:
 - No side effects outside the named files without saying so.
 - No abstraction, option, or error handling for a scenario the plan doesn't have; a diff that could be half the size and still meet it is too big.
 - A hot-path change is flagged for independent review before push.
+- Not done until the review loop has run, unasked: bk-test, then bk-review. Its blocking findings come back here and are fixed in every instance of their bug class; the fix goes back to bk-review as the next round, until a round blocks nothing or bk-review's cap stops the loop and the owner hears what is open. A docs-only or trivial change (formatting, comments, renames) skips the loop and says so.
 
 ## Evidence to paste
-- The `stackFiles` list and the files opened, the scout list, the test runs (red then green), the diff summary.
+- The `stackFiles` list and the files opened, the scout list, the test runs (red then green), the diff summary, the review round that closed the loop.
 
 ## Next step
-- bk-test for the suite, then bk-review; bk-debug on an unexpected failure.
+- bk-test for the suite, then bk-review (Gates); bk-debug on an unexpected failure.
 
 Sources: obra/superpowers 5.1.0 (MIT) via references/executing.md; anthropics/claude-plugins-official (Apache-2.0) `code-modernization` via references/major-upgrade.md; and multica-ai/andrej-karpathy-skills (no license, ideas only: two lines paraphrased into Steps and Gates, no NOTICE entry owed); attribution in NOTICE.
