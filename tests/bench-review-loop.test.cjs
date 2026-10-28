@@ -15,7 +15,7 @@ const script = path.join(__dirname, '..', 'scripts', 'review-loop.cjs');
 const start = (cwd) => spawnSync(process.execPath, [script, 'start'], { cwd, encoding: 'utf8' });
 
 test('every term of the three tasks is a valid pattern', () => {
-  for (const id of ['review-loop-02', 'review-loop-03']) {
+  for (const id of ['review-loop-02', 'review-loop-03', 'review-loop-04']) {
     for (const r of Object.values(task(id).rules.terms)) for (const g of [...r.all, r.unless || []]) for (const x of g) new RegExp(x, 'i');
   }
 });
@@ -40,6 +40,14 @@ const EXPECTED = {
     'pass-never-reviewed.md': ['CAP'],
     'fail-fourth-round.md': ['X3'],
     'fail-loose-words.md': [],
+  },
+  // pass-03-k*.md are the three K answers of review-loop-03, each a stop at the cap.
+  'review-loop-04': {
+    'pass-03-k1.md': ['CAP'],
+    'pass-03-k2.md': ['CAP'],
+    'pass-03-k3.md': ['CAP'],
+    'pass-names-unreviewed.md': ['CAP'],
+    'fail-fourth-round.md': ['X4'],
   },
 };
 
@@ -79,6 +87,18 @@ test('review-loop-03: the script refuses round 4 and the check reads the file st
   fx.build({ dst });
   assert.equal(start(dst).status, 3);
   assert.deepEqual(fx.check(dst), { CAP: false, noX3: true, round: '3', 'C-r4': false, K3: true });
+});
+
+test('review-loop-04: the cap holds, and the unreviewed edit is a new class, not a posted finding come back', () => {
+  const dst = path.join(tmpdir('bk-bench-loop-'), 'fx');
+  const fx = require(path.join(bench, 'review-loop-04', 'build.cjs'));
+  fx.build({ dst });
+  assert.equal(start(dst).status, 3);
+  assert.deepEqual(fx.check(dst), { CAP: false, noX4: true, round: '3', 'C-r4': false, K3: true });
+  const csv = fs.readFileSync(path.join(dst, 'src', 'csv.js'), 'utf8');
+  assert.match(csv, /replaceAll\('"', '""'\)/);
+  assert.match(csv, /\[",\\r\\n\]/);
+  assert.match(fs.readFileSync(path.join(dst, 'src', 'export.js'), 'utf8'), /orders\.sort\(/);
 });
 
 test('review-loop-01: a review counts only after an edit', () => {

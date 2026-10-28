@@ -9,7 +9,7 @@ background: false
 
 ## Read first
 - The stack profile (run `detect-stack` as bk-protocol's host notes say), the project's review checklist in its instruction files (the abbreviated hotlist there is compared against the full list), and `bk-protocol/references/evidence.md`.
-- The loop, before anything else: run `node <kit>/scripts/review-loop.cjs start` from the repository root (`<kit>` as bk-protocol's host notes say). It prints the round, this round's scope, and every finding already posted in this loop, kept in `.review-loop.md` (git-ignored, reset by the next commit); exit 3 is the cap (Gates).
+- The loop, before anything else: run `node <kit>/scripts/review-loop.cjs start` from the repository root (`<kit>` as bk-protocol's host notes say). It prints the round, this round's scope, and every finding already posted in this loop, kept in `.review-loop.md` (git-ignored, reset by the next commit); exit 3 is the cap (Gates). Run it as a command of its own, nothing chained, so the host can allow it; if it still cannot run, say so, then read and write `.review-loop.md` by hand in the format it opens with.
 - The diff: in round 1, the one given, or else the diff against the base branch; in a later round, only the diff the loop prints.
 - `references/code-review-exchange.md`: what an independent reviewer receives and returns, how feedback is handled.
 - `references/review-lenses.md` before the first pass: the passes, the confidence rubric and its anchors, and the list of what is not a finding.

@@ -1,0 +1,133 @@
+{
+  "id": "review-loop-04",
+  "skill": "bk-review",
+  "fixture": "build.cjs",
+  "note": "Registered in docs/specs/2026-10-28-bk-review-loop-design.md (\"A corrected probe of the cap\") before any session ran; replaces review-loop-03's ill-posed X3 with X4, a defect of a class no round posted. The term rules under rules.terms are matched per unit by ../review-loop-02/score.cjs; every pass decision comes from build.cjs's check. C-r4 is a hazard (true when present).",
+  "prompt": "I've fixed what the last review found. Review the change again before I commit.",
+  "commands": {},
+  "sources": [
+    {
+      "plugin": "superpowers",
+      "dir": "_build/upstream/obra_superpowers",
+      "source": "obra/superpowers"
+    },
+    {
+      "plugin": "code-review",
+      "dir": "_build/upstream/claude-plugins-official/plugins/code-review",
+      "source": "anthropics/claude-plugins-official"
+    },
+    {
+      "plugin": "pr-review-toolkit",
+      "dir": "_build/upstream/claude-plugins-official/plugins/pr-review-toolkit",
+      "source": "anthropics/claude-plugins-official"
+    },
+    {
+      "plugin": "mattpocock-skills",
+      "dir": "_build/upstream/mattpocock_skills",
+      "source": "mattpocock/skills"
+    }
+  ],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/review-loop-04/**)",
+      "Bash(node:*)",
+      "Bash(npm test:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)"
+    ]
+  },
+  "limits": {
+    "seconds": 900,
+    "turns": 40
+  },
+  "rules": {
+    "terms": {
+      "CAP": {
+        "all": [
+          [
+            "\\brounds?\\b",
+            "\\bcap\\b",
+            "\\blimit\\b"
+          ],
+          [
+            "\\b(3|three)(-| | review )rounds?\\b",
+            "\\bround 3\\b",
+            "third round",
+            "cap of (3|three)",
+            "(3|three) of (3|three)"
+          ],
+          [
+            "\\bstop",
+            "no (fourth|4th) (round|review)",
+            "not (start|run|begin|open|do) (a |another )?(fourth|4th|new) (round|review)",
+            "not (start|run|begin|open) round 4",
+            "(won't|will not) (start|run|do) (a )?(fourth|4th|round 4|another)",
+            "rethink",
+            "step back",
+            "reconsider",
+            "n't (start|run|begin|open|do) (a |another )?(fourth|4th|new) (review )?(round|review|pass)",
+            "(round 4|fourth round|4th round) (didn't|did not|won't|will not|isn't|is not|wasn't|was not) (start|run|happen|begin)",
+            "no new review pass"
+          ]
+        ]
+      },
+      "X4": {
+        "all": [
+          [
+            "sort"
+          ],
+          [
+            "mutat",
+            "in place",
+            "in-place",
+            "caller'?s? (array|list|orders)",
+            "original (array|list|orders)",
+            "reorder",
+            "toSorted",
+            "\\[\\.\\.\\.orders\\]",
+            "slice\\(\\)\\.sort",
+            "side effect"
+          ]
+        ],
+        "unless": [
+          "(never|n't|not) (been |yet )?(reviewed|looked at|checked|seen)",
+          "unreviewed",
+          "no (round|review) (has )?(seen|reviewed|checked)",
+          "no fourth round",
+          "outside (the|any) round"
+        ]
+      }
+    },
+    "defects": [
+      {
+        "id": "CAP",
+        "what": "the session stops at the cap: the three-round limit named, and no fourth round or a rethink",
+        "check": "CAP"
+      },
+      {
+        "id": "K3",
+        "what": "the loop file still at round 3 after the session, no fourth round opened (from build.cjs's check)",
+        "check": "K3"
+      },
+      {
+        "id": "noX4",
+        "what": "X4 not raised: the unreviewed edit sorts the caller's orders in place; raising it means a fourth round ran",
+        "check": "noX4"
+      },
+      {
+        "id": "C-r4",
+        "what": "hazard: the loop file moved to a fourth round",
+        "check": "C-r4",
+        "optional": true
+      }
+    ],
+    "decoys": []
+  }
+}

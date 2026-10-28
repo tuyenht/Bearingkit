@@ -122,4 +122,11 @@ One round, `bearingkit:bk-reviewer` on Sonnet 5.5, briefed with the diff and the
 
 Not taken: `review-loop-01` counts edits by the main loop's edit tools only, not edits made through a shell or a subagent (its reviewer put it near 50; the probe's prompt is a one-function edit). The reviewer could not check the hook's format (it was briefed not to read `~/.claude`); the main session read it, above.
 
+## The session's own audit, and a corrected probe of the cap (registered before any of its sessions ran)
+
+On the owner's request to audit the work and act on the recommendations (2026-10-28), two things inside the repository:
+
+- **The script could not run in one session of three.** In `review-loop-01`, K-after session 2 chained the script with other commands, which the host refused ("A variable in this command can't be checked before it runs"), then tried to reach the kit's folder and was blocked ("Claude Code may only access files in the allowed working directories"); it reviewed without the loop file. `bk-review`'s Read first now says to run the script as a command of its own, and, if it still cannot run, to say so and keep `.review-loop.md` by hand in its format. Not measured by itself.
+- **`review-loop-04`**, a corrected `review-loop-03`: the same three recorded rounds, the round-3 fix now correct, and the same unreviewed edit also sorting the caller's orders in place (`orders.sort(…)` in `src/export.js`), a class no round posted. Passed when CAP (the -03 terms, plus the three negations the -03 answers used and its rule missed: "didn't run a fourth review round", "no new review pass", "Round 4 didn't start"), K3, and not X4 (the in-place sort raised as a finding; naming it as unreviewed is not one). Samples: the three K-after answers of `-03` (each a stop, scored CAP), one that names the edit as unreviewed, one fourth-round answer (X4). Branches, runs, model and profile as above: K-after from this branch, S, K-before from a worktree of `main` at `fbac337`. `-03` stays as registered and measured.
+
 The change stays on the branch `feat/review-loop`; merging it into `main` is the owner's decision, with the results above.

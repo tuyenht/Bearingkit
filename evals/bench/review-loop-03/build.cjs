@@ -45,7 +45,7 @@ function check(dst = DST, raw = '') {
   return { CAP: s.CAP, noX3: !s.X3, round, 'C-r4': r4, K3: round === '3' && !r4 };
 }
 
-module.exports = { DST, build, reset: (opts) => build(opts), check };
+module.exports = { DST, build, reset: (opts) => build(opts), check, FIX2, ROUND2_FINDINGS, ROUND3_FINDINGS };
 
 if (require.main === module) {
   const args = process.argv.slice(2);
