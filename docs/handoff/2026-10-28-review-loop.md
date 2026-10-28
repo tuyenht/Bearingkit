@@ -21,8 +21,8 @@ Như Block 2 của `docs/handoff/2026-10-28-cloud-merge.md`, trừ: `main` có t
 ### Decisions waiting on the owner
 
 1. Đã quyết (2026-10-28): merge vào `main`; khi chạm trần được nêu lỗi thấy trong đoạn chưa review, ghi "chưa review", không chấm.
-3. Vòng có nên sống qua một commit chỉ sửa phát hiện review không (spec, "Open for the owner").
-4. Cài lại bản Antigravity (`bearingkit antigravity install`) sau merge, để bản sao có script mới.
+3. Đã quyết (2026-10-28, mục 71): vòng không sống qua commit, commit mới vẫn mở vòng mới. Khi mỗi lần sửa là một commit, bộ điều phối giữ số vòng và các phát hiện đã đăng rồi chuyển cho reviewer kế tiếp (`executing.md` bước 5, chưa so với nguồn). Giới hạn còn lại: nhánh được review trong khi tác giả đẩy commit sửa mà không có bộ điều phối thì không có trần và không có bộ nhớ chống lặp từ file.
+4. Làm mới bản Antigravity ở kho `~/.bearingkit/antigravity/plugins/bearingkit`. Không có bản toàn cục dưới `~/.gemini`, nên lệnh cũ `bearingkit antigravity install` là sai. `doctor` vẫn báo phần script và `skills/` lệch; lệnh đúng: `node C:\Projects\Bearingkit\bin\bearingkit.cjs install --host antigravity`.
 5. Các mục chờ owner của handoff trước: không đổi.
 
 ### Open threads

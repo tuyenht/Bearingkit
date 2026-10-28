@@ -69,7 +69,7 @@ Differences that remain, for the owner: the two counts can disagree when one tur
 
 A review of a change already committed (a branch against its base, on a clean tree) sees the same tree each time, so it stays round 1 and spends no round.
 
-Open for the owner: fixes made as commits (a branch under review, per-task commits in `executing.md`) reset the loop at each commit, by the rule the owner's hook and global rules share; the cap then holds only where a controller counts. Whether a loop should survive a commit that only fixes review findings is the owner's call.
+Decided by the owner (2026-10-28, `docs/autopilot/decisions.md` entry 71): a loop does not survive a commit; a new commit starts a fresh loop, as the owner's hook, this script and the global rules already say. Rejected: a loop that survives commits fixing only review findings (a detector of such commits in the hook, the script and three rule files, easy to misjudge), and per-task commits only after the reviews pass (a change of `executing.md`'s flow). Where fixes are commits, the controller carries the loop: `executing.md` step 5 has it count the rounds and hand the findings already posted, with the fix's commit range, to the next fresh reviewer (not compared with the sources, not measured). The limit that remains: a branch reviewed while its author pushes fix commits, with no controller, gets neither the cap nor the no-repeat memory from the file.
 
 ## Registered before any session ran
 
