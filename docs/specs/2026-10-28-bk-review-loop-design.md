@@ -129,4 +129,22 @@ On the owner's request to audit the work and act on the recommendations (2026-10
 - **The script could not run in one session of three.** In `review-loop-01`, K-after session 2 chained the script with other commands, which the host refused ("A variable in this command can't be checked before it runs"), then tried to reach the kit's folder and was blocked ("Claude Code may only access files in the allowed working directories"); it reviewed without the loop file. `bk-review`'s Read first now says to run the script as a command of its own, and, if it still cannot run, to say so and keep `.review-loop.md` by hand in its format. Not measured by itself.
 - **`review-loop-04`**, a corrected `review-loop-03`: the same three recorded rounds, the round-3 fix now correct, and the same unreviewed edit also sorting the caller's orders in place (`orders.sort(…)` in `src/export.js`), a class no round posted. Passed when CAP (the -03 terms, plus the three negations the -03 answers used and its rule missed: "didn't run a fourth review round", "no new review pass", "Round 4 didn't start"), K3, and not X4 (the in-place sort raised as a finding; naming it as unreviewed is not one). Samples: the three K-after answers of `-03` (each a stop, scored CAP), one that names the edit as unreviewed, one fourth-round answer (X4). Branches, runs, model and profile as above: K-after from this branch, S, K-before from a worktree of `main` at `fbac337`. `-03` stays as registered and measured.
 
+### Measured · `review-loop-04`
+
+2026-10-28, 09:38–09:45Z, as registered (`_build/review-loop-04-runs.sh`, untracked): K-after from `103f286`, S, K-before from a worktree of `main` at `fbac337`; 31 tools in every session. Results `evals/results/2026-10-28-bench-review-loop-04-natural-claude-sonnet-5-5` and `…-kbefore`, untracked; every answer read.
+
+| | K-after | S | K-before |
+|---|---|---|---|
+| Registered pass, script | 0/3 | 0/3 | 0/3 |
+| Registered pass, read | 1/3 | 0/3 | 0/3 |
+| No fourth round (the loop file still at round 3, no new findings scored) | **3/3** ("The review didn't run. The loop is at its 3-round cap"; "stopped at its round-3 cap, so I didn't run a new round"; "didn't run a fourth round") | 0/3 (a full review, 7, 3 and 8 findings) | 0/3 ("Round 4 found two issues"; session 3 wrote a round 4 into the file) |
+| A rethink of the approach proposed | 3/3 (one escaping rule or a CSV library instead of patching `cell()`) | 0/3 | 0/3 |
+| X4, the in-place sort, raised | 2/3, each under "Not scored or logged in the loop" / "Not scored findings, but worth checking", after reading the diff | 3/3, as a finding | 3/3, as a blocking finding |
+| Tokens, median (min–max) | 225,071 (190,950–260,504) | 323,325 (228,126–327,294) | 268,176 (227,270–460,213) |
+| Cost USD, median | 0.105 | 0.133 | 0.135 |
+
+The script and the reading part on CAP for K-after session 1 ("The review didn't run. The loop is at its 3-round cap", which has none of the rule's stop words); that session is the one pass by reading. K-after sessions 2 and 3 stop, but read the new edit and name its defect as unscored: by the registered rule that is X4 raised, so they fail. Whether a stop may still mention a defect seen while listing what is open is a question for the owner; the skill text was not changed after this data.
+
+What this adds: in a second probe of the cap, the kit opened no fourth round in 3 of 3 sessions where the sources and the kit before ran one in 3 of 3; under the registered rule, 1 of 3 against 0 of 3 and 0 of 3. Three sessions each, not a significance test.
+
 The change stays on the branch `feat/review-loop`; merging it into `main` is the owner's decision, with the results above.

@@ -9,6 +9,7 @@ Phiên do owner mở bằng một brief dán vào (yêu cầu theo bài "How the
 - Năm test case mới, ba bài benchmark `evals/bench/review-loop-01`…`-03` (luật chấm đăng ký trước khi chạy).
 - Phiên hiệu chỉnh đầu dừng vì đăng nhập hết hạn; owner đăng nhập lại. Phiên hiệu chỉnh thứ hai cho thấy bộ chấm theo từng gạch đầu dòng tách gạch con khỏi tiêu đề, nên ba bài này chấm theo mục (`score.cjs`, `f153a17`), trước mọi phiên được tính.
 - Đợt đo (33 phiên, Sonnet 5.5, 08:57–09:20Z), đọc từng câu trả lời: (a) kit mới review sau build 3/3, nguồn 0/3, kit cũ 0/3; (b, c) đọc: kit mới 3/3, nguồn 0/3, kit cũ 0/3 (script: 2/3, 0/3, 0/3); (d) dừng ở trần: kit mới 3/3, nguồn 0/3, kit cũ 0/3 theo đọc, nhưng luật đăng ký chấm 0/3 cả ba vì decoy X3 đặt sai (lỗi fixture, ghi trong spec, không sửa luật sau dữ liệu); khả năng tìm lỗi `review-02`: 9/9 cả kit mới lẫn kit cũ. Chi tiết và những gì không được nói: spec, "Measured".
+- Theo lời owner ("Audit kỹ… thực hiện xử lý theo các khuyến nghị"), phiên tự kiểm: (1) ở bài (a) một phiên kit không chạy được script vì gộp lệnh rồi bị chặn đường dẫn kit; `bk-review` nay bảo chạy script thành một lệnh riêng, không chạy được thì nói rõ và giữ `.review-loop.md` bằng tay (chưa đo riêng); (2) bài `review-loop-04` sửa decoy đặt sai của bài 03, đăng ký trước (`103f286`), đo 9 phiên: kit mới không mở vòng 4 ở 3/3 (nguồn 0/3, kit cũ 0/3); theo luật đăng ký kit mới 1/3 vì 2/3 phiên vẫn nêu lỗi sắp xếp tại chỗ dưới mục "chưa chấm".
 - Suite một mình: xem thông điệp commit.
 
 ## Block 2 · Resume payload
@@ -20,7 +21,7 @@ Như Block 2 của `docs/handoff/2026-10-28-cloud-merge.md`, trừ: nhánh `feat
 ### Decisions waiting on the owner
 
 1. Merge `feat/review-loop` vào `main` hay không, với kết quả đo trong spec.
-2. Bài `review-loop-03`: sửa fixture (lỗi chưa review không được trùng lớp với phát hiện đã đăng) và đăng ký lại trước một đợt đo mới, hay để như hiện có.
+2. Khi dừng ở trần, phiên có được nêu một lỗi thấy trong đoạn chưa review (dưới nhãn "chưa chấm") không, hay chỉ ghi "chưa review" (spec, "Measured · `review-loop-04`"). Chữ skill chưa đổi sau dữ liệu này.
 3. Vòng có nên sống qua một commit chỉ sửa phát hiện review không (spec, "Open for the owner").
 4. Cài lại bản Antigravity (`bearingkit antigravity install`) sau merge, để bản sao có script mới.
 5. Các mục chờ owner của handoff trước: không đổi.
