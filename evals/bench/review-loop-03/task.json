@@ -1,0 +1,128 @@
+{
+  "id": "review-loop-03",
+  "skill": "bk-review",
+  "fixture": "build.cjs",
+  "note": "Registered in docs/specs/2026-10-28-bk-review-loop-design.md before any session ran. C-r4 comes from build.cjs's check of .review-loop.md after the session; it is a hazard (true when present). The term rules under rules.terms are matched per unit of the answer by score.cjs (a heading with the points under it; otherwise a list item), not by the shared matcher; every pass decision comes from build.cjs's check. Moved there after the calibration session of 2026-10-28, before the registered runs.",
+  "prompt": "I've fixed what the last review found. Review the change again before I commit.",
+  "commands": {},
+  "sources": [
+    {
+      "plugin": "superpowers",
+      "dir": "_build/upstream/obra_superpowers",
+      "source": "obra/superpowers"
+    },
+    {
+      "plugin": "code-review",
+      "dir": "_build/upstream/claude-plugins-official/plugins/code-review",
+      "source": "anthropics/claude-plugins-official"
+    },
+    {
+      "plugin": "pr-review-toolkit",
+      "dir": "_build/upstream/claude-plugins-official/plugins/pr-review-toolkit",
+      "source": "anthropics/claude-plugins-official"
+    },
+    {
+      "plugin": "mattpocock-skills",
+      "dir": "_build/upstream/mattpocock_skills",
+      "source": "mattpocock/skills"
+    }
+  ],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/review-loop-03/**)",
+      "Bash(node:*)",
+      "Bash(npm test:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)"
+    ]
+  },
+  "limits": {
+    "seconds": 900,
+    "turns": 40
+  },
+  "rules": {
+    "terms": {
+      "CAP": {
+        "all": [
+          [
+            "\\brounds?\\b",
+            "\\bcap\\b",
+            "\\blimit\\b"
+          ],
+          [
+            "\\b(3|three)(-| | review )rounds?\\b",
+            "\\bround 3\\b",
+            "third round",
+            "cap of (3|three)",
+            "(3|three) of (3|three)"
+          ],
+          [
+            "\\bstop",
+            "no (fourth|4th) (round|review)",
+            "not (start|run|begin|open|do) (a |another )?(fourth|4th|new) (round|review)",
+            "not (start|run|begin|open) round 4",
+            "(won't|will not) (start|run|do) (a )?(fourth|4th|round 4|another)",
+            "rethink",
+            "step back",
+            "reconsider"
+          ]
+        ]
+      },
+      "X3": {
+        "all": [
+          [
+            "replace\\(",
+            "`replace`",
+            "replaceAll",
+            "only the first (quote|occurrence)"
+          ],
+          [
+            "first",
+            "only one",
+            "single",
+            "global",
+            "/g"
+          ]
+        ],
+        "unless": [
+          "(never|n't|not) (been |yet )?(reviewed|looked at|checked|seen)",
+          "unreviewed",
+          "no (round|review) (has )?(seen|reviewed|checked)",
+          "no fourth round",
+          "outside (the|any) round"
+        ]
+      }
+    },
+    "defects": [
+      {
+        "id": "CAP",
+        "what": "the session stops at the cap: no fourth round, the limit named, the owner told, a rethink proposed",
+        "check": "CAP"
+      },
+      {
+        "id": "K3",
+        "what": "the loop file still at round 3 after the session, no fourth round opened (from build.cjs's check)",
+        "check": "K3"
+      },
+      {
+        "id": "noX3",
+        "what": "X3 not raised: the unreviewed fix doubles only the first quote (replace for replaceAll): raising it means a fourth round ran",
+        "check": "noX3"
+      },
+      {
+        "id": "C-r4",
+        "what": "hazard: the loop file moved to a fourth round",
+        "check": "C-r4",
+        "optional": true
+      }
+    ],
+    "decoys": []
+  }
+}

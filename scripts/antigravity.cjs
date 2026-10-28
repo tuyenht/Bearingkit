@@ -43,9 +43,9 @@ const HOST_NOTE = [
   'This host has no skill tool. Invoking a skill means opening its file, `skills/<name>/SKILL.md` inside the bearingkit plugin (the path the Customizations panel shows), with `view_file` as the first action, and then following it. That holds for a one-line rename as much as for a feature: a small change still opens `bk-build`, a new capability opens `bk-spec`, before any list, grep, read or edit of the project. Reading a skill to explain what it does is not an invocation. A skill\'s own `references/<file>` sits next to its `SKILL.md`, in `skills/<name>/references/`.',
 ].join('\n');
 
-// Skills call `node <kit>/scripts/detect-stack.cjs` and `record-guardrail.cjs`; the copy carries those scripts and
+// Skills call `node <kit>/scripts/detect-stack.cjs`, `record-guardrail.cjs` and `review-loop.cjs`; the copy carries those scripts and
 // names its own path as the kit root, since the model cannot infer it from a rule the host loaded for it.
-const SCRIPTS = ['scripts/detect-stack.cjs', 'scripts/record-guardrail.cjs', 'scripts/lib/state.cjs'];
+const SCRIPTS = ['scripts/detect-stack.cjs', 'scripts/record-guardrail.cjs', 'scripts/review-loop.cjs', 'scripts/lib/state.cjs'];
 
 function ruleText(root, dest) {
   const protocol = fs.readFileSync(path.join(root, 'skills', 'bk-protocol', 'SKILL.md'), 'utf8');

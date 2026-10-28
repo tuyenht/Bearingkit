@@ -13,7 +13,8 @@ Never the session's history. Exactly:
 - a description of what was built;
 - the requirements, or the plan task text;
 - the range: base and head commits (`git diff --stat base..head`, then the diff);
-- the working directory.
+- the working directory;
+- in a later round of a review loop, the fix diff the loop printed as the range, and the findings already posted, so that none is posted again.
 
 Base is the commit before the work (`origin/main`, or the previous task's commit).
 

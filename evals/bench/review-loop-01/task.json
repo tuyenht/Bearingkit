@@ -1,0 +1,76 @@
+{
+  "id": "review-loop-01",
+  "skill": "bk-build",
+  "fixture": "build.cjs",
+  "note": "Registered in docs/specs/2026-10-28-bk-review-loop-design.md before any session ran. R1 and R2 come from build.cjs's check of the stream: a review after the first edit, and after the last.",
+  "prompt": "In src/paginate.js, add pageCount(total, size): how many pages paginate() produces for a list of `total` items. You have my go-ahead to make the change without stopping to ask.",
+  "commands": {},
+  "sources": [
+    {
+      "plugin": "superpowers",
+      "dir": "_build/upstream/obra_superpowers",
+      "source": "obra/superpowers"
+    },
+    {
+      "plugin": "code-review",
+      "dir": "_build/upstream/claude-plugins-official/plugins/code-review",
+      "source": "anthropics/claude-plugins-official"
+    },
+    {
+      "plugin": "pr-review-toolkit",
+      "dir": "_build/upstream/claude-plugins-official/plugins/pr-review-toolkit",
+      "source": "anthropics/claude-plugins-official"
+    },
+    {
+      "plugin": "mattpocock-skills",
+      "dir": "_build/upstream/mattpocock_skills",
+      "source": "mattpocock/skills"
+    },
+    {
+      "plugin": "code-modernization",
+      "dir": "_build/upstream/claude-plugins-official/plugins/code-modernization",
+      "source": "anthropics/claude-plugins-official"
+    },
+    {
+      "plugin": "andrej-karpathy-skills",
+      "dir": "_build/upstream/multica-ai_andrej-karpathy-skills",
+      "source": "multica-ai/andrej-karpathy-skills"
+    }
+  ],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/review-loop-01/**)",
+      "Bash(node:*)",
+      "Bash(npm test:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)"
+    ]
+  },
+  "limits": {
+    "seconds": 900,
+    "turns": 40
+  },
+  "rules": {
+    "defects": [
+      {
+        "id": "R1",
+        "what": "a review ran after the first edit, unasked (a skill or subagent named review, or a review skill read)",
+        "check": "R1"
+      },
+      {
+        "id": "R2",
+        "what": "a review ran after the last edit",
+        "check": "R2",
+        "optional": true
+      }
+    ],
+    "decoys": []
+  }
+}

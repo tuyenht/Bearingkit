@@ -102,7 +102,7 @@ test('build-01: untouched is green on v1, a naive bump stays green but loses 01/
 
   build.reset({ dst });
   assert.equal(build.check(dst).O2, false, 'reset puts v1 back');
-  fs.rmSync(dir, { recursive: true, force: true });
+  fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
 });
 
 // P6 (2026-09-28): the pattern had \brevert\b, so the guard's K5 ("Going back means reverting…") was only caught by eye.

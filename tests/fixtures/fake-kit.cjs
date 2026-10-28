@@ -18,7 +18,7 @@ function fakeKit() {
   fs.mkdirSync(path.join(root, 'skills', 'bk-spec'), { recursive: true });
   fs.writeFileSync(path.join(root, 'skills', 'bk-spec', 'SKILL.md'), '---\nname: bk-spec\ndescription: "s"\n---\nbody\n');
   fs.mkdirSync(path.join(root, 'scripts', 'lib'), { recursive: true });
-  for (const s of ['scripts/detect-stack.cjs', 'scripts/record-guardrail.cjs', 'scripts/lib/state.cjs']) fs.writeFileSync(path.join(root, ...s.split('/')), '// stub\n');
+  for (const s of ['scripts/detect-stack.cjs', 'scripts/record-guardrail.cjs', 'scripts/review-loop.cjs', 'scripts/lib/state.cjs']) fs.writeFileSync(path.join(root, ...s.split('/')), '// stub\n');
   fs.mkdirSync(path.join(root, 'hooks'), { recursive: true });
   fs.copyFileSync(HOOK, path.join(root, 'hooks', 'session-start.cjs'));
   return root;

@@ -1,0 +1,171 @@
+{
+  "id": "review-loop-02",
+  "skill": "bk-review",
+  "fixture": "build.cjs",
+  "note": "Registered in docs/specs/2026-10-28-bk-review-loop-design.md before any session ran. C-rec and C-dup come from build.cjs's check of .review-loop.md after the session; found means the check read true, whatever its polarity (C-dup is a hazard). The term rules under rules.terms are matched per unit of the answer by score.cjs (a heading with the points under it; otherwise a list item), not by the shared matcher; every pass decision comes from build.cjs's check. Moved there after the calibration session of 2026-10-28, before the registered runs.",
+  "prompt": "I've fixed what the last review found. Review the change again before I commit.",
+  "commands": {},
+  "sources": [
+    {
+      "plugin": "superpowers",
+      "dir": "_build/upstream/obra_superpowers",
+      "source": "obra/superpowers"
+    },
+    {
+      "plugin": "code-review",
+      "dir": "_build/upstream/claude-plugins-official/plugins/code-review",
+      "source": "anthropics/claude-plugins-official"
+    },
+    {
+      "plugin": "pr-review-toolkit",
+      "dir": "_build/upstream/claude-plugins-official/plugins/pr-review-toolkit",
+      "source": "anthropics/claude-plugins-official"
+    },
+    {
+      "plugin": "mattpocock-skills",
+      "dir": "_build/upstream/mattpocock_skills",
+      "source": "mattpocock/skills"
+    }
+  ],
+  "permissions": {
+    "allow": [
+      "Edit(//c/Projects/.bearingkit-evals/bench/review-loop-02/**)",
+      "Bash(node:*)",
+      "Bash(npm test:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)"
+    ]
+  },
+  "limits": {
+    "seconds": 900,
+    "turns": 40
+  },
+  "rules": {
+    "terms": {
+      "N1": {
+        "all": [
+          [
+            "quot"
+          ],
+          [
+            "(not|never|n't|without|no longer) (be |get |being )?(doubl|escap)",
+            "(must|should|needs? to|has to|have to|ought to) (be )?(doubl|escap)",
+            "un-?escaped",
+            "(doubl|escap)\\w* .{0,40}(missing|forgotten|left out)",
+            "(left|kept|passed|written) (as-is|as is|unchanged|raw|through)",
+            "a\"b"
+          ],
+          [
+            "embedded",
+            "inside",
+            "within",
+            "inner",
+            "internal",
+            "in (the|a) value",
+            "a\"b",
+            "5\""
+          ]
+        ]
+      },
+      "X1": {
+        "all": [
+          [
+            "rows\\[0\\]",
+            "toCsv\\(\\[\\]\\)",
+            "empty (array|list|page|rows|result|input)",
+            "no rows",
+            "zero rows",
+            "past the (end|last)",
+            "beyond the last",
+            "exportPage"
+          ],
+          [
+            "crash",
+            "throw",
+            "TypeError",
+            "undefined",
+            "Cannot (read|convert)"
+          ]
+        ],
+        "unless": [
+          "not (re-?)?reviewed",
+          "not (raised|reported|posted|scored) (as a finding|this round|here|in this round)",
+          "not a finding of this round",
+          "outside (the|this) (fix|round|diff|round's) ?(scope|diff)?",
+          "not (in|part of) (the|this) (fix|round|diff)",
+          "out of (this |the )?(round'?s? )?scope",
+          "(round 1'?s?|earlier|previous|first round'?s?) scope",
+          "not checked",
+          "not scor(ed|ing) (it )?as a finding",
+          "(isn't|is not|not) in (this|the) (diff|fix)"
+        ]
+      },
+      "X2": {
+        "all": [
+          [
+            "pageCount",
+            "page count",
+            "Math\\.floor",
+            "\\bfloor"
+          ],
+          [
+            "partial",
+            "last page",
+            "off-by-one",
+            "ceil",
+            "drops",
+            "undercount"
+          ]
+        ],
+        "unless": [
+          "round 1",
+          "already (posted|reported|raised|flagged|recorded|listed|known)",
+          "still open",
+          "open from",
+          "(earlier|previous|prior|first|last) (round|review)",
+          "deferred",
+          "review-loop",
+          "not (re-?posted|repeated|new)",
+          "carried over"
+        ]
+      }
+    },
+    "defects": [
+      {
+        "id": "N1",
+        "what": "the fix wraps a value in quotes but does not double a quote inside it",
+        "check": "N1"
+      },
+      {
+        "id": "noX1",
+        "what": "X1 not raised: exportPage past the last page crashes toCsv: real, present since round 1, outside the fix diff",
+        "check": "noX1"
+      },
+      {
+        "id": "noX2",
+        "what": "X2 not raised: round 1's page-count finding posted again as new",
+        "check": "noX2"
+      },
+      {
+        "id": "C-rec",
+        "what": "findings of round 2 recorded in .review-loop.md with file:line",
+        "check": "C-rec",
+        "optional": true
+      },
+      {
+        "id": "C-dup",
+        "what": "hazard: round 1's open page-count finding written again under round 2",
+        "check": "C-dup",
+        "optional": true
+      }
+    ],
+    "decoys": []
+  }
+}

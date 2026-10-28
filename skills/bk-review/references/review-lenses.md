@@ -9,7 +9,7 @@ Each pass reads something different. A review that runs only the first is a skim
 1. **Project rules.** Read the project's own instruction files — the root one and any in the directories the diff touches — and check the change against them. Their guidance is written for whoever writes the code, so not every line applies at review time; a rule cited as violated is quoted, with its file.
 2. **The diff alone.** Read only the changed lines and look for real bugs: logic errors, null and undefined handling, races, leaks, unbounded input, security. Resist reading the whole codebase on this pass; breadth here produces nitpicks, not findings.
 3. **History.** Read `git blame` and the history of the lines touched. Code that was changed three times in a month is telling you something, and a bug that was fixed once and is now being reintroduced is only visible here.
-4. **Earlier review comments.** Look at what was said on previous changes to these same files. A comment that applied then usually still applies, and repeating a reviewer's earlier point is cheaper than rediscovering it.
+4. **Earlier review comments.** Look at what was said on previous changes to these same files. A comment that applied then usually still applies, and repeating a reviewer's point from an earlier change is cheaper than rediscovering it. Within one review loop the rule is the opposite: a finding already in `.review-loop.md` is never posted again; one still unfixed is listed as open, with its round, and not scored again.
 5. **The comments in the code.** Read the comments in and around the changed lines, and check the change against the guidance they carry. A change that contradicts a nearby comment either needs the comment updated or is wrong.
 
 ## Confidence rubric

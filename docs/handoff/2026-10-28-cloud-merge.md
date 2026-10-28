@@ -23,19 +23,19 @@ Gõ trong phiên này (bằng nút của phiên), nguyên văn: "Tôi duyệt me
 
 ### State
 
-Như Block 2 của `docs/handoff/2026-10-26-p6-scorer.md` với các chỗ đổi của Block 2 của `docs/handoff/2026-10-27-cloud-branch-windows.md` và `docs/handoff/2026-10-27-audit-session.md`, trừ: `main` có thêm sáu commit merge (`c95617e` tới `7a7b343`), commit bản ghi `396711c` và commit của mục 64; nhánh cloud đã vào `main` (nhánh `origin/claude/adoring-einstein-sjl4he` vẫn còn, không xóa); mục "sáu test đỏ trên Linux" đóng: suite xanh trên Linux theo CI của nhánh, và trên Windows ở đây; **bộ đếm kiểm toán 1** (đoạn merge sau kiểm toán tính là một phiên; owner có thể đọc khác).
+Như Block 2 của `docs/handoff/2026-10-26-p6-scorer.md` với các chỗ đổi của Block 2 của `docs/handoff/2026-10-27-cloud-branch-windows.md` và `docs/handoff/2026-10-27-audit-session.md`, trừ: `main` có thêm sáu commit merge (`c95617e` tới `7a7b343`), commit bản ghi `396711c`, `b8a8dd0` (mục 64), `fbac337` (mục 65, của phiên khác), các commit của mục 66 tới 69 (phiên khác) và commit của mục 70; nhánh cloud đã vào `main` (nhánh `origin/claude/adoring-einstein-sjl4he` vẫn còn, không xóa); mục "sáu test đỏ trên Linux" đóng: suite xanh trên Linux theo CI của nhánh, và trên Windows ở đây; **bộ đếm kiểm toán 1** (đoạn merge sau kiểm toán tính là một phiên; owner có thể đọc khác).
 
 ### Decisions waiting on the owner
 
 1. `b8e1545`: một vòng review thứ bảy (reviewer sự thật và reviewer đối kháng mới) hay chấp nhận như hiện có; khuyến nghị: vòng bảy, vì nhóm từ C1 quyết T8 và U8 trước giai đoạn 1.
-2. Bài học trong bộ nhớ host (mục 61): khuyến nghị giữ và xác nhận.
+2. Bài học trong bộ nhớ host (mục 61): đã xong, owner giữ nó (mục 65).
 3. 2.915 thư mục `bk-*` trong `%TEMP%`: khuyến nghị xóa (xóa dữ liệu là của owner).
 4. CI: lọc trigger `push` chỉ còn `main` (khuyến nghị không) và khối `concurrency` (khuyến nghị không, vì mất bằng chứng theo từng commit; mục 64). Phát hiện 5, 6 và 8 của mục 62: cân nhắc hay chấp nhận.
 5. Các mục chờ owner khác của các handoff trước: không đổi.
 
 ### Open threads
 
-- Thư mục `bench-fixture-*` còn sót trên Ubuntu Node 24: nguyên nhân chưa rõ; helper xóa lần nữa nên CI không còn thấy nó.
+- Thư mục `bench-fixture-*` trên Linux: nguyên nhân chưa rõ. Ngày 2026-10-27 (UTC; 01:07 ngày 28 giờ Việt Nam) CI đỏ một job (ubuntu, Node 22, ở `fbac337`) vì chính test `review-02` xóa thư mục fixture của nó gặp `ENOTEMPTY` ở `.git/objects`; lần xóa sau của helper thì sạch. Mười lệnh xóa `bench-fixture-` trong test nay thử lại 3 lần như helper (mục 70): giảm nhẹ, chưa phải sửa nguyên nhân. Trên Windows không thấy tiến trình git nào ghi tiếp sau khi dựng fixture; trên Linux chưa thử.
 
 ### Live temporary bypasses
 
@@ -47,4 +47,4 @@ Như Block 2 của `docs/handoff/2026-10-26-p6-scorer.md` với các chỗ đổ
 
 ### Resume prompt
 
-Resume prompt của `docs/handoff/2026-10-26-p6-scorer.md` với các chỗ đổi của hai file 2026-10-27, trừ: "bộ đếm kiểm toán 1"; đọc thêm file này ngay sau `docs/handoff/2026-10-27-audit-session.md`; phép kiểm `main` được nới thêm cho sáu commit merge, `396711c` và commit của mục 64; suite trên `main` nay có `tests/fixtures/tmpdir.cjs`.
+Resume prompt của `docs/handoff/2026-10-26-p6-scorer.md` với các chỗ đổi của hai file 2026-10-27, trừ: "bộ đếm kiểm toán 1"; đọc thêm file này ngay sau `docs/handoff/2026-10-27-audit-session.md`; phép kiểm `main` được nới thêm cho sáu commit merge, `396711c`, `b8a8dd0`, `fbac337`, các commit của mục 66 tới 69 và commit của mục 70; suite trên `main` nay có `tests/fixtures/tmpdir.cjs`.

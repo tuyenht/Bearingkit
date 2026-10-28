@@ -16,7 +16,7 @@ test('install composes plugin.json, skills and the always-on rule, and refreshes
   assert.ok(!fs.existsSync(dest), 'dry run writes nothing');
   assert.ok(dry.actions.some((a) => a.includes('rules')));
   install({ root, dest });
-  for (const f of ['plugin.json', 'skills/bk-protocol/SKILL.md', 'skills/bk-protocol/references/x.md', 'skills/bk-spec/SKILL.md', 'scripts/detect-stack.cjs', 'scripts/record-guardrail.cjs', 'scripts/lib/state.cjs', 'rules/bearingkit.md', MARKER]) assert.ok(fs.existsSync(path.join(dest, f)), f);
+  for (const f of ['plugin.json', 'skills/bk-protocol/SKILL.md', 'skills/bk-protocol/references/x.md', 'skills/bk-spec/SKILL.md', 'scripts/detect-stack.cjs', 'scripts/record-guardrail.cjs', 'scripts/review-loop.cjs', 'scripts/lib/state.cjs', 'rules/bearingkit.md', MARKER]) assert.ok(fs.existsSync(path.join(dest, f)), f);
   assertRuleComplete(fs.readFileSync(path.join(dest, 'rules', 'bearingkit.md'), 'utf8'), dest);
   fs.writeFileSync(path.join(dest, 'skills', 'stale.md'), 'old');
   install({ root, dest });

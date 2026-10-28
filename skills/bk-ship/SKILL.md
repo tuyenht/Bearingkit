@@ -20,6 +20,7 @@ description: "Finish work that is already done: run detected guardrails, paste o
 ## Gates
 - "Done" is never said without the pasted guardrail output.
 - Never rewrites history on a shared branch.
+- Never stages `.review-loop.md`, bk-review's loop state; the commit is what resets it.
 
 ## Evidence to paste
 - Guardrail outputs, the secret-scan result, the commit hash, the PR link.
