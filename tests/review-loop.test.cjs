@@ -75,11 +75,14 @@ test('the snapshot never contains the loop file itself, ignored or not', () => {
   run(dir, 'start');
   const ignored = loopFile(dir).match(/^Snapshot: ([0-9a-f]{40})$/m)[1];
   assert.doesNotMatch(git(dir, 'ls-tree', '-r', '--name-only', ignored), /review-loop/);
-  // a host where the exclude line cannot be written: the exclude file is a directory, so the loop file is not ignored
+  // a host where the exclude line cannot be written: the exclude file is read-only and lacks the line, so the loop
+  // file is not ignored (a directory in its place, tried first, is fatal to git on Linux and ignored on Windows)
   const exclude = path.join(dir, '.git', 'info', 'exclude');
-  fs.rmSync(exclude);
-  fs.mkdirSync(exclude);
+  fs.writeFileSync(exclude, '# nothing excluded\n');
+  fs.chmodSync(exclude, 0o444);
+  write(dir, 'src/a.js', 'module.exports = 5;\n');
   const r = run(dir, 'start');
+  fs.chmodSync(exclude, 0o644);
   assert.equal(r.status, 0, r.stderr);
   assert.match(r.stdout, /never stage \.review-loop\.md/);
   const plain = loopFile(dir).match(/^Snapshot: ([0-9a-f]{40})$/m)[1];
