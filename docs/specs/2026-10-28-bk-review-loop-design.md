@@ -1,6 +1,6 @@
 # bk-review · a review loop that converges · 2026-10-28
 
-Status: BUILT on the working tree, measured below. The owner's request of 2026-10-28 (pasted brief, in this session): make the kit's review loop converge, following the Claude Code team's post "How the Claude Code team does code review" (claude.dev/blog/solving-code-review-at-anthropic, 2026-10-15).
+Status: BUILT on the branch `feat/review-loop`, measured 2026-10-28 (section "Measured"); not merged into `main`. The owner's request of 2026-10-28 (pasted brief, in this session): make the kit's review loop converge, following the Claude Code team's post "How the Claude Code team does code review" (claude.dev/blog/solving-code-review-at-anthropic, 2026-10-15).
 
 ## Why
 
@@ -89,7 +89,30 @@ Recall guard: `review-02` (round 1, three planted defects, one decoy), K-before 
 
 ## Measured
 
-Not yet. The calibration session (`review-loop-02`, K-after, one run) stopped before its first turn: "Failed to authenticate: OAuth session expired and could not be refreshed" (`evals/results/2026-10-28-bench-review-loop-02-natural-claude-sonnet-5-5/`, untracked). Signing the isolated profile in again is the owner's. Until the registered runs above exist, nothing here says the loop converges on the kit or that `bk-review` does better than its sources: "not compared".
+2026-10-28, 08:57Z to about 09:22Z (the runner's log and the results files' times), Claude Code in the isolated profile, `claude-sonnet-5-5`, 31 tools in every session of every run (token totals compare). Commands as registered (`_build/review-loop-runs.sh`, untracked): `bearingkit bench --task <id> --config-dir _build/profile/claude --branches K,S --runs 3 --model claude-sonnet-5-5` from this branch at `f153a17`, and `--branches K` from the worktree of `main` at `fbac337`. Results under `evals/results/2026-10-28-bench-review-loop-0{1,2,3}-natural-claude-sonnet-5-5[-3]` and `…-kbefore`, `…-bench-review-02-…`, untracked. Every answer was read; where the script and the reading disagree, both are given.
+
+**Calibration first.** The first attempt stopped on an expired login; the owner signed the profile in again. The second (`…-review-loop-02-…-2`, K, one run, not counted) answered as the loop asks, and the shared per-item matcher mis-scored it, splitting each bullet from the heading that said it was old ("Still open: `src/csv.js:5`, unescaped fields (from round 1)") or out of scope ("Not checked"). The term rules moved under `rules.terms`, matched per unit by `evals/bench/review-loop-02/score.cjs` (`f153a17`, before any counted session); the rules themselves were not changed.
+
+| Task | K-after (this branch) | S (sources) | K-before (`main`) |
+|---|---|---|---|
+| `review-loop-01` (a) review after a build, unasked | **3/3** (`bk-build`, then `bk-review`; two of three ran `review-loop.cjs start`) | 0/3 (one edit each, no review; 9–12 s) | 0/3 (test first, no review) |
+| `review-loop-02` (b, c) script | 2/3 | 0/3 | 0/3 |
+| `review-loop-02` read | **3/3**: N1 named in all three; round 1's page count kept as round 1's ("Still open … not fixed" once, "Deferred" twice), not posted as new; the crash outside the diff not raised as a finding: named as "Outside the diff" once and "outside this diff, so I did not count it as a finding" once, not mentioned in the third | 0/3: N1 3/3, but X1 and X2 raised as findings in all three (a whole-change review, 7–8 findings) | 0/3: N1 3/3 and the page count kept as round 1's, but X1 raised as a new finding in all three ("New, blocking", "New finding (score 90)", "New: empty input crashes (confidence 85)") |
+| `review-loop-03` (d) script | 0/3 | 0/3 | 0/3 |
+| `review-loop-03` read | stop 3/3 ("I didn't run a fourth review round", "hit its 3-round cap, so no new review pass ran", "Round 4 didn't start"), a rethink proposed 3/3 (a tested CSV encoder instead of patching `cell()`); X3 named 3/3 as still open (once labelled round 2's finding) | stop 0/3 (a full review, 7–8 findings each), X3 3/3 | stop 0/3 (a full review of the whole change each time), X3 3/3 |
+| Tokens, median (min–max) on `-01` / `-02` / `-03` | 590,444 (503,417–766,124) / 270,591 / 267,068 | 136,039 / 275,288 / 279,939 | 352,030 / 269,468 / 273,214 |
+| Cost USD, median, `-01` / `-02` / `-03` | 0.197 / 0.195 / 0.125 | 0.073 / 0.119 / 0.139 | 0.113 / 0.145 / 0.140 |
+
+Recall guard, `review-02`: K-after found H1, H2 and H3 in 3 of 3, K-before in 3 of 3; nine of nine each, so the change is not held. The script flagged the decoy X1 once for K-after; read, that item is a missing timeout on `fetchFxRates`, not the decoy's tenant-less cache key, so no false finding by reading.
+
+Where the script and the reading part, and why:
+- N1 on `-02`: "the inner quote needs doubling" (K-after, session 3) and "`cell()` doesn't double embedded `"`" (S, session 4, under a heading ending in a colon, with no word "quote" in the unit) are N1 by reading; the rule has no "needs doubling" and needs the word.
+- CAP on `-03`: "didn't run a fourth review round" has no "not " for the rule's negations; two of K-after's three stops are missed by the script.
+- X3 on `-03`, a fault of the fixture, not of the sessions: the unreviewed fix brings back round 2's posted finding (a quote inside a value not doubled), so naming it as still open with its round is what the Gate asks for. The registered premise, "raising it means a fourth round ran", was wrong; the pass rule stands as registered and fails every session. What separates the branches on `-03` is the stop and the scope: K-after checked the open findings and ran no fourth review; S and K-before reviewed the whole change again.
+
+What this says, within the registration: on `-01` the kit ran a review after a build, unasked, in 3 of 3 sessions, against 0 of 3 for the sources and 0 of 3 for the kit before (three sessions each, not a significance test; two-sided Fisher exact p = 0.1 for 3/3 against 0/3). On `-02` the kit follows the loop protocol (round 2 of 3, the fix diff, nothing posted twice) and the sources do not, which they could not without the protocol; on `-03` it stops at the cap and the others do not, by reading, while the registered pass rule scores 0 of 3 everywhere. Not said: that the kit reviews better than its sources (the recall guard shows the same recall as the kit before; the sources did not run `review-02` today), anything about the post's figures on the kit, any host but Claude Code, any model but `claude-sonnet-5-5`. C-rec was false in all K-after sessions on `-02`: each named N1 as round 1's finding still open, not as a new one, so nothing new was written under round 2. The `-01` cost is the price of the review: 2.7 times the sources' median, which ran no review.
+
+Not measured: Antigravity; a hot path past the cap (case 09); a loop whose fixes are commits.
 
 Checked without a session, in `tests/bench-review-loop.test.cjs`: the fixtures build; on `review-loop-02` the script gives round 2 with the scope `src/csv.js`, `src/paginate.js`, `test/csv.test.js` (not `src/export.js`) and hands back both round-1 findings; on `review-loop-03` it exits 3 and the check reads `K3`; the samples score as registered. The fixtures' own tests pass (3 and 4), read by hand.
 
@@ -99,4 +122,4 @@ One round, `bearingkit:bk-reviewer` on Sonnet 5.5, briefed with the diff and the
 
 Not taken: `review-loop-01` counts edits by the main loop's edit tools only, not edits made through a shell or a subagent (its reviewer put it near 50; the probe's prompt is a one-function edit). The reviewer could not check the hook's format (it was briefed not to read `~/.claude`); the main session read it, above.
 
-The change ships on a branch, not on `main`, until those runs exist (the owner's brief: a skill change is "not shipped on reading alone").
+The change stays on the branch `feat/review-loop`; merging it into `main` is the owner's decision, with the results above.
