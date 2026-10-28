@@ -180,20 +180,31 @@ const build = ({ dst = DST } = {}) => buildLoop({ dst, steps: [ROUND1, FIX1], ro
 const readLoop = (dst) => { try { return fs.readFileSync(path.join(dst, '.review-loop.md'), 'utf8'); } catch { return ''; } };
 const section = (text, n) => { const m = text.split(new RegExp(`^## Round ${n}\\s*$`, 'm'))[1]; return m === undefined ? null : m.split(/^## Round \d+\s*$/m)[0]; };
 
-// After the session: what the loop file says now. C-rec: findings recorded for round 2 with file:line. C-dup (a
-// hazard, true when present): round 1's still-open page-count finding written again as a round-2 finding.
-function check(dst = DST) {
+// The final answer of a stream, scored with the task's term rules per unit (score.cjs).
+const answerScore = (raw, taskDir) => {
+  const { usageFrom } = require('../../../scripts/lib/bench-score.cjs');
+  const { score } = require('./score.cjs');
+  const terms = JSON.parse(fs.readFileSync(path.join(taskDir, 'task.json'), 'utf8')).rules.terms;
+  return score(usageFrom(raw || '').answer || '', terms);
+};
+
+// After the session: the answer's terms (N1 found; X1 and X2 not raised) and what the loop file says now. C-rec:
+// findings recorded for round 2 with file:line. C-dup (a hazard, true when present): round 1's still-open
+// page-count finding written again as a round-2 finding.
+function check(dst = DST, raw = '') {
   const text = readLoop(dst);
   const r2 = section(text, 2);
   const lines = r2 === null ? [] : r2.split('\n').filter((l) => /^\s*[-*] /.test(l));
+  const s = answerScore(raw, __dirname);
   return {
+    N1: s.N1, noX1: !s.X1, noX2: !s.X2,
     round: (text.match(/^Round:\s*(\d+)/m) || [])[1] || null,
     'C-rec': lines.some((l) => /`[^`]+:\d+`/.test(l)),
     'C-dup': lines.some((l) => /pageCount|page count|Math\.floor|floor/i.test(l)),
   };
 }
 
-module.exports = { DST, build, reset: (opts) => build(opts), check, HEAD, ROUND1, FIX1, ROUND1_FINDINGS, CSV, PAGINATE_WITH_COUNT, CSV_TEST, buildLoop, writeAll, gitIn, readLoop, section };
+module.exports = { DST, build, reset: (opts) => build(opts), check, answerScore, HEAD, ROUND1, FIX1, ROUND1_FINDINGS, CSV, PAGINATE_WITH_COUNT, CSV_TEST, buildLoop, writeAll, gitIn, readLoop, section };
 
 if (require.main === module) {
   const args = process.argv.slice(2);

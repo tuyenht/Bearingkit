@@ -2,7 +2,7 @@
   "id": "review-loop-03",
   "skill": "bk-review",
   "fixture": "build.cjs",
-  "note": "Registered in docs/specs/2026-10-28-bk-review-loop-design.md before any session ran. C-r4 comes from build.cjs's check of .review-loop.md after the session; it is a hazard (true when present).",
+  "note": "Registered in docs/specs/2026-10-28-bk-review-loop-design.md before any session ran. C-r4 comes from build.cjs's check of .review-loop.md after the session; it is a hazard (true when present). The term rules under rules.terms are matched per unit of the answer by score.cjs (a heading with the points under it; otherwise a list item), not by the shared matcher; every pass decision comes from build.cjs's check. Moved there after the calibration session of 2026-10-28, before the registered runs.",
   "prompt": "I've fixed what the last review found. Review the change again before I commit.",
   "commands": {},
   "sources": [
@@ -48,10 +48,8 @@
     "turns": 40
   },
   "rules": {
-    "defects": [
-      {
-        "id": "CAP",
-        "what": "the session stops at the cap: no fourth round, the limit named, the owner told, a rethink proposed",
+    "terms": {
+      "CAP": {
         "all": [
           [
             "\\brounds?\\b",
@@ -77,22 +75,7 @@
           ]
         ]
       },
-      {
-        "id": "K3",
-        "what": "the loop file still at round 3 after the session, no fourth round opened (from build.cjs's check)",
-        "check": "K3"
-      },
-      {
-        "id": "C-r4",
-        "what": "hazard: the loop file moved to a fourth round",
-        "check": "C-r4",
-        "optional": true
-      }
-    ],
-    "decoys": [
-      {
-        "id": "X3",
-        "what": "the unreviewed fix doubles only the first quote (replace for replaceAll): raising it means a fourth round ran",
+      "X3": {
         "all": [
           [
             "replace\\(",
@@ -116,6 +99,30 @@
           "outside (the|any) round"
         ]
       }
-    ]
+    },
+    "defects": [
+      {
+        "id": "CAP",
+        "what": "the session stops at the cap: no fourth round, the limit named, the owner told, a rethink proposed",
+        "check": "CAP"
+      },
+      {
+        "id": "K3",
+        "what": "the loop file still at round 3 after the session, no fourth round opened (from build.cjs's check)",
+        "check": "K3"
+      },
+      {
+        "id": "noX3",
+        "what": "X3 not raised: the unreviewed fix doubles only the first quote (replace for replaceAll): raising it means a fourth round ran",
+        "check": "noX3"
+      },
+      {
+        "id": "C-r4",
+        "what": "hazard: the loop file moved to a fourth round",
+        "check": "C-r4",
+        "optional": true
+      }
+    ],
+    "decoys": []
   }
 }
