@@ -1,4 +1,4 @@
-# Handoff · 2026-10-28 · vòng review hội tụ: `bk-review` có trần 3 vòng, vòng sau chỉ soi phần sửa, không lặp phát hiện; nhánh `feat/review-loop`, đã đo 2026-10-28, chờ owner quyết merge; công tắc `PAUSE`
+# Handoff · 2026-10-28 · vòng review hội tụ: `bk-review` có trần 3 vòng, vòng sau chỉ soi phần sửa, không lặp phát hiện; đã đo và vào `main` theo lời owner; công tắc `PAUSE`
 
 Phiên do owner mở bằng một brief dán vào (yêu cầu theo bài "How the Claude Code team does code review", 2026-10-15). **Trạng thái dự án và Resume prompt vẫn là của `docs/handoff/2026-10-28-cloud-merge.md`**, trừ đúng những chỗ Block 2 dưới đây ghi. Nhật ký: `docs/autopilot/decisions.md` mục 66. Thiết kế và đăng ký đo: `docs/specs/2026-10-28-bk-review-loop-design.md`.
 
@@ -16,12 +16,11 @@ Phiên do owner mở bằng một brief dán vào (yêu cầu theo bài "How the
 
 ### State
 
-Như Block 2 của `docs/handoff/2026-10-28-cloud-merge.md`, trừ: nhánh `feat/review-loop` (đã đẩy) mang thay đổi này; `main` không đổi.
+Như Block 2 của `docs/handoff/2026-10-28-cloud-merge.md`, trừ: `main` có thêm các commit của nhánh `feat/review-loop` (fast-forward từ `fbac337`); nhánh vẫn còn trên origin, không xóa.
 
 ### Decisions waiting on the owner
 
-1. Merge `feat/review-loop` vào `main` hay không, với kết quả đo trong spec.
-2. Khi dừng ở trần, phiên có được nêu một lỗi thấy trong đoạn chưa review (dưới nhãn "chưa chấm") không, hay chỉ ghi "chưa review" (spec, "Measured · `review-loop-04`"). Chữ skill chưa đổi sau dữ liệu này.
+1. Đã quyết (2026-10-28): merge vào `main`; khi chạm trần được nêu lỗi thấy trong đoạn chưa review, ghi "chưa review", không chấm.
 3. Vòng có nên sống qua một commit chỉ sửa phát hiện review không (spec, "Open for the owner").
 4. Cài lại bản Antigravity (`bearingkit antigravity install`) sau merge, để bản sao có script mới.
 5. Các mục chờ owner của handoff trước: không đổi.
@@ -36,8 +35,8 @@ Như Block 2 của `docs/handoff/2026-10-28-cloud-merge.md`, trừ: nhánh `feat
 
 ### Next work
 
-1. Theo quyết định merge của owner.
+1. Không còn việc của thay đổi này; Next work của handoff trước không đổi.
 
 ### Resume prompt
 
-Resume prompt của `docs/handoff/2026-10-28-cloud-merge.md`, trừ: đọc thêm file này; checkout `feat/review-loop`; đợt đo đã xong; việc tiếp theo là quyết định merge của owner.
+Resume prompt của `docs/handoff/2026-10-28-cloud-merge.md`, trừ: đọc thêm file này; checkout `feat/review-loop`; thay đổi này đã vào `main`; không còn việc dở.

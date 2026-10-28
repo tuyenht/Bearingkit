@@ -1,6 +1,6 @@
 # bk-review · a review loop that converges · 2026-10-28
 
-Status: BUILT on the branch `feat/review-loop`, measured 2026-10-28 (section "Measured"); not merged into `main`. The owner's request of 2026-10-28 (pasted brief, in this session): make the kit's review loop converge, following the Claude Code team's post "How the Claude Code team does code review" (claude.dev/blog/solving-code-review-at-anthropic, 2026-10-15).
+Status: BUILT, measured 2026-10-28 (section "Measured"), merged into `main` on the owner's word the same day. The owner's request of 2026-10-28 (pasted brief, in this session): make the kit's review loop converge, following the Claude Code team's post "How the Claude Code team does code review" (claude.dev/blog/solving-code-review-at-anthropic, 2026-10-15).
 
 ## Why
 
@@ -143,8 +143,8 @@ On the owner's request to audit the work and act on the recommendations (2026-10
 | Tokens, median (min–max) | 225,071 (190,950–260,504) | 323,325 (228,126–327,294) | 268,176 (227,270–460,213) |
 | Cost USD, median | 0.105 | 0.133 | 0.135 |
 
-The script and the reading part on CAP for K-after session 1 ("The review didn't run. The loop is at its 3-round cap", which has none of the rule's stop words); that session is the one pass by reading. K-after sessions 2 and 3 stop, but read the new edit and name its defect as unscored: by the registered rule that is X4 raised, so they fail. Whether a stop may still mention a defect seen while listing what is open is a question for the owner; the skill text was not changed after this data.
+The script and the reading part on CAP for K-after session 1 ("The review didn't run. The loop is at its 3-round cap", which has none of the rule's stop words); that session is the one pass by reading. K-after sessions 2 and 3 stop, but read the new edit and name its defect as unscored: by the registered rule that is X4 raised, so they fail. Whether a stop may still mention a defect seen while listing what is open was put to the owner, who chose, verbatim: "Được nêu, ghi \"chưa review\" (Recommended)": a stop may name such a defect as not reviewed, unscored and not written to the loop file; the skill text stays as it is. The registered result above is not rescored by that choice.
 
 What this adds: in a second probe of the cap, the kit opened no fourth round in 3 of 3 sessions where the sources and the kit before ran one in 3 of 3; under the registered rule, 1 of 3 against 0 of 3 and 0 of 3. Three sessions each, not a significance test.
 
-The change stays on the branch `feat/review-loop`; merging it into `main` is the owner's decision, with the results above.
+Merged into `main` by fast-forward on the owner's word, verbatim: "Merge vào main (Recommended)" (2026-10-28).
