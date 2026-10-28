@@ -64,7 +64,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 ## 4. Đang chờ owner
 
 - **Đo kit so với một chồng gói** (2026-10-08): đề xuất `docs/specs/2026-10-08-kit-vs-stack-proposal.md` (PROPOSED, năm câu hỏi ở cuối); chưa phiên nào chạy.
-- **Trang `bearingkit.dev`** (2026-10-08, `docs/handoff/2026-10-08-site-and-readme.md`): bật GitHub Pages với nguồn "GitHub Actions", đặt custom domain, trỏ DNS; điền mục About của repo (proxy của phiên chặn API settings).
+- **Trang `bearingkit.dev`**: đã chạy (đọc 2026-10-29: GitHub Pages trả 200 trên tên miền riêng, mục About đã điền); không còn chờ.
 - **38/38 câu D5 có quyết định** (`docs/specs/2026-09-12-d5-owner-questions.md`). Mới nhất: câu 38 (2026-09-27), cách đo ba file stack còn lại của P4.
 - Việc chờ owner: Decisions waiting của hai handoff cuối. `2026-10-28-cloud-merge.md`: `b8e1545` (vòng bảy); xóa hay giữ `bk-*` ở `%TEMP%`. `2026-10-26-p6-scorer.md`: khoản $200 dùng vào việc gì (không phải phiên đo P6); xác nhận thu hồi khóa API; should-fix cũ của phiên 11, 12; phát hiện kiểm toán còn mở (43 s, V3, quyền task: khuyến nghị giữ, 2026-10-27).
 
