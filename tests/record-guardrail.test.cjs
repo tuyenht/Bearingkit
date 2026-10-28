@@ -74,3 +74,27 @@ test('creates the state when --session is given', () => {
   assert.equal(r.status, 0, r.stderr);
   assert.ok(fs.existsSync(path.join(base, 'claude-fresh.json')));
 });
+
+// Audit 2026-09-13, left item (3): prune ran only when the recorder created its own file, never on the --session path.
+test('the --session path prunes state files older than seven days too', () => {
+  const base = tmp();
+  const old = new State({ host: 'claude', sessionId: 'old', cwd: dirOf('C:/proj-old'), baseDir: base });
+  const eightDays = (Date.now() - 8 * 86400000) / 1000;
+  fs.utimesSync(old.file, eightDays, eightDays);
+  const r = run(['--command', 'pnpm test', '--exit', '0', '--session', 'fresh', '--cwd', dirOf('C:/proj-new')], { BEARINGKIT_STATE_DIR: base });
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(fs.existsSync(old.file), false, 'the eight-day-old file is pruned');
+  assert.ok(fs.existsSync(path.join(base, 'claude-fresh.json')), 'the session file itself stays');
+});
+
+// Review of the change above: a session idle for more than seven days, then resumed with --session, keeps its own file.
+test('the --session path does not prune the session\'s own file, however old', () => {
+  const base = tmp();
+  const cwd = dirOf('C:/proj-idle');
+  const own = new State({ host: 'claude', sessionId: 'idle', cwd, baseDir: base });
+  const eightDays = (Date.now() - 8 * 86400000) / 1000;
+  fs.utimesSync(own.file, eightDays, eightDays);
+  const r = run(['--command', 'pnpm test', '--exit', '0', '--session', 'idle', '--cwd', cwd], { BEARINGKIT_STATE_DIR: base });
+  assert.equal(r.status, 0, r.stderr);
+  assert.deepEqual(own.read().guardrailRuns.map((g) => g.command), ['pnpm test']);
+});

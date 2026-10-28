@@ -18,13 +18,17 @@ const MARKER = '.bearingkit-copy';
 
 function defaultDest() { return path.join(os.homedir(), '.gemini', 'config', 'plugins', 'bearingkit'); }
 
+// Flags that take no value: the word after one is a command, not its value (`--dry-run install`).
+const BOOLEAN_FLAGS = new Set(['dry-run']);
+
 function parseArgs(argv) {
   const out = { _: [] };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a.startsWith('--')) {
       const next = argv[i + 1];
-      if (next !== undefined && !next.startsWith('--')) { out[a.slice(2)] = next; i++; } else { out[a.slice(2)] = true; }
+      if (BOOLEAN_FLAGS.has(a.slice(2))) out[a.slice(2)] = true;
+      else if (next !== undefined && !next.startsWith('--')) { out[a.slice(2)] = next; i++; } else { out[a.slice(2)] = true; }
     } else out._.push(a);
   }
   return out;
@@ -108,4 +112,4 @@ function cli(argv) {
 
 if (require.main === module) cli(process.argv.slice(2));
 
-module.exports = { install, uninstall, cli, defaultDest, ruleText, MARKER, SCRIPTS };
+module.exports = { install, uninstall, cli, defaultDest, ruleText, parseArgs, MARKER, SCRIPTS };

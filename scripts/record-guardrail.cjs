@@ -30,7 +30,11 @@ function parseArgs(argv) {
 // Without this, the command bk-ship tells the model to run (no --session) could only ever fail.
 function selectState(args) {
   const cwd = path.resolve(args.cwd || process.cwd());
-  if (args.session) return new State({ host: args.host || 'claude', sessionId: args.session, cwd });
+  if (args.session) {
+    const chosen = new State({ host: args.host || 'claude', sessionId: args.session, cwd });
+    chosen.prune();
+    return chosen;
+  }
   const found = State.latest({ cwd });
   if (found) return found;
   const created = new State({ host: args.host || 'local', sessionId: `auto-${new Date().toISOString().slice(0, 10)}`, cwd });

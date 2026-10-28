@@ -22,6 +22,8 @@ const DEFAULTS = () => ({
 });
 
 const norm = (p) => String(p || '').replace(/\\/g, '/');
+// Windows paths are case-insensitive, so `C:\Projects` and `c:\projects` are one directory; elsewhere case matters.
+const sameDir = (a, b) => (process.platform === 'win32' ? norm(a).toLowerCase() === norm(b).toLowerCase() : norm(a) === norm(b));
 
 function defaultDir() {
   return process.env.BEARINGKIT_STATE_DIR || path.join(os.homedir(), '.bearingkit', 'state');
@@ -58,6 +60,7 @@ class State {
     for (const f of fs.readdirSync(this.dir)) {
       if (!f.endsWith('.json')) continue;
       const p = path.join(this.dir, f);
+      if (p === this.file) continue; // the session's own file stays, however long it sat idle
       try { if (fs.statSync(p).mtimeMs < cutoff) fs.rmSync(p); } catch { /* another process may have removed it */ }
     }
   }
@@ -74,14 +77,13 @@ class State {
   static latest({ cwd, baseDir }) {
     const dir = baseDir || defaultDir();
     if (!fs.existsSync(dir)) return null;
-    const want = norm(cwd);
     let best = null;
     for (const f of fs.readdirSync(dir)) {
       if (!f.endsWith('.json')) continue;
       const p = path.join(dir, f);
       let data;
       try { data = JSON.parse(fs.readFileSync(p, 'utf8')); } catch { continue; }
-      if (norm(data.cwd) !== want) continue;
+      if (!sameDir(data.cwd, cwd)) continue;
       const m = fs.statSync(p).mtimeMs;
       if (!best || m > best.m) best = { p, m };
     }
