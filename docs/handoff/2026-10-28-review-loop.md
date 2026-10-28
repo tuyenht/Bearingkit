@@ -22,7 +22,7 @@ Như Block 2 của `docs/handoff/2026-10-28-cloud-merge.md`, trừ: `main` có t
 
 1. Đã quyết (2026-10-28): merge vào `main`; khi chạm trần được nêu lỗi thấy trong đoạn chưa review, ghi "chưa review", không chấm.
 3. Đã quyết (2026-10-28, mục 71): vòng không sống qua commit, commit mới vẫn mở vòng mới. Khi mỗi lần sửa là một commit, bộ điều phối giữ số vòng và các phát hiện đã đăng rồi chuyển cho reviewer kế tiếp (`executing.md` bước 5, chưa so với nguồn). Giới hạn còn lại: nhánh được review trong khi tác giả đẩy commit sửa mà không có bộ điều phối thì không có trần và không có bộ nhớ chống lặp từ file.
-4. Làm mới bản Antigravity ở kho `~/.bearingkit/antigravity/plugins/bearingkit`. Không có bản toàn cục dưới `~/.gemini`, nên lệnh cũ `bearingkit antigravity install` là sai. `doctor` vẫn báo phần script và `skills/` lệch; lệnh đúng: `node C:\Projects\Bearingkit\bin\bearingkit.cjs install --host antigravity`.
+4. Đã xong (2026-10-28): bản Antigravity ở kho `~/.bearingkit/antigravity/plugins/bearingkit` đã được làm mới từ `main` tại `59423b9` bằng `node bin/bearingkit.cjs install --host antigravity`. Phiên khác chạy lệnh này theo khuyến nghị owner đã xác nhận. Phiên này chạy lại `bearingkit doctor` (chỉ đọc): năm mục Antigravity đều `ok`. Không có bản toàn cục dưới `~/.gemini`.
 5. Các mục chờ owner của handoff trước: không đổi.
 
 ### Open threads
