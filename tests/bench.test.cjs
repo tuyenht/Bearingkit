@@ -234,7 +234,7 @@ test('review-02 keeps the pay route outside the diff and its rules tell a carefu
   const changed = spawnSync('git', ['diff', '--name-only', 'main...HEAD'], { cwd: dst, encoding: 'utf8' }).stdout.split('\n');
   assert.ok(changed.some((f) => f.endsWith('tenancy.ts')));
   assert.ok(!changed.some((f) => f.includes('/pay/')), 'the pay route is not in the diff');
-  fs.rmSync(dir, { recursive: true, force: true });
+  fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
   const { rules } = loadTask('review-02', ROOT);
   const careful = '1. **Pay route skips the tenant check** `src/app/api/invoices/[id]/pay/route.ts:9`: assertTenant now returns null instead of throwing, and the pay route ignores the return value.\n2. `invoice-stats` is memoized without the tenant in the key, so one tenant sees another tenant\'s totals.\n3. The catch block logs every header with console.error, including the Authorization bearer token.\n- `fx-rates` has no tenant in its key, which is fine: the rates are global.';
   assert.deepEqual(scoreAnswer(careful, rules), { found: ['H1', 'H2', 'H3'], missed: [], decoys: [], blocked: null, passed: true });
@@ -257,7 +257,7 @@ test('the fixture builder makes the branch with the planted defects and resets i
   build.reset({ dst });
   assert.equal(fs.existsSync(path.join(dst, 'scratch.txt')), false);
   assert.equal(git('rev-parse', '--abbrev-ref', 'HEAD'), 'feature/invoice-export');
-  fs.rmSync(dir, { recursive: true, force: true });
+  fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
 });
 
 // review-03 is a clean diff: telling the owner not to merge it is a false outcome, read on the whole answer.
@@ -325,7 +325,7 @@ test('review-03 is a clean branch whose own code passes its checks, and its rule
   build.reset({ dst });
   assert.equal(fs.existsSync(path.join(dst, 'scratch.txt')), false);
   assert.equal(git('rev-parse', '--abbrev-ref', 'HEAD'), 'feature/payment-webhook');
-  fs.rmSync(dir, { recursive: true, force: true });
+  fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
   const { rules } = loadTask('review-03', ROOT);
   const careful = '1. The search builds SQL with `$queryRaw` and `Prisma.raw(SORTS[sort])`; it looks like SQL injection, but the sort comes from a fixed map and every value is bound, so it is safe.\n2. The length check before `timingSafeEqual` leaks nothing: both are 32-byte SHA-256 digests.\n3. The webhook marks the invoice paid with no tenant filter, which is correct: the id comes from the signed payload.\n4. The events route checks the invoice\'s tenant before listing payment events, so there is no IDOR.\n5. Minor: the search could use a trigram index.\n\nReady to merge.';
   assert.deepEqual(scoreAnswer(careful, rules), { found: [], missed: [], decoys: [], blocked: false, passed: true });
@@ -510,7 +510,7 @@ test('debug-01: the planted bug fails only east of UTC, and the checks tell the 
   assert.deepEqual(build.check(dst), { visible: true, root: false, kept: true, regression: false }, 'a noon-anchored date fails east of UTC+12');
   build.reset({ dst });
   assert.equal(git('status', '--porcelain'), '');
-  fs.rmSync(dir, { recursive: true, force: true });
+  fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
 });
 
 // A run never writes into a folder that already holds a run: the model is in the name unless it is the default, and a
@@ -686,7 +686,7 @@ test('review-04 plants its three defects in a 29-file branch and its rules tell 
   fs.writeFileSync(path.join(dst, 'scratch.txt'), 'left by a session');
   build.reset({ dst });
   assert.equal(fs.existsSync(path.join(dst, 'scratch.txt')), false);
-  fs.rmSync(dir, { recursive: true, force: true });
+  fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
   const { rules } = loadTask('review-04', ROOT);
   const careful = '1. **Any member can export the full CSV** at src/app/api/admin/export/route.ts:11: requireRole now returns a boolean and this route ignores the result.\n2. **findByNumber ignores the tenant** at src/repos/invoices.ts:19, so the by-number route reads another tenant\'s invoice.\n3. **Void is not atomic** at src/app/api/invoices/[id]/void/route.ts:17: no transaction, the catch only logs, and it still returns 200.\n\nChecked and fine: the revenue report binds every value through Prisma.sql, no SQL injection; the fx cache has no tenant in its key, which is fine since rates are the same for every tenant.';
   assert.deepEqual(scoreAnswer(careful, rules), { found: ['D1', 'D2', 'D3'], missed: [], decoys: [], blocked: null, passed: true });
@@ -760,7 +760,7 @@ test('shipping', () => {
   assert.equal(locked.green, true);
   assert.equal(locked.textLocked, true);
   assert.equal(locked.killed, 0, 'a text-locked suite scores nothing');
-  fs.rmSync(dir, { recursive: true, force: true });
+  fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
 });
 
 // Exact two-sided permutation test on the difference of means, for counts such as mutants killed per session.

@@ -191,6 +191,6 @@ test('php-01: untouched is green with no transfer; each port fails the hazard it
     build.reset({ dst });
     assert.equal((await build.check(dst)).O1, false, 'reset takes the transfer away');
   } finally {
-    fs.rmSync(dir, { recursive: true, force: true });
+    fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
   }
 });

@@ -169,6 +169,6 @@ test('py-01: untouched is green with no export; each port fails the hazard it ig
     assert.equal((await build.check(dst, null, SMALL)).O1, false, 'reset takes the export away');
     await t.test('O2 on each tree (python -m pytest)', { skip: suite ? false : `not checked: ${first.O2error}` }, () => {});
   } finally {
-    fs.rmSync(dir, { recursive: true, force: true });
+    fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
   }
 });

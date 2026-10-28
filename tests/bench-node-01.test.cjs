@@ -124,6 +124,6 @@ test('node-01: untouched is green with no export; each port fails the hazard it 
     build.reset({ dst });
     assert.equal((await build.check(dst, null, SMALL)).O1, false, 'reset takes the export away');
   } finally {
-    fs.rmSync(dir, { recursive: true, force: true });
+    fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
   }
 });
