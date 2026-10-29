@@ -253,3 +253,11 @@ Nguyên văn như ở commit `ac7458c` (`git show ac7458c:docs/status.md`, dòng
 
 - Guard `build-01` không chạm chữ mới; cây C/C++ chưa đo (`docs/specs/2026-10-08-bk-spec-stack-reach-design.md`).
 - P5a (`bk-spec`, `spec-01`): đóng, không merge, nhánh `p5a-bk-spec`. P5c: đóng theo luật đã đăng ký, không merge.
+
+---
+
+# Phụ lục 2026-10-29: kết quả đo file stack rời khỏi đoạn "Đang ở đâu" của `docs/status.md`
+
+Nguyên văn như ở commit `49c3c60` (`git show 49c3c60:docs/status.md`, dòng 15). Chuyển sang đây ngày 2026-10-29, ở phiên làm song song (nhật ký mục 73), để `docs/status.md` về dưới trần 15 KB. Không sửa.
+
+So với skill nguồn, tám phiên xen kẽ mỗi bên: **không khác biệt rõ** (`node-01` p = 1,0; `py-01` p = 0,2; `php-01` p = 1,0). `php-laravel.md` trượt guard lần đầu vì không được đọc (0/8); bước 1 mới của `bk-build` (chạy `detect-stack`, mở mọi file trong `stackFiles`) đo 2026-10-01: file mở 6/8 so với 1/8, p = 0,041, guard đạt → merge (`docs/specs/2026-10-01-bk-build-stack-reach-design.md`). P4b (2026-10-01): `detect-stack` nêu `sql.md` và `shell.md` theo nội dung cây; `sql.md` mở 8/8 trên `php-01` → merge (`docs/specs/2026-09-28-topic-stackfiles-design.md`). `shell.md` (2026-10-01, lặp lại 2026-10-02): `shell-01` (PowerShell 5.1) là task stack đầu tiên qua hiệu chỉnh; kit có file so với kit chưa có: p = 0,0016, **lặp lại được vào ngày khác** (p = 0,0003); so với `fullstack-dev-skills` p = 0,0005 (tốt hơn trên task này); **so với chữ của nguồn**, khi nguồn được đọc 8/8: **không khác biệt rõ** (p = 0,34); không câu nào được nói `shell.md` tốt hơn nguồn (`docs/specs/2026-10-01-stack-shell-design.md`).
