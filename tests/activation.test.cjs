@@ -260,3 +260,12 @@ test('status answers three things: is the store there, is it current, is this pr
   fs.writeFileSync(path.join(storePath(home), 'skills', 'bk-spec', 'SKILL.md'), 'stale');
   assert.equal(status({ project, home, root }).store.current, false);
 });
+
+// Same fault as the one the 2026-09-13 audit left in antigravity.cjs: a flag that takes no value swallowed the project
+// after it, so `activate --no-git-exclude <dir>` switched on the working directory instead of <dir>.
+test('parseArgs keeps the project after a flag that takes no value', () => {
+  const { parseArgs } = require('../scripts/activation.cjs');
+  assert.deepEqual(parseArgs(['--dry-run', 'C:/p']), { _: ['C:/p'], 'dry-run': true });
+  assert.deepEqual(parseArgs(['--no-git-exclude', 'C:/p']), { _: ['C:/p'], 'no-git-exclude': true });
+  assert.deepEqual(parseArgs(['--no-pull', 'C:/p', '--host', 'claude']), { _: ['C:/p'], 'no-pull': true, host: 'claude' });
+});

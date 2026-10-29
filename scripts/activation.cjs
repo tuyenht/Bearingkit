@@ -185,13 +185,17 @@ function status(opts = {}) {
 // --host all|claude|antigravity, a project (positional or --project), --dry-run, and prints `+`, `-` or `=` lines.
 // What only the host's own CLI may do — registering the marketplace, fetching the plugin into its cache — is printed
 // for the owner to run, never run here: those write under ~/.claude.
+// Flags that take no value: the word after one is the project, not its value (`activate --no-git-exclude <dir>`).
+const BOOLEAN_FLAGS = new Set(['dry-run', 'no-git-exclude', 'no-pull']);
+
 function parseArgs(argv) {
   const out = { _: [] };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (!a.startsWith('--')) { out._.push(a); continue; }
     const next = argv[i + 1];
-    if (next !== undefined && !next.startsWith('--')) { out[a.slice(2)] = next; i++; } else out[a.slice(2)] = true;
+    if (BOOLEAN_FLAGS.has(a.slice(2))) out[a.slice(2)] = true;
+    else if (next !== undefined && !next.startsWith('--')) { out[a.slice(2)] = next; i++; } else out[a.slice(2)] = true;
   }
   return out;
 }
@@ -277,4 +281,4 @@ function cli(cmd, argv = []) {
   process.exitCode = 2;
 }
 
-module.exports = { activate, deactivate, status, storePath, storeEntry, plan, cli, USAGE, PLUGIN_ID, AGENTS_FILE, CLAUDE_FILE, EXCLUDE_HEAD, HOSTS };
+module.exports = { activate, deactivate, status, storePath, storeEntry, plan, cli, parseArgs, USAGE, PLUGIN_ID, AGENTS_FILE, CLAUDE_FILE, EXCLUDE_HEAD, HOSTS };

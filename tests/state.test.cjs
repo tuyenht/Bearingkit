@@ -68,3 +68,13 @@ test('BEARINGKIT_STATE_DIR overrides the default location', () => {
     delete process.env.BEARINGKIT_STATE_DIR;
   }
 });
+
+// Audit 2026-09-13, left item (2): Windows paths are case-insensitive, so `C:\Projects` and `c:\projects` are one
+// directory and must find one state file. Elsewhere case matters and the two stay apart.
+test('latest matches cwd without regard to case on Windows only', () => {
+  const base = tmp();
+  const s = new State({ host: 'claude', sessionId: 'case', cwd: 'C:\\Projects\\App', baseDir: base });
+  const found = State.latest({ cwd: 'c:/projects/app', baseDir: base });
+  if (process.platform === 'win32') assert.equal(found && found.file, s.file);
+  else assert.equal(found, null);
+});

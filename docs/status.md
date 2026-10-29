@@ -82,7 +82,6 @@ Chữ đầy đủ ở `docs/status-history.md`, §7, theo nhãn. Luồng của 
 | (rr) | Còn một trường hợp con số lấy từ kiến thức chung sau bản sửa `ed8aaeb` |
 | (tt) | Antigravity mở `bk-review` cho `rev-neg-01` (nhãn `none`) |
 | (ss) | `bnd-en-01` chưa có lần đọc sạch trong gói đo `bk-perf` |
-| (ll) | Hàng đợi đo từng nằm cạnh kho, một hội thoại đã đi tới nó |
 | (gg) | `database-playbook` của owner và `bk-db` trả lời cùng câu hỏi database |
 | (aa) | `bk-design` chưa trỏ tới Web Interface Guidelines của Vercel dù đã quyết |
 | (p) | `npx <bin>` có thể tự tải package khi không có TTY; chưa kiểm thật |

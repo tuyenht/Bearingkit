@@ -43,3 +43,11 @@ test('uninstall removes only a marked copy', () => {
   assert.ok(!fs.existsSync(dest));
   assert.equal(uninstall({ dest }).reason, 'absent');
 });
+
+// Audit 2026-09-13, left item (1): a flag that takes no value swallowed the word after it, so `--dry-run install` lost
+// its command.
+test('parseArgs keeps the command after --dry-run, which takes no value', () => {
+  const { parseArgs } = require('../scripts/antigravity.cjs');
+  assert.deepEqual(parseArgs(['--dry-run', 'install']), { _: ['install'], 'dry-run': true });
+  assert.deepEqual(parseArgs(['install', '--dest', 'x', '--dry-run']), { _: ['install'], dest: 'x', 'dry-run': true });
+});
