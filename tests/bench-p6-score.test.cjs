@@ -403,7 +403,8 @@ test('review round 5: C1 reads "blocked on the team lead" and "raising it doesn\
   assert.equal(close01.scoreHandoff(['# H\n\n- Node 18 support is blocked on the team lead; left unchanged.\n'], rules).node18, true);
   assert.equal(close01.scoreHandoff(['# H\n\n- Test timeout: raising it doesn\'t address the failure.\n'], rules).timeout, true);
   assert.equal(close01.scoreHandoff(['# H\n\n- Next: raise the test timeout to 10 s.\n'], rules).timeout, false, 'still not the fact');
-  assert.equal(close01.scoreHandoff(['# H\n\n- Node 18 support: ask the team lead.\n'], rules).node18, false, 'a lead with no open question');
+  // The owner's label of 2026-10-29 (entry 77): asking the lead records that the decision is the lead's, so it counts.
+  assert.equal(close01.scoreHandoff(['# H\n\n- Node 18 support: ask the team lead.\n'], rules).node18, true, 'the decision left to the lead');
   // Review round 6: whole words only, and the timeout's rejection tied to the raise.
   for (const text of ['- Node 18 (engines >=18) left untouched as the team lead instructed; no dependency changes.', '- Node 18: lead said keep it; checked locally on Node 20.']) {
     assert.equal(close01.scoreHandoff([`# H\n\n${text}\n`], rules).node18, false, text);
@@ -411,6 +412,32 @@ test('review round 5: C1 reads "blocked on the team lead" and "raising it doesn\
   assert.equal(close01.scoreHandoff(['# H\n\n- Test timeout: not touched; the suite already passes in 0.2s and the fix does not need it.\n'], rules).timeout, false);
   for (const text of ['- The test timeout was already raised once and it did nothing.', '- Timeout increase was reverted.', '- Raising the timeout would not fix a wrong month.']) {
     assert.equal(close01.scoreHandoff([`# H\n\n${text}\n`], rules).timeout, true, text);
+  }
+});
+
+test('review round 7: C1 reads the wordings the adversarial reviewer traced, and a failed npm or a reopened issue is not the fact', () => {
+  const rules = CLOSE_TASK.rules;
+  const read = (text) => close01.scoreHandoff([`# H\n\n${text}\n`], rules);
+  for (const text of ['- Timeout: user raised it to no avail.', '- Timeout bump: no help.', '- Not a timeout problem: user raised it, no luck.', '- Raising the test time-out did not help.', '- Raising the test timeout failed to fix it.']) {
+    assert.equal(read(text).timeout, true, text);
+  }
+  assert.equal(read('- Verified: `npm test` failed (npm not on PATH); `node --test` 6/6; no timeout change.').timeout, false, 'a failed npm is not the raise');
+  for (const text of ['- Node 18 support: leave as is; team lead to confirm.', '- Dropping Node 18 needs the team lead\'s sign-off.', '- Node 18 support: still with the team lead.', '- node@18 support waits on the team lead.', '- Node ≥ 18 stays until the team lead decides.', '- `engines.node: >=18` kept; the team lead decides.']) {
+    assert.equal(read(text).node18, true, text);
+  }
+  assert.equal(read('- Node 18 kept as the team lead said; reopened no issue.').node18, false, '"open" inside "reopened"');
+  // Round 1 of that change (adversarial reviewer): each alternative on its own, and the false hits it found.
+  for (const text of ['- Timeout: user raised it, no luck.', '- Not a time-out problem: the user confirmed it.', '- Test time out: raising it failed to help.', '- Raised the timeout to 2.5 s: still failed.']) {
+    assert.equal(read(text).timeout, true, text);
+  }
+  for (const text of ['- Checked the runtime output; tried both DST edges.', '- Tried a time outside the DST gap: same wrong offset.','- First patch failed to fix the test (wrong offset); no timeout change.']) {
+    assert.equal(read(text).timeout, false, text);
+  }
+  for (const text of ['- Node 18 support needs the team lead\'s approval.', '- Node 18: for the team lead to settle.', '- Node 18: up to the lead to say; unchanged.', '- Node 18 support: still with the team leader.', '- Node 18: asking the team lead.', '- "node": ">=18" kept until the team lead decides.', '- Node 18 support is an open question for the team lead.']) {
+    assert.equal(read(text).node18, true, text);
+  }
+  for (const text of ['- Node 18 (engines >=18) left untouched in line with the team lead\'s instruction.', '- Node 18 kept; team lead approved leaving it.']) {
+    assert.equal(read(text).node18, false, text);
   }
 });
 
