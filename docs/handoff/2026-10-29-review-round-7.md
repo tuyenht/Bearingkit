@@ -16,12 +16,12 @@ Phiên owner mở trên máy owner, `C:\Projects\Bearingkit`, `main`, bằng m�
 
 ### State
 
-Như Block 2 của `docs/handoff/2026-10-29-quick-act.md`, trừ: nhánh `fix/quick-act-2026-10-28` đã merge vào `main` (`3f99471`, mục 74) rồi bị xóa cùng bốn nhánh làm việc đã merge khác, mỗi nhánh còn tag `archive/<tên>` (mục 75; các nhánh đo đều còn); `main` có thêm `de8657e`, `7f8c1aa`, `f849877`, `fb1e458` (spec dòng 116, mục 76, file này, `docs/status.md`) và commit của mục 77 (nhóm từ C1, test, spec, file này, `docs/status.md`). Bản cài hằng ngày `f8498772f483`. Bộ đếm kiểm toán **3**. Giai đoạn 1 chưa chạy phiên nào.
+Như Block 2 của `docs/handoff/2026-10-29-quick-act.md`, trừ: nhánh `fix/quick-act-2026-10-28` đã merge vào `main` (`3f99471`, mục 74) rồi bị xóa cùng bốn nhánh làm việc đã merge khác, mỗi nhánh còn tag `archive/<tên>` (mục 75; các nhánh đo đều còn); `main` có thêm `de8657e`, `7f8c1aa`, `f849877`, `fb1e458` (spec dòng 116, mục 76, file này, `docs/status.md`) và commit của mục 77 (`08ee8b8`: nhóm từ C1, test, spec, file này, `docs/status.md`) và commit của mục 78 (chỉ tài liệu). Bản cài hằng ngày `f8498772f483`. Bộ đếm kiểm toán **3**. Giai đoạn 1 chưa chạy phiên nào.
 
 ### Decisions waiting on the owner
 
-1. Đã quyết (2026-10-29, mục 77): nhóm từ C1 đổi trước giai đoạn 1; "ask the team lead" tính là đạt; vòng 8 và 9 đứng như mục 76 ghi.
-2. **Commit đo** (dòng "Text" của Stage 1): commit của mục 77 (hoặc một commit chỉ tài liệu sau nó, bằng nó trên các đường dẫn được đo). Chỉ ghi vào spec khi owner nói "chạy giai đoạn 1".
+1. Đã quyết (2026-10-29, mục 77): nhóm từ C1 đổi trước giai đoạn 1; "ask the team lead" tính là đạt; vòng 8 và 9 đứng như mục 76 ghi. Đã quyết (2026-10-30, mục 78): các điều chỉnh theo chữ reviewer vòng 1 và 2 của lần đổi đó (ngoài nhãn "Sửa trước") được giữ, owner chọn "Giữ (Recommended)".
+2. **Commit đo** (dòng "Text" của Stage 1): `08ee8b8`, commit của mục 77 (hoặc một commit chỉ tài liệu sau nó, bằng nó trên các đường dẫn được đo). Chỉ ghi vào spec khi owner nói "chạy giai đoạn 1".
 3. Các mục chờ owner của các handoff trước: không đổi (trong đó $200, thu hồi khóa, 43 s của `ship-02`, V3, quyền task).
 
 ### Open threads
@@ -39,4 +39,4 @@ Như Block 2 của `docs/handoff/2026-10-29-quick-act.md`, trừ: nhánh `fix/qu
 
 ### Resume prompt
 
-Resume prompt của `docs/handoff/2026-10-29-quick-act.md`, trừ: đọc thêm file này ngay sau nó; "bộ đếm kiểm toán 3"; phép kiểm `main` được nới thêm cho `de8657e`, `7f8c1aa`, `f849877`, `fb1e458` và commit của mục 77; nhánh `fix/quick-act-2026-10-28` không còn (tag `archive/fix/quick-act-2026-10-28`); vẫn CẤM chạy phiên đo nào (kể cả phiên không đếm) và sửa thêm nhóm từ C1 (ngoài những gì mục 77 ghi) khi chưa có lời nêu tên của owner.
+Resume prompt của `docs/handoff/2026-10-29-quick-act.md`, trừ: đọc thêm file này ngay sau nó; "bộ đếm kiểm toán 3"; phép kiểm `main` được nới thêm cho `de8657e`, `7f8c1aa`, `f849877`, `fb1e458`, `08ee8b8` và commit của mục 78; nhánh `fix/quick-act-2026-10-28` không còn (tag `archive/fix/quick-act-2026-10-28`); vẫn CẤM chạy phiên đo nào (kể cả phiên không đếm) và sửa thêm nhóm từ C1 (ngoài những gì mục 77 ghi) khi chưa có lời nêu tên của owner.
