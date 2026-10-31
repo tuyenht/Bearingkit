@@ -1,6 +1,6 @@
 # Trạng thái dự án Bearingkit
 
-Cập nhật: **2026-10-30: giai đoạn 1 của P6 đã chạy (26 phiên, mục 79): `ship-01` trượt T3 (O1 5/8) và T4 (P1 6/8), `close-01` trượt T8 (C1 8/8); cả hai sprint đóng, giai đoạn 2 không chạy; bộ đếm kiểm toán 4.** Bước 1 mới của `bk-spec` (mở file stack trước) vào `main` 2026-10-15 (`bc541c1`, không đo lại trên bản merge). Nhãn: đạt ngưỡng trên `node-01` và `py-01`, `claude-sonnet-5-5`, host `2.1.291`, hỏi bằng lời thường: file stack mở 47/48 phiên K-after so với 5/48 K-before, p = 3,6e-20; tốt hơn các plugin kiến thức stack đã ghim ở rủi ro deadline trên hai task này. Không được nói: điều gì về "Sonnet" nói chung, task, model, host khác; "tốt hơn nguồn của nó"; bước này lặp lại kết quả của `bk-build`; đạt ngưỡng không cho thấy rủi ro deadline được qua nhiều hơn; cây C/C++ chưa đo. Nhãn được dùng cho `bk-plan`: đạt ngưỡng đã đăng ký trên `plan-01`, `claude-sonnet-5-5`, ở lượt đo thứ hai của bản chữ, theo cách đọc B kèm F do owner chọn đích danh; tốt hơn `superpowers:writing-plans` như đã đọc trên task và model đó; với `to-tickets`: chưa so. Không được nói: lượt hai lặp lại lượt đầu, hai lượt gộp lại, điều gì về "Sonnet" nói chung, hay guard cho thấy bản chữ có tác dụng. Phiên gần nhất: `docs/handoff/2026-10-30-p6-stage1.md` (mục 79), trước đó `docs/handoff/2026-10-29-review-round-7.md` (mục 76), trước đó `docs/handoff/2026-10-29-quick-act.md` (mục 73), trước đó `docs/handoff/2026-10-28-review-loop.md` (vòng review có trần 3 vòng, đã đo, vào `main` 2026-10-28 theo lời owner; vòng không sống qua commit, mục 71), trước đó `docs/handoff/2026-10-28-cloud-merge.md`; dự án: Block 2 của `2026-10-26-p6-scorer.md` (`PAUSE`). Lịch sử file này (nguyên văn tới `b89eb36`): `docs/status-history.md`; mọi tham chiếu "status §N" viết trước 2026-09-26 trỏ về đó.
+Cập nhật: **2026-10-31: phiên kiểm toán đã chạy (mục 80, có lỗi, công tắc giữ `PAUSE`; bộ đếm kiểm toán 0). 2026-10-30: giai đoạn 1 của P6 (mục 79): `ship-01` trượt T3 và T4, `close-01` trượt T8; cả hai sprint đóng.** Bước 1 mới của `bk-spec` (mở file stack trước) vào `main` 2026-10-15 (`bc541c1`, không đo lại trên bản merge). Nhãn: đạt ngưỡng trên `node-01` và `py-01`, `claude-sonnet-5-5`, host `2.1.291`, hỏi bằng lời thường: file stack mở 47/48 phiên K-after so với 5/48 K-before, p = 3,6e-20; tốt hơn các plugin kiến thức stack đã ghim ở rủi ro deadline trên hai task này. Không được nói: điều gì về "Sonnet" nói chung, task, model, host khác; "tốt hơn nguồn của nó"; bước này lặp lại kết quả của `bk-build`; đạt ngưỡng không cho thấy rủi ro deadline được qua nhiều hơn; cây C/C++ chưa đo. Nhãn được dùng cho `bk-plan`: đạt ngưỡng đã đăng ký trên `plan-01`, `claude-sonnet-5-5`, ở lượt đo thứ hai của bản chữ, theo cách đọc B kèm F do owner chọn đích danh; tốt hơn `superpowers:writing-plans` như đã đọc trên task và model đó; với `to-tickets`: chưa so. Không được nói: lượt hai lặp lại lượt đầu, hai lượt gộp lại, điều gì về "Sonnet" nói chung, hay guard cho thấy bản chữ có tác dụng. Phiên gần nhất: `docs/handoff/2026-10-31-audit.md` (mục 80), trước đó `docs/handoff/2026-10-30-p6-stage1.md` (mục 79), `docs/handoff/2026-10-29-review-round-7.md` (mục 76), `docs/handoff/2026-10-28-review-loop.md` (vòng review có trần 3 vòng, vào `main` 2026-10-28 theo lời owner); dự án: Block 2 của `2026-10-26-p6-scorer.md` (`PAUSE`). Lịch sử file này (nguyên văn tới `b89eb36`): `docs/status-history.md`; mọi tham chiếu "status §N" viết trước 2026-09-26 trỏ về đó.
 
 > **File này là bảng điều khiển, không phải nguồn sự thật.** Nó chỉ đếm và trỏ; nội dung thật nằm ở:
 > - thiết kế: `docs/specs/2026-09-11-bearingkit-v2-design.md` (§13 bảng mốc, §15 log quyết định);
@@ -24,13 +24,13 @@ Mốc **v0.3**, mục 9 của thứ tự v0.3: `bk-ship` + `bk-close` (P6); năm
 | Kiểm kê từng mục (§5.2) | **1.295** mục của **22/22** nguồn: 46 absorb, 610 idea, 639 drop, 0 lệch | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
 | Test | **326/326** xanh trên Windows (2026-10-31) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test "tests/**/*.test.cjs"` |
 | Prompt activation | **96** ở `phase-1.jsonl`, **6** ranh giới, **2** acceptance | `evals/activation/*.jsonl` |
-| Case trong `skills/<name>/tests/` | **17/17** skill, **56** case (`bk-protocol` không cần) | `recount-status-numbers.cjs` |
+| Case trong `skills/<name>/tests/` | **17/17** skill, **61** case (`bk-protocol` không cần) | `recount-status-numbers.cjs` |
 | File stack `bk-build/references/stacks/` | **8/8** trên `main` (`typescript-react`, `kotlin`, `sql`, `node`, `python`, `php-laravel`, `shell`, `c-cpp`) | `ls` |
-| Task benchmark trong `evals/bench/` | **19** trên `main` (`build-01`, `close-01`, `cpp-01`, `debug-01`, `node-01`, `php-01`, `plan-01` (chấm bằng hai người đọc mù; hồ sơ về `main` 2026-10-08), `py-01`, `shell-01`, `shell-01-src` (cùng fixture, nhánh S là nguồn đã bọc), `spec-01` (chấm bằng hai người đọc mù), `probe-review-authored`, `review-01`…`04`, `ship-01`, `ship-02`, `test-01`; ba task P6 có phần chấm từ 2026-10-26) | `ls evals/bench/*/task.json` |
+| Task benchmark trong `evals/bench/` | **23** trên `main` (`review-loop-01`…`04`, `build-01`, `close-01`, `cpp-01`, `debug-01`, `node-01`, `php-01`, `plan-01` (chấm bằng hai người đọc mù; hồ sơ về `main` 2026-10-08), `py-01`, `shell-01`, `shell-01-src` (cùng fixture, nhánh S là nguồn đã bọc), `spec-01` (chấm bằng hai người đọc mù), `probe-review-authored`, `review-01`…`04`, `ship-01`, `ship-02`, `test-01`; ba task P6 có phần chấm từ 2026-10-26) | `ls evals/bench/*/task.json` |
 | Hàng nguồn trong ma trận | **39** | `grep -c '^\| [0-9]' docs/specs/2026-09-10-coverage-matrix.md` |
 | Host đã qua acceptance | **2/7** (Claude Code, Antigravity; bảy host của `docs/hosts.md`, trong đó Copilot CLI và Factory Droid chung một mục. §2 mục 11 là chỉ số khác: 2/6 host owner thực dùng, câu 8) | `docs/hosts.md` |
 | Bootstrap protocol | **6.485/6.500** ký tự | proxy của `tests/session-start.test.cjs`, đo lại 2026-09-26 |
-| Bản cài hằng ngày | user `716e900`, local `62215df` (host tự cập nhật, đọc 2026-10-31); `doctor` sáu `ok` (bản sao Antigravity khớp checkout), một `skip` (2026-10-30) | nhật ký mục 76, 79 |
+| Bản cài hằng ngày | user `eab7d1b`, local `839a596` (host tự cập nhật, đọc 2026-10-31); `doctor` sáu `ok` (bản sao Antigravity khớp checkout), một `skip` (2026-10-31) | nhật ký mục 80 |
 
 ## 2. "Hoàn thành" là gì — 12 mục: 2 đạt có phép đo, 1 đạt theo thiết kế, 9 chưa
 
@@ -49,7 +49,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 | 9 | Mỗi skill mang provenance và license mode; `NOTICE` đủ | 18 + `NOTICE` | **18/18**, có test canh (`tests/skills.test.cjs`) |
 | 10 | Không file cấu hình kit trong project | 0 | **Đạt theo kiến trúc**; `bearingkit activate` chỉ ghi vào file của chính host |
 | 11 | Host owner dùng đã qua acceptance | 6 | **2/6** (4 host còn lại phải chạy trên máy khác) |
-| 12 | Phát hành: README EN+VI, CI, marketplace, publish từ history squash | 4 | **0/4** |
+| 12 | Phát hành: README EN+VI, CI, marketplace, publish từ history squash | 4 | **2/4** (README EN+VI; CI, xanh trên `eab7d1b`. Còn listing marketplace, publish từ history squash; `marketplace.json` đã có) |
 
 ## 3. Mốc phát hành (spec §13)
 
@@ -57,17 +57,15 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 |---|---|---|
 | `0.1.0-phase1` | đã phát hành 2026-09-11 | `docs/compat/phase-1-gate.md` |
 | v0.2 | cổng đo đạt từ 2026-09-17; còn hạng mục #11 (các nguồn còn lại); chắt lọc tám skill lifecycle đang làm trong v0.3 | `docs/status-history.md` §4, §5 |
-| **v0.3** | **đang làm**: catalog đủ; sprint lifecycle tới `bk-build` xong; `bk-spec` bước 1 vào `main` 2026-10-15, `bk-plan` 2026-10-07; `bk-ship`/`bk-close`: ba task, 9 phiên sàn (2026-10-16), phần chấm và limits (2026-10-26); giai đoạn 1 (2026-10-30): cả hai task trượt cổng, sprint đóng; còn quyết định của owner về `--verify`, cổng | `docs/plans/2026-09-26-v03-roadmap.md` |
+| **v0.3** | **đang làm**: catalog đủ; sprint lifecycle tới `bk-build` xong; `bk-spec` bước 1 vào `main` 2026-10-15, `bk-plan` 2026-10-07; `bk-ship`/`bk-close`: ba task, 9 phiên sàn (2026-10-16), phần chấm và limits (2026-10-26); giai đoạn 1 (2026-10-30): cả hai task trượt cổng, sprint đóng; `--verify` đã quyết, chờ task khác (mục 79); còn cổng | `docs/plans/2026-09-26-v03-roadmap.md` |
 | v0.4 | chưa bắt đầu: pack tuỳ chọn, hook push/deploy (Biome/Pint, câu 9), acceptance Gemini CLI / Cursor / Codex | spec §13 |
-| v1.0 | chưa bắt đầu: outcome benchmark đủ 12 task, `upstream-watch`, README EN+VI, CI, marketplace, publish từ history squash | spec §13 |
+| v1.0 | chưa bắt đầu: outcome benchmark đủ 12 task, `upstream-watch`, listing marketplace, publish từ history squash (README EN+VI và CI đã có) | spec §13 |
 
 ## 4. Đang chờ owner
 
 - **Đo kit so với một chồng gói** (2026-10-08): đề xuất `docs/specs/2026-10-08-kit-vs-stack-proposal.md` (PROPOSED, năm câu hỏi ở cuối); chưa phiên nào chạy.
-- **Trang `bearingkit.dev`**: đã chạy (đọc 2026-10-29: GitHub Pages trả 200 trên tên miền riêng, mục About đã điền); không còn chờ.
 - **38/38 câu D5 có quyết định** (`docs/specs/2026-09-12-d5-owner-questions.md`). Mới nhất: câu 38 (2026-09-27), cách đo ba file stack còn lại của P4.
-- Nhánh `fix/quick-act-2026-10-28`: đã merge 2026-10-29 (mục 74), rồi xóa cùng bốn nhánh đã merge khác, còn tag `archive/<tên>` (mục 75); bản Antigravity đã làm mới, `doctor` ok.
-- Việc chờ owner: `2026-10-30-p6-stage1.md`: `--verify` của D3 đã quyết, chờ task khác; E-C1 (bước 1 và một dòng template, chưa đo) vào bằng commit riêng sau phiên kiểm toán, theo nhãn owner ngày 2026-10-31. `2026-10-29-review-round-7.md`: commit đo: đã quyết, `08ee8b8`, ghi vào dòng "Text" của Stage 1 theo lời owner 2026-10-30 (cùng lời "chạy giai đoạn 1"); nhóm từ C1 và vòng 8, 9 đã quyết (mục 77); các điều chỉnh vòng 1–2 của lần đổi đó, ngoài nhãn "Sửa trước", owner chọn giữ (mục 78). `2026-10-28-cloud-merge.md`: xóa hay giữ `bk-*` ở `%TEMP%`. `2026-10-26-p6-scorer.md`: khoản $200 dùng vào việc gì (không phải phiên đo P6); xác nhận thu hồi khóa API; should-fix cũ của phiên 11, 12; phát hiện kiểm toán còn mở (43 s, V3, quyền task: khuyến nghị giữ, 2026-10-27).
+- Việc chờ owner: `2026-10-31-audit.md` (nhãn cuối phiên kiểm toán, nhánh `claude/serene-franklin-3f3bb7`, sửa lỗi code của mục 80). `2026-10-30-p6-stage1.md`: `--verify` của D3 đã quyết, chờ task khác; E-C1 (bước 1 và một dòng template, chưa đo) vào bằng commit riêng sau phiên kiểm toán, theo nhãn owner ngày 2026-10-31. `2026-10-29-review-round-7.md`: commit đo: đã quyết, `08ee8b8`, ghi vào dòng "Text" của Stage 1 theo lời owner 2026-10-30 (cùng lời "chạy giai đoạn 1"); nhóm từ C1 và vòng 8, 9 đã quyết (mục 77); các điều chỉnh vòng 1–2 của lần đổi đó, ngoài nhãn "Sửa trước", owner chọn giữ (mục 78). `bk-*` ở `%TEMP%`: hết chờ (đọc 2026-10-31: 3 `bk-*`, 2 `bench-fixture-*`). `2026-10-26-p6-scorer.md`: khoản $200 dùng vào việc gì (không phải phiên đo P6); xác nhận thu hồi khóa API; should-fix cũ của phiên 11, 12; phát hiện kiểm toán còn mở (43 s, V3, quyền task: khuyến nghị giữ, 2026-10-27).
 
 ## 5. Luồng mở mang từ bản cũ của file này
 
@@ -94,7 +92,7 @@ Chữ đầy đủ ở `docs/status-history.md`, §7, theo nhãn. Luồng của 
 
 - **v0.3**: 8 file stack; `bk-spec` (bước 1 đã vào `main` 2026-10-15), `bk-ship`/`bk-close` (`--verify` chờ task khác, nhãn owner 2026-10-31; câu 34); một lượt chấp nhận Antigravity ngắn (câu 34, đã duyệt).
 - **v0.4**: pack tuỳ chọn kiểm kê chứng minh được; hook push/deploy; acceptance thật cho Gemini CLI, Cursor, Codex, Copilot CLI trên máy khác (câu 8).
-- **v1.0**: outcome benchmark 12 task; `upstream-watch`; README EN+VI; CI; marketplace; publish từ history squash sau khi grep tên project riêng.
+- **v1.0**: outcome benchmark 12 task; `upstream-watch`; listing marketplace; publish từ history squash sau khi grep tên project riêng.
 
 ## 7. Cách cập nhật file này
 
