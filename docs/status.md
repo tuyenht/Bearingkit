@@ -67,7 +67,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 - **Trang `bearingkit.dev`**: đã chạy (đọc 2026-10-29: GitHub Pages trả 200 trên tên miền riêng, mục About đã điền); không còn chờ.
 - **38/38 câu D5 có quyết định** (`docs/specs/2026-09-12-d5-owner-questions.md`). Mới nhất: câu 38 (2026-09-27), cách đo ba file stack còn lại của P4.
 - Nhánh `fix/quick-act-2026-10-28`: đã merge 2026-10-29 (mục 74), rồi xóa cùng bốn nhánh đã merge khác, còn tag `archive/<tên>` (mục 75); bản Antigravity đã làm mới, `doctor` ok.
-- Việc chờ owner: `2026-10-30-p6-stage1.md`: `--verify` của D3 vào không đo, chờ task khác hay bỏ; có đọc thêm C2, V1 0/8 của `close-01` không. `2026-10-29-review-round-7.md`: commit đo: đã quyết, `08ee8b8`, ghi vào dòng "Text" của Stage 1 theo lời owner 2026-10-30 (cùng lời "chạy giai đoạn 1"); nhóm từ C1 và vòng 8, 9 đã quyết (mục 77); các điều chỉnh vòng 1–2 của lần đổi đó, ngoài nhãn "Sửa trước", owner chọn giữ (mục 78). `2026-10-28-cloud-merge.md`: xóa hay giữ `bk-*` ở `%TEMP%`. `2026-10-26-p6-scorer.md`: khoản $200 dùng vào việc gì (không phải phiên đo P6); xác nhận thu hồi khóa API; should-fix cũ của phiên 11, 12; phát hiện kiểm toán còn mở (43 s, V3, quyền task: khuyến nghị giữ, 2026-10-27).
+- Việc chờ owner: `2026-10-30-p6-stage1.md`: `--verify` của D3 đã quyết, chờ task khác; E-C1 (bước 1 và một dòng template, chưa đo) vào bằng commit riêng sau phiên kiểm toán, theo nhãn owner ngày 2026-10-31. `2026-10-29-review-round-7.md`: commit đo: đã quyết, `08ee8b8`, ghi vào dòng "Text" của Stage 1 theo lời owner 2026-10-30 (cùng lời "chạy giai đoạn 1"); nhóm từ C1 và vòng 8, 9 đã quyết (mục 77); các điều chỉnh vòng 1–2 của lần đổi đó, ngoài nhãn "Sửa trước", owner chọn giữ (mục 78). `2026-10-28-cloud-merge.md`: xóa hay giữ `bk-*` ở `%TEMP%`. `2026-10-26-p6-scorer.md`: khoản $200 dùng vào việc gì (không phải phiên đo P6); xác nhận thu hồi khóa API; should-fix cũ của phiên 11, 12; phát hiện kiểm toán còn mở (43 s, V3, quyền task: khuyến nghị giữ, 2026-10-27).
 
 ## 5. Luồng mở mang từ bản cũ của file này
 
@@ -92,7 +92,7 @@ Chữ đầy đủ ở `docs/status-history.md`, §7, theo nhãn. Luồng của 
 
 ## 6. Việc của các mốc sau
 
-- **v0.3**: 8 file stack; `bk-spec` (bước 1 đã vào `main` 2026-10-15), `bk-ship`/`bk-close` (có `--verify`, câu 34); một lượt chấp nhận Antigravity ngắn (câu 34, đã duyệt).
+- **v0.3**: 8 file stack; `bk-spec` (bước 1 đã vào `main` 2026-10-15), `bk-ship`/`bk-close` (`--verify` chờ task khác, nhãn owner 2026-10-31; câu 34); một lượt chấp nhận Antigravity ngắn (câu 34, đã duyệt).
 - **v0.4**: pack tuỳ chọn kiểm kê chứng minh được; hook push/deploy; acceptance thật cho Gemini CLI, Cursor, Codex, Copilot CLI trên máy khác (câu 8).
 - **v1.0**: outcome benchmark 12 task; `upstream-watch`; README EN+VI; CI; marketplace; publish từ history squash sau khi grep tên project riêng.
 
