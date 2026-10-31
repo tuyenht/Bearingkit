@@ -22,7 +22,7 @@ Mốc **v0.3**, mục 9 của thứ tự v0.3: `bk-ship` + `bk-close` (P6); năm
 | Nguồn có `derived` (chữ thật đã port) | **4** nguồn, **29** mục dẫn xuất trên **27** file kit | `_build/v03-prep/recount-status-numbers.cjs` |
 | Mục trong `NOTICE` | **3** (anthropics/claude-plugins-official, mattpocock/skills, obra/superpowers) | `grep '^##' NOTICE` |
 | Kiểm kê từng mục (§5.2) | **1.295** mục của **22/22** nguồn: 46 absorb, 610 idea, 639 drop, 0 lệch | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
-| Test | **296/296** xanh trên Windows (2026-10-28, sau merge nhánh cloud) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test "tests/**/*.test.cjs"` |
+| Test | **326/326** xanh trên Windows (2026-10-31) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test "tests/**/*.test.cjs"` |
 | Prompt activation | **96** ở `phase-1.jsonl`, **6** ranh giới, **2** acceptance | `evals/activation/*.jsonl` |
 | Case trong `skills/<name>/tests/` | **17/17** skill, **56** case (`bk-protocol` không cần) | `recount-status-numbers.cjs` |
 | File stack `bk-build/references/stacks/` | **8/8** trên `main` (`typescript-react`, `kotlin`, `sql`, `node`, `python`, `php-laravel`, `shell`, `c-cpp`) | `ls` |
@@ -30,7 +30,7 @@ Mốc **v0.3**, mục 9 của thứ tự v0.3: `bk-ship` + `bk-close` (P6); năm
 | Hàng nguồn trong ma trận | **39** | `grep -c '^\| [0-9]' docs/specs/2026-09-10-coverage-matrix.md` |
 | Host đã qua acceptance | **2/7** (Claude Code, Antigravity; bảy host của `docs/hosts.md`, trong đó Copilot CLI và Factory Droid chung một mục. §2 mục 11 là chỉ số khác: 2/6 host owner thực dùng, câu 8) | `docs/hosts.md` |
 | Bootstrap protocol | **6.485/6.500** ký tự | proxy của `tests/session-start.test.cjs`, đo lại 2026-09-26 |
-| Bản cài hằng ngày | `f849877` ở cả scope user lẫn local (host tự cập nhật, đọc 2026-10-29); `doctor` sáu `ok` (bản sao Antigravity khớp checkout), một `skip` (2026-10-29) | nhật ký mục 76 |
+| Bản cài hằng ngày | user `716e900`, local `62215df` (host tự cập nhật, đọc 2026-10-31); `doctor` sáu `ok` (bản sao Antigravity khớp checkout), một `skip` (2026-10-30) | nhật ký mục 76, 79 |
 
 ## 2. "Hoàn thành" là gì — 12 mục: 2 đạt có phép đo, 1 đạt theo thiết kế, 9 chưa
 
