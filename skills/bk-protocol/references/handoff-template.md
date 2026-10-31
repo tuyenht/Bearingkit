@@ -1,6 +1,6 @@
 # Handoff template (two blocks)
 
-Written by bk-close to `docs/handoff/<date>.md`. Every line in Block 2 is checked against `git status` and `git log` before it is written. No secrets, no credentials, no private hostnames.
+Written by bk-close to `docs/handoff/<date>.md` (or `<date>-<topic>.md`, as bk-close step 1 says). Every line in Block 2 is checked against `git status` and `git log` before it is written. No secrets, no credentials, no private hostnames.
 
 ```markdown
 # Handoff · <date>
