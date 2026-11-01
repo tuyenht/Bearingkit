@@ -44,7 +44,8 @@ function keepOutOfCommits(gitdir) {
   const exclude = path.join(gitdir, 'info', 'exclude');
   try {
     const text = fs.existsSync(exclude) ? fs.readFileSync(exclude, 'utf8') : '';
-    if (text.split(/\s+/).includes(`/${FILE}`)) return null;
+    // Whole lines, as git reads them: a carriage return before the newline and trailing spaces are dropped; a comment line or a line with anything else around the pattern is a different line.
+    if (text.split(/\r?\n/).map((l) => l.replace(/ +$/, '')).includes(`/${FILE}`)) return null;
     fs.mkdirSync(path.dirname(exclude), { recursive: true });
     fs.appendFileSync(exclude, `\n/${FILE}\n`);
     return null;
@@ -55,18 +56,19 @@ function keepOutOfCommits(gitdir) {
 
 const SHA = /^[0-9a-f]{40}$/;
 
+// Every line but the header this script owns: another host's agent may have written the file by hand.
+function ownLinesRemoved(text) {
+  return text.replace(/\r\n/g, '\n').split('\n').filter((l) => !/^(Head|Round|Snapshot|Base):/.test(l) && l !== '# Review loop' && !l.startsWith('Findings posted in this loop'));
+}
+
 function parse(raw) {
   const text = raw.replace(/\r\n/g, '\n');
   const field = (name) => { const m = text.match(new RegExp(`^${name}:\\s*(\\S+)\\s*$`, 'm')); return m ? m[1] : null; };
   const headings = [...text.matchAll(/^## Round (\d+)\s*$/gm)].map((m) => Number(m[1]));
-  const findings = text.split('\n').filter((l) => /^\s*[-*] /.test(l));
+  // Any other line counts, bullet or not, and so counts as a round: one listed in excess only lengthens the list a reader gets, one left out is posted again.
+  const findings = ownLinesRemoved(text).filter((l) => l.trim() && !/^#+\s/.test(l));
   const round = Math.max(Number(field('Round')) || 0, ...headings, findings.length ? 1 : 0);
   return { head: field('Head'), round, snapshot: field('Snapshot'), base: field('Base'), findings };
-}
-
-// Another host's agent may have written the file by hand; its own lines are kept, under a header this script owns.
-function body(text) {
-  return text.replace(/\r\n/g, '\n').split('\n').filter((l) => !/^(Head|Round|Snapshot|Base):/.test(l) && l !== '# Review loop' && !l.startsWith('Findings posted in this loop')).join('\n').trim();
 }
 
 function start(cwd, { beyondCap = false } = {}) {
@@ -91,7 +93,7 @@ function start(cwd, { beyondCap = false } = {}) {
   }
   if (!same) {
     const header = ['# Review loop', '', `Head: ${head}`, `Round: ${round}`, `Snapshot: ${snap || 'none'}`, ...(base ? [`Base: ${base}`] : []), '', INTRO, ''].join('\n');
-    const kept = fresh ? '' : body(old);
+    const kept = fresh ? '' : ownLinesRemoved(old).join('\n').trim();
     fs.writeFileSync(file, `${header}\n${kept ? `${kept}\n\n` : ''}## Round ${round}\n`);
   }
   const lines = [`Review loop: round ${round} of ${CAP}${round > CAP ? ' (beyond the cap, on the owner\'s word)' : ''} (${FILE}).`];

@@ -45,8 +45,25 @@ test('the file is kept out of commits with the same exclude line the owner\'s ho
   run(dir, 'start');
   run(dir, 'start');
   const exclude = fs.readFileSync(path.join(dir, '.git', 'info', 'exclude'), 'utf8');
-  assert.equal(exclude.split(/\s+/).filter((w) => w === '/.review-loop.md').length, 1);
+  assert.equal(exclude.split('\n').filter((l) => l === '/.review-loop.md').length, 1);
   assert.doesNotMatch(git(dir, 'status', '--porcelain'), /review-loop/);
+});
+
+test('only a line git reads as the exclude line counts as one', () => {
+  for (const line of ['# /.review-loop.md', '/.review-loop.md # note', '  /.review-loop.md']) {
+    const dir = repo();
+    write(dir, '.git/info/exclude', `${line}\n`);
+    assert.equal(run(dir, 'start').status, 0);
+    assert.doesNotMatch(git(dir, 'status', '--porcelain'), /review-loop/, line);
+  }
+  // trailing spaces and a carriage return are git's to drop: these lines already ignore the file, so none is added
+  for (const line of ['/.review-loop.md  ', '/.review-loop.md\r']) {
+    const dir = repo();
+    write(dir, '.git/info/exclude', `${line}\n`);
+    assert.equal(run(dir, 'start').status, 0);
+    assert.equal(fs.readFileSync(path.join(dir, '.git', 'info', 'exclude'), 'utf8'), `${line}\n`);
+    assert.doesNotMatch(git(dir, 'status', '--porcelain'), /review-loop/, line);
+  }
 });
 
 test('a later round names only the diff since the previous round, untracked files included', () => {
@@ -87,6 +104,26 @@ test('the snapshot never contains the loop file itself, ignored or not', () => {
   assert.match(r.stdout, /never stage \.review-loop\.md/);
   const plain = loopFile(dir).match(/^Snapshot: ([0-9a-f]{40})$/m)[1];
   assert.doesNotMatch(git(dir, 'ls-tree', '-r', '--name-only', plain), /review-loop/);
+});
+
+test('a finding comes back in the format the file states, with or without a bullet, and nothing else does', () => {
+  const dir = repo();
+  run(dir, 'start');
+  const found = ['`src/a.js:1` · wrong constant · no bullet', '- `src/a.js:1` · stale comment · a dash', '* `src/a.js:1` · bad name · a star'];
+  fs.appendFileSync(path.join(dir, '.review-loop.md'), `${found.join('\n')}\n`);
+  write(dir, 'src/a.js', 'module.exports = 3;\n');
+  const out = run(dir, 'start').stdout.split('\n');
+  const from = out.findIndex((l) => l.startsWith('Findings already posted'));
+  const to = out.findIndex((l) => l.startsWith('Record each finding'));
+  assert.deepEqual(out.slice(from + 1, to), found);
+});
+
+test('a file written by hand with one finding and no bullet counts as a round', () => {
+  const dir = repo();
+  write(dir, '.review-loop.md', '`src/a.js:1` · wrong constant · by hand\n');
+  const r = run(dir, 'start');
+  assert.match(r.stdout, /round 2 of 3/i);
+  assert.match(r.stdout, /by hand/);
 });
 
 test('a new commit starts a fresh loop and drops the old findings', () => {
