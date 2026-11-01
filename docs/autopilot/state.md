@@ -1,6 +1,6 @@
 # Autopilot switch
 
-State: PAUSE
+State: RUN
 
 - Weekly usage cap for autopilot work: 70% (read with `get_usage`; above it the session reports and stops).
 - Five-hour window: no measurement starts above 80%.
