@@ -266,3 +266,7 @@ So với skill nguồn, tám phiên xen kẽ mỗi bên: **không khác biệt r
 
 - **Trang `bearingkit.dev`**: đã chạy (đọc 2026-10-29: GitHub Pages trả 200 trên tên miền riêng, mục About đã điền); không còn chờ.
 - Nhánh `fix/quick-act-2026-10-28`: đã merge 2026-10-29 (mục 74), rồi xóa cùng bốn nhánh đã merge khác, còn tag `archive/<tên>` (mục 75); bản Antigravity đã làm mới, `doctor` ok.
+
+## Phụ lục 2026-11-01: một câu đã đóng của mục "Đang chờ owner" (nguyên văn)
+
+- `bk-*` ở `%TEMP%`: hết chờ (đọc 2026-10-31: 3 `bk-*`, 2 `bench-fixture-*`).
