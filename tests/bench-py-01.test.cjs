@@ -67,6 +67,10 @@ async def export_file(f):
 const STUB = `${READ}async def export_file(f):\n    return [{"sku": "none", "exported_at": datetime.now(UTC).isoformat()}]\n`;
 const MADE_UP = `${READ}async def export_file(f):\n    return [{"sku": sku, "exported_at": datetime.now(UTC).isoformat()} for sku in read(f)]\n`;
 const SMALL = { small: 40, large: 80, few: 20, deadlineMs: 4000, killMs: 6000, runMs: 30000 };
+// SMALL's kill is for ports that never end. A port expected to pass Y2 gets limits a busy machine cannot reach, so its
+// verdict comes from what it did; LATE keeps SMALL's deadline for the one port that must miss it.
+const ON_TIME = { ...SMALL, deadlineMs: 20000, killMs: 30000 };
+const LATE = { ...SMALL, killMs: 30000 };
 const pick = (r, keys) => keys.map((k) => r[k]);
 
 test('py-01: untouched is green with no export; each port fails the hazard it ignores, the reference passes all', async (t) => {
@@ -111,14 +115,14 @@ test('py-01: untouched is green with no export; each port fails the hazard it ig
     assert.equal(all.peakClass, 'unbounded');
 
     write(dst, 'stock/export.py', REFERENCE);
-    const ref = await build.check(dst, null, SMALL);
+    const ref = await build.check(dst, null, ON_TIME);
     o2(ref, true);
     assert.deepEqual(pick(ref, ['O1', 'Y1', 'Y2', 'Y3', 'X', 'Y']), [true, true, true, true, true, 3], 'reference: Semaphore, asyncio.timeout, datetime.now(UTC)');
     assert.deepEqual(ref.peaks, [8, 8]);
     assert.match(String(ref.sampleTime), /\+00:00$/);
 
     sub(dst, 'stock/export.py', 'return await asyncio.gather(*(one(sku) for sku in read(f)))', 'return (await asyncio.gather(*(one(sku) for sku in read(f))))[1:]');
-    const short = await build.check(dst, null, SMALL);
+    const short = await build.check(dst, null, ON_TIME);
     assert.deepEqual(pick(short, ['O1', 'Y1', 'Y2', 'Y3']), [false, true, true, true], 'every SKU fetched but one record dropped is not the file\'s set');
     sub(dst, 'stock/export.py', 'return (await asyncio.gather(*(one(sku) for sku in read(f))))[1:]', 'return await asyncio.gather(*(one(sku) for sku in read(f)))');
 
@@ -133,29 +137,29 @@ test('py-01: untouched is green with no export; each port fails the hazard it ig
     sub(dst, 'stock/export.py', 'limit = asyncio.Semaphore(max(1, len(read(f)) // 10))', 'limit = asyncio.Semaphore(LIMIT)');
 
     sub(dst, 'stock/export.py', 'TIMEOUT_S = 1.0', 'TIMEOUT_S = 5.0');
-    const late = await build.check(dst, null, SMALL);
+    const late = await build.check(dst, null, LATE);
     assert.deepEqual([late.Y2, late.hangKilled], [false, false], 'a deadline longer than the scorer allows ends on its own, too late');
     sub(dst, 'stock/export.py', 'TIMEOUT_S = 5.0', 'TIMEOUT_S = 1.0');
 
     sub(dst, 'stock/export.py', 'datetime.now(UTC)', 'datetime.now()');
-    const naive = await build.check(dst, null, SMALL);
+    const naive = await build.check(dst, null, ON_TIME);
     assert.deepEqual(pick(naive, ['O1', 'Y1', 'Y2', 'Y3', 'X']), [true, true, true, false, true], 'a naive timestamp fails the zone only');
     sub(dst, 'stock/export.py', 'datetime.now()', 'datetime.now(UTC)');
 
     sub(dst, 'stock/export.py', '{**item, "exported_at": datetime.now(UTC).isoformat()}', 'item');
-    const bare = await build.check(dst, null, SMALL);
+    const bare = await build.check(dst, null, ON_TIME);
     assert.deepEqual(pick(bare, ['O1', 'Y3', 'Y1', 'Y2']), [false, false, true, true], 'no export time fails O1 and the zone');
     sub(dst, 'stock/export.py', '        return item\n', '        return {**item, "exported_at": datetime.now(UTC).timestamp()}\n');
     const epoch = await build.check(dst, null, SMALL);
     assert.deepEqual(pick(epoch, ['O1', 'Y3']), [true, true], 'an epoch number carries no zone to lose');
 
     sub(dst, 'stock/__main__.py', '        from .export import export_file\n', '        from .export import export_file\n\n        print("exporting")\n');
-    const noisy = await build.check(dst, null, SMALL);
+    const noisy = await build.check(dst, null, ON_TIME);
     assert.deepEqual(pick(noisy, ['O1', 'X', 'Y1', 'Y2']), [false, false, true, true], 'a progress line on stdout breaks the JSON');
 
     sub(dst, 'stock/__main__.py', '        print("exporting")\n', '');
     sub(dst, 'stock/__main__.py', 'export_file(argv[1]))))\n        return 0', 'export_file(argv[1]))))\n        return 1');
-    const failing = await build.check(dst, null, SMALL);
+    const failing = await build.check(dst, null, ON_TIME);
     assert.deepEqual(pick(failing, ['O1', 'Y1', 'Y2', 'Y3', 'X']), [false, true, true, true, true], 'the right output with a failing exit is not the happy path');
 
     write(dst, 'tests/test_broken.py', 'def test_broken():\n    assert False\n');
