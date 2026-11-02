@@ -25,7 +25,7 @@ const MUTANTS = [
   ['M15 P4 ignores paths outside', 'out.P4 = paths.filter(', 'out.P4 = [].filter('],
   ['M16 O1 ignores whether every SKU was asked', 'out.O1 = a.code === 0 && small.every((s) => a.asked.has(s)) && ', 'out.O1 = a.code === 0 && '],
 ];
-const COPY = ['scripts', 'skills/bk-build/references/stacks', 'evals/bench/py-01', 'tests/bench-py-01.test.cjs'];
+const COPY = ['scripts', 'skills/bk-build/references/stacks', 'evals/bench/py-01', 'tests/bench-py-01.test.cjs', 'tests/fixtures'];
 
 // One mutant's line from its `node --test` run. Red or green is the exit code (non-zero is red); a run killed at the
 // timeout or never started has no verdict. The TAP output only gives the first assertion error and any skip.

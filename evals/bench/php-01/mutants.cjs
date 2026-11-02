@@ -28,7 +28,7 @@ const MUTANTS = [
   ['M17 a seed failure is not reported', 'if (seeded.status !== 0) return', 'if (false) return'],
   ['M18 moved() ignores extra stock rows', "((tables && tables.stock) || []).length === SEED.length && SEED.every(", 'SEED.every('],
 ];
-const COPY = ['scripts', 'skills/bk-build/references/stacks', 'evals/bench/php-01', 'tests/bench-php-01.test.cjs'];
+const COPY = ['scripts', 'skills/bk-build/references/stacks', 'evals/bench/php-01', 'tests/bench-php-01.test.cjs', 'tests/fixtures'];
 
 const scratch = process.argv[2];
 if (!scratch) { console.error('usage: node evals/bench/php-01/mutants.cjs <scratch dir>'); process.exit(2); }
