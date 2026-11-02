@@ -67,7 +67,7 @@ async def export_file(f):
 const STUB = `${READ}async def export_file(f):\n    return [{"sku": "none", "exported_at": datetime.now(UTC).isoformat()}]\n`;
 const MADE_UP = `${READ}async def export_file(f):\n    return [{"sku": sku, "exported_at": datetime.now(UTC).isoformat()} for sku in read(f)]\n`;
 const SMALL = { small: 40, large: 80, few: 20, deadlineMs: 4000, killMs: 6000, runMs: 30000 };
-// SMALL's kill is for ports that never end. A port expected to pass Y2 gets limits a busy machine cannot reach, so its
+// SMALL's kill is for ports that never end. A port expected to pass Y2 gets limits a busy machine is unlikely to reach, so its
 // verdict comes from what it did; LATE keeps SMALL's deadline for the one port that must miss it.
 const ON_TIME = { ...SMALL, deadlineMs: 20000, killMs: 30000 };
 const LATE = { ...SMALL, killMs: 30000 };
