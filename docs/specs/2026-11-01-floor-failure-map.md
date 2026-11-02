@@ -29,10 +29,9 @@ Floor n is 3 on most tasks; shell-01 has 8, debug-01 has 11 on the default model
 - Most hazards were planted by the kit's author. Real-work defects should supply the next pilot points.
 
 ## Real-work defects not yet a measured point (v1 spec section 18)
-- 362 bypass outliving its purpose; 363 guardrails not wired into CI; 364 class-string tests hid unstyled UI;
-  365 auth and tenancy found late; 370 syntax of older majors; 371 wrong package manager in CI;
-  379 no transaction, past-time and test-state leaks; 380 test-first not enforced.
+Corrected 2026-11-02 on the owner's label for open choice 7 of `docs/specs/2026-11-01-real-defect-pilot-design.md` (`docs/autopilot/decisions.md` entry 89), from that spec's check of 2026-11-01:
+- Already measured, so no longer in this list: 362 (L1) is `close-01` G2; 365 (L4) is `review-01` D1, `review-02` H1 and H2, `review-04` D1 and D2; the transaction half of 379 (L18) is `review-04` D3; 380 (L19) is `debug-01`'s regression test and seen-red-first.
+- Still not a measured point: 363 guardrails not wired into CI; 364 class-string tests hid unstyled UI; 370 syntax of older majors; 371 wrong package manager in CI; the past-time and test-state halves of 379.
 
 ## Gap
-No handoff in docs/handoff has a lesson-candidates section (search on 2026-11-01: 0 hits), so field lessons
-since v1 have no feed into this list.
+Corrected 2026-11-02, same label. The search of 2026-11-01 matched only the literal words "lesson candidates"; the heading the template prescribes is `### Lessons (candidate lines for the lessons log)` (`skills/bk-protocol/references/handoff-template.md:22`). Counted by the pilot spec on 2026-11-01 over 86 handoffs: 46 have a heading that starts "Lessons", with 135 `RULE |` lines, the newest in `2026-10-26-p6-scorer.md`, and none of the 12 later handoffs has one. So the feed stopped on 2026-10-26; nothing reads the lines (`.claude/lessons.log` is not in this tree, and `skills/bk-close/SKILL.md:16` appends to it only if it exists); and the lines are rules about how sessions work, not defects in delivered work. From 2026-11-02 such defects go to `docs/field-defects.md` (open choice 6 of the same spec).
