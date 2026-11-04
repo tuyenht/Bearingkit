@@ -270,3 +270,8 @@ So với skill nguồn, tám phiên xen kẽ mỗi bên: **không khác biệt r
 ## Phụ lục 2026-11-01: một câu đã đóng của mục "Đang chờ owner" (nguyên văn)
 
 - `bk-*` ở `%TEMP%`: hết chờ (đọc 2026-10-31: 3 `bk-*`, 2 `bench-fixture-*`).
+
+## Phụ lục 2026-11-04: hai câu đã quyết của mục "Đang chờ owner" (nguyên văn)
+
+- `2026-10-29-review-round-7.md`: commit đo: đã quyết, `08ee8b8`, ghi vào dòng "Text" của Stage 1 theo lời owner 2026-10-30 (cùng lời "chạy giai đoạn 1"); nhóm từ C1 và vòng 8, 9 đã quyết (mục 77); các điều chỉnh vòng 1–2 của lần đổi đó, ngoài nhãn "Sửa trước", owner chọn giữ (mục 78).
+- Đã quyết 2026-10-31 (mục 81): khóa API đã thu hồi; giữ 43 s, V3, quyền task; $48 và $200 để hết hạn; nhánh `claude/serene-franklin-3f3bb7` thành tag `archive/`.
