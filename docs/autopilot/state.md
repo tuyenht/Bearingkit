@@ -1,6 +1,6 @@
 # Autopilot switch
 
-State: RUN
+State: PAUSE
 
 - Weekly usage cap for autopilot work: 70% (read with `get_usage`; above it the session reports and stops). Until the reset of 2026-11-04T02:59:59Z only, on the owner's label of 2026-11-02 (`docs/autopilot/decisions.md` entry 90), a rising yield line replaces it: 96% minus one point for every three hours left until that reset, counted continuously (80% at 2026-11-02T03:00Z, 88% at 2026-11-03T03:00Z, 96% at the reset). Above the line no autopilot work starts; the session reports, does not close, and starts again once the line has reached the reading. The line keeps 8 points a day and 4 points spare for the owner's production SaaS project; the reading counts every project on the account, NgayTot included, so they all push it towards the line. From that reset on, 70% applies again.
 - Five-hour window: no measurement starts above 80%.
