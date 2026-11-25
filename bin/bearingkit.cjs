@@ -3,7 +3,8 @@
 // One verb set for every host: install and update carry the store, activate and deactivate switch one project on or
 // off in the host's own configuration file, status says where things stand, uninstall takes the store away. What only
 // a host's own CLI may do is printed, never run (docs/hosts.md). `antigravity install|uninstall` stays as the older
-// spelling of install and uninstall for that one host; `doctor` is the deeper read-only check, `evals` the harness.
+// spelling of install and uninstall for that one host; `doctor` is the deeper read-only check, `upstream-watch` the
+// read-only drift report of the listed sources, `evals` the harness.
 
 const [cmd, ...args] = process.argv.slice(2);
 const activation = () => require('../scripts/activation.cjs');
@@ -19,12 +20,13 @@ const commands = {
   evals: () => require('../scripts/evals.cjs').run(args),
   bench: () => require('../scripts/bench.cjs').run(args),
   doctor: () => require('../scripts/doctor.cjs').cli(args),
+  'upstream-watch': () => require('../scripts/upstream-watch.cjs').cli(args),
 };
 
 // Object.hasOwn, not a truthiness test: `commands[cmd]` also resolves `constructor`, `toString` and the rest of
 // Object.prototype, and those were dispatched as commands that did nothing and exited 0.
 if (!Object.hasOwn(commands, String(cmd))) {
-  console.error('usage: bearingkit <install|update|activate|deactivate|status|uninstall|doctor|evals|bench|antigravity> [options]');
+  console.error('usage: bearingkit <install|update|activate|deactivate|status|uninstall|doctor|upstream-watch|evals|bench|antigravity> [options]');
   process.exit(2);
 }
 
