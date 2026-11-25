@@ -22,7 +22,7 @@ Mốc **v0.3**, mục 9 của thứ tự v0.3: `bk-ship` + `bk-close` (P6); năm
 | Nguồn có `derived` (chữ thật đã port) | **4** nguồn, **29** mục dẫn xuất trên **27** file kit | `_build/v03-prep/recount-status-numbers.cjs` |
 | Mục trong `NOTICE` | **3** (anthropics/claude-plugins-official, mattpocock/skills, obra/superpowers) | `grep '^##' NOTICE` |
 | Kiểm kê từng mục (§5.2) | **1.295** mục của **22/22** nguồn: 46 absorb, 610 idea, 639 drop, 0 lệch | `node scripts/inventory-items.cjs totals docs/specs/2026-09-18-item-inventory.md` |
-| Test | **329/329** xanh trên Windows (2026-11-25) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test "tests/**/*.test.cjs"` |
+| Test | **346/346** xanh trên Windows (2026-11-25, sau merge `upstream-watch`) (trên worktree không có `_build/upstream`: một test bỏ qua) | `node --test "tests/**/*.test.cjs"` |
 | Prompt activation | **96** ở `phase-1.jsonl`, **6** ranh giới, **2** acceptance | `evals/activation/*.jsonl` |
 | Case trong `skills/<name>/tests/` | **17/17** skill, **61** case (`bk-protocol` không cần) | `recount-status-numbers.cjs` |
 | File stack `bk-build/references/stacks/` | **8/8** trên `main` (`typescript-react`, `kotlin`, `sql`, `node`, `python`, `php-laravel`, `shell`, `c-cpp`) | `ls` |
@@ -60,7 +60,7 @@ Suy ra từ `v1 §17`, `v2 §13` (hàng v1.0), `v2 §5.3`. Số không chạy l�
 | v0.2 | cổng đo đạt từ 2026-09-17; còn hạng mục #11 (các nguồn còn lại); chắt lọc tám skill lifecycle đang làm trong v0.3 | `docs/status-history.md` §4, §5 |
 | **v0.3** | **đang làm**: catalog đủ; sprint lifecycle tới `bk-build` xong; `bk-spec` bước 1 vào `main` 2026-10-15, `bk-plan` 2026-10-07; `bk-ship`/`bk-close`: ba task, 9 phiên sàn (2026-10-16), phần chấm và limits (2026-10-26); giai đoạn 1 (2026-10-30): cả hai task trượt cổng, sprint đóng; `--verify` đã quyết, chờ task khác (mục 79); E-C1 vào `main` 2026-11-01 (`01f8981`, chưa đo); còn cổng | `docs/plans/2026-09-26-v03-roadmap.md` |
 | v0.4 | chưa bắt đầu: pack tuỳ chọn, hook push/deploy (Biome/Pint, câu 9), acceptance Gemini CLI / Cursor / Codex | spec §13 |
-| v1.0 | chưa bắt đầu: outcome benchmark đủ 12 task, `upstream-watch`, listing marketplace, publish từ history squash (README EN+VI và CI đã có) | spec §13 |
+| v1.0 | chưa bắt đầu: outcome benchmark đủ 12 task, `upstream-watch` (lệnh đã merge, chưa chạy thật), listing marketplace, publish từ history squash (README EN+VI và CI đã có) | spec §13 |
 
 ## 4. Đang chờ owner
 
@@ -93,7 +93,7 @@ Chữ đầy đủ ở `docs/status-history.md`, §7, theo nhãn. Luồng của 
 
 - **v0.3**: 8 file stack; `bk-spec` (bước 1 đã vào `main` 2026-10-15), `bk-ship`/`bk-close` (`--verify` chờ task khác, nhãn owner 2026-10-31; câu 34); một lượt chấp nhận Antigravity ngắn (câu 34, đã duyệt).
 - **v0.4**: pack tuỳ chọn kiểm kê chứng minh được; hook push/deploy; acceptance thật cho Gemini CLI, Cursor, Codex, Copilot CLI trên máy khác (câu 8).
-- **v1.0**: outcome benchmark 12 task; `upstream-watch`; listing marketplace; publish từ history squash sau khi grep tên project riêng.
+- **v1.0**: outcome benchmark 12 task; `upstream-watch` (lệnh đã merge, chưa chạy thật); listing marketplace; publish từ history squash sau khi grep tên project riêng.
 
 ## 7. Cách cập nhật file này
 
