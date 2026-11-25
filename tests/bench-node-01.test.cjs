@@ -74,6 +74,14 @@ exports.exportFile = async (f) => {
 };
 `;
 const SMALL = { small: 40, large: 80, few: 20, deadlineMs: 4000, killMs: 6000, runMs: 30000 };
+// On a busy machine the requests of one export arrive spread out, and with the default 20 ms answers the first ones finish
+// before the last arrive: SLOW_API keeps every request of the Promise.all port in flight at once. LATE keeps SMALL's
+// deadline for the port that must miss it and moves only the kill, which a busy machine reached at 6 s, as py-01's LATE does.
+const SLOW_API = { ...SMALL, delayMs: 500 };
+const LATE = { ...SMALL, killMs: 30000 };
+// A port expected to end on its own before the deadline gets limits a busy machine is unlikely to reach, as py-01's ON_TIME
+// does: the late check below keeps SMALL's deadline, so a deadline that is too long is still caught there.
+const ON_TIME = { ...SMALL, deadlineMs: 20000, killMs: 30000 };
 
 test('node-01: untouched is green with no export; each port fails the hazard it ignores, the pooled one passes all', async () => {
   const dir = tmpdir('bench-fixture-');
@@ -95,12 +103,12 @@ test('node-01: untouched is green with no export; each port fails the hazard it 
     assert.deepEqual([seq.peaks, seq.peakClass, seq.hangKilled], [[1, 1], '1', true]);
 
     write(dst, 'src/export.cjs', ALL_AT_ONCE);
-    const all = await build.check(dst, null, SMALL);
+    const all = await build.check(dst, null, SLOW_API);
     assert.deepEqual([all.O1, all.N1, all.N2, all.N3], [true, false, true, false], 'Promise.all: every call in flight at once');
     assert.equal(all.peakClass, 'unbounded');
 
     write(dst, 'src/export.cjs', POOLED);
-    const pooled = await build.check(dst, null, SMALL);
+    const pooled = await build.check(dst, null, ON_TIME);
     assert.deepEqual([pooled.O1, pooled.O2, pooled.N1, pooled.N2, pooled.N3, pooled.X, pooled.N], [true, true, true, true, true, true, 3], 'pooled with a deadline');
     assert.deepEqual(pooled.peaks, [8, 8]);
 
@@ -109,12 +117,12 @@ test('node-01: untouched is green with no export; each port fails the hazard it 
     write(dst, 'src/export.cjs', POOLED);
 
     sub(dst, 'src/export.cjs', 'const TIMEOUT_MS = 1000;', 'const TIMEOUT_MS = 5000;');
-    const late = await build.check(dst, null, SMALL);
+    const late = await build.check(dst, null, LATE);
     assert.deepEqual([late.N3, late.hangKilled], [false, false], 'a deadline longer than the scorer allows ends on its own, too late');
     sub(dst, 'src/export.cjs', 'const TIMEOUT_MS = 5000;', 'const TIMEOUT_MS = 1000;');
 
     sub(dst, 'src/export.cjs', 'const skus = read(f);', "const skus = read(f);\n  console.log(`exporting ${skus.length} SKUs`);");
-    const noisy = await build.check(dst, null, SMALL);
+    const noisy = await build.check(dst, null, ON_TIME);
     assert.deepEqual([noisy.O1, noisy.N2, noisy.N1, noisy.N3], [false, false, true, true], 'a progress line on stdout breaks the pipe');
 
     write(dst, 'config/export.json', '{}\n');
