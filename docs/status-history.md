@@ -275,3 +275,7 @@ So với skill nguồn, tám phiên xen kẽ mỗi bên: **không khác biệt r
 
 - `2026-10-29-review-round-7.md`: commit đo: đã quyết, `08ee8b8`, ghi vào dòng "Text" của Stage 1 theo lời owner 2026-10-30 (cùng lời "chạy giai đoạn 1"); nhóm từ C1 và vòng 8, 9 đã quyết (mục 77); các điều chỉnh vòng 1–2 của lần đổi đó, ngoài nhãn "Sửa trước", owner chọn giữ (mục 78).
 - Đã quyết 2026-10-31 (mục 81): khóa API đã thu hồi; giữ 43 s, V3, quyền task; $48 và $200 để hết hạn; nhánh `claude/serene-franklin-3f3bb7` thành tag `archive/`.
+
+## Phụ lục 2026-11-26: đuôi dòng "Cập nhật" (nguyên văn)
+
+- E-C1 ở `01f8981`, chưa đo (mục 82); giai đoạn 1 của P6: cả hai sprint đóng (mục 79).
